@@ -31,5 +31,20 @@ go.work.sum
 # .idea/
 # .vscode/
 
+# Backend
+backend/.env
+backend/tmp/
+
+# Frontend
+frontend/node_modules/
+frontend/build/
+frontend/.env.local
+frontend/.env
+
+# General
+*.log
+.DS_Store
+
+
 
 
