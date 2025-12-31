@@ -19,7 +19,7 @@
 #### **Hour 1-2: Project Definition & Goals**
 **Tasks:**
 - [ ] Define app purpose and target audience
-- [ ] Write project vision statement
+- [ ] Write project vision **statement**
 - [ ] List core problems you're solving
 - [ ] Define success metrics
 
