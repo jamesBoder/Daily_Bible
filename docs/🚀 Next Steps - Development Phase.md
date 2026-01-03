@@ -43,18 +43,21 @@ Database Connection (Day 1)
 Setup GORM connection
 Test database connectivity
 Create migration runner
+
 Models (Day 1-2)
 
 User model
 Verse model
 Favorite model
 Profile model
+
 Authentication (Day 2-3)
 
 JWT middleware
 Signup endpoint
 Login endpoint
 Password hashing (bcrypt)
+
 Verse Endpoints (Day 3-4)
 
 Daily verse endpoint
