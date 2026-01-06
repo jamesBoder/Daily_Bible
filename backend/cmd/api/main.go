@@ -6,6 +6,8 @@ import (
     "dailybible/internal/database"
     "dailybible/internal/repository"
     "dailybible/internal/services"
+
+    "github.com/gin-gonic/gin"
     // "dailybible/internal/handlers" // TODO: uncomment when implementing routes
 )
 
@@ -50,5 +52,25 @@ func main() {
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
     log.Println("Backend is ready. TODO: Add HTTP server and routes")
-    // ... your router setup will go here
-}
+
+
+    
+}   // init gin router
+    router := gin.Default()
+    
+    // add health endpoint
+    router.GET("/health", healthHandler)
+
+    // start server
+    router.Run(cfg.ServerAddress)
+    if err := router.Run(cfg.ServerAddress); err != nil {
+        log.Fatal("Failed to start server:", err)
+    }
+    
+    // healthHandler is a simple health check endpoint
+    func healthHandler(c *gin.Context) {
+        c.JSON(200, gin.H{
+            "status": "ok",
+        })
+    }
+
