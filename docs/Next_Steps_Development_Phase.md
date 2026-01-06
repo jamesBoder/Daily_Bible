@@ -1,4 +1,4 @@
-🚀 Next Steps - Development Phase
+Next Steps - Development Phase
 Phase 1: Environment Setup (1-2 hours)
 
 1. Database Setup
