@@ -12,6 +12,7 @@ type Config struct {
     JWTSecret        string
     BibleAPIKey      string
     BibleAPIBaseURL  string
+    ServerAddress   string
 }
 
 func Load() (*Config, error) {
@@ -23,5 +24,6 @@ func Load() (*Config, error) {
         JWTSecret:       os.Getenv("JWT_SECRET"),
         BibleAPIKey:     os.Getenv("BIBLE_API_KEY"),
         BibleAPIBaseURL: os.Getenv("BIBLE_API_BASE_URL"),
+        ServerAddress:   ":" + os.Getenv("PORT"),
     }, nil
 }

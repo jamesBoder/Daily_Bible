@@ -2,6 +2,13 @@ package main
 
 import (
     "log"
+    "net/http"
+    "os"
+    "os/signal"
+    "time"
+
+    "context"
+
     "dailybible/internal/config"
     "dailybible/internal/database"
     "dailybible/internal/repository"
@@ -10,6 +17,15 @@ import (
     "github.com/gin-gonic/gin"
     // "dailybible/internal/handlers" // TODO: uncomment when implementing routes
 )
+
+// healthHandler is a simple health check endpoint
+func healthHandler(c *gin.Context) {
+    c.JSON(200, gin.H{
+        "status": "ok",
+        "database": "connected",
+        "timestamp": time.Now().UTC(),
+    })
+}
 
 func main() {
     // 1. Load config
@@ -53,24 +69,47 @@ func main() {
     log.Println("Database connected and migrations completed successfully!")
     log.Println("Backend is ready. TODO: Add HTTP server and routes")
 
-
     
-}   // init gin router
+    // init gin router
     router := gin.Default()
     
     // add health endpoint
     router.GET("/health", healthHandler)
 
-    // start server
-    router.Run(cfg.ServerAddress)
-    if err := router.Run(cfg.ServerAddress); err != nil {
-        log.Fatal("Failed to start server:", err)
-    }
+    // register routes and middlewares here
     
-    // healthHandler is a simple health check endpoint
-    func healthHandler(c *gin.Context) {
-        c.JSON(200, gin.H{
-            "status": "ok",
-        })
+    
+
+   // create http.Server with router
+   c := &http.Server{
+       Addr:    cfg.ServerAddress,
+       Handler: router,
+   }
+
+   // start server in goroutine
+   go func() {
+       if err := c.ListenAndServe(); err != nil && err != http.ErrServerClosed {
+           log.Fatalf("listen: %s\n", err)
+       }
+   }()
+
+   log.Printf("Server is running at %s\n", cfg.ServerAddress)
+
+    // create signal channel
+    quit := make(chan os.Signal, 1)
+    signal.Notify(quit, os.Interrupt)
+    <-quit
+    log.Println("Shutting down server...")
+
+    // wait for signal
+    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer cancel()
+    if err := c.Shutdown(ctx); err != nil {
+        log.Fatal("Server forced to shutdown:", err)
     }
+
+    log.Println("Server exiting")
+}
+    
+
 
