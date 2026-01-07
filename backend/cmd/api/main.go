@@ -7,12 +7,14 @@ import (
     "os/signal"
     "time"
 
+
     "context"
 
     "dailybible/internal/config"
     "dailybible/internal/database"
     "dailybible/internal/repository"
     "dailybible/internal/services"
+    "dailybible/internal/middleware"
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
@@ -72,7 +74,15 @@ func main() {
 
     
     // init gin router
-    router := gin.Default()
+    router := gin.New()
+
+    // use logger middleware
+    router.Use(middleware.Logger())
+    //
+    router.Use(gin.Recovery())
+
+    // debug print logger middleware setup
+    log.Println("Logger middleware set up")
 
     // init CORS middleware config
     corsConfig := cors.DefaultConfig()
@@ -89,13 +99,15 @@ func main() {
 
     // add health endpoint
     router.GET("/health", healthHandler)
-   
 
+  
    // create http.Server with router
    c := &http.Server{
        Addr:    cfg.ServerAddress,
        Handler: router,
    }
+
+   
 
    // start server in goroutine
    go func() {
