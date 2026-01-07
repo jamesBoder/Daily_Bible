@@ -15,6 +15,7 @@ import (
     "dailybible/internal/services"
 
     "github.com/gin-gonic/gin"
+    "github.com/gin-contrib/cors"
     // "dailybible/internal/handlers" // TODO: uncomment when implementing routes
 )
 
@@ -72,13 +73,23 @@ func main() {
     
     // init gin router
     router := gin.Default()
-    
+
+    // init CORS middleware config
+    corsConfig := cors.DefaultConfig()
+    log.Println("Setting up CORS middleware")
+    corsConfig.AllowCredentials = true
+    corsConfig.AllowOrigins = []string{"http://localhost:3000"}
+    corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+    corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
+    router.Use(cors.New(corsConfig))
+
+    // debug print
+    log.Printf("Starting server at %s\n", cfg.ServerAddress)
+
+
     // add health endpoint
     router.GET("/health", healthHandler)
-
-    // register routes and middlewares here
-    
-    
+   
 
    // create http.Server with router
    c := &http.Server{
@@ -109,7 +120,9 @@ func main() {
     }
 
     log.Println("Server exiting")
-}
+
+    
+    }
     
 
 
