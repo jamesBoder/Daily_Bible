@@ -30,6 +30,13 @@ func healthHandler(c *gin.Context) {
     })
 }
 
+// errorHandler is a test endpoint to trigger an error
+func errorHandler(c *gin.Context) {
+    panic("Test panic for error handling middleware")
+}
+
+
+
 func main() {
     // 1. Load config
     cfg, err := config.Load()
@@ -100,6 +107,9 @@ func main() {
     // add health endpoint
     router.GET("/health", healthHandler)
 
+    // add test error endpoint
+    router.GET("/test-panic", errorHandler)
+
   
    // create http.Server with router
    c := &http.Server{
@@ -107,7 +117,7 @@ func main() {
        Handler: router,
    }
 
-   
+
 
    // start server in goroutine
    go func() {
