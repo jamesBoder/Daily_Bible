@@ -2,23 +2,17 @@ package handlers
 
 import (
 	"net/http"
+	"github.com/gin-gonic/gin"
 )
 
-type HistoryHandler struct {
-	// Will add history service later
-}
-
-func NewHistoryHandler() *HistoryHandler {
-	return &HistoryHandler{}
-}
 
 // Placeholder handlers - will implement later
-func (h *HistoryHandler) GetHistory(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Get history endpoint - to be implemented"))
+func GetHistory(c *gin.Context) {
+	c.Writer.WriteHeader(http.StatusNotImplemented)
+	c.Writer.Write([]byte("Get history endpoint - to be implemented"))
 }
 
-func (h *HistoryHandler) ClearHistory(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Clear history endpoint - to be implemented"))
+func ClearHistory(c *gin.Context) {
+	c.Writer.WriteHeader(http.StatusNotImplemented)
+	c.Writer.Write([]byte("Clear history endpoint - to be implemented"))
 }

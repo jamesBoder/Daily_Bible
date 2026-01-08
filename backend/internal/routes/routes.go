@@ -2,6 +2,8 @@ package routes
 
 import (
 	"github.com/gin-gonic/gin"
+	"dailybible/internal/handlers"
+	"dailybible/internal/middleware"
 )
 
 
@@ -24,7 +26,7 @@ func SetupRoutes(router *gin.Engine) {
 			 auth.POST("/logout", handlers.Logout)
 			 auth.GET("/me", handlers.GetMe)
 		}
-		
+
 		// verses routes
 		verses := api.Group("/verses")
 		{

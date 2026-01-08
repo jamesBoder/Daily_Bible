@@ -15,6 +15,7 @@ import (
     "dailybible/internal/repository"
     "dailybible/internal/services"
     "dailybible/internal/middleware"
+    "dailybible/internal/routes"
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
@@ -103,6 +104,12 @@ func main() {
     // debug print
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
+    // setup routes
+    routes.SetupRoutes(router)
+
+    // debug print setup routes
+    log.Println("Routes have been set up")
+
 
     // add health endpoint
     router.GET("/health", healthHandler)
@@ -110,7 +117,8 @@ func main() {
     // add test error endpoint
     router.GET("/test-panic", errorHandler)
 
-  
+    
+
    // create http.Server with router
    c := &http.Server{
        Addr:    cfg.ServerAddress,
@@ -126,7 +134,10 @@ func main() {
        }
    }()
 
+    // debug print
    log.Printf("Server is running at %s\n", cfg.ServerAddress)
+
+   
 
     // create signal channel
     quit := make(chan os.Signal, 1)

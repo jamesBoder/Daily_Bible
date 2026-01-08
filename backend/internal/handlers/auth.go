@@ -2,28 +2,27 @@ package handlers
 
 import (
 	"net/http"
+	"github.com/gin-gonic/gin"
+
 )
 
-type AuthHandler struct {
-	// Will add auth service later
-}
-
-func NewAuthHandler() *AuthHandler {
-	return &AuthHandler{}
-}
-
 // Placeholder handlers - will implement later
-func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Register endpoint - to be implemented"))
+func Register(c *gin.Context) {
+	c.Writer.WriteHeader(http.StatusNotImplemented)
+	c.Writer.Write([]byte("Register endpoint - to be implemented"))
 }
 
-func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Login endpoint - to be implemented"))
+func Login(c *gin.Context) {
+	c.Writer.WriteHeader(http.StatusNotImplemented)
+	c.Writer.Write([]byte("Login endpoint - to be implemented"))
 }
 
-func (h *AuthHandler) Logout(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Logout endpoint - to be implemented"))
+func Logout(c *gin.Context) {
+	c.Writer.WriteHeader(http.StatusNotImplemented)
+	c.Writer.Write([]byte("Logout endpoint - to be implemented"))
+}
+
+func GetMe(c *gin.Context) {
+	c.Writer.WriteHeader(http.StatusNotImplemented)
+	c.Writer.Write([]byte("GetMe endpoint - to be implemented"))
 }
