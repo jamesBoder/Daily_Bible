@@ -5,8 +5,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-
-		
+	
 // Placeholder handlers - will implement later
 func GetFavorites(c *gin.Context) {
 	c.Writer.WriteHeader(http.StatusNotImplemented)
