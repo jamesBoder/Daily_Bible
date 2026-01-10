@@ -1,26 +1,39 @@
 package repository
 
 import (
+    "errors"
+    
     "gorm.io/gorm"
     "dailybible/internal/models"
 )
 
-type UserRepository struct {
-    db *gorm.DB 
+// UserRepository handles CRUD operations for User model
+type UserRepository interface {
+    Create(user *models.User) error
+    GetByID(id uint) (*models.User, error)
+    GetByEmail(email string) (*models.User, error)
+    GetByUsername(username string) (*models.User, error)
+    Update(user *models.User) error
+    Delete(id uint) error
+    List(limit, offset int) ([]models.User, error)  }
+
+// define the struct that implements UserRepository
+type userRepository struct {
+    db *gorm.DB
 }
 
 // Constructor
-func NewUserRepository(db *gorm.DB) *UserRepository {
-    return &UserRepository{db: db}
+func NewUserRepository(db *gorm.DB) UserRepository {
+    return &userRepository{db: db}
 }
 
 
-func (r *UserRepository) Create(user *models.User) error {
+func (r *userRepository) Create(user *models.User) error {
     return r.db.Create(user).Error
 }
 
 
-func (r *UserRepository) FindByID(id uint) (*models.User, error) {
+func (r *userRepository) GetByID(id uint) (*models.User, error) {
     var user models.User
     err := r.db.First(&user, id).Error
     if err != nil {
@@ -30,21 +43,39 @@ func (r *UserRepository) FindByID(id uint) (*models.User, error) {
 }
 
 
-func (r *UserRepository) FindByEmail(email string) (*models.User, error) {
+func (r *userRepository) GetByEmail(email string) (*models.User, error) {
     var user models.User
     err := r.db.Where("email = ?", email).First(&user).Error
-    if err != nil {
-        return nil, err
+    if err == gorm.ErrRecordNotFound {
+        return nil, errors.New("user not found")
+    }
+    return &user, nil
+}
+
+func (r *userRepository) GetByUsername(username string) (*models.User, error) {
+    var user models.User
+    err := r.db.Where("username = ?", username).First(&user).Error
+    if err == gorm.ErrRecordNotFound {
+        return nil, errors.New("user not found")
     }
     return &user, nil
 }
 
 
-func (r *UserRepository) Update(user *models.User) error {
+func (r *userRepository) Update(user *models.User) error {
     return r.db.Save(user).Error
 }
 
 
-func (r *UserRepository) Delete(id uint) error {
+func (r *userRepository) Delete(id uint) error {
     return r.db.Delete(&models.User{}, id).Error
+}
+
+func (r *userRepository) List(limit, offset int) ([]models.User, error) {
+    var users []models.User
+    err := r.db.Limit(limit).Offset(offset).Find(&users).Error
+    if err != nil {
+        return nil, err
+    }
+    return users, nil
 }

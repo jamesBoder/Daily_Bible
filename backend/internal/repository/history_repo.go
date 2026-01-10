@@ -6,24 +6,36 @@ import (
     "dailybible/internal/models"
 )
 
-type HistoryRepository struct {
+type HistoryRepository interface {
+    Track(userID, verseID uint) error
+    List(userID uint, limit int) ([]models.History, error)
+    Clear(userID uint) error
+    CleanupOld(days int) error
+}
+
+type historyRepository struct {
     db *gorm.DB
 }
 
-func NewHistoryRepository(db *gorm.DB) *HistoryRepository {
-    return &HistoryRepository{db: db}
+func NewHistoryRepository(db *gorm.DB) HistoryRepository {
+    return &historyRepository{db: db}
 }
 
 // Create history entry
-func (r *HistoryRepository) Create(history *models.History) error {
-    return r.db.Create(history).Error
+func (r *historyRepository) Track(userID, verseID uint) error {
+    history := models.History{
+        UserID:   userID,
+        VerseID:  verseID,
+        ViewedAt: time.Now(),
+    }
+    return r.db.Create(&history).Error
 }
 
 // Find user's history
-func (r *HistoryRepository) FindByUserID(userID uint, limit int) ([]models.History, error) {
+func (r *historyRepository) List(userID uint, limit int) ([]models.History, error) {
     var history []models.History
     err := r.db.Where("user_id = ?", userID).
-        Preload("Verse").
+        Preload("Verse").  // Load related verse
         Order("viewed_at DESC").
         Limit(limit).
         Find(&history).Error
@@ -31,17 +43,14 @@ func (r *HistoryRepository) FindByUserID(userID uint, limit int) ([]models.Histo
 }
 
 // Delete old history (older than 90 days)
-func (r *HistoryRepository) DeleteOld(days int) error {
+func (r *historyRepository) CleanupOld(days int) error {
     cutoff := time.Now().AddDate(0, 0, -days)
     return r.db.Where("viewed_at < ?", cutoff).
         Delete(&models.History{}).Error
 }
 
 // Count user's history
-func (r *HistoryRepository) CountByUserID(userID uint) (int64, error) {
-    var count int64
-    err := r.db.Model(&models.History{}).
-        Where("user_id = ?", userID).
-        Count(&count).Error
-    return count, err
+func (r *historyRepository) Clear(userID uint) error {
+    return r.db.Where("user_id = ?", userID).
+        Delete(&models.History{}).Error
 }
