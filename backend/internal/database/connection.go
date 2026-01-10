@@ -1,16 +1,26 @@
 package database
 
 import (
+    "fmt"
+    "time"
+    "dailybible/internal/config"
+
+    "gorm.io/gorm/logger"
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
 )
 
-dsn := "host=localhost user=dailybible_user password=test123 dbname=daily_bible_dev port=5432 sslmode=disable"
 
-func Connect(databaseURL string) (*gorm.DB, error) {
+
+func Connect(config *config.Config) (*gorm.DB, error) {
+
+    dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s",
+    config.DBHost, config.DBPort, config.DBUser, 
+    config.DBPassword, config.DBName, config.DBSSLMode)
+
     db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{
         // logger : logger.Default.LogMode(logger.Info),
-        logger : logger.Default.LogMode(logger.Info),
+        Logger : logger.Default.LogMode(logger.Info),
         NowFunc: func() time.Time {
         return time.Now().UTC()  // Use UTC timestamps
         },

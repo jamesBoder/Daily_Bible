@@ -7,19 +7,30 @@ import (
 )
 
 type Config struct {
-    DatabaseURL      string
+    DBHost          string
+    DBPort          string
+    DBUser          string
+    DBPassword      string
+    DBName          string
+    DBSSLMode      string
     Port             string
     JWTSecret        string
     BibleAPIKey      string
     BibleAPIBaseURL  string
     ServerAddress   string
+
 }
 
 func Load() (*Config, error) {
     godotenv.Load()
     
     return &Config{
-        DatabaseURL:     os.Getenv("DATABASE_URL"),
+        DBHost:          os.Getenv("DB_HOST"),
+        DBPort:          os.Getenv("DB_PORT"),
+        DBUser:          os.Getenv("DB_USER"),
+        DBPassword:      os.Getenv("DB_PASSWORD"),
+        DBName:          os.Getenv("DB_NAME"),
+        DBSSLMode:      os.Getenv("DB_SSLMODE"),
         Port:            os.Getenv("PORT"),
         JWTSecret:       os.Getenv("JWT_SECRET"),
         BibleAPIKey:     os.Getenv("BIBLE_API_KEY"),
