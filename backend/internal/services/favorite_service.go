@@ -6,10 +6,10 @@ import (
 )
 
 type FavoriteService struct {
-	favoriteRepo *repository.FavoriteRepository
+	favoriteRepo repository.FavoriteRepository
 }
 
-func NewFavoriteService(favoriteRepo *repository.FavoriteRepository) *FavoriteService {
+func NewFavoriteService(favoriteRepo repository.FavoriteRepository) *FavoriteService {
 	return &FavoriteService{
 		favoriteRepo: favoriteRepo,
 	}

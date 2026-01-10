@@ -61,15 +61,18 @@ func main() {
     verseRepo := repository.NewVerseRepository(db)
     favoriteRepo := repository.NewFavoriteRepository(db)
     
+    
     // 5. Initialize services
     authService := services.NewAuthService(userRepo)
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo)
     
+    
     // 6. Initialize handlers (TODO: implement when needed)
     _ = authService      // Use services to avoid "declared and not used" errors
     _ = verseService
     _ = favoriteService
+    
     
     // TODO: Initialize handlers when implementing routes
     // authHandler := handlers.NewAuthHandler()

@@ -6,10 +6,10 @@ import (
 )
 
 type VerseService struct {
-	verseRepo *repository.VerseRepository
+	verseRepo repository.VerseRepository
 }
 
-func NewVerseService(verseRepo *repository.VerseRepository) *VerseService {
+func NewVerseService(verseRepo repository.VerseRepository) *VerseService {
 	return &VerseService{
 		verseRepo: verseRepo,
 	}

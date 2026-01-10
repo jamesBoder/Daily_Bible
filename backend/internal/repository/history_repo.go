@@ -21,6 +21,8 @@ func NewHistoryRepository(db *gorm.DB) HistoryRepository {
     return &historyRepository{db: db}
 }
 
+
+
 // Create history entry
 func (r *historyRepository) Track(userID, verseID uint) error {
     history := models.History{
