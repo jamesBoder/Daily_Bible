@@ -2,7 +2,13 @@ package models
 
 import (
     "time"
+    "errors"
+
+    "dailybible/internal/services"
+
     "gorm.io/gorm"
+    
+
 )
 
 type User struct {
@@ -20,4 +26,42 @@ type User struct {
     // Relationships (if you want to preload)
     Favorites []Favorite `gorm:"foreignKey:UserID" json:"favorites,omitempty"`
     History   []History  `gorm:"foreignKey:UserID" json:"history,omitempty"`
+}
+
+// create SetPassword method
+func (u *User) SetPassword(password string) error {
+    // validate hashed password is not empty
+    if password == "" {
+        return errors.New("password cannot be empty")
+    }
+
+    // validate password strength
+    if valid, err := services.ValidatePasswordStrength(password); !valid {
+        return errors.New("password does not meet strength requirements: " + err.Error())
+    }
+
+    // call hashPassword function to hash password
+    hashedPassword, err := services.HashPassword(password)
+    // validate password strength
+    u.Password = hashedPassword
+    return err
+}
+
+// create CheckPassword method
+func (u *User) CheckPassword(password string) bool {
+    // compare password with hashed password
+    // return true if match, false otherwise
+    return services.CheckPasswordHash(password, u.Password)
+}
+
+// create BeforeCreate hook to hash password
+func (u *User) BeforeCreate(tx *gorm.DB) error {
+    // call SetPassword to hash password before creating user
+    return u.SetPassword(u.Password)
+}
+
+// create BeforeUpdate hook to hash password
+func (u *User) BeforeUpdate(tx *gorm.DB) error {
+    // call SetPassword to hash password before updating user
+    return u.SetPassword(u.Password)
 }

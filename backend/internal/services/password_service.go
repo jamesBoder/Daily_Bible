@@ -5,10 +5,6 @@ import (
 	"fmt"
 	"errors"
 
-
-	"dailybible/internal/models"
-	"dailybible/internal/repository"
-
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -34,15 +30,15 @@ func CheckPasswordHash(password, hash string) bool {
 }
 
 // password validation function
-func ValidatePasswordStrength(password string) bool {
+func ValidatePasswordStrength(password string) (bool, error) {
 	// checks for minimum length
 	if len(password) < MinPasswordLength {
-		errors.New(fmt.Sprintf("Password must be at least %d characters long", MinPasswordLength))
-		return false
+		return false, errors.New(fmt.Sprintf("Password must be at least %d characters long", MinPasswordLength))
 	}
 
 	// checks for uppercase, lowercase, digit, special character
 	var hasUpper, hasLower, hasDigit, hasSpecial bool
+
 	for _, char := range password {
 		switch {
 		case 'A' <= char && char <= 'Z':
@@ -56,8 +52,12 @@ func ValidatePasswordStrength(password string) bool {
 			hasSpecial = true
 		}
 	}
-	return hasUpper && hasLower && hasDigit && hasSpecial
 
+	if !hasUpper || !hasLower || !hasDigit || !hasSpecial {
+		return false, errors.New("Password must contain at least one uppercase letter, one lowercase letter, one digit, and one special character")
+	}
 
+	return true, nil
+	
 }
 
