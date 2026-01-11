@@ -53,7 +53,7 @@ type UserResponse struct {
 	CreatedAt time.Time `json:"created_at"`
 }
 
-// Placeholder handlers - will implement later
+// Register handler
 func (h *AuthHandler) Register(c *gin.Context) {
 	// Parse request body
 	var req RegisterRequest
@@ -131,9 +131,69 @@ func (h *AuthHandler) Register(c *gin.Context) {
 
 }
 
-func Login(c *gin.Context) {
-	c.Writer.WriteHeader(http.StatusNotImplemented)
-	c.Writer.Write([]byte("Login endpoint - to be implemented"))
+
+// init LoginRequest struct
+type LoginRequest struct {
+	Email    string `json:"email" validate:"required,email"`
+	Password string `json:"password" validate:"required"`
+}
+
+// init LoginResponse struct
+type LoginResponse struct {
+	User  UserResponse `json:"user"`
+	Token string       `json:"token"`
+}
+
+func (h *AuthHandler) Login(c *gin.Context) {
+	// parse and bind JSON req body
+	var req LoginRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	// validate using validator
+	if err := h.validator.Struct(req); err != nil {
+		var errors []string
+		for _, err := range err.(validator.ValidationErrors) {
+			errors = append(errors, err.Field()+" is "+err.Tag())
+		}
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": errors})
+		return
+	}
+
+	// look up user by email
+	user, err := h.userRepo.GetByEmail(req.Email)
+	if err != nil || user == nil {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+
+	// verify password
+	if !password.CheckPasswordHash(req.Password, user.Password) {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
+		return
+	}
+	
+	// generate JWT token
+	token, err := h.tokenService.GenerateToken(user.ID, user.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token: " + err.Error()})
+		return
+	}
+
+	// return 200 ok with user data and token
+	resp := LoginResponse{
+		User: UserResponse{
+			ID:        user.ID,
+			Email:     user.Email,
+			Username:  user.Username,
+			CreatedAt: user.CreatedAt,
+		},
+		Token: token,
+	}
+
+	c.JSON(http.StatusOK, resp)
 }
 
 func Logout(c *gin.Context) {

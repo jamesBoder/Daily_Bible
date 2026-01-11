@@ -22,7 +22,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler)  {
 		auth := api.Group("/auth")
 		{
 			 auth.POST("/register", authHandler.Register)
-			 auth.POST("/login", handlers.Login)
+			 auth.POST("/login", authHandler.Login)
 			 auth.POST("/logout", handlers.Logout)
 			 auth.GET("/me", handlers.GetMe)
 		}
