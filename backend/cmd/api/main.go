@@ -113,7 +113,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler)
+    routes.SetupRoutes(router, authHandler, tokenService)
 
     // debug print setup routes
     log.Println("Routes have been set up")

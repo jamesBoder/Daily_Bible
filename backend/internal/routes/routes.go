@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"dailybible/internal/handlers"
 	"dailybible/internal/middleware"
+	"dailybible/internal/services"
 )
 
 
@@ -14,7 +15,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler)  {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService)  {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -24,7 +25,8 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler)  {
 			 auth.POST("/register", authHandler.Register)
 			 auth.POST("/login", authHandler.Login)
 			 auth.POST("/logout", handlers.Logout)
-			 auth.GET("/me", handlers.GetMe)
+			 // /me endpoint requires authentication
+			 auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
 		}
 
 		// verses routes
@@ -37,7 +39,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler)  {
 
 		// Protected routes (require auth)
 		protected := api.Group("/")
-		protected.Use(middleware.AuthMiddleware())
+		protected.Use(middleware.AuthMiddleware(tokenService))
 		{
 			// favorites routes
 			favorites := protected.Group("/favorites")

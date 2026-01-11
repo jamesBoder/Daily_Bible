@@ -201,7 +201,37 @@ func Logout(c *gin.Context) {
 	c.Writer.Write([]byte("Logout endpoint - to be implemented"))
 }
 
-func GetMe(c *gin.Context) {
-	c.Writer.WriteHeader(http.StatusNotImplemented)
-	c.Writer.Write([]byte("GetMe endpoint - to be implemented"))
+//init GetMe struct
+type GetMeResponse struct {
+	User  UserResponse `json:"user"`
+}
+
+// GetMe handler
+func (h *AuthHandler) GetMe(c *gin.Context) {
+	// retrieve userID from context
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// fetch user from database
+	user, err := h.userRepo.GetByID(userID.(uint))
+	if err != nil || user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// prepare response
+	resp := GetMeResponse{
+		User: UserResponse{
+			ID:        user.ID,
+			Email:     user.Email,
+			Username:  user.Username,
+			CreatedAt: user.CreatedAt,
+		},
+	}
+
+	// return 200 ok with user data
+	c.JSON(http.StatusOK, resp)
 }
