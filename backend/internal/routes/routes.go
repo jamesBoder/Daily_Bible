@@ -14,14 +14,14 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler)  {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
 		// auth routes
 		auth := api.Group("/auth")
 		{
-			 auth.POST("/register", handlers.Register)
+			 auth.POST("/register", authHandler.Register)
 			 auth.POST("/login", handlers.Login)
 			 auth.POST("/logout", handlers.Logout)
 			 auth.GET("/me", handlers.GetMe)

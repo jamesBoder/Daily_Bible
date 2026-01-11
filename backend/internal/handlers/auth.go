@@ -8,7 +8,7 @@ import (
 	"dailybible/internal/services"
 	"dailybible/internal/models"
 	"dailybible/internal/password"
-	
+
 	"github.com/gin-gonic/gin"
 	"github.com/go-playground/validator/v10"
 	
@@ -17,12 +17,13 @@ import (
 // init AuthHanlder struct
 type AuthHandler struct {
 	userRepo repository.UserRepository
-	tokenService services.TokenService
+	tokenService *services.TokenService
 	validator *validator.Validate
+	
 }
 
 // Constructor
-func NewAuthHandler(userRepo repository.UserRepository, tokenService services.TokenService) *AuthHandler {
+func NewAuthHandler(userRepo repository.UserRepository, tokenService *services.TokenService) *AuthHandler {
 	return &AuthHandler{
 		userRepo:     userRepo,
 		tokenService: tokenService,

@@ -19,7 +19,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
-    // "dailybible/internal/handlers" // TODO: uncomment when implementing routes
+    "dailybible/internal/handlers"
 )
 
 // healthHandler is a simple health check endpoint
@@ -35,8 +35,6 @@ func healthHandler(c *gin.Context) {
 func errorHandler(c *gin.Context) {
     panic("Test panic for error handling middleware")
 }
-
-
 
 func main() {
     // 1. Load config
@@ -66,12 +64,19 @@ func main() {
     authService := services.NewAuthService(userRepo)
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo)
+    tokenService := services.NewTokenService(cfg)
     
-    
-    // 6. Initialize handlers (TODO: implement when needed)
+    // 6. Initialize handlers 
     _ = authService      // Use services to avoid "declared and not used" errors
     _ = verseService
     _ = favoriteService
+    _ = tokenService
+
+    // init authHandler variable
+    authHandler := handlers.NewAuthHandler(
+        userRepo, 
+        tokenService,
+    )
     
     
     // TODO: Initialize handlers when implementing routes
@@ -108,7 +113,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router)
+    routes.SetupRoutes(router, authHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
@@ -120,7 +125,6 @@ func main() {
     // add test error endpoint
     router.GET("/test-panic", errorHandler)
 
-    
 
    // create http.Server with router
    c := &http.Server{
