@@ -4,7 +4,7 @@ import (
     "time"
     "errors"
 
-    "dailybible/internal/services"
+    "dailybible/internal/password"
 
     "gorm.io/gorm"
     
@@ -29,29 +29,29 @@ type User struct {
 }
 
 // create SetPassword method
-func (u *User) SetPassword(password string) error {
+func (u *User) SetPassword(pwd string) error {
     // validate hashed password is not empty
-    if password == "" {
+    if pwd == "" {
         return errors.New("password cannot be empty")
     }
 
     // validate password strength
-    if valid, err := services.ValidatePasswordStrength(password); !valid {
+    if valid, err := password.ValidatePasswordStrength(pwd); !valid {
         return errors.New("password does not meet strength requirements: " + err.Error())
     }
 
     // call hashPassword function to hash password
-    hashedPassword, err := services.HashPassword(password)
+    hashedPassword, err := password.HashPassword(pwd)
     // validate password strength
     u.Password = hashedPassword
     return err
 }
 
 // create CheckPassword method
-func (u *User) CheckPassword(password string) bool {
+func (u *User) CheckPassword(pwd string) bool {
     // compare password with hashed password
     // return true if match, false otherwise
-    return services.CheckPasswordHash(password, u.Password)
+    return password.CheckPasswordHash(pwd, u.Password)
 }
 
 // create BeforeCreate hook to hash password
