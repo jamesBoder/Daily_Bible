@@ -65,6 +65,15 @@ func main() {
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo)
     tokenService := services.NewTokenService(cfg)
+    bibleAPIService := services.NewBibleAPIService(
+        cfg.BibleAPIKey,
+        cfg.BibleAPIBaseURL,
+        cfg.BibleVersionID,
+    )
+    dailyVerseService := services.NewDailyVerseService(
+        bibleAPIService,
+        verseRepo,
+    )
     
     // 6. Initialize handlers 
     _ = authService      // Use services to avoid "declared and not used" errors
@@ -78,6 +87,11 @@ func main() {
         tokenService,
     )
     
+    // init verseHandler variable
+    verseHandler := handlers.NewVerseHandler(
+        dailyVerseService,
+        bibleAPIService,
+    )
     
     // TODO: Initialize handlers when implementing routes
     // authHandler := handlers.NewAuthHandler()
@@ -113,7 +127,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

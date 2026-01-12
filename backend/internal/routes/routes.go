@@ -15,7 +15,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService)  {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -32,9 +32,9 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 		// verses routes
 		verses := api.Group("/verses")
 		{
-			 verses.GET("/daily", handlers.GetDailyVerse)
-			 verses.GET("/:reference", handlers.GetVerseByReference)
-			 verses.GET("/search", handlers.SearchVerses)
+			 verses.GET("/daily", verseHandler.GetDailyVerse)
+			 verses.GET("/:reference", verseHandler.GetVerseByReference)
+			 verses.GET("/search", verseHandler.SearchVerses)
 		}
 
 		// Protected routes (require auth)
