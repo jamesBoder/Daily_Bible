@@ -18,12 +18,16 @@ func AuthMiddleware(tokenService *services.TokenService) gin.HandlerFunc {
 			return
 		}
 
-		// strip "Bearer " prefix
+		// Trim spaces and strip "Bearer " prefix
+		authHeader = strings.TrimSpace(authHeader)
 		token := strings.TrimPrefix(authHeader, "Bearer ")
 		if token == authHeader {
 			c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{"error": "Invalid token format"})
 			return
 		}
+		
+		// Trim any remaining spaces from the token
+		token = strings.TrimSpace(token)
 
 		// validate token using TokenService
 		claims, err := tokenService.ValidateToken(token)
