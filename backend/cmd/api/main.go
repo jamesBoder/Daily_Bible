@@ -93,8 +93,6 @@ func main() {
         bibleAPIService,
     )
     
-    // TODO: Initialize handlers when implementing routes
-    // authHandler := handlers.NewAuthHandler()
     // favoritesHandler := handlers.NewFavoritesHandler()
     // historyHandler := handlers.NewHistoryHandler()
     
