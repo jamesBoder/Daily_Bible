@@ -39,7 +39,7 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
             "text":      verse.Text,
             "book":      verse.Book,
             "chapter":   verse.Chapter,
-            "verse":     verse.Verse,
+            "verse":     verse.VerseNumber,
             "version":   verse.Version,
         },
     })

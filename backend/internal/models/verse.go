@@ -18,6 +18,8 @@ type Verse struct {
     Book        string `gorm:"size:50;not null" json:"book"`
     Chapter     int    `gorm:"not null" json:"chapter"`
     VerseNumber int    `gorm:"not null" json:"verse_number"`
+    Version     string `gorm:"size:20;default:'KJV'" json:"version"`
+    Verse       string `gorm:"-" json:"verse,omitempty"` // Deprecated: use VerseNumber instead
     Translation string `gorm:"size:10;default:'KJV'" json:"translation"`
     DailyDate  *string `gorm:"uniqueIndex;type:date" json:"daily_date,omitempty"` // Date when used as daily verse
     

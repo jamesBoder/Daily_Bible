@@ -5,6 +5,8 @@ import (
     "encoding/json"
     "fmt"
     "net/http"
+    "regexp"
+    "strings"
     "time"
 )
 
@@ -39,27 +41,68 @@ type BibleAPIVerse struct {
 	ID        string `json:"id"`
     Reference string `json:"reference"`
     Text      string `json:"text"`
+	Content	  string `json:"content"`
     BookID    string `json:"bookId"`
     ChapterID string `json:"chapterId"`
 }
 
-// BibleAPIResponse represents the API response
+// stripHTML removes HTML tags from a string
+func stripHTML(html string) string {
+    // Remove HTML tags
+    re := regexp.MustCompile(`<[^>]*>`)
+    text := re.ReplaceAllString(html, "")
+    
+    // Clean up extra whitespace
+    text = strings.TrimSpace(text)
+    text = regexp.MustCompile(`\s+`).ReplaceAllString(text, " ")
+    
+    return text
+}
+
+// BibleAPIResponse represents the API response for passage search
 type BibleAPIResponse struct {
     Data struct {
+        Query      string `json:"query"`
+        Limit      int    `json:"limit"`
+        Offset     int    `json:"offset"`
+        Total      int    `json:"total"`
+        VerseCount int    `json:"verseCount"`
+        Passages []struct {
+            ID        string `json:"id"`
+            OrgID     string `json:"orgId"`
+            BibleID   string `json:"bibleId"`
+            BookID    string `json:"bookId"`
+            ChapterID string `json:"chapterId"`
+            Content   string `json:"content"`
+            Reference string `json:"reference"`
+        } `json:"passages"`
+    } `json:"data"`
+}
+
+// BibleAPISearchResponse represents the API response for verse search
+type BibleAPISearchResponse struct {
+    Data struct {
+        Query      string `json:"query"`
+        Limit      int    `json:"limit"`
+        Offset     int    `json:"offset"`
+        Total      int    `json:"total"`
+        VerseCount int    `json:"verseCount"`
         Verses []struct {
             ID        string `json:"id"`
             OrgID     string `json:"orgId"`
             BookID    string `json:"bookId"`
+            BibleID   string `json:"bibleId"`
             ChapterID string `json:"chapterId"`
-            Text      string `json:"text"`
             Reference string `json:"reference"`
+            Text      string `json:"text"`
         } `json:"verses"`
     } `json:"data"`
 }
 
+
 // GetVerse fetches a verse by reference
 func (s *bibleApiService) GetVerse(reference string) (*BibleAPIVerse, error) {
-	url := fmt.Sprintf("%s/bibles/%s/verses/%s", s.baseURL, s.versionID, reference)
+	url := fmt.Sprintf("%s/bibles/%s/search?query=%s", s.baseURL, s.versionID, reference)
 	if reference == "" {
 		return nil, fmt.Errorf("reference cannot be empty")
 	}
@@ -103,16 +146,17 @@ func (s *bibleApiService) GetVerse(reference string) (*BibleAPIVerse, error) {
 	}
 
 	// ensure we have at least one verse
-	if len(apiResp.Data.Verses) == 0 {
+	if len(apiResp.Data.Passages) == 0 {
 		return nil, fmt.Errorf("no verses found for reference: %s", reference)
 	}
 
 	// map to BibleAPIVerse
-	verseData := apiResp.Data.Verses[0]
+	verseData := apiResp.Data.Passages[0]
 	verse := &BibleAPIVerse{
 		ID:        verseData.ID,
 		Reference: verseData.Reference,
-		Text:      verseData.Text,
+		Content:   verseData.Content,
+		Text:      stripHTML(verseData.Content),
 		BookID:    verseData.BookID,
 		ChapterID: verseData.ChapterID,
 	}
@@ -123,7 +167,7 @@ func (s *bibleApiService) GetVerse(reference string) (*BibleAPIVerse, error) {
 
 // SearchVerses searches for verses
 func (s *bibleApiService) SearchVerses(query string, limit int) ([]BibleAPIVerse, error) {
-	url := fmt.Sprintf("%s/bibles/%s/verses/search?query=%s&limit=%d", s.baseURL, s.versionID, query, limit)
+	url := fmt.Sprintf("%s/bibles/%s/search?query=%s&limit=%d", s.baseURL, s.versionID, query, limit)
 	if query == "" {
 		return nil, fmt.Errorf("query cannot be empty")
 	}
@@ -158,7 +202,7 @@ func (s *bibleApiService) SearchVerses(query string, limit int) ([]BibleAPIVerse
 	}
 
 	// parse response
-	var apiResp BibleAPIResponse
+	var apiResp BibleAPISearchResponse
 	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
 		return nil, err
 	}
@@ -172,7 +216,7 @@ func (s *bibleApiService) SearchVerses(query string, limit int) ([]BibleAPIVerse
             Text:      v.Text,
             BookID:    v.BookID,
             ChapterID: v.ChapterID,
-        })
+		})
     }
 
 	return verses, nil

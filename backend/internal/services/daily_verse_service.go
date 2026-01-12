@@ -5,9 +5,12 @@ import (
     "encoding/hex"
     "fmt"
     "time"
-    
+	"strconv"
+    "strings"
     "dailybible/internal/models"
     "dailybible/internal/repository"
+	
+	
 )
 
 type DailyVerseService struct {
@@ -52,9 +55,11 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         Text:      apiVerse.Text,
         Book:      extractBook(apiVerse.Reference),
         Chapter:   extractChapter(apiVerse.Reference),
-        Verse:     extractVerse(apiVerse.Reference),
-        Version:   "KJV",
+        VerseNumber: extractVerse(apiVerse.Reference),
+        Version: "KJV", // Default
+        Translation: "KJV", // Default
         DailyDate: &today,
+
     }
     
     if err := s.verseRepo.Create(verse); err != nil {

@@ -13,6 +13,7 @@ type VerseRepository interface {
     Search(query string) ([]models.Verse, error)
     GetDailyVerse() (*models.Verse, error)
     List(limit, offset int) ([]models.Verse, error)
+    GetByDate(date string) (*models.Verse, error)
 }
 
 // init the struct that implements VerseRepository
