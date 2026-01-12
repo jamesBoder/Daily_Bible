@@ -75,3 +75,13 @@ func (r *verseRepository) List(limit, offset int) ([]models.Verse, error) {
     }
     return verses, nil
 }
+
+// GetByDate fetches a verse by its daily date
+func (r *verseRepository) GetByDate(date string) (*models.Verse, error) {
+    var verse models.Verse
+    err := r.db.Where("daily_date = ?", date).First(&verse).Error
+    if err != nil {
+        return nil, err
+    }
+    return &verse, nil
+}

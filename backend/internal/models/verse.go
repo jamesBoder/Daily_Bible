@@ -19,6 +19,7 @@ type Verse struct {
     Chapter     int    `gorm:"not null" json:"chapter"`
     VerseNumber int    `gorm:"not null" json:"verse_number"`
     Translation string `gorm:"size:10;default:'KJV'" json:"translation"`
+    DailyDate  *string `gorm:"uniqueIndex;type:date" json:"daily_date,omitempty"` // Date when used as daily verse
     
     // Relationships
     Favorites []Favorite `gorm:"foreignKey:VerseID" json:"favorites,omitempty"`
