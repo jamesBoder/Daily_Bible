@@ -16,6 +16,7 @@ type Config struct {
     Port             string
     JWTSecret        string
     BibleAPIKey      string
+    BibleVersionID    string
     BibleAPIBaseURL  string
     ServerAddress   string
 
@@ -34,7 +35,16 @@ func Load() (*Config, error) {
         Port:            os.Getenv("PORT"),
         JWTSecret:       os.Getenv("JWT_SECRET"),
         BibleAPIKey:     os.Getenv("BIBLE_API_KEY"),
-        BibleAPIBaseURL: os.Getenv("BIBLE_API_BASE_URL"),
+        BibleVersionID:  getEnvOrDefault("BIBLE_VERSION_ID", "de4e12af7f28f599-02"),
+        BibleAPIBaseURL: getEnvOrDefault("BIBLE_API_BASE_URL", "https://rest.api.bible/v1"),
         ServerAddress:   ":" + os.Getenv("PORT"),
     }, nil
+}
+
+func getEnvOrDefault(key, defaultValue string) string {
+    value := os.Getenv(key)
+    if value == "" {
+        return defaultValue
+    }
+    return value
 }
