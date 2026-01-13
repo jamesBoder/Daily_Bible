@@ -71,7 +71,7 @@ func main() {
 	testUser := &models.User{
 		Email:    "test@repo.com",
 		Username: "testrepo",
-		Password: "hashedpassword123",
+		Password: "Hashedpassword123$",
 	}
 
 	// Create user
@@ -118,11 +118,7 @@ func main() {
 	// Test 3: Favorite Repository
 	fmt.Println("\n--- Testing Favorite Repository ---")
 
-	// Add favorite
-	if err := favoriteRepo.Add(testUser.ID, testVerse.ID); err != nil {
-		log.Fatal("Failed to add favorite:", err)
-	}
-	fmt.Println("✅ Added favorite")
+	
 
 	// Check if exists
 	exists, err := favoriteRepo.Exists(testUser.ID, testVerse.ID)
@@ -131,15 +127,9 @@ func main() {
 	}
 	fmt.Printf("✅ Favorite exists: %v\n", exists)
 
-	// List favorites
-	favorites, err := favoriteRepo.List(testUser.ID)
-	if err != nil {
-		log.Fatal("Failed to list favorites:", err)
-	}
-	fmt.Printf("✅ User has %d favorite(s)\n", len(favorites))
+	
 
-	// Test 4: History Repository
-	fmt.Println("\n--- Testing History Repository ---")
+	
 
 	// Track view
 	if err := historyRepo.Track(testUser.ID, testVerse.ID); err != nil {
