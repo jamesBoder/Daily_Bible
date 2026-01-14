@@ -4,7 +4,7 @@ package utils
 
 import (
 	"math"
-	"dailybible/internal/models"
+	
 )
 
 
@@ -45,3 +45,4 @@ func CalculatePaginationMeta(total int64, params PaginationParams) PaginationMet
 		Total:      total,
 		TotalPages: totalPages,
 	}
+}

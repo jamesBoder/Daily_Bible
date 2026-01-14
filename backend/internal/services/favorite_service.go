@@ -28,8 +28,8 @@ func (s *FavoriteService) GetUserFavorites(userID uint) ([]models.Favorite, erro
     return s.favoriteRepo.GetByUserID(userID)
 }
 
-// GetUserFavoritesPaginated retrieves favorites with pagination
-func (s *FavoriteService) GetUserFavoritesPaginated(userID uint, page, pageSize int) ([]models.Favorite, int64, error) {
+// GetUserFavoritesPaginated retrieves favorites with pagination and optional search
+func (s *FavoriteService) GetUserFavoritesPaginated(userID uint, search string, page, pageSize int) ([]models.Favorite, int64, error) {
     if page < 1 {
         page = 1
     }
@@ -38,8 +38,15 @@ func (s *FavoriteService) GetUserFavoritesPaginated(userID uint, page, pageSize 
     }
     
     offset := (page - 1) * pageSize
+    
+    // If search query is provided, use SearchFavorites, otherwise use regular pagination
+    if search != "" {
+        return s.favoriteRepo.SearchFavorites(userID, search, pageSize, offset)
+    }
+    
     return s.favoriteRepo.GetByUserIDPaginated(userID, pageSize, offset)
 }
+
 
 // AddFavorite adds a verse to user's favorites
 func (s *FavoriteService) AddFavorite(userID, verseID uint) error {

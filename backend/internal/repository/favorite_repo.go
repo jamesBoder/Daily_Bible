@@ -106,14 +106,14 @@ func (r *favoriteRepository) SearchFavorites(userID uint, query string, limit, o
     var total int64
 
     // build the query
-    dbQuery := r.db.Joins("JOIN verses ON favorites.verse_id = verses.id").Where("favorites.user_id = ? AND verses.text LIKE ?", userID, "%"+query+"%")
+    db := r.db.Joins("JOIN verses ON favorites.verse_id = verses.id").Where("favorites.user_id = ? AND verses.text LIKE ?", userID, "%"+query+"%")
     if query != "" {
         searchPattern := "%" + query + "%"
         db = db.Where("verses.text ILIKE ? OR verses.reference ILIKE ?", searchPattern, searchPattern)
     }
 
     // get total count
-    if err := dbQuery.Model(&models.Favorite{}).Count(&total).Error; err != nil {
+    if err := db.Model(&models.Favorite{}).Count(&total).Error; err != nil {
         return nil, 0, err
     }
 

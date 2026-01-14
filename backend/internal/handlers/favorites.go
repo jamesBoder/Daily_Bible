@@ -5,6 +5,7 @@ import (
 	"strconv"
 
 	"dailybible/internal/services"
+	"dailybible/internal/utils"
 	"github.com/gin-gonic/gin"
 )
 
@@ -47,14 +48,13 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
 		return
 	}
 
-	// calculate pagination info
-	totalPages := (int(total) + pageSize - 1) / pageSize
-
 	// prepare response
+	paginationParams := utils.NewPaginationParams(page, pageSize)
 	c.JSON(http.StatusOK, gin.H{
-        "favorites": favorites,
-        "pagination": utils.CalculatePaginationMeta(page, pageSize, total),
-    })
+		"favorites": favorites,
+		"pagination": utils.CalculatePaginationMeta(total, paginationParams),
+	})
+
 }
 
 // add AddFavorite handler adds a verse to user's favorites

@@ -945,3 +945,412 @@ if [ "$TOKEN" == "null" ] || [ -z "$TOKEN" ]; then
     echo -e "${RED}✗ FAILED${NC} - Could not get auth token"
     exit 1
 fi
+
+echo -e "${GREEN}✓ PASSED${NC} - Successfully logged in"
+echo ""
+
+# Test 1: Get empty favorites list
+echo -e "${YELLOW}Test 1: Get empty favorites list${NC}"
+FAVORITES_RESPONSE=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/favorites")
+FAVORITES_COUNT=$(echo "$FAVORITES_RESPONSE" | jq '.favorites | length')
+
+if [ "$FAVORITES_COUNT" == "0" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Favorites list is empty"
+else
+    echo -e "${RED}✗ FAILED${NC} - Expected empty favorites list, got $FAVORITES_COUNT items"
+fi
+echo ""
+
+# Test 2: Get daily verse (to get a verse ID)
+echo -e "${YELLOW}Test 2: Get daily verse${NC}"
+VERSE_RESPONSE=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/verses/daily")
+VERSE_ID=$(echo "$VERSE_RESPONSE" | jq -r '.verse.id')
+
+if [ "$VERSE_ID" != "null" ] && [ -n "$VERSE_ID" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Got daily verse with ID: $VERSE_ID"
+else
+    echo -e "${RED}✗ FAILED${NC} - Could not get daily verse"
+    exit 1
+fi
+echo ""
+
+# Test 3: Add verse to favorites
+echo -e "${YELLOW}Test 3: Add verse to favorites${NC}"
+ADD_RESPONSE=$(curl -s -X POST "$BASE_URL/api/favorites" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"verse_id\": $VERSE_ID}")
+
+ADD_MESSAGE=$(echo "$ADD_RESPONSE" | jq -r '.message')
+
+if [ "$ADD_MESSAGE" == "Favorite added successfully" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Successfully added favorite"
+else
+    echo -e "${RED}✗ FAILED${NC} - Failed to add favorite: $ADD_RESPONSE"
+fi
+echo ""
+
+# Test 4: Verify favorite was added
+echo -e "${YELLOW}Test 4: Verify favorite was added${NC}"
+FAVORITES_RESPONSE=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/favorites")
+FAVORITES_COUNT=$(echo "$FAVORITES_RESPONSE" | jq '.favorites | length')
+
+if [ "$FAVORITES_COUNT" == "1" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Favorite was added successfully"
+else
+    echo -e "${RED}✗ FAILED${NC} - Expected 1 favorite, got $FAVORITES_COUNT"
+fi
+echo ""
+
+# Test 5: Try to add duplicate favorite (should fail)
+echo -e "${YELLOW}Test 5: Try to add duplicate favorite${NC}"
+DUPLICATE_RESPONSE=$(curl -s -X POST "$BASE_URL/api/favorites" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d "{\"verse_id\": $VERSE_ID}")
+
+DUPLICATE_ERROR=$(echo "$DUPLICATE_RESPONSE" | jq -r '.error')
+
+if [[ "$DUPLICATE_ERROR" == *"already in favorites"* ]]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Correctly prevented duplicate favorite"
+else
+    echo -e "${RED}✗ FAILED${NC} - Should have prevented duplicate: $DUPLICATE_RESPONSE"
+fi
+echo ""
+
+# Test 6: Get favorite ID for deletion
+echo -e "${YELLOW}Test 6: Get favorite ID${NC}"
+FAVORITE_ID=$(echo "$FAVORITES_RESPONSE" | jq -r '.favorites[0].id')
+
+if [ "$FAVORITE_ID" != "null" ] && [ -n "$FAVORITE_ID" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Got favorite ID: $FAVORITE_ID"
+else
+    echo -e "${RED}✗ FAILED${NC} - Could not get favorite ID"
+fi
+echo ""
+
+# Test 7: Remove favorite
+echo -e "${YELLOW}Test 7: Remove favorite${NC}"
+DELETE_RESPONSE=$(curl -s -X DELETE "$BASE_URL/api/favorites/$FAVORITE_ID" \
+  -H "Authorization: Bearer $TOKEN")
+
+DELETE_MESSAGE=$(echo "$DELETE_RESPONSE" | jq -r '.message')
+
+if [ "$DELETE_MESSAGE" == "Favorite removed successfully" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Successfully removed favorite"
+else
+    echo -e "${RED}✗ FAILED${NC} - Failed to remove favorite: $DELETE_RESPONSE"
+fi
+echo ""
+
+# Test 8: Verify favorite was removed
+echo -e "${YELLOW}Test 8: Verify favorite was removed${NC}"
+FAVORITES_RESPONSE=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/favorites")
+FAVORITES_COUNT=$(echo "$FAVORITES_RESPONSE" | jq '.favorites | length')
+
+if [ "$FAVORITES_COUNT" == "0" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Favorite was removed successfully"
+else
+    echo -e "${RED}✗ FAILED${NC} - Expected 0 favorites, got $FAVORITES_COUNT"
+fi
+echo ""
+
+# Test 9: Get empty history
+echo -e "${YELLOW}Test 9: Get empty history (or check if verse was tracked)${NC}"
+HISTORY_RESPONSE=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/history")
+HISTORY_COUNT=$(echo "$HISTORY_RESPONSE" | jq '.history | length')
+
+echo -e "${GREEN}✓ INFO${NC} - History has $HISTORY_COUNT entries (daily verse should be tracked)"
+echo ""
+
+# Test 10: Clear history
+echo -e "${YELLOW}Test 10: Clear history${NC}"
+CLEAR_RESPONSE=$(curl -s -X DELETE "$BASE_URL/api/history" \
+  -H "Authorization: Bearer $TOKEN")
+
+CLEAR_MESSAGE=$(echo "$CLEAR_RESPONSE" | jq -r '.message')
+
+if [ "$CLEAR_MESSAGE" == "History cleared successfully" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Successfully cleared history"
+else
+    echo -e "${RED}✗ FAILED${NC} - Failed to clear history: $CLEAR_RESPONSE"
+fi
+echo ""
+
+# Test 11: Verify history was cleared
+echo -e "${YELLOW}Test 11: Verify history was cleared${NC}"
+HISTORY_RESPONSE=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/history")
+HISTORY_COUNT=$(echo "$HISTORY_RESPONSE" | jq '.history | length')
+
+if [ "$HISTORY_COUNT" == "0" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - History was cleared successfully"
+else
+    echo -e "${RED}✗ FAILED${NC} - Expected 0 history entries, got $HISTORY_COUNT"
+fi
+echo ""
+
+# Test 12: Test pagination
+echo -e "${YELLOW}Test 12: Test pagination${NC}"
+PAGINATED_RESPONSE=$(curl -s -H "Authorization: Bearer $TOKEN" "$BASE_URL/api/favorites?page=1&page_size=5")
+PAGE=$(echo "$PAGINATED_RESPONSE" | jq -r '.pagination.page')
+PAGE_SIZE=$(echo "$PAGINATED_RESPONSE" | jq -r '.pagination.page_size')
+
+if [ "$PAGE" == "1" ] && [ "$PAGE_SIZE" == "5" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Pagination parameters working correctly"
+else
+    echo -e "${RED}✗ FAILED${NC} - Pagination not working as expected"
+fi
+echo ""
+
+# Test 13: Test unauthorized access
+echo -e "${YELLOW}Test 13: Test unauthorized access${NC}"
+UNAUTH_RESPONSE=$(curl -s "$BASE_URL/api/favorites")
+UNAUTH_ERROR=$(echo "$UNAUTH_RESPONSE" | jq -r '.error')
+
+if [ "$UNAUTH_ERROR" == "Unauthorized" ]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Correctly blocked unauthorized access"
+else
+    echo -e "${RED}✗ FAILED${NC} - Should have blocked unauthorized access"
+fi
+echo ""
+
+# Test 14: Test invalid verse ID
+echo -e "${YELLOW}Test 14: Test invalid verse ID${NC}"
+INVALID_RESPONSE=$(curl -s -X POST "$BASE_URL/api/favorites" \
+  -H "Authorization: Bearer $TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"verse_id": 999999}')
+
+INVALID_ERROR=$(echo "$INVALID_RESPONSE" | jq -r '.error')
+
+if [[ "$INVALID_ERROR" == *"Failed"* ]] || [[ "$INVALID_ERROR" == *"not found"* ]]; then
+    echo -e "${GREEN}✓ PASSED${NC} - Correctly handled invalid verse ID"
+else
+    echo -e "${RED}✗ FAILED${NC} - Should have rejected invalid verse ID"
+fi
+echo ""
+
+echo "=========================================="
+echo "All Tests Completed!"
+echo "=========================================="
+```
+
+**Run the tests:**
+```bash
+chmod +x backend/test_favorites_history.sh
+./backend/test_favorites_history.sh
+```
+
+**Expected Output:**
+- All tests should pass
+- Favorites can be added and removed
+- History is tracked automatically
+- Pagination works correctly
+- Unauthorized access is blocked
+- Invalid data is rejected
+
+---
+
+#### **Step 12: Error Handling & Edge Cases (1-2 hours)**
+
+**Common Error Scenarios to Handle:**
+
+1. **Duplicate Favorites**
+   - Return 409 Conflict status
+   - Clear error message: "verse already in favorites"
+
+2. **Non-existent Verse**
+   - Return 404 Not Found
+   - Message: "verse not found"
+
+3. **Unauthorized Access**
+   - Return 401 Unauthorized
+   - Verify user owns the resource before deletion
+
+4. **Invalid Input**
+   - Return 400 Bad Request
+   - Validate verse_id is provided and valid
+   - Validate pagination parameters
+
+5. **Database Errors**
+   - Return 500 Internal Server Error
+   - Log the actual error for debugging
+   - Return generic message to user
+
+**Update Error Handling in Handlers:**
+
+```go
+// Example: Enhanced error handling in AddFavorite
+func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
+    userID, exists := c.Get("user_id")
+    if !exists {
+        c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+        return
+    }
+    
+    var req struct {
+        VerseID uint `json:"verse_id" binding:"required"`
+    }
+    
+    if err := c.ShouldBindJSON(&req); err != nil {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": "Invalid request",
+            "details": "verse_id is required and must be a valid number",
+        })
+        return
+    }
+    
+    // Validate verse_id is not zero
+    if req.VerseID == 0 {
+        c.JSON(http.StatusBadRequest, gin.H{
+            "error": "Invalid verse_id",
+            "details": "verse_id must be greater than 0",
+        })
+        return
+    }
+    
+    err := h.favoriteService.AddFavorite(userID.(uint), req.VerseID)
+    if err != nil {
+        // Handle specific errors
+        switch {
+        case strings.Contains(err.Error(), "already in favorites"):
+            c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+        case strings.Contains(err.Error(), "not found"):
+            c.JSON(http.StatusNotFound, gin.H{"error": "Verse not found"})
+        default:
+            // Log the actual error for debugging
+            log.Printf("Error adding favorite: %v", err)
+            c.JSON(http.StatusInternalServerError, gin.H{
+                "error": "Failed to add favorite",
+            })
+        }
+        return
+    }
+    
+    c.JSON(http.StatusCreated, gin.H{
+        "message": "Favorite added successfully",
+    })
+}
+```
+
+**Edge Cases to Test:**
+
+1. **Empty Database**
+   - Favorites list returns empty array
+   - History list returns empty array
+   - Pagination shows 0 total
+
+2. **Large Datasets**
+   - Test with 100+ favorites
+   - Verify pagination works correctly
+   - Check performance
+
+3. **Concurrent Requests**
+   - Multiple users adding favorites simultaneously
+   - Same user adding same favorite twice quickly
+   - Database should handle race conditions
+
+4. **Invalid Tokens**
+   - Expired tokens return 401
+   - Malformed tokens return 401
+   - Missing tokens return 401
+
+5. **Boundary Values**
+   - Page 0 defaults to page 1
+   - Page size 0 defaults to 20
+   - Page size > 100 caps at 100
+   - Negative values handled gracefully
+
+**Add Logging:**
+
+```go
+// Add to main.go or create logger utility
+import "log"
+
+// In handlers, add logging for errors
+log.Printf("Error in GetFavorites for user %d: %v", userID, err)
+log.Printf("User %d added favorite verse %d", userID, verseID)
+log.Printf("User %d cleared history", userID)
+```
+
+---
+
+## 🎉 Week 4 Completion Checklist
+
+By the end of Week 4, verify you can:
+
+- [ ] Add verses to favorites
+- [ ] View favorites list with pagination
+- [ ] Remove favorites
+- [ ] Search favorites by text/reference
+- [ ] View verse history automatically tracked
+- [ ] Clear history
+- [ ] All endpoints require authentication
+- [ ] Pagination works correctly (page, page_size, total, total_pages)
+- [ ] Error handling is robust
+- [ ] Unauthorized access is blocked
+- [ ] Invalid data is rejected with clear messages
+- [ ] Integration tests pass
+
+---
+
+## 📝 Next Steps (Week 5 Preview)
+
+After completing Week 4, you'll be ready for:
+
+1. **Frontend Integration**
+   - Connect React frontend to favorites/history APIs
+   - Build favorites page UI
+   - Build history page UI
+   - Add favorite buttons to verse displays
+
+2. **Advanced Features**
+   - Favorite collections/folders
+   - Export favorites
+   - Share favorites
+   - History analytics
+
+3. **Performance Optimization**
+   - Database indexing
+   - Caching frequently accessed data
+   - Query optimization
+
+---
+
+## 🐛 Troubleshooting
+
+**Common Issues:**
+
+1. **"Unauthorized" errors**
+   - Check JWT token is valid
+   - Verify middleware is applied to routes
+   - Check user_id is set in context
+
+2. **Favorites not showing**
+   - Check Preload("Verse") is used
+   - Verify foreign key relationships
+   - Check database migrations ran
+
+3. **History not tracking**
+   - Verify goroutine is running
+   - Check for errors in logs
+   - Ensure verse ID is valid
+
+4. **Pagination not working**
+   - Verify offset calculation: `(page - 1) * pageSize`
+   - Check total count query
+   - Validate page/pageSize parameters
+
+---
+
+## 📚 Resources
+
+- [GORM Documentation](https://gorm.io/docs/)
+- [Gin Framework](https://gin-gonic.com/docs/)
+- [JWT Authentication](https://jwt.io/)
+- [REST API Best Practices](https://restfulapi.net/)
+- [PostgreSQL Documentation](https://www.postgresql.org/docs/)
+
+---
+
+**Good luck with Week 4! 🚀**
