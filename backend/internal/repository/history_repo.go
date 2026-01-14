@@ -2,15 +2,16 @@ package repository
 
 import (
     "time"
-    "gorm.io/gorm"
     "dailybible/internal/models"
+    "gorm.io/gorm"
 )
 
 type HistoryRepository interface {
-    Track(userID, verseID uint) error
-    List(userID uint, limit int) ([]models.History, error)
-    Clear(userID uint) error
-    CleanupOld(days int) error
+    Create(history *models.History) error
+    GetByUserID(userID uint) ([]models.History, error)
+    GetByUserIDPaginated(userID uint, limit, offset int) ([]models.History, int64, error)
+    DeleteByUserID(userID uint) error
+    DeleteOlderThan(userID uint, date time.Time) error
 }
 
 type historyRepository struct {
@@ -21,38 +22,47 @@ func NewHistoryRepository(db *gorm.DB) HistoryRepository {
     return &historyRepository{db: db}
 }
 
-
-
-// Create history entry
-func (r *historyRepository) Track(userID, verseID uint) error {
-    history := models.History{
-        UserID:   userID,
-        VerseID:  verseID,
-        ViewedAt: time.Now(),
-    }
-    return r.db.Create(&history).Error
+// Create adds a new history entry
+func (r *historyRepository) Create(history *models.History) error {
+    return r.db.Create(history).Error
 }
 
-// Find user's history
-func (r *historyRepository) List(userID uint, limit int) ([]models.History, error) {
+// GetByUserID retrieves all history for a user
+func (r *historyRepository) GetByUserID(userID uint) ([]models.History, error) {
     var history []models.History
     err := r.db.Where("user_id = ?", userID).
-        Preload("Verse").  // Load related verse
+        Preload("Verse").
         Order("viewed_at DESC").
-        Limit(limit).
         Find(&history).Error
     return history, err
 }
 
-// Delete old history (older than 90 days)
-func (r *historyRepository) CleanupOld(days int) error {
-    cutoff := time.Now().AddDate(0, 0, -days)
-    return r.db.Where("viewed_at < ?", cutoff).
-        Delete(&models.History{}).Error
+// GetByUserIDPaginated retrieves history with pagination
+func (r *historyRepository) GetByUserIDPaginated(userID uint, limit, offset int) ([]models.History, int64, error) {
+    var history []models.History
+    var total int64
+    
+    // Get total count
+    r.db.Model(&models.History{}).Where("user_id = ?", userID).Count(&total)
+    
+    // Get paginated results
+    err := r.db.Where("user_id = ?", userID).
+        Preload("Verse").
+        Order("viewed_at DESC").
+        Limit(limit).
+        Offset(offset).
+        Find(&history).Error
+    
+    return history, total, err
 }
 
-// Count user's history
-func (r *historyRepository) Clear(userID uint) error {
-    return r.db.Where("user_id = ?", userID).
+// DeleteByUserID clears all history for a user
+func (r *historyRepository) DeleteByUserID(userID uint) error {
+    return r.db.Where("user_id = ?", userID).Delete(&models.History{}).Error
+}
+
+// DeleteOlderThan removes history entries older than specified date
+func (r *historyRepository) DeleteOlderThan(userID uint, date time.Time) error {
+    return r.db.Where("user_id = ? AND viewed_at < ?", userID, date).
         Delete(&models.History{}).Error
 }

@@ -12,16 +12,19 @@ import (
 type VerseHandler struct {
 	dailyVerseService *services.DailyVerseService
 	bibleAPIService   services.BibleAPIService
+	historyService   *services.HistoryService
 }
 
 // NewVerseHandler creates a new VerseHandler
 func NewVerseHandler(
 	dailyVerseService *services.DailyVerseService,
 	bibleAPIService services.BibleAPIService,
+	historyService *services.HistoryService,
 ) *VerseHandler {
 	return &VerseHandler{
 		dailyVerseService: dailyVerseService,
 		bibleAPIService:   bibleAPIService,
+		historyService:    historyService,
 	}
 }
 
@@ -32,6 +35,16 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get daily verse"})
 		return
 	}
+
+	// Record verse view in history if user is authenticated
+	if userID, exists := c.Get("userID"); exists {
+		err := h.historyService.AddToHistory(userID.(uint), verse.ID)
+		if err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to record verse view in history"})
+			return
+		}
+    }
+
 	c.JSON(http.StatusOK, gin.H{
         "verse": gin.H{
             "id":        verse.ID,
@@ -53,6 +66,9 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch verse"})
 		return
 	}
+
+	// Record verse view in history if user is authenticated
+
 	c.JSON(http.StatusOK, gin.H{
 		"verse": gin.H{
 			"id":        verse.ID,

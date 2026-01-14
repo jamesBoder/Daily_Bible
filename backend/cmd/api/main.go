@@ -60,6 +60,7 @@ func main() {
     userRepo := repository.NewUserRepository(db)
     verseRepo := repository.NewVerseRepository(db)
     favoriteRepo := repository.NewFavoriteRepository(db)
+    historyRepo := repository.NewHistoryRepository(db)
     
     
     // 5. Initialize services
@@ -76,12 +77,16 @@ func main() {
         bibleAPIService,
         verseRepo,
     )
+    historyService := services.NewHistoryService(historyRepo)
     
     // 6. Initialize handlers 
     _ = authService      // Use services to avoid "declared and not used" errors
     _ = verseService
     _ = favoriteService
     _ = tokenService
+    _ = bibleAPIService
+    _ = dailyVerseService
+    _ = historyService
 
     // init authHandler variable
     authHandler := handlers.NewAuthHandler(
@@ -93,11 +98,17 @@ func main() {
     verseHandler := handlers.NewVerseHandler(
         dailyVerseService,
         bibleAPIService,
+        historyService,
     )
 
     // init favoriteHandler variable
     favoriteHandler := handlers.NewFavoriteHandler(
         favoriteService,
+    )
+
+    // init historyHandler variable
+    historyHandler := handlers.NewHistoryHandler(
+        historyService,
     )
     
     // favoritesHandler := handlers.NewFavoritesHandler()
@@ -132,7 +143,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

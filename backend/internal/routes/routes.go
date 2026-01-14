@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -53,8 +53,8 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			// history routes
 			history := protected.Group("/history")
 			{
-				history.GET("/", handlers.GetHistory)
-				history.DELETE("/:id", handlers.ClearHistory)
+				history.GET("/", historyHandler.GetHistory)
+				history.DELETE("/", historyHandler.ClearHistory)
 			}
 		}		
 	}
