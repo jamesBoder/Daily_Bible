@@ -61,6 +61,7 @@ func main() {
     verseRepo := repository.NewVerseRepository(db)
     favoriteRepo := repository.NewFavoriteRepository(db)
     historyRepo := repository.NewHistoryRepository(db)
+
     
     
     // 5. Initialize services
@@ -99,6 +100,7 @@ func main() {
         dailyVerseService,
         bibleAPIService,
         historyService,
+
     )
 
     // init favoriteHandler variable
@@ -111,8 +113,7 @@ func main() {
         historyService,
     )
     
-    // favoritesHandler := handlers.NewFavoritesHandler()
-    // historyHandler := handlers.NewHistoryHandler()
+    
     
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")

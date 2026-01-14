@@ -45,16 +45,16 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			// favorites routes
 			favorites := protected.Group("/favorites")
 			{
-				favorites.GET("/", favoriteHandler.GetFavorites)
-				favorites.POST("/", favoriteHandler.AddFavorite)
+				favorites.GET("", favoriteHandler.GetFavorites)
+				favorites.POST("", favoriteHandler.AddFavorite)
 				favorites.DELETE("/:id", favoriteHandler.RemoveFavorite)
 			}
 
 			// history routes
 			history := protected.Group("/history")
 			{
-				history.GET("/", historyHandler.GetHistory)
-				history.DELETE("/", historyHandler.ClearHistory)
+				history.GET("", historyHandler.GetHistory)
+				history.DELETE("", historyHandler.ClearHistory)
 			}
 		}		
 	}

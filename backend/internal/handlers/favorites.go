@@ -3,7 +3,7 @@ package handlers
 import (
 	"net/http"
 	"strconv"
-
+	"strings"
 	"dailybible/internal/services"
 	"dailybible/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -77,10 +77,16 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 	}
 
 	// add favorite via service
-	if err := h.favoriteService.AddFavorite(userIDStr.(uint), req.VerseID); err != nil {
+	err := h.favoriteService.AddFavorite(userIDStr.(uint), req.VerseID)
+	if err != nil {
+		if strings.Contains(err.Error(), "already in favorites") {
+			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
+			return
+		}
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to add favorite"})
 		return
 	}
+
 
 	c.JSON(http.StatusOK, gin.H{"message": "Favorite added successfully"})
 }
