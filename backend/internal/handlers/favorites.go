@@ -33,11 +33,12 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
 	// get pagination parameters
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
-	
+	search := c.Query("search")
 
 	// get favorites from service
 	favorites, total, err := h.favoriteService.GetUserFavoritesPaginated(
         userID.(uint),
+		search,
         page,
         pageSize,
     )
@@ -52,13 +53,8 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
 	// prepare response
 	c.JSON(http.StatusOK, gin.H{
         "favorites": favorites,
-        "pagination": gin.H{
-            "page":        page,
-            "page_size":   pageSize,
-            "total":       total,
-            "total_pages": totalPages,
-        },
-	})
+        "pagination": utils.CalculatePaginationMeta(page, pageSize, total),
+    })
 }
 
 // add AddFavorite handler adds a verse to user's favorites
