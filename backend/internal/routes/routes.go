@@ -5,6 +5,7 @@ import (
 	"dailybible/internal/handlers"
 	"dailybible/internal/middleware"
 	"dailybible/internal/services"
+	
 )
 
 
@@ -15,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -44,9 +45,9 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			// favorites routes
 			favorites := protected.Group("/favorites")
 			{
-				favorites.GET("/", handlers.GetFavorites)
-				favorites.POST("/", handlers.AddFavorite)
-				favorites.DELETE("/:id", handlers.RemoveFavorite)
+				favorites.GET("/", favoriteHandler.GetFavorites)
+				favorites.POST("/", favoriteHandler.AddFavorite)
+				favorites.DELETE("/:id", favoriteHandler.RemoveFavorite)
 			}
 
 			// history routes

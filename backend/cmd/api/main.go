@@ -16,10 +16,12 @@ import (
     "dailybible/internal/services"
     "dailybible/internal/middleware"
     "dailybible/internal/routes"
+    "dailybible/internal/handlers"
+    
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
-    "dailybible/internal/handlers"
+    
 )
 
 // healthHandler is a simple health check endpoint
@@ -63,7 +65,7 @@ func main() {
     // 5. Initialize services
     authService := services.NewAuthService(userRepo)
     verseService := services.NewVerseService(verseRepo)
-    favoriteService := services.NewFavoriteService(favoriteRepo)
+    favoriteService := services.NewFavoriteService(favoriteRepo, verseRepo)
     tokenService := services.NewTokenService(cfg)
     bibleAPIService := services.NewBibleAPIService(
         cfg.BibleAPIKey,
@@ -91,6 +93,11 @@ func main() {
     verseHandler := handlers.NewVerseHandler(
         dailyVerseService,
         bibleAPIService,
+    )
+
+    // init favoriteHandler variable
+    favoriteHandler := handlers.NewFavoriteHandler(
+        favoriteService,
     )
     
     // favoritesHandler := handlers.NewFavoritesHandler()
@@ -125,7 +132,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

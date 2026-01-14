@@ -351,7 +351,7 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
     pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "20"))
     
     // Get favorites
-    favorites, total, err := h.favoriteService.GetUserFavoritesPaginated(
+    favorites, total, err := h.favoriteService.GetUserFavorites(
         userID.(uint),
         page,
         pageSize,
