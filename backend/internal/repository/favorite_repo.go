@@ -16,6 +16,7 @@ type FavoriteRepository interface {
     DeleteByUserAndVerse(userID uint, verseID uint) error
     Exists(userID uint, verseID uint) (bool, error)
     ListAll() ([]models.Favorite, error)
+    SearchFavorites(userID uint, query string, limit, offset int) ([]models.Favorite, int64, error)
 }
 
 // favoriteRepository is the concrete implementation of FavoriteRepository using GORM.
@@ -98,6 +99,32 @@ func (r *favoriteRepository) ListAll() ([]models.Favorite, error) {
     return favorites, nil
 }
 
+
+// SearchFavorites searches for favorites based on a query string with pagination.
+func (r *favoriteRepository) SearchFavorites(userID uint, query string, limit, offset int) ([]models.Favorite, int64, error) {
+    var favorites []models.Favorite
+    var total int64
+
+    // build the query
+    dbQuery := r.db.Joins("JOIN verses ON favorites.verse_id = verses.id").Where("favorites.user_id = ? AND verses.text LIKE ?", userID, "%"+query+"%")
+    if query != "" {
+        searchPattern := "%" + query + "%"
+        db = db.Where("verses.text ILIKE ? OR verses.reference ILIKE ?", searchPattern, searchPattern)
+    }
+
+    // get total count
+    if err := dbQuery.Model(&models.Favorite{}).Count(&total).Error; err != nil {
+        return nil, 0, err
+    }
+
+    // get resuts
+    err := db.Preload("Verse").Order("favorites.created_at DESC").Limit(limit).Offset(offset).Find(&favorites).Error
+    if err != nil {
+        return nil, 0, err
+    }
+
+    return favorites, total, nil
+}
 
 
 
