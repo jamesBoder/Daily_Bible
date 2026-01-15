@@ -37,6 +37,40 @@
 
 ---
 
+## ⚠️ Important Setup Notes
+
+**Before You Start:**
+
+1. **Node Version Compatibility:**
+   - You're running Node v18.19.1
+   - React Router v7 requires Node 20+
+   - **Solution:** Use React Router v6 (compatible with Node 18)
+   - Install with: `npm install react-router-dom@6`
+
+2. **Tailwind CSS Setup:**
+   - If `npx tailwindcss init -p` fails, manually create config files
+   - See detailed instructions in Step 2 below
+
+3. **Security Vulnerabilities:**
+   - The 9 vulnerabilities shown are mostly in dev dependencies
+   - They won't affect your production build
+   - You can safely ignore them for development
+   - Or run `npm audit fix` to fix non-breaking issues
+
+**Quick Fix Commands:**
+```bash
+# If you already installed react-router-dom@7, downgrade to v6:
+npm uninstall react-router-dom
+npm install react-router-dom@6
+
+# If tailwindcss init failed, try:
+npx tailwindcss@latest init -p
+
+# Or manually create the config files (see Step 2)
+```
+
+---
+
 ## 📅 Week 5 Schedule
 
 ### **Day 1: React Setup & Project Structure (4-5 hours)**
@@ -152,18 +186,57 @@ export default App;
 **Install Core Dependencies:**
 
 ```bash
-# React Router for navigation
-npm install react-router-dom
+# React Router for navigation (use v6 for Node 18 compatibility)
+npm install react-router-dom@6
 
 # Axios for API calls
 npm install axios
 
-# TypeScript types
+# TypeScript types for React Router v6
 npm install --save-dev @types/react-router-dom
 
 # Tailwind CSS for styling
-npm install -D tailwindcss postcss autoprefixer
+npm install -D tailwindcss@latest postcss@latest autoprefixer@latest
+
+# Initialize Tailwind CSS (creates tailwind.config.js and postcss.config.js)
 npx tailwindcss init -p
+```
+
+**Note on Node Version:**
+- If you see `EBADENGINE` warnings about React Router requiring Node 20+, don't worry! We're using React Router v6 which is compatible with Node 18.
+- React Router v7 requires Node 20+, but v6 works perfectly fine with Node 18.19.1
+- If the `npx tailwindcss init -p` command fails, try running it with the full path:
+  ```bash
+  npx tailwindcss@latest init -p
+  ```
+  Or manually create the config files (see below).
+
+**If Tailwind Init Fails, Create Config Files Manually:**
+
+If `npx tailwindcss init -p` doesn't work, create these files manually:
+
+**Create `tailwind.config.js` in the frontend root:**
+```javascript
+/** @type {import('tailwindcss').Config} */
+module.exports = {
+  content: [
+    "./src/**/*.{js,jsx,ts,tsx}",
+  ],
+  theme: {
+    extend: {},
+  },
+  plugins: [],
+}
+```
+
+**Create `postcss.config.js` in the frontend root:**
+```javascript
+module.exports = {
+  plugins: {
+    tailwindcss: {},
+    autoprefixer: {},
+  },
+}
 ```
 
 **Configure Tailwind CSS:**
@@ -2016,6 +2089,44 @@ npm test
 
 ### **Troubleshooting:**
 
+**Issue: EBADENGINE warnings for React Router**
+- **Cause:** React Router v7 requires Node 20+, but you have Node 18.19.1
+- **Solution:** Use React Router v6 instead:
+  ```bash
+  npm uninstall react-router-dom
+  npm install react-router-dom@6
+  ```
+- **Note:** The warnings won't affect functionality if using v6
+
+**Issue: `npx tailwindcss init -p` fails with "tailwind: not found"**
+- **Solution 1:** Try with explicit version:
+  ```bash
+  npx tailwindcss@latest init -p
+  ```
+- **Solution 2:** Manually create config files (see Step 2 above)
+- **Solution 3:** Clear npm cache and reinstall:
+  ```bash
+  npm cache clean --force
+  rm -rf node_modules package-lock.json
+  npm install
+  npx tailwindcss init -p
+  ```
+
+**Issue: Security vulnerabilities (9 vulnerabilities)**
+- **Note:** These are mostly in development dependencies and won't affect production
+- **To fix non-breaking issues:**
+  ```bash
+  npm audit fix
+  ```
+- **To fix all (may cause breaking changes):**
+  ```bash
+  npm audit fix --force
+  ```
+- **Recommended:** Review each vulnerability before forcing fixes:
+  ```bash
+  npm audit
+  ```
+
 **Issue: CORS errors**
 - Solution: Check backend CORS configuration
 - Ensure `AllowOrigins` includes `http://localhost:3000`
@@ -2031,6 +2142,15 @@ npm test
 **Issue: Routes not working**
 - Solution: Check React Router configuration
 - Verify all routes are defined in `App.tsx`
+
+**Issue: Tailwind styles not applying**
+- Solution 1: Verify `tailwind.config.js` content paths are correct
+- Solution 2: Check that `index.css` has the Tailwind directives
+- Solution 3: Restart the development server
+  ```bash
+  # Stop the server (Ctrl+C) then:
+  npm start
+  ```
 
 ---
 
