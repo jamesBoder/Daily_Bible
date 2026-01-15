@@ -205,11 +205,22 @@ npx tailwindcss init -p
 **Note on Node Version:**
 - If you see `EBADENGINE` warnings about React Router requiring Node 20+, don't worry! We're using React Router v6 which is compatible with Node 18.
 - React Router v7 requires Node 20+, but v6 works perfectly fine with Node 18.19.1
+- **Good news:** All code in this guide is written to be compatible with both v6 and v7, so upgrading later will be easy!
 - If the `npx tailwindcss init -p` command fails, try running it with the full path:
   ```bash
   npx tailwindcss@latest init -p
   ```
   Or manually create the config files (see below).
+
+**Future Upgrade Path to React Router v7:**
+- When you upgrade Node to v20+, you can easily upgrade to React Router v7
+- The code patterns used in this guide (Routes, Route, Navigate, useNavigate, etc.) are the same in both versions
+- Main differences in v7 are internal optimizations and new features you can adopt gradually
+- Upgrade command when ready:
+  ```bash
+  # After upgrading to Node 20+
+  npm install react-router-dom@latest
+  ```
 
 **If Tailwind Init Fails, Create Config Files Manually:**
 
@@ -2151,6 +2162,19 @@ npm test
   # Stop the server (Ctrl+C) then:
   npm start
   ```
+
+**Issue: TS1208 - "cannot be compiled under '--isolatedModules'"**
+- **Cause:** TypeScript files without import/export statements are treated as global scripts
+- **This happens when:** You create empty placeholder files or files with only type definitions
+- **Solution:** Ensure every `.ts` and `.tsx` file has at least one import or export statement
+- **Quick fix for type files:** Add `export {}` at the end of the file
+- **Quick fix for component files:** Ensure they have `export` statements (all code examples in this guide already include exports)
+- **Example for empty placeholder files:**
+  ```typescript
+  // For empty files that will be implemented later
+  export {};
+  ```
+- **Note:** All code examples provided in this guide already include proper exports, so this error should not occur if you follow the examples exactly
 
 ---
 

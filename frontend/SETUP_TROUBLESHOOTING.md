@@ -104,30 +104,63 @@ npm start
 
 ### 3. Handle Security Vulnerabilities
 
-**Understanding the vulnerabilities:**
-- Most are in development dependencies
-- They won't affect your production build
-- Safe to ignore during development
+**Understanding the 9 vulnerabilities (3 moderate, 6 high):**
 
-**Option 1 - Ignore for now (Recommended for development):**
-Just continue working. These won't affect functionality.
+The vulnerabilities are in:
+1. **nth-check** (high) - In SVGO, used by react-scripts for SVG optimization
+2. **postcss** (moderate) - In resolve-url-loader, used by react-scripts
+3. **webpack-dev-server** (moderate) - Used by react-scripts for development server
 
-**Option 2 - Fix non-breaking issues:**
+**Important Context:**
+- ✅ All vulnerabilities are in **development dependencies** (react-scripts)
+- ✅ They **do NOT affect your production build** (`npm run build`)
+- ✅ The vulnerabilities only exist during development (`npm start`)
+- ⚠️ Running `npm audit fix --force` will **break your app** (tries to install react-scripts@0.0.0)
+
+**Recommended Action: IGNORE for Development**
+
+These vulnerabilities are:
+- Only present during local development
+- Not exploitable in typical development workflows
+- Will be fixed when Create React App releases updates
+- **Safe to ignore** for this project
+
+**Why Not Fix with `--force`?**
 ```bash
-npm audit fix
-```
-
-**Option 3 - Review vulnerabilities:**
-```bash
-npm audit
-```
-
-**Option 4 - Fix all (may cause breaking changes):**
-```bash
+# ❌ DON'T RUN THIS - it will break your app
 npm audit fix --force
+# This tries to install react-scripts@0.0.0 which doesn't exist
 ```
 
-⚠️ **Warning:** `npm audit fix --force` may update packages to versions that break compatibility. Only use if you understand the risks.
+**Alternative Solutions:**
+
+**Option 1 - Accept the Risk (Recommended):**
+- Continue development as-is
+- These vulnerabilities don't affect production
+- Wait for Create React App to release updates
+
+**Option 2 - Use npm overrides (Node 16.14+):**
+Add to your `package.json`:
+```json
+{
+  "overrides": {
+    "nth-check": "^2.1.1",
+    "postcss": "^8.4.31",
+    "webpack-dev-server": "^5.2.1"
+  }
+}
+```
+Then run:
+```bash
+npm install
+```
+⚠️ **Warning:** This may cause compatibility issues with react-scripts
+
+**Bottom Line:**
+- ✅ **Safe to ignore** for local development
+- ✅ Production builds are **not affected**
+- ✅ Your deployed app will be **secure**
+- ❌ **Don't run** `npm audit fix --force`
 
 ---
 
@@ -217,7 +250,7 @@ For Node 18.19.1, use these versions:
   "dependencies": {
     "react": "^18.x.x",
     "react-dom": "^18.x.x",
-    "react-router-dom": "^6.x.x",  // NOT v7
+    "react-router-dom": "^6.x.x",  // NOT v7 (requires Node 20+)
     "axios": "^1.x.x"
   },
   "devDependencies": {
@@ -227,6 +260,136 @@ For Node 18.19.1, use these versions:
     "autoprefixer": "^10.x.x"
   }
 }
+```
+
+---
+
+## Future Upgrade to React Router v7
+
+**Yes, you can upgrade to React Router v7 in the future!**
+
+### When Can You Upgrade?
+
+You can upgrade to React Router v7 when:
+1. You upgrade Node.js to version 20 or higher
+2. You're ready to take advantage of v7's new features
+
+### How Easy Is the Upgrade?
+
+**Very easy!** The code written in this guide is compatible with both v6 and v7:
+
+✅ **Same API patterns:**
+- `<Routes>` and `<Route>` components work the same
+- `useNavigate()` hook works the same
+- `<Navigate>` component works the same
+- `<Link>` component works the same
+- Protected routes pattern works the same
+
+✅ **No breaking changes in core functionality:**
+- Your authentication flow will work as-is
+- Your routing structure will work as-is
+- Your navigation will work as-is
+
+### Upgrade Steps (When Ready)
+
+```bash
+# 1. First, upgrade Node.js to v20+
+# Check your Node version
+node --version
+
+# 2. If Node is 20+, upgrade React Router
+npm install react-router-dom@latest
+
+# 3. Test your app
+npm start
+
+# That's it! Your code should work without changes
+```
+
+### What's New in React Router v7?
+
+React Router v7 adds:
+- Better performance optimizations
+- Improved TypeScript support
+- New data loading patterns (optional to adopt)
+- Better error boundaries
+- Server-side rendering improvements
+
+**Important:** You can adopt these new features gradually. Your existing code will continue to work!
+
+### Migration Checklist (When You Upgrade)
+
+```markdown
+- [ ] Upgrade Node.js to v20+
+- [ ] Run: npm install react-router-dom@latest
+- [ ] Test authentication flow
+- [ ] Test all navigation links
+- [ ] Test protected routes
+- [ ] Check browser console for warnings
+- [ ] (Optional) Explore new v7 features
+```
+
+### Bottom Line
+
+**Don't worry about being "stuck" on v6!**
+- v6 is stable and widely used
+- The upgrade path to v7 is straightforward
+- Your code is written to be compatible with both versions
+- You can upgrade whenever you're ready (after Node 20+)
+
+---
+
+## Common TypeScript Compilation Errors
+
+### Error: TS1208 - "cannot be compiled under '--isolatedModules'"
+
+**Full Error Message:**
+```
+TS1208: 'filename.tsx' cannot be compiled under '--isolatedModules' 
+because it is considered a global script file. Add an import, export, 
+or an empty 'export {}' statement to make it a module.
+```
+
+**What This Means:**
+- TypeScript requires every file to be a "module" (have at least one import or export)
+- Files without imports/exports are treated as global scripts
+- This error occurs when you create empty placeholder files
+
+**Solution:**
+
+**Option 1 - Follow the code examples exactly:**
+All code examples in `WEEK5_FRONTEND_FOUNDATION.md` already include proper exports. If you copy them exactly, you won't get this error.
+
+**Option 2 - For empty placeholder files:**
+If you created empty files to set up the structure first, add this line to each:
+```typescript
+export {};
+```
+
+**Option 3 - Verify your files have exports:**
+Check that each file has at least one of these:
+- `export const ...`
+- `export function ...`
+- `export interface ...`
+- `export type ...`
+- `export default ...`
+- Or at minimum: `export {};`
+
+**Quick Fix Command:**
+If you have many empty files, you can add the export statement to all of them:
+```bash
+# For all empty .ts files
+find src -name "*.ts" -type f -empty -exec sh -c 'echo "export {};" > "$1"' _ {} \;
+
+# For all empty .tsx files
+find src -name "*.tsx" -type f -empty -exec sh -c 'echo "export {};" > "$1"' _ {} \;
+```
+
+**Prevention:**
+When creating files, immediately add at least a comment and `export {}`:
+```typescript
+// TODO: Implement this component
+export {};
 ```
 
 ---
