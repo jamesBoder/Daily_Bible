@@ -241,11 +241,13 @@ module.exports = {
 ```
 
 **Create `postcss.config.js` in the frontend root:**
+
+**Note:** Tailwind CSS v4 requires `@tailwindcss/postcss` plugin instead of the old `tailwindcss` plugin.
+
 ```javascript
 module.exports = {
   plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
+    '@tailwindcss/postcss': {},
   },
 }
 ```
@@ -253,6 +255,8 @@ module.exports = {
 **Configure Tailwind CSS:**
 
 **Update `tailwind.config.js`:**
+
+**Note:** Tailwind CSS v4 has simplified configuration. The config file is now optional for basic setups, but we'll keep it for custom colors and fonts.
 
 ```javascript
 /** @type {import('tailwindcss').Config} */
@@ -288,10 +292,10 @@ module.exports = {
 
 **Update `src/index.css`:**
 
+**Note:** Tailwind CSS v4 uses a new import syntax. Use `@import "tailwindcss";` instead of the old `@tailwind` directives.
+
 ```css
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 @layer base {
   body {
@@ -2162,6 +2166,29 @@ npm test
   # Stop the server (Ctrl+C) then:
   npm start
   ```
+
+**Issue: "PostCSS plugin has moved to a separate package" error**
+- **Cause:** Tailwind CSS v4 changed how it integrates with PostCSS
+- **Error message:** "It looks like you're trying to use `tailwindcss` directly as a PostCSS plugin..."
+- **Solution 1:** Update `postcss.config.js`:
+  ```javascript
+  module.exports = {
+    plugins: {
+      '@tailwindcss/postcss': {},
+    },
+  }
+  ```
+- **Solution 2:** Update `src/index.css` to use new import syntax:
+  ```css
+  @import "tailwindcss";
+  ```
+  Instead of:
+  ```css
+  @tailwind base;
+  @tailwind components;
+  @tailwind utilities;
+  ```
+- **Solution 3:** Restart the development server after making changes
 
 **Issue: TS1208 - "cannot be compiled under '--isolatedModules'"**
 - **Cause:** TypeScript files without import/export statements are treated as global scripts
