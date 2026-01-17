@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -55,6 +55,15 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			{
 				history.GET("", historyHandler.GetHistory)
 				history.DELETE("", historyHandler.ClearHistory)
+			}
+
+			// comments routes
+			comments := protected.Group("/comments")
+			{
+				comments.POST("", commentHandler.AddOrUpdateComment)
+				comments.GET("/verse/:reference", commentHandler.GetCommentForVerse)
+				comments.DELETE("/:id", commentHandler.DeleteComment)
+				comments.GET("/user", commentHandler.GetUserComments)
 			}
 		}		
 	}

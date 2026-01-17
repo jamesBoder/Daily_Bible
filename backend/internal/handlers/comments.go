@@ -1,7 +1,7 @@
 package handlers
 
 import (
-    "Daily_Bible/internal/services"
+    "dailybible/internal/services"
     "net/http"
     "strconv"
     "github.com/gin-gonic/gin"
@@ -25,7 +25,7 @@ type AddCommentRequest struct {
 
 // Add or update comment
 func (h *CommentHandler) AddOrUpdateComment(c *gin.Context) {
-    userID, exists := c.Get("user_id")
+    userID, exists := c.Get("userID")
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
@@ -38,7 +38,7 @@ func (h *CommentHandler) AddOrUpdateComment(c *gin.Context) {
     }
     
     comment, err := h.commentService.AddOrUpdateComment(
-        userID.(string),
+        userID.(uint),
         req.VerseID,
         req.VerseReference,
         req.CommentText,
@@ -54,7 +54,7 @@ func (h *CommentHandler) AddOrUpdateComment(c *gin.Context) {
 
 // Get comment for verse
 func (h *CommentHandler) GetCommentForVerse(c *gin.Context) {
-    userID, exists := c.Get("user_id")
+    userID, exists := c.Get("userID")
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
@@ -62,7 +62,7 @@ func (h *CommentHandler) GetCommentForVerse(c *gin.Context) {
     
     verseReference := c.Param("reference")
     
-    comment, err := h.commentService.GetCommentForVerse(userID.(string), verseReference)
+    comment, err := h.commentService.GetCommentForVerse(userID.(uint), verseReference)
     if err != nil {
         c.JSON(http.StatusNotFound, gin.H{"error": "Comment not found"})
         return
@@ -73,7 +73,7 @@ func (h *CommentHandler) GetCommentForVerse(c *gin.Context) {
 
 // Delete comment
 func (h *CommentHandler) DeleteComment(c *gin.Context) {
-    userID, exists := c.Get("user_id")
+    userID, exists := c.Get("userID")
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
@@ -85,7 +85,7 @@ func (h *CommentHandler) DeleteComment(c *gin.Context) {
         return
     }
     
-    err = h.commentService.DeleteComment(uint(commentID), userID.(string))
+    err = h.commentService.DeleteComment(uint(commentID), userID.(uint))
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to delete comment"})
         return
@@ -96,13 +96,13 @@ func (h *CommentHandler) DeleteComment(c *gin.Context) {
 
 // Get all user comments
 func (h *CommentHandler) GetUserComments(c *gin.Context) {
-    userID, exists := c.Get("user_id")
+    userID, exists := c.Get("userID")
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
     }
     
-    comments, err := h.commentService.GetUserComments(userID.(string))
+    comments, err := h.commentService.GetUserComments(userID.(uint))
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch comments"})
         return

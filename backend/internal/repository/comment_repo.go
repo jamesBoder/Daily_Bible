@@ -1,7 +1,7 @@
 package repository
 
 import (
-    "Daily_Bible/internal/models"
+    "dailybible/internal/models"
     "gorm.io/gorm"
 )
 
@@ -19,7 +19,7 @@ func (r *CommentRepository) Create(comment *models.Comment) error {
 }
 
 // Get comment by user and verse reference
-func (r *CommentRepository) GetByUserAndVerse(userID string, verseReference string) (*models.Comment, error) {
+func (r *CommentRepository) GetByUserAndVerse(userID uint, verseReference string) (*models.Comment, error) {
     var comment models.Comment
     err := r.db.Where("user_id = ? AND verse_reference = ?", userID, verseReference).First(&comment).Error
     if err != nil {
@@ -34,12 +34,12 @@ func (r *CommentRepository) Update(comment *models.Comment) error {
 }
 
 // Delete comment
-func (r *CommentRepository) Delete(id uint, userID string) error {
+func (r *CommentRepository) Delete(id uint, userID uint) error {
     return r.db.Where("id = ? AND user_id = ?", id, userID).Delete(&models.Comment{}).Error
 }
 
 // Get all comments by user
-func (r *CommentRepository) GetByUser(userID string) ([]models.Comment, error) {
+func (r *CommentRepository) GetByUser(userID uint) ([]models.Comment, error) {
     var comments []models.Comment
     err := r.db.Where("user_id = ?", userID).Order("created_at DESC").Find(&comments).Error
     return comments, err

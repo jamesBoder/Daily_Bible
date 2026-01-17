@@ -1,9 +1,8 @@
 package services
 
 import (
-    "Daily_Bible/internal/models"
-    "Daily_Bible/internal/repository"
-    "errors"
+    "dailybible/internal/models"
+    "dailybible/internal/repository"
 )
 
 type CommentService struct {
@@ -17,7 +16,7 @@ func NewCommentService(commentRepo *repository.CommentRepository) *CommentServic
 }
 
 // Add or update comment
-func (s *CommentService) AddOrUpdateComment(userID string, verseID int, verseReference string, commentText string) (*models.Comment, error) {
+func (s *CommentService) AddOrUpdateComment(userID uint, verseID int, verseReference string, commentText string) (*models.Comment, error) {
     // Check if comment already exists
     existingComment, err := s.commentRepo.GetByUserAndVerse(userID, verseReference)
     
@@ -41,16 +40,16 @@ func (s *CommentService) AddOrUpdateComment(userID string, verseID int, verseRef
 }
 
 // Get comment for specific verse
-func (s *CommentService) GetCommentForVerse(userID string, verseReference string) (*models.Comment, error) {
+func (s *CommentService) GetCommentForVerse(userID uint, verseReference string) (*models.Comment, error) {
     return s.commentRepo.GetByUserAndVerse(userID, verseReference)
 }
 
 // Delete comment
-func (s *CommentService) DeleteComment(commentID uint, userID string) error {
+func (s *CommentService) DeleteComment(commentID uint, userID uint) error {
     return s.commentRepo.Delete(commentID, userID)
 }
 
 // Get all user comments
-func (s *CommentService) GetUserComments(userID string) ([]models.Comment, error) {
+func (s *CommentService) GetUserComments(userID uint) ([]models.Comment, error) {
     return s.commentRepo.GetByUser(userID)
 }

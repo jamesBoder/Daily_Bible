@@ -12,7 +12,7 @@ type Comment struct {
     DeletedAt      gorm.DeletedAt `gorm:"index" json:"-"`
     
     // Foreign keys
-    UserID         string `gorm:"type:uuid;not null;index" json:"user_id"`
+    UserID         uint   `gorm:"not null;index" json:"user_id"`
     VerseID        int    `gorm:"not null" json:"verse_id"`
     VerseReference string `gorm:"size:255;not null;index" json:"verse_reference"`
     
@@ -21,4 +21,6 @@ type Comment struct {
     
     // Relationships
     User User `gorm:"foreignKey:UserID" json:"user,omitempty"`
+
+	
 }

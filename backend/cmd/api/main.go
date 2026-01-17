@@ -61,7 +61,7 @@ func main() {
     verseRepo := repository.NewVerseRepository(db)
     favoriteRepo := repository.NewFavoriteRepository(db)
     historyRepo := repository.NewHistoryRepository(db)
-
+    commentRepo := repository.NewCommentRepository(db)
     
     
     // 5. Initialize services
@@ -79,6 +79,8 @@ func main() {
         verseRepo,
     )
     historyService := services.NewHistoryService(historyRepo)
+
+    commentService := services.NewCommentService(commentRepo)
     
     // 6. Initialize handlers 
     _ = authService      // Use services to avoid "declared and not used" errors
@@ -88,6 +90,7 @@ func main() {
     _ = bibleAPIService
     _ = dailyVerseService
     _ = historyService
+    _ = commentService
 
     // init authHandler variable
     authHandler := handlers.NewAuthHandler(
@@ -112,8 +115,11 @@ func main() {
     historyHandler := handlers.NewHistoryHandler(
         historyService,
     )
-    
-    
+
+    // init commentService variable
+    commentHandler := handlers.NewCommentHandler(
+        commentService,
+    )
     
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
@@ -144,7 +150,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
