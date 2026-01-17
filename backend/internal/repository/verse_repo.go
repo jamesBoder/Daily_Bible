@@ -8,6 +8,7 @@ import (
 
 type VerseRepository interface {
     Create(verse *models.Verse) error
+    Update(verse *models.Verse) error
     GetByID(id uint) (*models.Verse, error)
     GetByReference(reference string) (*models.Verse, error)
     Search(query string) ([]models.Verse, error)
@@ -29,6 +30,11 @@ func NewVerseRepository(db *gorm.DB) VerseRepository {
 // Create verse
 func (r *verseRepository) Create(verse *models.Verse) error {
     return r.db.Create(verse).Error
+}
+
+// Update verse
+func (r *verseRepository) Update(verse *models.Verse) error {
+    return r.db.Save(verse).Error
 }
 
 // Find by ID

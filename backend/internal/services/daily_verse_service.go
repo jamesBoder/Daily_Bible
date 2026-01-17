@@ -34,7 +34,7 @@ func NewDailyVerseService(
 func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
     today := time.Now().Format("2006-01-02")
     
-    // Check cache first
+    // Check cache first - see if we already have a verse for today
     cached, err := s.verseRepo.GetByDate(today)
     if err == nil && cached != nil {
         return cached, nil
@@ -43,13 +43,24 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
     // Select verse for today
     reference := s.selectVerseForDate(today)
     
+    // Check if verse already exists by reference
+    existingVerse, err := s.verseRepo.GetByReference(reference)
+    if err == nil && existingVerse != nil {
+        // Verse exists, just update the daily_date
+        existingVerse.DailyDate = &today
+        if err := s.verseRepo.Update(existingVerse); err != nil {
+            return nil, fmt.Errorf("failed to update verse daily date: %w", err)
+        }
+        return existingVerse, nil
+    }
+    
     // Fetch from Bible API
     apiVerse, err := s.bibleAPI.GetVerse(reference)
     if err != nil {
-        return nil, fmt.Errorf("failed to fetch verse: %w", err)
+        return nil, fmt.Errorf("failed to fetch verse from API: %w", err)
     }
     
-    // Convert and save
+    // Convert and save new verse
     verse := &models.Verse{
         Reference: apiVerse.Reference,
         Text:      apiVerse.Text,
@@ -59,7 +70,6 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         Version: "KJV", // Default
         Translation: "KJV", // Default
         DailyDate: &today,
-
     }
     
     if err := s.verseRepo.Create(verse); err != nil {
