@@ -1,18 +1,44 @@
 import React from "react";
-import { BrowserRouter as Router } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Navigate,
+} from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
+import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { Login } from "./features/auth/Login";
+import { Signup } from "./features/auth/Signup";
+import { DailyVerse } from "./features/verse/DailyVerse";
+import { Layout } from "./components/layout/Layout";
 import "./App.css";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <div className="App App-header">
-          <h1 className="text-3xl font-bold text-primary-600">
-            Words of Praise app
-          </h1>
-          <p className="text-gray-600 mt-4">Coming Soon</p>
-        </div>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<Signup />} />
+
+          {/* Protected routes with layout */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Layout />
+              </ProtectedRoute>
+            }
+          >
+            <Route index element={<DailyVerse />} />
+            <Route path="daily" element={<DailyVerse />} />
+            {/* More routes will be added in future weeks */}
+          </Route>
+
+          {/* Catch all - redirect to home */}
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </AuthProvider>
     </Router>
   );
