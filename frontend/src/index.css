@@ -4,7 +4,21 @@
 
 @layer base {
   body {
-    @apply bg-gray-50 text-gray-900;
+    @apply text-gray-900;
+    /* Gradient background from white to blue */
+    background: linear-gradient(
+      to bottom,
+      #ffffff 0%,
+      #f0f9ff 50%,
+      #e0f2fe 100%
+    );
+    min-height: 100vh;
+    background-attachment: fixed;
+  }
+
+  /* Ensure the root element also has the gradient */
+  #root {
+    min-height: 100vh;
   }
 }
 
