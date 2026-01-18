@@ -63,7 +63,11 @@ func (r *favoriteRepository) GetByUserIDPaginated(userID uint, limit int, offset
         return nil, 0, err
     }
 
-    if err := r.db.Where("user_id = ?", userID).Limit(limit).Offset(offset).Find(&favorites).Error; err != nil {
+    if err := r.db.Where("user_id = ?", userID).
+    Preload("Verse").  // Preload associated Verse
+    Limit(limit).
+    Offset(offset).
+    Find(&favorites).Error; err != nil {
         return nil, 0, err
     }
 
