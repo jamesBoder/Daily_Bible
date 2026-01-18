@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { Button } from "../../components/common/Button";
 import { commentService } from "../../services/api/comment";
 import { Comment } from "../../types/comment";
+import { useCallback } from "react";
 
 interface CommentSectionProps {
   verseId: number;
@@ -18,12 +19,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
 
-  // Load existing comment
-  useEffect(() => {
-    loadComment();
-  }, [verseReference]);
-
-  const loadComment = async () => {
+  // define loadComment before using it in useEffect
+  const loadComment = useCallback(async () => {
     try {
       const existingComment =
         await commentService.getCommentForVerse(verseReference);
@@ -34,7 +31,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     } catch (err) {
       console.error("Failed to load comment:", err);
     }
-  };
+  }, [verseReference]);
+
+  // Load existing comment
+  useEffect(() => {
+    loadComment();
+  }, [loadComment]);
 
   const handleSave = async () => {
     if (!commentText.trim()) {
@@ -95,9 +97,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   return (
     <div className="mt-6 border-t border-gray-200 pt-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-3">
-        Personal Notes
-      </h3>
+      <h3 className="text-lg font-semibold text-gray-900 mb-3">Notes</h3>
 
       {error && (
         <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
