@@ -3,18 +3,40 @@ import { Verse } from "../../types/verse";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { CommentSection } from "../verse/CommentSection";
+import { useFavorites } from "../../hooks/useFavorites";
 
 interface VerseCardProps {
   verse: Verse;
 }
 
 export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
-  const [isFavorited, setIsFavorited] = useState(false);
+  const { isFavorited, getFavoriteId, addFavorite, removeFavorite } =
+    useFavorites();
   const [isSharing, setIsSharing] = useState(false);
+  const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
+  const [favoriteError, setFavoriteError] = useState<string | null>(null);
 
   const handleFavorite = async () => {
-    // TODO: Implement favorite functionality in Week 6
-    setIsFavorited(!isFavorited);
+    setIsFavoriteLoading(true);
+    setFavoriteError(null);
+
+    try {
+      if (isFavorited(verse.id)) {
+        // Remove from favorites
+        const favoriteId = getFavoriteId(verse.id);
+        if (favoriteId) {
+          await removeFavorite(favoriteId);
+        }
+      } else {
+        // Add to favorites
+        await addFavorite(verse.id);
+      }
+    } catch (err: any) {
+      setFavoriteError(err.message);
+      setTimeout(() => setFavoriteError(null), 3000);
+    } finally {
+      setIsFavoriteLoading(false);
+    }
   };
 
   const handleShare = async () => {
@@ -27,7 +49,6 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
           text: `${verse.text}\n\n- ${verse.reference}`,
         });
       } else {
-        // Fallback: Copy to clipboard
         await navigator.clipboard.writeText(
           `${verse.text}\n\n- ${verse.reference}`,
         );
@@ -39,6 +60,8 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       setIsSharing(false);
     }
   };
+
+  const isVerseAlreadyFavorited = isFavorited(verse.id);
 
   return (
     <Card className="relative">
@@ -64,15 +87,23 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
         )}
       </div>
 
+      {/* Error message */}
+      {favoriteError && (
+        <div className="mb-4 text-center">
+          <p className="text-sm text-red-600">{favoriteError}</p>
+        </div>
+      )}
+
       {/* Action buttons */}
       <div className="flex justify-center gap-4">
         <Button
           onClick={handleFavorite}
           variant="secondary"
+          isLoading={isFavoriteLoading}
           className="flex items-center gap-2"
         >
           <svg
-            className={`w-5 h-5 ${isFavorited ? "fill-red-500" : "fill-none"}`}
+            className={`w-5 h-5 ${isVerseAlreadyFavorited ? "fill-red-500" : "fill-none"}`}
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
@@ -83,7 +114,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
               d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
             />
           </svg>
-          {isFavorited ? "Favorited" : "Favorite"}
+          {isVerseAlreadyFavorited ? "Favorited" : "Favorite"}
         </Button>
 
         <Button
