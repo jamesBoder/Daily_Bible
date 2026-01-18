@@ -17,6 +17,9 @@ export const API_ENDPOINTS = {
   
   // History
   HISTORY: '/api/history',
+
+  // Comments
+  COMMENTS: '/api/comments',
 };
 
 export const STORAGE_KEYS = {
