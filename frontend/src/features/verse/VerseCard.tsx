@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Verse } from "../../types/verse";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
+import { CommentSection } from "../verse/CommentSection";
 
 interface VerseCardProps {
   verse: Verse;
@@ -28,7 +29,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       } else {
         // Fallback: Copy to clipboard
         await navigator.clipboard.writeText(
-          `${verse.text}\n\n- ${verse.reference}`
+          `${verse.text}\n\n- ${verse.reference}`,
         );
         alert("Verse copied to clipboard!");
       }
@@ -107,6 +108,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
           Share
         </Button>
       </div>
+      <CommentSection verseId={verse.id} verseReference={verse.reference} />
     </Card>
   );
 };
