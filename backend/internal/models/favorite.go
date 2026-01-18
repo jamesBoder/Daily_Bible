@@ -17,6 +17,6 @@ type Favorite struct {
     VerseID uint `gorm:"not null;index" json:"verse_id"`
     
     // Relationships
-    User  User  `gorm:"foreignKey:UserID" json:"user,omitempty"`
-    Verse Verse `gorm:"foreignKey:VerseID" json:"verse,omitempty"`
+    User  User  `gorm:"foreignKey:UserID;references:ID" json:"user,omitempty"`
+    Verse Verse `gorm:"foreignKey:VerseID;references:ID" json:"verse,omitempty"`
 }
