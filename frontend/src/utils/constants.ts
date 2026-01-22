@@ -20,6 +20,9 @@ export const API_ENDPOINTS = {
 
   // Comments
   COMMENTS: '/api/comments',
+
+  // Profile
+  PROFILE: '/api/profile',
 };
 
 export const STORAGE_KEYS = {

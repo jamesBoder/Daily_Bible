@@ -11,6 +11,7 @@ import { Login } from "./features/auth/Login";
 import { Signup } from "./features/auth/Signup";
 import { DailyVerse } from "./features/verse/DailyVerse";
 import { FavoritesList } from "./features/favorites/FavoritesList";
+import { HistoryList } from "./features/history/HistoryList";
 import { Layout } from "./components/layout/Layout";
 import "./App.css";
 
@@ -35,7 +36,7 @@ function App() {
             <Route index element={<DailyVerse />} />
             <Route path="daily" element={<DailyVerse />} />
             <Route path="favorites" element={<FavoritesList />} />
-            {/* More routes will be added in future weeks */}
+            <Route path="history" element={<HistoryList />} />
           </Route>
 
           {/* Catch all - redirect to home */}
