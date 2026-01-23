@@ -76,11 +76,28 @@ export const HistoryList: React.FC = () => {
         <div className="space-y-4">
           {history.map((entry) => (
             <Card key={entry.id}>
-              <div className="p-4">
-                <p className="text-gray-800">{entry.verse_id}</p>
-                <p className="text-sm text-gray-500 mt-2">
-                  Viewed on: {new Date(entry.viewed_at).toLocaleString()}
-                </p>
+              <div className="p-6">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-primary-600 mb-2">
+                    {entry.verse?.reference || "Unknown Reference"}
+                  </h3>
+                  <p className="text-gray-800 leading-relaxed">
+                    {entry.verse?.text || "Verse text not available"}
+                  </p>
+                </div>
+                <div className="flex items-center justify-between text-sm text-gray-500 pt-4 border-t border-gray-200">
+                  <span>
+                    {entry.verse?.book &&
+                    entry.verse?.chapter &&
+                    entry.verse?.verse
+                      ? `${entry.verse.book} ${entry.verse.chapter}:${entry.verse.verse}`
+                      : ""}
+                  </span>
+                  <span>
+                    Viewed: {new Date(entry.viewed_at).toLocaleDateString()} at{" "}
+                    {new Date(entry.viewed_at).toLocaleTimeString()}
+                  </span>
+                </div>
               </div>
             </Card>
           ))}

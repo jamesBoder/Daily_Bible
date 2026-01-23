@@ -68,15 +68,11 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 		return
 	}
 
-	// Record verse view in history if user is authenticated
-	if userID, exists := c.Get("userID"); exists {
-		err := h.historyService.AddToHistory(userID.(uint), verse.ID)
-		if err != nil {
-			// Log error but don't fail the request
-			// History tracking is a non-critical feature
-			c.Error(err)
-		}
-	}
+	// Note: History tracking is not implemented for this endpoint
+	// because verses from the Bible API don't have database IDs yet.
+	// History tracking only works for the daily verse endpoint which
+	// stores verses in the database with proper uint IDs.
+	// TODO: Consider storing all viewed verses in DB to enable history tracking
 
 	c.JSON(http.StatusOK, gin.H{
 		"verse": gin.H{

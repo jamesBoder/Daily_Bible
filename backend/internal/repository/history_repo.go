@@ -13,6 +13,8 @@ type HistoryRepository interface {
     DeleteByUserID(userID uint) error
     DeleteOlderThan(userID uint, date time.Time) error
     CountByUserID(userID uint) (int64, error)
+    FindByUserAndVerse(userID, verseID uint) (*models.History, error)
+    UpdateViewedAt(historyID uint, viewedAt time.Time) error
 }
 
 type historyRepository struct {
@@ -73,4 +75,19 @@ func (r *historyRepository) CountByUserID(userID uint) (int64, error) {
     var count int64
     err := r.db.Model(&models.History{}).Where("user_id = ?", userID).Count(&count).Error
     return count, err
+}
+
+// FindByUserAndVerse finds an existing history entry for a user and verse
+func (r *historyRepository) FindByUserAndVerse(userID, verseID uint) (*models.History, error) {
+    var history models.History
+    err := r.db.Where("user_id = ? AND verse_id = ?", userID, verseID).First(&history).Error
+    if err != nil {
+        return nil, err
+    }
+    return &history, nil
+}
+
+// UpdateViewedAt updates the viewed_at timestamp for a history entry
+func (r *historyRepository) UpdateViewedAt(historyID uint, viewedAt time.Time) error {
+    return r.db.Model(&models.History{}).Where("id = ?", historyID).Update("viewed_at", viewedAt).Error
 }
