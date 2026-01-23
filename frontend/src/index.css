@@ -16,7 +16,16 @@
     background-attachment: fixed;
   }
 
-  /* Ensure the root element also has the gradient */
+  /* Dark mode gradient */
+  .dark body {
+    background: linear-gradient(
+      to bottom,
+      #1a1a1a 0%,
+      #0f172a 50%,
+      #1e293b 100%
+    );
+  }
+
   #root {
     min-height: 100vh;
   }
@@ -24,18 +33,26 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 text-white px-4 py-2 rounded-lg hover:bg-primary-700 transition-colors;
+    @apply bg-primary-600 text-white px-4 py-2 rounded-lg 
+           hover:bg-primary-700 transition-colors
+           dark:bg-primary-500 dark:hover:bg-primary-600;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors;
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg 
+           hover:bg-gray-300 transition-colors
+           dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
   }
 
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent;
+    @apply w-full px-4 py-2 border border-gray-300 rounded-lg 
+           focus:ring-2 focus:ring-primary-500 focus:border-transparent
+           dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100
+           dark:focus:ring-primary-400;
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-md p-6;
+    @apply bg-white rounded-lg shadow-md p-6
+           dark:bg-gray-800 dark:shadow-xl;
   }
 }

@@ -14,37 +14,38 @@ import { FavoritesList } from "./features/favorites/FavoritesList";
 import { HistoryList } from "./features/history/HistoryList";
 import { Layout } from "./components/layout/Layout";
 import { Settings } from "./features/profile/Settings";
+import { ThemeProvider } from "./contexts/ThemeContext";
 import "./App.css";
 
 function App() {
   return (
     <Router>
-      <AuthProvider>
-        <Routes>
-          {/* Public routes */}
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<Signup />} />
-
-          {/* Protected routes with layout */}
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute>
-                <Layout />
-              </ProtectedRoute>
-            }
-          >
-            <Route index element={<DailyVerse />} />
-            <Route path="daily" element={<DailyVerse />} />
-            <Route path="favorites" element={<FavoritesList />} />
-            <Route path="history" element={<HistoryList />} />
-            <Route path="settings" element={<Settings />} />
-          </Route>
-
-          {/* Catch all - redirect to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <Routes>
+            {/* Public routes */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<Signup />} />
+            {/* Protected routes with layout */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout />
+                </ProtectedRoute>
+              }
+            >
+              <Route index element={<DailyVerse />} />
+              <Route path="daily" element={<DailyVerse />} />
+              <Route path="favorites" element={<FavoritesList />} />
+              <Route path="history" element={<HistoryList />} />
+              <Route path="settings" element={<Settings />} />
+            </Route>
+            {/* Catch all - redirect to home */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </AuthProvider>
+      </ThemeProvider>
     </Router>
   );
 }
