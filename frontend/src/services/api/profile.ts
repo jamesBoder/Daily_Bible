@@ -3,7 +3,7 @@
 // imports 
 import apiClient from './client';
 import { API_ENDPOINTS } from '../../utils/constants';
-import { UserProfile, UserStats } from '../../types/profile';
+import { UpdateUserSettingsRequest, UserProfile, UserSettingsResponse, UserStats } from '../../types/profile';
 
 // init GetUserProfileParams interface
 export interface GetUserProfileParams {
@@ -34,6 +34,23 @@ export const profileService = {
     getStats: async (): Promise<UserStats> => {
         const response = await apiClient.get<UserStats>(
             `${API_ENDPOINTS.PROFILE}/stats`
+        );
+        return response.data;
+    },
+
+    // getUserSettings method
+    getUserSettings: async (): Promise<UserSettingsResponse> => {
+        const response = await apiClient.get<UserSettingsResponse>(
+            `${API_ENDPOINTS.PROFILE}/settings`
+        );
+        return response.data;
+    },
+
+    // updateUserSettings method
+    updateUserSettings: async (settings: UpdateUserSettingsRequest): Promise<UserSettingsResponse> => {
+        const response = await apiClient.put<UserSettingsResponse>(
+            `${API_ENDPOINTS.PROFILE}/settings`,
+            settings
         );
         return response.data;
     }
