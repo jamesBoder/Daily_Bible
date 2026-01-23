@@ -40,10 +40,11 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	if userID, exists := c.Get("userID"); exists {
 		err := h.historyService.AddToHistory(userID.(uint), verse.ID)
 		if err != nil {
-			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to record verse view in history"})
-			return
+			// Log error but don't fail the request
+			// History tracking is a non-critical feature
+			c.Error(err)
 		}
-    }
+	}
 
 	c.JSON(http.StatusOK, gin.H{
         "verse": gin.H{
@@ -68,6 +69,14 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 	}
 
 	// Record verse view in history if user is authenticated
+	if userID, exists := c.Get("userID"); exists {
+		err := h.historyService.AddToHistory(userID.(uint), verse.ID)
+		if err != nil {
+			// Log error but don't fail the request
+			// History tracking is a non-critical feature
+			c.Error(err)
+		}
+	}
 
 	c.JSON(http.StatusOK, gin.H{
 		"verse": gin.H{

@@ -30,8 +30,9 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			 auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
 		}
 
-		// verses routes
+		// verses routes - use optional auth to track history for authenticated users
 		verses := api.Group("/verses")
+		verses.Use(middleware.OptionalAuthMiddleware(tokenService))
 		{
 			 verses.GET("/daily", verseHandler.GetDailyVerse)
 			 verses.GET("/:reference", verseHandler.GetVerseByReference)

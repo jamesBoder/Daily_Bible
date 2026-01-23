@@ -42,3 +42,46 @@ func AuthMiddleware(tokenService *services.TokenService) gin.HandlerFunc {
 		c.Next()
 	}
 }
+
+// OptionalAuthMiddleware validates authentication if token is present, but doesn't require it
+// This allows endpoints to work for both authenticated and anonymous users
+// If authenticated, userID will be set in context for features like history tracking
+func OptionalAuthMiddleware(tokenService *services.TokenService) gin.HandlerFunc {
+	return func(c *gin.Context) {
+		// Extract token from Authorization header
+		authHeader := c.GetHeader("Authorization")
+		
+		// If no auth header, continue without authentication
+		if authHeader == "" {
+			c.Next()
+			return
+		}
+
+		// Trim spaces and strip "Bearer " prefix
+		authHeader = strings.TrimSpace(authHeader)
+		token := strings.TrimPrefix(authHeader, "Bearer ")
+		
+		// If token format is invalid, continue without authentication
+		if token == authHeader || token == "" {
+			c.Next()
+			return
+		}
+		
+		// Trim any remaining spaces from the token
+		token = strings.TrimSpace(token)
+
+		// Validate token using TokenService
+		claims, err := tokenService.ValidateToken(token)
+		if err != nil {
+			// If token is invalid, continue without authentication
+			// Don't abort the request - just don't set userID
+			c.Next()
+			return
+		}
+
+		// Store user ID in Gin context for authenticated requests
+		c.Set("userID", claims.UserID)
+
+		c.Next()
+	}
+}
