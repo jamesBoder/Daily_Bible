@@ -62,6 +62,15 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 
 // create BeforeUpdate hook to hash password
 func (u *User) BeforeUpdate(tx *gorm.DB) error {
-    // call SetPassword to hash password before updating user
-    return u.SetPassword(u.Password)
+    // Only hash password if it has been changed
+    // This prevents re-hashing an already-hashed password when updating other fields
+    if tx.Statement.Changed("Password") {
+        // Check if the password looks like it's already hashed (bcrypt hashes start with $2a$ or $2b$)
+        // If it's already hashed, skip hashing again
+        if len(u.Password) > 0 && (u.Password[:4] == "$2a$" || u.Password[:4] == "$2b$") {
+            return nil
+        }
+        return u.SetPassword(u.Password)
+    }
+    return nil
 }

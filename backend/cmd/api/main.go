@@ -21,6 +21,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
+    "github.com/go-playground/validator/v10"
     
 )
 
@@ -81,6 +82,10 @@ func main() {
     historyService := services.NewHistoryService(historyRepo)
 
     commentService := services.NewCommentService(commentRepo)
+
+    // create validator instance
+    validate := validator.New()
+    _ = validate // currently not used, but can be integrated into services or handlers later
     
     // 6. Initialize handlers 
     _ = authService      // Use services to avoid "declared and not used" errors
@@ -120,6 +125,15 @@ func main() {
     commentHandler := handlers.NewCommentHandler(
         commentService,
     )
+
+    // init profileHandler variable
+    profileHandler := handlers.NewProfileHandler(
+        userRepo,
+        favoriteRepo,
+        historyRepo,
+        commentRepo,
+        validate, // validator can be added later
+    )
     
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
@@ -150,7 +164,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

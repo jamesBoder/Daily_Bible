@@ -5,6 +5,8 @@ import (
     "gorm.io/gorm"
 )
 
+
+
 type CommentRepository struct {
     db *gorm.DB
 }
@@ -43,4 +45,11 @@ func (r *CommentRepository) GetByUser(userID uint) ([]models.Comment, error) {
     var comments []models.Comment
     err := r.db.Where("user_id = ?", userID).Order("created_at DESC").Find(&comments).Error
     return comments, err
+}
+
+// GetCountByUserID returns the total number of comments made by a user
+func (r *CommentRepository) CountByUserID(userID uint) (int64, error) {
+    var count int64
+    err := r.db.Model(&models.Comment{}).Where("user_id = ?", userID).Count(&count).Error
+    return count, err
 }

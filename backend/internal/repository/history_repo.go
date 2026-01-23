@@ -12,6 +12,7 @@ type HistoryRepository interface {
     GetByUserIDPaginated(userID uint, limit, offset int) ([]models.History, int64, error)
     DeleteByUserID(userID uint) error
     DeleteOlderThan(userID uint, date time.Time) error
+    CountByUserID(userID uint) (int64, error)
 }
 
 type historyRepository struct {
@@ -65,4 +66,11 @@ func (r *historyRepository) DeleteByUserID(userID uint) error {
 func (r *historyRepository) DeleteOlderThan(userID uint, date time.Time) error {
     return r.db.Where("user_id = ? AND viewed_at < ?", userID, date).
         Delete(&models.History{}).Error
+}
+
+// CountByUserID returns the total number of history entries for a user
+func (r *historyRepository) CountByUserID(userID uint) (int64, error) {
+    var count int64
+    err := r.db.Model(&models.History{}).Where("user_id = ?", userID).Count(&count).Error
+    return count, err
 }

@@ -17,6 +17,7 @@ type FavoriteRepository interface {
     Exists(userID uint, verseID uint) (bool, error)
     ListAll() ([]models.Favorite, error)
     SearchFavorites(userID uint, query string, limit, offset int) ([]models.Favorite, int64, error)
+    CountByUserID(userID uint) (int64, error)
 }
 
 // favoriteRepository is the concrete implementation of FavoriteRepository using GORM.
@@ -128,6 +129,13 @@ func (r *favoriteRepository) SearchFavorites(userID uint, query string, limit, o
     }
 
     return favorites, total, nil
+}
+
+// CountByUserID returns the total number of favorites for a specific user.
+func (r *favoriteRepository) CountByUserID(userID uint) (int64, error) {
+    var count int64
+    err := r.db.Model(&models.Favorite{}).Where("user_id = ?", userID).Count(&count).Error
+    return count, err
 }
 
 

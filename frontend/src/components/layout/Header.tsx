@@ -44,6 +44,24 @@ export const Header: React.FC = () => {
             >
               History
             </Link>
+            <Link
+              to="/profile"
+              className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+            >
+              Profile
+            </Link>
+            <Link
+              to="/account"
+              className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+            >
+              Account
+            </Link>
+            <Link
+              to="/settings"
+              className="text-gray-700 hover:text-primary-600 font-medium transition-colors"
+            >
+              Settings
+            </Link>
           </div>
 
           {/* User Menu */}
