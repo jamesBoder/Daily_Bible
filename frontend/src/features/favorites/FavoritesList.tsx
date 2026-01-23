@@ -3,6 +3,7 @@ import { useFavorites } from "../../hooks/useFavorites";
 import { Loading } from "../../components/common/Loading";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
+import { CommentSection } from "../verse/CommentSection";
 
 export const FavoritesList: React.FC = () => {
   const { favorites, isLoading, error, removeFavorite } = useFavorites();
@@ -109,6 +110,10 @@ export const FavoritesList: React.FC = () => {
                   Remove
                 </Button>
               </div>
+              <CommentSection
+                verseId={favorite.verse_id}
+                verseReference={favorite.verse?.reference || ""}
+              />
             </Card>
           ))}
         </div>
