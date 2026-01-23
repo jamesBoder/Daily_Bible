@@ -56,7 +56,7 @@ export const StatsCard: React.FC = () => {
           </div>
           <div className="p-4 bg-gray-100 rounded-lg text-center">
             <h3 className="text-lg font-semibold">Daily Reading Streak</h3>
-            <p className="text-3xl">{stats.dailyStreak} days</p>
+            <p className="text-lg">{stats.dailyStreak} days</p>
           </div>
           <div className="p-4 bg-gray-100 rounded-lg text-center">
             <h3 className="text-lg font-semibold">Favorites Count</h3>

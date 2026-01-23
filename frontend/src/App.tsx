@@ -13,8 +13,6 @@ import { DailyVerse } from "./features/verse/DailyVerse";
 import { FavoritesList } from "./features/favorites/FavoritesList";
 import { HistoryList } from "./features/history/HistoryList";
 import { Layout } from "./components/layout/Layout";
-import { Profile } from "./features/profile/Profile";
-import { AccountManagement } from "./features/profile/AccountManagement";
 import { Settings } from "./features/profile/Settings";
 import "./App.css";
 
@@ -40,8 +38,6 @@ function App() {
             <Route path="daily" element={<DailyVerse />} />
             <Route path="favorites" element={<FavoritesList />} />
             <Route path="history" element={<HistoryList />} />
-            <Route path="profile" element={<Profile />} />
-            <Route path="account" element={<AccountManagement />} />
             <Route path="settings" element={<Settings />} />
           </Route>
 
