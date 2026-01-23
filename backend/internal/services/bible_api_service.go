@@ -51,6 +51,14 @@ func stripHTML(html string) string {
     // Remove HTML tags
     re := regexp.MustCompile(`<[^>]*>`)
     text := re.ReplaceAllString(html, "")
+
+	// Remove verse numbers at the beginning of text
+    // Matches: "1", "1 ", "12", "123 " at start (with or without space)
+    text = regexp.MustCompile(`^\d+\s*`).ReplaceAllString(text, "")
+
+	// Remove verse numbers in the middle of text (after punctuation)
+    // Matches patterns like ". 2 ", "; 3", ": 9Not" etc.
+    text = regexp.MustCompile(`([.;!?:])\s*\d+\s*`).ReplaceAllString(text, "$1 ")
     
     // Clean up extra whitespace
     text = strings.TrimSpace(text)
