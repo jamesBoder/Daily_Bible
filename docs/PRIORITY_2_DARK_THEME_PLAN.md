@@ -449,3 +449,445 @@ const handleToggle = (key: keyof SettingsState) => {
 - ✅ Comment display box has good contrast
 - ✅ Edit/Delete buttons visible
 
+**FavoritesList:**
+- ✅ Empty state icon/text visible
+- ✅ Verse cards readable
+- ✅ Remove button visible
+- ✅ Comment sections work
+
+**HistoryList:**
+- ✅ Similar to FavoritesList
+- ✅ All elements visible and readable
+
+**Settings:**
+- ✅ Tab navigation clear
+- ✅ Active tab highlighted
+- ✅ Form inputs readable
+- ✅ Toggle switches work
+- ✅ All text readable
+
+**Auth Pages (Login/Signup):**
+- ✅ Forms readable
+- ✅ Input fields have good contrast
+- ✅ Error messages visible
+- ✅ Links visible
+
+**Test 6: Accessibility**
+1. Enable dark mode
+2. Test keyboard navigation
+3. ✅ Verify focus states are visible
+4. ✅ Verify sufficient color contrast (WCAG AA)
+5. Test with screen reader
+6. ✅ Verify theme change is announced
+
+**Test 7: Performance**
+1. Toggle theme multiple times rapidly
+2. ✅ Verify no lag or flicker
+3. ✅ Verify smooth transition
+4. Navigate between pages with dark mode on
+5. ✅ Verify no performance issues
+
+**Test 8: Edge Cases**
+1. Open app in incognito (no localStorage)
+2. ✅ Verify defaults to light mode
+3. Enable dark mode in incognito
+4. ✅ Verify works but doesn't persist after close
+5. Clear localStorage while app is open
+6. ✅ Verify theme doesn't break
+7. Manually edit localStorage theme value to invalid
+8. ✅ Verify app handles gracefully (defaults to light)
+
+**Test 9: Cross-Browser Testing**
+- ✅ Chrome
+- ✅ Firefox
+- ✅ Safari
+- ✅ Edge
+
+**Test 10: Mobile Testing**
+- ✅ Test on mobile viewport
+- ✅ Verify touch interactions work
+- ✅ Verify theme toggle works on mobile
+- ✅ Verify all pages readable on small screens
+
+---
+
+### Phase 5: Polish & Optimization (30 minutes)
+
+#### Step 5.1: Add Transition Effects
+- Add smooth color transitions to prevent jarring switches
+- Use `transition-colors duration-200` on elements that change
+
+#### Step 5.2: Optimize Color Palette
+- Review all dark mode colors for consistency
+- Ensure proper contrast ratios (WCAG AA: 4.5:1 for text)
+- Test with color blindness simulators
+
+#### Step 5.3: Add Theme Toggle Animation
+- Smooth slide animation on toggle switch
+- Optional: Add sun/moon icons to toggle
+
+#### Step 5.4: Documentation
+- Update README with dark mode feature
+- Document color palette in design system
+- Add comments in code for dark mode classes
+
+---
+
+## 📊 Files to Create/Modify
+
+### New Files (1):
+1. `frontend/src/contexts/ThemeContext.tsx` - Theme state management
+
+### Files to Modify (20+):
+
+**Configuration:**
+1. `frontend/tailwind.config.js` - Add darkMode config
+
+**Styles:**
+2. `frontend/src/index.css` - Add dark mode global styles
+
+**Contexts:**
+3. `frontend/src/App.tsx` - Wrap with ThemeProvider
+
+**Common Components:**
+4. `frontend/src/components/common/Button.tsx`
+5. `frontend/src/components/common/Input.tsx`
+6. `frontend/src/components/common/Loading.tsx`
+
+**Layout Components:**
+7. `frontend/src/components/layout/Header.tsx`
+8. `frontend/src/components/layout/Footer.tsx`
+
+**Feature Components:**
+9. `frontend/src/features/verse/DailyVerse.tsx`
+10. `frontend/src/features/verse/VerseCard.tsx`
+11. `frontend/src/features/verse/CommentSection.tsx`
+12. `frontend/src/features/favorites/FavoritesList.tsx`
+13. `frontend/src/features/history/HistoryList.tsx`
+14. `frontend/src/features/profile/Settings.tsx`
+15. `frontend/src/features/profile/Profile.tsx`
+16. `frontend/src/features/profile/ProfileEditForm.tsx`
+17. `frontend/src/features/profile/AccountManagement.tsx`
+18. `frontend/src/features/profile/StatsCard.tsx`
+19. `frontend/src/features/auth/Login.tsx`
+20. `frontend/src/features/auth/Signup.tsx`
+
+**Total Files:** 1 new + 20 modified = 21 files
+
+---
+
+## 🎨 Dark Mode Color Palette
+
+### Background Colors:
+- **Primary:** `#1a1a1a` (darkest - main background)
+- **Secondary:** `#2d2d2d` (cards, elevated surfaces)
+- **Tertiary:** `#3d3d3d` (hover states, inputs)
+
+### Text Colors:
+- **Primary:** `#e5e5e5` (main text - high contrast)
+- **Secondary:** `#a3a3a3` (secondary text - medium contrast)
+- **Tertiary:** `#737373` (tertiary text - low contrast)
+
+### Border Colors:
+- **Default:** `#404040` (subtle borders)
+- **Hover:** `#525252` (hover state borders)
+
+### Accent Colors (Primary Blue):
+- **Light Mode:** `#0284c7` (primary-600)
+- **Dark Mode:** `#38bdf8` (primary-400) - brighter for visibility
+
+### Status Colors:
+- **Success:** `#10b981` (green-500)
+- **Error:** `#ef4444` (red-500)
+- **Warning:** `#f59e0b` (amber-500)
+- **Info:** `#3b82f6` (blue-500)
+
+---
+
+## ⏱️ Time Breakdown
+
+| Phase | Task | Estimated Time | Actual Time |
+|-------|------|---------------|-------------|
+| 1 | Setup & Configuration | 30 min | ___ |
+| 1.1 | Update Tailwind config | 5 min | ___ |
+| 1.2 | Create ThemeContext | 15 min | ___ |
+| 1.3 | Integrate ThemeProvider | 10 min | ___ |
+| 2 | Update Global Styles | 30 min | ___ |
+| 2.1 | Update index.css | 30 min | ___ |
+| 3 | Update Components | 2-3 hours | ___ |
+| 3.1 | Common components | 30 min | ___ |
+| 3.2 | Layout components | 30 min | ___ |
+| 3.3 | Feature components | 1-2 hours | ___ |
+| 3.4 | Connect Settings toggle | 15 min | ___ |
+| 4 | Testing | 1-2 hours | ___ |
+| 5 | Polish & Optimization | 30 min | ___ |
+| **Total** | **4-6 hours** | ___ |
+
+**Realistic Estimate:** 2-3 days (accounting for breaks, testing, fixes)
+
+---
+
+## ✅ Definition of Done
+
+This task is complete when:
+
+1. ✅ Tailwind dark mode configured (class-based)
+2. ✅ ThemeContext created and integrated
+3. ✅ Theme persists in localStorage
+4. ✅ Settings toggle controls theme
+5. ✅ All pages support dark mode:
+   - ✅ Daily Verse
+   - ✅ Favorites
+   - ✅ History
+   - ✅ Settings (all tabs)
+   - ✅ Profile
+   - ✅ Login/Signup
+6. ✅ All components have dark variants:
+   - ✅ Buttons
+   - ✅ Cards
+   - ✅ Inputs
+   - ✅ Headers/Footers
+   - ✅ Text elements
+7. ✅ Color contrast meets WCAG AA standards
+8. ✅ No visual bugs or regressions
+9. ✅ Smooth transitions between themes
+10. ✅ Works on all browsers (Chrome, Firefox, Safari, Edge)
+11. ✅ Works on mobile devices
+12. ✅ No console errors or warnings
+
+---
+
+## 🚨 Potential Issues & Solutions
+
+### Issue 1: Flicker on Page Load
+**Problem:** Brief flash of light theme before dark theme applies  
+**Solution:**
+- Add inline script in index.html to check localStorage and apply dark class before React loads
+- Or use CSS to hide content until theme is determined
+
+### Issue 2: Inconsistent Colors
+**Problem:** Some components use different shades of gray  
+**Solution:**
+- Create standardized color variables in Tailwind config
+- Use consistent color tokens across all components
+- Document color usage guidelines
+
+### Issue 3: Poor Contrast in Dark Mode
+**Problem:** Some text hard to read on dark backgrounds  
+**Solution:**
+- Use lighter text colors (#e5e5e5 instead of #a3a3a3)
+- Test with contrast checker tools
+- Adjust colors to meet WCAG AA (4.5:1 ratio)
+
+### Issue 4: Images/Icons Not Visible
+**Problem:** Dark images disappear on dark background  
+**Solution:**
+- Add light border or background to images
+- Use SVG icons with currentColor
+- Invert icon colors in dark mode if needed
+
+### Issue 5: Third-Party Components
+**Problem:** External components (if any) don't support dark mode  
+**Solution:**
+- Wrap in custom container with dark mode styles
+- Override styles with !important if necessary
+- Consider replacing with dark-mode-compatible alternatives
+
+### Issue 6: Performance with Many Components
+**Problem:** Re-rendering all components on theme change  
+**Solution:**
+- Use React.memo for expensive components
+- Optimize ThemeContext to prevent unnecessary re-renders
+- Use CSS transitions instead of JS animations
+
+---
+
+## 🎯 Success Criteria
+
+### Functional Requirements:
+- ✅ Theme toggle works in Settings
+- ✅ Theme persists across sessions
+- ✅ Theme applies to all pages
+- ✅ No broken layouts in dark mode
+
+### Visual Requirements:
+- ✅ Consistent color palette
+- ✅ Readable text (good contrast)
+- ✅ Visible borders and separators
+- ✅ Appropriate button colors
+- ✅ No white "flashes" or artifacts
+
+### Performance Requirements:
+- ✅ Theme switch is instant (< 100ms)
+- ✅ No lag when navigating pages
+- ✅ Smooth transitions
+
+### Accessibility Requirements:
+- ✅ WCAG AA contrast ratios (4.5:1 for text)
+- ✅ Focus states visible in both modes
+- ✅ Screen reader announces theme change
+- ✅ Keyboard navigation works
+
+### User Experience:
+- ✅ Intuitive toggle in Settings
+- ✅ Clear visual feedback
+- ✅ Preference remembered
+- ✅ Consistent across all pages
+
+---
+
+## 📝 Testing Checklist
+
+Copy this checklist when testing:
+
+```
+FUNCTIONALITY:
+□ Theme toggle in Settings works
+□ Dark mode applies to entire app
+□ Light mode applies to entire app
+□ Theme persists on page refresh
+□ Theme persists after browser close/reopen
+□ localStorage stores theme correctly
+□ Invalid localStorage values handled gracefully
+
+VISUAL - DARK MODE:
+□ Daily Verse page readable
+□ Favorites page readable
+□ History page readable
+□ Settings page readable (all tabs)
+□ Profile page readable
+□ Login page readable
+□ Signup page readable
+□ All text has good contrast
+□ All borders visible
+□ All buttons visible
+□ All icons visible
+□ No white flashes or artifacts
+□ Cards have dark background
+□ Inputs have dark background
+□ Hover states work correctly
+
+VISUAL - LIGHT MODE:
+□ No regressions (everything still works)
+□ All pages look as before
+
+COMPONENTS:
+□ VerseCard works in both modes
+□ CommentSection works in both modes
+□ Buttons work in both modes
+□ Inputs work in both modes
+□ Cards work in both modes
+□ Header works in both modes
+□ Footer works in both modes
+□ Loading spinner visible in both modes
+
+ACCESSIBILITY:
+□ Focus states visible in dark mode
+□ Focus states visible in light mode
+□ Color contrast meets WCAG AA
+□ Keyboard navigation works
+□ Screen reader compatible
+
+PERFORMANCE:
+□ Theme switch is instant
+□ No lag when toggling
+□ No lag when navigating pages
+□ Smooth transitions
+
+CROSS-BROWSER:
+□ Works in Chrome
+□ Works in Firefox
+□ Works in Safari
+□ Works in Edge
+
+MOBILE:
+□ Works on mobile viewport
+□ Touch interactions work
+□ All pages readable on small screens
+□ Theme toggle works on mobile
+
+EDGE CASES:
+□ Works in incognito mode
+□ Handles missing localStorage
+□ Handles invalid localStorage values
+□ Works with browser extensions
+```
+
+---
+
+## 🚀 Implementation Order
+
+### Day 1: Setup & Core Components (4-5 hours)
+1. ✅ Update Tailwind config (5 min)
+2. ✅ Create ThemeContext (15 min)
+3. ✅ Integrate ThemeProvider (10 min)
+4. ✅ Update index.css (30 min)
+5. ✅ Update common components (30 min)
+6. ✅ Update layout components (30 min)
+7. ✅ Connect Settings toggle (15 min)
+8. ✅ Test basic functionality (30 min)
+
+### Day 2: Feature Components (4-5 hours)
+1. ✅ Update DailyVerse & VerseCard (45 min)
+2. ✅ Update CommentSection (30 min)
+3. ✅ Update FavoritesList (30 min)
+4. ✅ Update HistoryList (30 min)
+5. ✅ Update Settings (30 min)
+6. ✅ Update Profile components (45 min)
+7. ✅ Update Auth components (30 min)
+8. ✅ Test all pages (1 hour)
+
+### Day 3: Testing & Polish (2-3 hours)
+1. ✅ Comprehensive testing (1-2 hours)
+2. ✅ Fix any bugs found (30 min - 1 hour)
+3. ✅ Polish transitions (15 min)
+4. ✅ Optimize colors (15 min)
+5. ✅ Final cross-browser testing (30 min)
+6. ✅ Documentation (15 min)
+
+---
+
+## 💡 Best Practices
+
+### Color Selection:
+- Use Tailwind's built-in gray scale for consistency
+- Adjust primary colors to be brighter in dark mode
+- Test colors with color blindness simulators
+- Maintain consistent contrast ratios
+
+### Component Updates:
+- Update one component at a time
+- Test each component before moving to next
+- Use consistent naming for dark variants
+- Document any custom dark mode logic
+
+### Performance:
+- Use CSS transitions for smooth theme changes
+- Avoid unnecessary re-renders
+- Optimize ThemeContext
+- Use React.memo for expensive components
+
+### Accessibility:
+- Test with keyboard navigation
+- Test with screen readers
+- Verify color contrast
+- Ensure focus states are visible
+
+### Testing:
+- Test on real devices, not just browser DevTools
+- Test with different screen sizes
+- Test with different browsers
+- Test edge cases (no localStorage, invalid values, etc.)
+
+---
+
+## 📚 Reference Links
+
+### Tailwind Dark Mode:
+- https://tailwindcss.com/docs/dark-mode
+
+### Color Contrast Checker:
+- https://webaim.org/resources/contrastchecker/
+
+### WCAG Guidelines:
+- https://www.w3.org/WAI/
