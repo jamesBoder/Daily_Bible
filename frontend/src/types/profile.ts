@@ -108,7 +108,7 @@ export interface UserActivityResponse {
 
 export interface UpdateUserSettingsRequest {
     darkMode?: boolean;
-    emailNotifications?: boolean;
+    notificationsEnabled?: boolean;
 }
 
 export interface UpdateUserSettingsResponse {

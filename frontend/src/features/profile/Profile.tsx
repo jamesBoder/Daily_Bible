@@ -86,7 +86,7 @@ export const Profile: React.FC = () => {
         </Card>
       )}
 
-      {user && <StatsCard userId={user.id.toString()} />}
+      {user && <StatsCard />}
     </div>
   );
 };
