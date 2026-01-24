@@ -319,16 +319,46 @@ For each component, add `dark:` variants to:
    - Success message: `bg-green-100` → `bg-green-100 dark:bg-green-900/20`
 
 6. **Profile Components** (Profile.tsx, ProfileEditForm.tsx, AccountManagement.tsx, StatsCard.tsx)
-   - Update all text colors
-   - Update form inputs
-   - Update card backgrounds
-   - Update borders
+   
+   **Profile.tsx:**
+   - Labels: `text-gray-500` → `text-gray-500 dark:text-gray-400`
+   - Values: `text-lg` → `text-lg dark:text-gray-200`
+   
+   **ProfileEditForm.tsx:**
+   - Labels: `text-gray-700` → `text-gray-700 dark:text-gray-300`
+   - Inputs: `border-gray-300` → `border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100`
+   - Error text: `text-red-500` → `text-red-500 dark:text-red-400`
+   
+   **AccountManagement.tsx:**
+   - Title: `text-gray-900` → `text-gray-900 dark:text-gray-100`
+   - Description: `text-gray-600` → `text-gray-600 dark:text-gray-400`
+   - Error messages: `text-red-500` → `text-red-500 dark:text-red-400`
+   - Success messages: `text-green-500` → `text-green-500 dark:text-green-400`
+   - Warning box: `bg-red-50 border-red-200` → `bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800`
+   - Warning text: `text-red-800` → `text-red-800 dark:text-red-300`
+   - Danger zone title: `text-red-600` → `text-red-600 dark:text-red-400`
+   
+   **StatsCard.tsx:**
+   - Card title: `text-gray-900` → `text-gray-900 dark:text-gray-100`
+   - Stat labels: `text-gray-600` → `text-gray-600 dark:text-gray-400`
+   - Stat values: `text-gray-900` → `text-gray-900 dark:text-gray-100`
+   - Icons: `text-primary-600` → `text-primary-600 dark:text-primary-400`
 
 7. **Auth Components** (Login.tsx, Signup.tsx)
-   - Form backgrounds
-   - Input fields
-   - Error messages
-   - Links
+   
+   **Login.tsx:**
+   - Page title: `text-gray-900` → `text-gray-900 dark:text-gray-100`
+   - Subtitle: `text-gray-600` → `text-gray-600 dark:text-gray-400`
+   - Error box: `bg-red-50 border-red-200 text-red-700` → `bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300`
+   - Footer text: `text-gray-600` → `text-gray-600 dark:text-gray-400`
+   - Link: `text-primary-600 hover:text-primary-700` → `text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300`
+   
+   **Signup.tsx:**
+   - Page title: `text-gray-900` → `text-gray-900 dark:text-gray-100`
+   - Subtitle: `text-gray-600` → `text-gray-600 dark:text-gray-400`
+   - Error box: `bg-red-50 border-red-200 text-red-700` → `bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800 text-red-700 dark:text-red-300`
+   - Footer text: `text-gray-600` → `text-gray-600 dark:text-gray-400`
+   - Link: `text-primary-600 hover:text-primary-700` → `text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300`
 
 ---
 

@@ -50,10 +50,10 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-6">
-      {error && <div className="text-red-500">{error}</div>}
+      {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
           Username
         </label>
         <input
@@ -61,19 +61,19 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           name="username"
           value={profileData.username || ""}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          className="mt-1 block w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-md p-2"
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700">Email</label>
+        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
         <input
           type="email"
           name="email"
           value={profileData.email || ""}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 rounded-md p-2"
+          className="mt-1 block w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-md p-2"
           required
         />
       </div>
