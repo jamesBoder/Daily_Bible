@@ -83,14 +83,14 @@ export const Settings: React.FC = () => {
       <h1 className="text-3xl font-bold">Settings</h1>
 
       {/* Tab Navigation */}
-      <div className="border-b border-gray-200">
+      <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
         <nav className="-mb-px flex space-x-8">
           <button
             onClick={() => setActiveTab("profile")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === "profile"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
             }`}
           >
             Profile
@@ -99,8 +99,8 @@ export const Settings: React.FC = () => {
             onClick={() => setActiveTab("preferences")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === "preferences"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
             }`}
           >
             Preferences
@@ -109,8 +109,8 @@ export const Settings: React.FC = () => {
             onClick={() => setActiveTab("account")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === "account"
-                ? "border-blue-500 text-blue-600"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
             }`}
           >
             Account Management
@@ -119,7 +119,7 @@ export const Settings: React.FC = () => {
       </div>
 
       {successMessage && (
-        <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded">
+        <div className="bg-green-100 dark:bg-green-900/20 border border-green-400 text-green-700 px-4 py-3 rounded">
           {successMessage}
         </div>
       )}
@@ -143,7 +143,7 @@ export const Settings: React.FC = () => {
                 <h2 className="text-2xl font-bold mb-4">Profile Information</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Username
                     </label>
                     <p className="mt-1 text-lg text-gray-900">
@@ -151,7 +151,7 @@ export const Settings: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Email
                     </label>
                     <p className="mt-1 text-lg text-gray-900">
@@ -159,7 +159,7 @@ export const Settings: React.FC = () => {
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                       Member Since
                     </label>
                     <p className="mt-1 text-lg text-gray-900">
@@ -270,13 +270,13 @@ export const Settings: React.FC = () => {
           <Card>
             <h2 className="text-2xl font-bold mb-4">Language</h2>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preferred Language
               </label>
               <select
                 value={settings.language}
                 onChange={handleLanguageChange}
-                className="block w-full border border-gray-300 rounded-md p-2"
+                className="block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2"
               >
                 <option value="en">English</option>
                 <option value="es">Spanish</option>
