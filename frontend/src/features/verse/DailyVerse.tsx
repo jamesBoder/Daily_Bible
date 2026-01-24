@@ -14,8 +14,8 @@ export const DailyVerse: React.FC = () => {
   if (error) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-red-50 border border-red-200 rounded-lg p-6 text-center">
-          <p className="text-red-700 mb-4">{error}</p>
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+          <p className="text-red-700 dark:text-red-400 mb-4">{error}</p>
           <Button onClick={refetch} variant="primary">
             Try Again
           </Button>
@@ -27,8 +27,10 @@ export const DailyVerse: React.FC = () => {
   if (!verse) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-gray-50 border border-gray-200 rounded-lg p-6 text-center">
-          <p className="text-gray-700">No verse available today</p>
+        <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
+          <p className="text-gray-700 dark:text-gray-400">
+            No verse available today
+          </p>
         </div>
       </div>
     );
@@ -37,7 +39,9 @@ export const DailyVerse: React.FC = () => {
   return (
     <div className="max-w-2xl mx-auto px-4 py-8">
       <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Today's Verse</h1>
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-primary-900 mb-2">
+          Today's Verse
+        </h1>
         <p className="text-gray-600">
           {new Date().toLocaleDateString("en-US", {
             weekday: "long",

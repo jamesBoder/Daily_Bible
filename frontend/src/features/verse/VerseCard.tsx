@@ -66,24 +66,26 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   return (
     <Card className="relative">
       {/* Decorative quote mark */}
-      <div className="absolute top-4 left-4 text-6xl text-primary-100 font-serif">
+      <div className="absolute top-4 left-4 text-6xl text-primary-100 dark:text-primary-900 font-serif">
         "
       </div>
 
       {/* Verse text */}
       <div className="relative z-10 mb-6">
-        <p className="text-xl md:text-2xl text-gray-800 font-serif leading-relaxed text-center px-8 py-4">
+        <p className="text-xl md:text-2xl text-gray-800 dark:text-gray-100 font-serif leading-relaxed text-center px-8 py-4">
           {verse.text}
         </p>
       </div>
 
       {/* Reference */}
       <div className="text-center mb-6">
-        <p className="text-lg font-semibold text-primary-700">
+        <p className="text-lg font-semibold text-primary-700 dark:text-primary-400">
           {verse.reference}
         </p>
         {verse.version && (
-          <p className="text-sm text-gray-500 mt-1">{verse.version}</p>
+          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+            {verse.version}
+          </p>
         )}
       </div>
 
