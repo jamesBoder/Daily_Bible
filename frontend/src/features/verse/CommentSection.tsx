@@ -97,10 +97,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   return (
     <div className="mt-6 border-t border-gray-200 pt-6">
-      <h3 className="text-lg font-semibold text-gray-900 mb-3">Notes</h3>
+      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+        Notes
+      </h3>
 
       {error && (
-        <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
+        <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
           {error}
         </div>
       )}
@@ -146,7 +148,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               Delete
             </button>
           </div>
-          <p className="text-xs text-gray-500 mt-2">
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
             Last updated: {new Date(comment.updated_at).toLocaleDateString()}
           </p>
         </div>
@@ -158,12 +160,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Add your personal thoughts, reflections, or prayers about this verse..."
-            className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+            className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
             rows={4}
             maxLength={1000}
           />
           <div className="flex justify-between items-center mt-2">
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-gray-500 dark:text-gray-400">
               {commentText.length}/1000 characters
             </span>
             <div className="flex gap-2">
