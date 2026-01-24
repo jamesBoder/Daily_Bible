@@ -6,9 +6,9 @@ import { StatsCard } from "./StatsCard";
 import { useAuth } from "../../hooks/useAuth";
 import { profileService } from "../../services/api/profile";
 import { UserProfile } from "../../types/profile";
+import { useTheme } from "../../contexts/ThemeContext";
 
 interface SettingsState {
-  darkMode: boolean;
   emailNotifications: boolean;
   dailyVerseReminder: boolean;
   language: string;
@@ -23,13 +23,14 @@ export const Settings: React.FC = () => {
   const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(true);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [settings, setSettings] = useState<SettingsState>({
-    darkMode: false,
     emailNotifications: true,
     dailyVerseReminder: true,
     language: "en",
   });
+
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  const { isDarkMode, toggleTheme } = useTheme();
 
   // Fetch profile data
   useEffect(() => {
@@ -80,7 +81,7 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-bold">Settings</h1>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Settings</h1>
 
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
@@ -189,25 +190,21 @@ export const Settings: React.FC = () => {
 
           {/* Appearance Settings */}
           <Card>
-            <h2 className="text-2xl font-bold mb-4">Appearance</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Appearance</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold">Dark Mode</h3>
+                  <h3 className="font-bold">Dark Mode</h3>
                   <p className="text-sm text-gray-600">
                     Use dark theme throughout the app
                   </p>
                 </div>
                 <button
-                  onClick={() => handleToggle("darkMode")}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    settings.darkMode ? "bg-blue-600" : "bg-gray-300"
-                  }`}
+                  onClick={() => toggleTheme()}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isDarkMode ? "bg-blue-600" : "bg-gray-300"}`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.darkMode ? "translate-x-6" : "translate-x-1"
-                    }`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isDarkMode ? "translate-x-6" : "translate-x-1"}`}
                   />
                 </button>
               </div>
@@ -216,7 +213,7 @@ export const Settings: React.FC = () => {
 
           {/* Notification Settings */}
           <Card>
-            <h2 className="text-2xl font-bold mb-4">Notifications</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100">Notifications</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -243,7 +240,7 @@ export const Settings: React.FC = () => {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold">Daily Verse Reminder</h3>
+                  <h3 className="font-bold">Daily Verse Reminder</h3>
                   <p className="text-sm text-gray-600">
                     Get reminded to read your daily verse
                   </p>
@@ -268,7 +265,7 @@ export const Settings: React.FC = () => {
 
           {/* Language Settings */}
           <Card>
-            <h2 className="text-2xl font-bold mb-4">Language</h2>
+            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Language</h2>
             <div>
               <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                 Preferred Language

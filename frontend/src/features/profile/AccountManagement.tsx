@@ -121,11 +121,15 @@ export const AccountManagement: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-bold">Account Management</h1>
+      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+        Account Management
+      </h1>
 
       {/* Change Password */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4">Change Password</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-300">
+          Change Password
+        </h2>
         <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400 mb-4">
           Update your password to keep your account secure.
         </p>
@@ -137,7 +141,9 @@ export const AccountManagement: React.FC = () => {
         ) : (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             {passwordError && (
-              <div className="text-red-500 dark:text-gray-400 text-sm">{passwordError}</div>
+              <div className="text-red-500 dark:text-gray-400 text-sm">
+                {passwordError}
+              </div>
             )}
             {passwordSuccess && (
               <div className="text-green-500 dark:text-green-400 text-sm">
@@ -195,7 +201,7 @@ export const AccountManagement: React.FC = () => {
 
       {/* Export Data */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4">Export Your Data</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300">Export Your Data</h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Download all your data including favorites, history, and comments.
         </p>
@@ -206,7 +212,9 @@ export const AccountManagement: React.FC = () => {
 
       {/* Delete Account */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4 text-red-600">Danger Zone</h2>
+        <h2 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-400">
+          Danger Zone
+        </h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           <strong>Warning:</strong> This action is irreversible. All your data
           will be permanently deleted.
@@ -222,11 +230,13 @@ export const AccountManagement: React.FC = () => {
         ) : (
           <div className="space-y-4">
             {deleteError && (
-              <div className="text-red-500 dark:text-gray-400 text-sm">{deleteError}</div>
+              <div className="text-red-500 dark:text-gray-400 text-sm">
+                {deleteError}
+              </div>
             )}
 
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 rounded p-4">
-              <p className="font-semibold text-red-800 mb-2">
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-4">
+              <p className="font-semibold text-red-800 dark:text-red-300 mb-2">
                 Are you absolutely sure?
               </p>
               <p className="text-sm text-red-700 mb-4">

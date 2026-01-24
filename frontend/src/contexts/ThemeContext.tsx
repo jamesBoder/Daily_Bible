@@ -5,7 +5,7 @@ import React from "react";
 import { useState, useEffect, ReactNode } from "react";
 
 // init interface for ThemeContextType
-interface ThemeContextType {
+export interface ThemeContextType {
   isDarkMode: boolean;
   toggleTheme: () => void;
 }
@@ -32,6 +32,15 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
     }
   }, []);
 
+  // Apply dark mode class to document element
+  useEffect(() => {
+    if (isDarkMode) {
+      document.documentElement.classList.add("dark");
+    } else {
+      document.documentElement.classList.remove("dark");
+    }
+  }, [isDarkMode]);
+
   // Toggle theme and save preference to localStorage
   const toggleTheme = () => {
     setIsDarkMode((prevMode) => {
@@ -46,4 +55,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
       {children}
     </ThemeContext.Provider>
   );
+};
+
+// useTheme hook
+// Custom hook to use the ThemeContext
+export const useTheme = (): ThemeContextType => {
+  const context = React.useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("useTheme must be used within a ThemeProvider");
+  }
+  return context;
 };
