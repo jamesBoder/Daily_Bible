@@ -12,7 +12,7 @@ import (
 )
 
 type User struct {
-    // GORM base fields (add these at the top)
+    // GORM base fields for ID, timestamps, and soft delete
     ID        uint           `gorm:"primaryKey" json:"id"`
     CreatedAt time.Time      `json:"created_at"`
     UpdatedAt time.Time      `json:"updated_at"`
@@ -22,6 +22,12 @@ type User struct {
     Email    string `gorm:"uniqueIndex;not null" json:"email"`
     Username string `gorm:"size:50" json:"username"`
     Password string `gorm:"not null" json:"-"`
+
+    // Google OAuth fields
+    GoogleID       string `gorm:"uniqueIndex" json:"google_id,omitempty"`    // Unique index for Google ID
+    GoogleEmail    string `json:"google_email,omitempty"` // Email from Google
+    GooglePicture  string `json:"google_picture,omitempty"` // Profile picture URL from Google
+    IsGoogleLinked bool   `gorm:"default:false" json:"is_google_linked"`  // Flag to indicate if Google account is linked
     
     // Relationships (if you want to preload)
     Favorites []Favorite `gorm:"foreignKey:UserID" json:"favorites,omitempty"`
