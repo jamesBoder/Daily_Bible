@@ -21,7 +21,7 @@ type User struct {
     // Your existing fields (add GORM tags)
     Email    string `gorm:"uniqueIndex;not null" json:"email"`
     Username string `gorm:"size:50" json:"username"`
-    Password string `gorm:"not null" json:"-"`
+    Password string `gorm: json:"-"`
 
     // Google OAuth fields
     GoogleID       string `gorm:"uniqueIndex" json:"google_id,omitempty"`    // Unique index for Google ID
@@ -62,6 +62,17 @@ func (u *User) CheckPassword(pwd string) bool {
 
 // create BeforeCreate hook to hash password
 func (u *User) BeforeCreate(tx *gorm.DB) error {
+    // check if password is empty
+    if u.Password == "" {
+        return errors.New("password cannot be empty")
+    }
+
+    // skip hashing for Oauth users
+    if u.GoogleID != "" {
+        return nil
+    }
+    
+
     // call SetPassword to hash password before creating user
     return u.SetPassword(u.Password)
 }

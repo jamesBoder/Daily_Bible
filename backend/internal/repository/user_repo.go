@@ -15,7 +15,11 @@ type UserRepository interface {
     GetByUsername(username string) (*models.User, error)
     Update(user *models.User) error
     Delete(id uint) error
-    List(limit, offset int) ([]models.User, error)  }
+    List(limit, offset int) ([]models.User, error)
+    GetByGoogleID(googleID string) (*models.User, error)
+    UpdateGoogleInfor (userId uint, googleID, email, picture string) error
+    RemoveGoogleLink(userId uint) error
+  }
 
 // define the struct that implements UserRepository
 type userRepository struct {

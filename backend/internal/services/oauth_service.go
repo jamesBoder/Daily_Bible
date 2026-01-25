@@ -11,7 +11,7 @@ import (
 	"dailybible/internal/models"
 	"dailybible/internal/repository"
 	"golang.org/x/oauth2"
-	"io/ioutil"
+	"io"
 )
 
 // init OAuthService
@@ -19,6 +19,15 @@ type OAuthService struct {
 	userRepo       repository.UserRepository
 	tokenService    *TokenService
 	oauthConfig   *oauth2.Config
+}
+
+// constructor
+type NewOAuthService(userRepo repository.UserRepository, tokenService *TokenService) *OAuthService {
+	return &OAuthService{
+		userRepo:     userRepo,
+		tokenService:  tokenService,
+		oauthConfig: config.GoogleOAuthConfig(),
+	}
 }
 
 // GetGoogleLoginURL generates URL to redirect user to Google OAuth consent page
@@ -66,6 +75,7 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, error) {
 		// Create new user
 		user = &models.User{
 			Email:         googleUser.Email,
+			Username:	  googleUser.Email, 
 			GoogleID:      googleUser.ID,
 			GoogleEmail:   googleUser.Email,
 			GooglePicture: googleUser.Picture,
