@@ -3,7 +3,6 @@
 // imports
 import React, { useEffect, useState } from "react";
 import { profileService } from "../../services/api/profile";
-import { useAuth } from "../../hooks/useAuth";
 
 // StatsCard component
 //- Total Verses Read
@@ -16,7 +15,6 @@ import { useAuth } from "../../hooks/useAuth";
 //- Beautiful card layout
 
 export const StatsCard: React.FC = () => {
-  const { user } = useAuth();
   const [stats, setStats] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -38,37 +36,65 @@ export const StatsCard: React.FC = () => {
   }, []);
 
   if (isLoading) {
-    return <div>Loading stats...</div>;
+    return (
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+        <div className="text-gray-600 dark:text-gray-300">Loading stats...</div>
+      </div>
+    );
   }
 
   if (error) {
-    return <div className="text-red-500">Error: {error}</div>;
+    return (
+      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+        <div className="text-red-500">Error: {error}</div>
+      </div>
+    );
   }
 
   return (
-    <div className="bg-white  shadow-md rounded-lg p-6">
-      <h2 className="text-2xl font-bold mb-4">Your Statistics</h2>
+    <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
+        Your Statistics
+      </h2>
       {stats ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="p-4 bg-gray-100 rounded-lg text-center">
-            <h3 className="text-lg font-semibold">Total Verses Read</h3>
-            <p className="text-3xl">{stats.totalVersesRead}</p>
+          <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg text-center border border-blue-200 dark:border-blue-800">
+            <h3 className="text-sm font-semibold text-blue-700 dark:text-blue-300 mb-2">
+              Verses Read
+            </h3>
+            <p className="text-4xl font-bold text-blue-900 dark:text-blue-100">
+              {stats.history_count || 0}
+            </p>
           </div>
-          <div className="p-4 bg-gray-100 rounded-lg text-center">
-            <h3 className="text-lg font-semibold">Daily Reading Streak</h3>
-            <p className="text-lg">{stats.dailyStreak} days</p>
+          <div className="p-4 bg-red-50 dark:bg-red-900/20 rounded-lg text-center border border-red-200 dark:border-red-800">
+            <h3 className="text-sm font-semibold text-red-700 dark:text-red-300 mb-2">
+              Favorites
+            </h3>
+            <p className="text-4xl font-bold text-red-900 dark:text-red-100">
+              {stats.favorite_count || 0}
+            </p>
           </div>
-          <div className="p-4 bg-gray-100 rounded-lg text-center">
-            <h3 className="text-lg font-semibold">Favorites Count</h3>
-            <p className="text-3xl">{stats.favoritesCount}</p>
+          <div className="p-4 bg-green-50 dark:bg-green-900/20 rounded-lg text-center border border-green-200 dark:border-green-800">
+            <h3 className="text-sm font-semibold text-green-700 dark:text-green-300 mb-2">
+              Notes
+            </h3>
+            <p className="text-4xl font-bold text-green-900 dark:text-green-100">
+              {stats.comment_count || 0}
+            </p>
           </div>
-          <div className="p-4 bg-gray-100 rounded-lg text-center">
-            <h3 className="text-lg font-semibold">Notes Taken</h3>
-            <p className="text-3xl">{stats.notesCount}</p>
+          <div className="p-4 bg-purple-50 dark:bg-purple-900/20 rounded-lg text-center border border-purple-200 dark:border-purple-800">
+            <h3 className="text-sm font-semibold text-purple-700 dark:text-purple-300 mb-2">
+              Days Active
+            </h3>
+            <p className="text-4xl font-bold text-purple-900 dark:text-purple-100">
+              {stats.account_age_days || 0}
+            </p>
           </div>
         </div>
       ) : (
-        <p>No statistics available.</p>
+        <p className="text-gray-600 dark:text-gray-400">
+          No statistics available.
+        </p>
       )}
     </div>
   );

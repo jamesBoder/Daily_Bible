@@ -121,13 +121,9 @@ export const AccountManagement: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-        Account Management
-      </h1>
-
       {/* Change Password */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-300">
+        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300">
           Change Password
         </h2>
         <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400 mb-4">
@@ -201,7 +197,9 @@ export const AccountManagement: React.FC = () => {
 
       {/* Export Data */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300">Export Your Data</h2>
+        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300">
+          Export Your Data
+        </h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
           Download all your data including favorites, history, and comments.
         </p>

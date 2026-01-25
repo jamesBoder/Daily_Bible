@@ -141,7 +141,7 @@ export const Settings: React.FC = () => {
             <div className="space-y-6">
               {/* Profile Information Card */}
               <Card>
-                <h2 className="text-2xl font-bold mb-4">Profile Information</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-gray-600 dark:text-gray-300">Profile Information</h2>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -190,11 +190,11 @@ export const Settings: React.FC = () => {
 
           {/* Appearance Settings */}
           <Card>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Appearance</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100">Appearance</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold">Dark Mode</h3>
+                  <h3 className="font-semibold">Dark Mode</h3>
                   <p className="text-sm text-gray-600">
                     Use dark theme throughout the app
                   </p>
@@ -240,7 +240,7 @@ export const Settings: React.FC = () => {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold">Daily Verse Reminder</h3>
+                  <h3 className="font-semibold">Daily Verse Reminder</h3>
                   <p className="text-sm text-gray-600">
                     Get reminded to read your daily verse
                   </p>
@@ -265,9 +265,9 @@ export const Settings: React.FC = () => {
 
           {/* Language Settings */}
           <Card>
-            <h2 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Language</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100">Language</h2>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Preferred Language
               </label>
               <select
