@@ -23,6 +23,9 @@ export const API_ENDPOINTS = {
 
   // Profile
   PROFILE: '/api/profile',
+
+  // OAuth
+  AUTH: '/api/oauth',
 };
 
 export const STORAGE_KEYS = {
