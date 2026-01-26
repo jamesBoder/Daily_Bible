@@ -2,10 +2,11 @@ package handlers
 
 import (
 	"net/http"
-	"crypto/rand"
-	"dailybible/internal/models"
+	"fmt"
 
+	"os"
 	"dailybible/internal/services"
+	"dailybible/internal/utils"
 	"github.com/gin-gonic/gin"
 
 )
@@ -25,16 +26,17 @@ func NewOAuthHandler(oauthService *services.OAuthService) *OAuthHandler {
 // GoogleLogin - redirect to Google OAuth, generate state token. endpoint: /api/auth/google/login
 func (h *OAuthHandler) GoogleLogin(c *gin.Context) {
 	//  Generate a random state string using crypto/rand for security
-	state := make([]byte, 16)
-	_, err := rand.Read(state)
+	state, err := utils.GenerateStateToken()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate state token"})
 		return
 	}
-	stateStr := fmt.Sprintf("%x", state)
+
+	// Store state token for validation
+	utils.StoreState(state)
 
 	// Get Google OAuth URL
-	url := h.oauthService.GetGoogleLoginURL(stateStr)
+	url := h.oauthService.GetGoogleLoginURL(state)
 
 	// Redirect to Google OAuth consent page
 	c.Redirect(http.StatusTemporaryRedirect, url)
@@ -44,48 +46,95 @@ func (h *OAuthHandler) GoogleLogin(c *gin.Context) {
 func (h *OAuthHandler) GoogleCallback(c *gin.Context) {
 	// Get state from query params  
 	state := c.Query("state")
+	code := c.Query("code")
 
-	// validate state here 
-	_ = state // Placeholder for state validation
+	// Validate state token
+	if !utils.ValidateState(state) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired state token"})
+		return
+	}
 
 	// Get code from query params
-	code := c.Query("code")
 	if code == "" {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Code not found in callback"})
 		return
 	}
 
 	// Handle Google OAuth callback
-	user, err := h.oauthService.HandleGoogleCallback(code)
+	_, token, err := h.oauthService.HandleGoogleCallback(code)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to handle Google callback: " + err.Error()})
 		return
 	}
 
-	// generate JWT using token service
-	token, err := h.oauthService.tokenService.GenerateToken(user.ID)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
-		return
+	// Get frontend URL from environment variables
+	frontendURL := os.Getenv("FRONTEND_URL")
+	if frontendURL == "" {
+		frontendURL = "http://localhost:3000" // default to localhost if not set
 	}
 
-	// return token and user info to frontend
-	c.JSON(http.StatusOK, gin.H{
-		"token": token,
-		"user":  user,
-	})
+	// Redirect to frontend with token
+	redirectURL := fmt.Sprintf("%s/auth/google/callback?token=%s", frontendURL, token)
+    c.Redirect(http.StatusTemporaryRedirect, redirectURL)
 
 }
 
 // LinkGoogle - link Google account to existing user. endpoint: /api/auth/google/link requires authentication
 func (h *OAuthHandler) LinkGoogle(c *gin.Context) {
-	// Implementation for linking Google account to existing user
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "LinkGoogle not implemented yet"})
 	
+	// get authecticated user ID from context 
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// Get Google aurthorization code from request body
+	var req struct {
+		Code string `json:"code" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request: " + err.Error()})
+		return
+	}
+
+	// exchange code for Google user info
+	user, _, err := h.oauthService.HandleGoogleCallback(req.Code)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to handle Google callback: " + err.Error()})
+	}
+
+	// verify the Google accoutn isn't already linked to another user 
+	if user.ID != userID.(uint) {
+		c.JSON(http.StatusConflict, gin.H{"error": "Google account already linked to another user"})
+		return
+	}
+
+	// return success response JSON
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Google account linked successfully",
+		"user":    user,
+	})
 }
 
 // UnlinkGoogle - unlink Google account from existing user. endpoint: /api/auth/google/unlink requires authentication
 func (h *OAuthHandler) UnlinkGoogle(c *gin.Context) {
-	// removes google ID from user  
-	c.JSON(http.StatusNotImplemented, gin.H{"message": "UnlinkGoogle not implemented yet"})
+	// Get authenticated user ID from context
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// Unlink Google account
+	if err := h.oauthService.UnlinkGoogleAccount(userID.(uint)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to unlink Google account: " + err.Error()})
+		return
+	}
+
+	// Return success response JSON
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Google account unlinked successfully",
+	})
 }
+

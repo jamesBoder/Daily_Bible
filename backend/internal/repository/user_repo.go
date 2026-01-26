@@ -17,7 +17,7 @@ type UserRepository interface {
     Delete(id uint) error
     List(limit, offset int) ([]models.User, error)
     GetByGoogleID(googleID string) (*models.User, error)
-    UpdateGoogleInfor (userID uint, googleID, email, picture string) error
+    UpdateGoogleInfo (userID uint, googleID, email, picture string) error
     RemoveGoogleLink(userID uint) error
   }
 

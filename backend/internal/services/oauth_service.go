@@ -7,10 +7,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"net/http"
+	"errors"
 	"strings"
 
-	"dailybible/internal/config"
+	
 	"dailybible/internal/models"
 	"dailybible/internal/repository"
 	"golang.org/x/oauth2"

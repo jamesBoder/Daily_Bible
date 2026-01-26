@@ -63,13 +63,15 @@ func main() {
     favoriteRepo := repository.NewFavoriteRepository(db)
     historyRepo := repository.NewHistoryRepository(db)
     commentRepo := repository.NewCommentRepository(db)
+    googleOAuthConfig := config.GoogleOAuthConfig()
     
     
     // 5. Initialize services
     authService := services.NewAuthService(userRepo)
+    tokenService := services.NewTokenService(cfg)
+    oauthService := services.NewOAuthService(userRepo, tokenService, googleOAuthConfig)
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo, verseRepo)
-    tokenService := services.NewTokenService(cfg)
     bibleAPIService := services.NewBibleAPIService(
         cfg.BibleAPIKey,
         cfg.BibleAPIBaseURL,
@@ -134,6 +136,11 @@ func main() {
         commentRepo,
         validate, // validator can be added later
     )
+
+    // init oauthHandler variable
+    oauthHandler := handlers.NewOAuthHandler(
+        oauthService,
+    )
     
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
@@ -164,7 +171,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
