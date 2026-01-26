@@ -64,7 +64,7 @@ func (u *User) CheckPassword(pwd string) bool {
 func (u *User) BeforeCreate(tx *gorm.DB) error {
     // check if password is empty
     if u.Password == "" {
-        return errors.New("password cannot be empty")
+        return u.SetPassword(u.Password)
     }
 
     // skip hashing for Oauth users
@@ -73,12 +73,16 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
     }
     
 
-    // call SetPassword to hash password before creating user
-    return u.SetPassword(u.Password)
+    // hash password before creating user
+    return nil
 }
 
 // create BeforeUpdate hook to hash password
 func (u *User) BeforeUpdate(tx *gorm.DB) error {
+    // skip hashing for Oauth users
+    if u.Password == "" || u.GoogleID != "" {
+        return nil
+    }
     // Only hash password if it has been changed
     // This prevents re-hashing an already-hashed password when updating other fields
     if tx.Statement.Changed("Password") {
