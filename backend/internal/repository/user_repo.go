@@ -17,8 +17,8 @@ type UserRepository interface {
     Delete(id uint) error
     List(limit, offset int) ([]models.User, error)
     GetByGoogleID(googleID string) (*models.User, error)
-    UpdateGoogleInfor (userId uint, googleID, email, picture string) error
-    RemoveGoogleLink(userId uint) error
+    UpdateGoogleInfor (userID uint, googleID, email, picture string) error
+    RemoveGoogleLink(userID uint) error
   }
 
 // define the struct that implements UserRepository
@@ -82,4 +82,37 @@ func (r *userRepository) List(limit, offset int) ([]models.User, error) {
         return nil, err
     }
     return users, nil
+}
+
+// GetByGoogleID retrieves a user by their Google ID
+func (r *userRepository) GetByGoogleID(googleID string) (*models.User, error) {
+    var user models.User
+    err := r.db.Where("google_id = ?", googleID).First(&user).Error
+    if err == gorm.ErrRecordNotFound {
+        return nil, nil
+    }
+    if err != nil {
+        return nil, err
+    }
+    return &user, nil
+}
+
+// UpdateGoogleInfo updates the Google-related information for a user
+func (r *userRepository) UpdateGoogleInfo(userID uint, googleID, email, picture string) error {
+    return r.db.Model(&models.User{}).Where("id = ?", userID).Updates(map[string]interface{}{
+        "google_id": googleID,
+        "google_email":     email,
+        "google_picture":   picture,
+        "is_google_linked": true,
+    }).Error
+}
+
+// RemoveGoogleLink removes the Google link from a user's account
+func (r *userRepository) RemoveGoogleLink(userID uint) error {
+    return r.db.Model(&models.User{}).Where("id = ?", userID).Updates(map[string]interface{}{
+        "google_id":       "",
+        "google_email":    "",
+        "google_picture":  "",
+        "is_google_linked": false,
+    }).Error
 }
