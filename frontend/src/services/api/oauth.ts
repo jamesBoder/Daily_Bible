@@ -36,4 +36,15 @@ export const oauthService = {
     unlinkGoogle: async (): Promise<void> => {
         await apiClient.post(`${API_ENDPOINTS.AUTH}/google/unlink`);
     },
+
+    // exchange Google authorization code for token
+    exchangeGoogleCode: async (code: string, state: string): Promise<GoogleAuthResponse> => {
+        const response = await apiClient.post<GoogleAuthResponse>(`${API_ENDPOINTS.AUTH}/google/callback`, { code, state });
+        return response.data;
+    },
+
+    loginWithToken: async (token: string): Promise<GoogleAuthResponse> => {
+        const response = await apiClient.post<GoogleAuthResponse>(`${API_ENDPOINTS.AUTH}/token-login`, { token });
+        return response.data;
+    },
 }

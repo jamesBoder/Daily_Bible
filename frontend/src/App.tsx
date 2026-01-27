@@ -9,6 +9,7 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
 import { Login } from "./features/auth/Login";
 import { Signup } from "./features/auth/Signup";
+import { GoogleCallback } from "./features/auth/GoogleCallback";
 import { DailyVerse } from "./features/verse/DailyVerse";
 import { FavoritesList } from "./features/favorites/FavoritesList";
 import { HistoryList } from "./features/history/HistoryList";
@@ -26,6 +27,7 @@ function App() {
             {/* Public routes */}
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<Signup />} />
+            <Route path="/auth/google/callback" element={<GoogleCallback />} />
             {/* Protected routes with layout */}
             <Route
               path="/"

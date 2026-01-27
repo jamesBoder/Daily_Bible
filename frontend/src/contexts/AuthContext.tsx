@@ -1,14 +1,17 @@
 import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { User, LoginCredentials, SignupCredentials } from "../types/user";
-import { authService } from "../services/api/auth";
+import { authService } from "../services/api/authService";
+
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  setAuthToken: (token: string) => void;
   login: (credentials: LoginCredentials) => Promise<void>;
   signup: (credentials: SignupCredentials) => Promise<void>;
   logout: () => Promise<void>;
+  loginWithToken: (token: string) => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -78,6 +81,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const loginWithToken = async (token: string) => {
+    try {
+      const response = await authService.loginWithToken(token);
+      setUser(response.user);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
@@ -85,6 +97,9 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     signup,
     logout,
+    setAuthToken: authService.setAuthToken,
+    loginWithToken,
+
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -194,3 +194,4 @@ func (s *OAuthService) generateUsername(email string) (string, error) {
     
     return username, nil
 }
+

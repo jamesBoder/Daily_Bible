@@ -88,4 +88,25 @@ export const authService = {
     const userData = localStorage.getItem(USER_KEY);
     return userData ? JSON.parse(userData) : null;
   },
+
+  // Login with token
+  loginWithToken: async (token: string): Promise<AuthResponse> => {
+    const response = await apiClient.post<AuthResponse>(
+      '/api/auth/token-login',
+      { token }
+    );
+    
+    // Store token and user data
+    if (response.data.token) {
+      localStorage.setItem(TOKEN_KEY, response.data.token);
+      localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+    }
+    
+    return response.data;
+  },
+
+  // Set auth token manually
+  setAuthToken: (token: string): void => {
+    localStorage.setItem(TOKEN_KEY, token);
+  },
 };
