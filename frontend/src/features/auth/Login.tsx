@@ -4,6 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
 import { Card } from "../../components/common/Card";
+import GoogleLoginButton  from "../../components/common/GoogleLoginButton";
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -78,6 +79,15 @@ export const Login: React.FC = () => {
               Sign In
             </Button>
           </form>
+          <div className="my-6 flex items-center">
+            <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+            <span className="mx-4 text-gray-500 dark:text-gray-400">OR</span>
+            <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+          </div>
+          <GoogleLoginButton
+            mode="login"
+            onError={(err) => setError(err.message)}
+          />
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
