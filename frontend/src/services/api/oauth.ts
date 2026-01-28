@@ -3,7 +3,7 @@
 // imports 
 
 import apiClient from './client';
-import { API_ENDPOINTS } from '../../utils/constants';
+import { API_ENDPOINTS, API_BASE_URL } from '../../utils/constants';
 
 // export GoogleAuthResponse interface
 export interface GoogleAuthResponse {
@@ -23,7 +23,7 @@ export const oauthService = {
     // get Google OAuth login URL
     getGoogleLoginUrl: (): string => {
         // google oauth login
-        return `${API_ENDPOINTS.AUTH}/google/login`;
+        return `${API_BASE_URL}${API_ENDPOINTS.AUTH}/google/login`;
     },
 
     // link Google account

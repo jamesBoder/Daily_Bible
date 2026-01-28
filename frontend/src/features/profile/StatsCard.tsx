@@ -53,7 +53,7 @@ export const StatsCard: React.FC = () => {
 
   return (
     <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white">
+      <h2 className="text-2xl font-semibold mb-4 text-gray-800 dark:text-white text-center">
         Your Statistics
       </h2>
       {stats ? (

@@ -9,6 +9,11 @@ export interface User {
   username: string;
   created_at: string;
   updated_at: string;
+  // Google OAuth Fields
+  google_id?: string;
+  google_email?: string;
+  google_picture?: string;
+  is_google_linked?: boolean;
 }
 
 

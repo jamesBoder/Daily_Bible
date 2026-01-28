@@ -89,21 +89,23 @@ export const authService = {
     return userData ? JSON.parse(userData) : null;
   },
 
-  // Login with token
+  // Login with token (for OAuth)
   loginWithToken: async (token: string): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>(
-      '/api/auth/token-login',
-      { token }
-    );
+    // Store the token first
+    localStorage.setItem(TOKEN_KEY, token);
     
-    // Store token and user data
-    if (response.data.token) {
-      localStorage.setItem(TOKEN_KEY, response.data.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
-    }
+    // Fetch user data using the token
+    const user = await authService.getCurrentUser();
     
-    return response.data;
+    // Store user data
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+    
+    return {
+      token,
+      user
+    };
   },
+
 
   // Set auth token manually
   setAuthToken: (token: string): void => {

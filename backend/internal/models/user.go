@@ -62,20 +62,20 @@ func (u *User) CheckPassword(pwd string) bool {
 
 // create BeforeCreate hook to hash password
 func (u *User) BeforeCreate(tx *gorm.DB) error {
-    // check if password is empty
-    if u.Password == "" {
-        return u.SetPassword(u.Password)
-    }
-
-    // skip hashing for Oauth users
-    if u.GoogleID != "" {
+    // Skip password validation for OAuth users (they don't need a password)
+    if u.GoogleID != "" && u.Password == "" {
         return nil
     }
     
-
-    // hash password before creating user
-    return nil
+    // For non-OAuth users, password is required
+    if u.Password == "" {
+        return errors.New("password cannot be empty")
+    }
+    
+    // Hash the password
+    return u.SetPassword(u.Password)
 }
+
 
 // create BeforeUpdate hook to hash password
 func (u *User) BeforeUpdate(tx *gorm.DB) error {

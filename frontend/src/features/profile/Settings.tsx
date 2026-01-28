@@ -141,29 +141,29 @@ export const Settings: React.FC = () => {
             <div className="space-y-6">
               {/* Profile Information Card */}
               <Card>
-                <h2 className="text-2xl font-semibold mb-4 text-gray-600 dark:text-gray-300">Profile Information</h2>
+                <h2 className="text-2xl font-semibold mb-4 text-gray-600 dark:text-gray-300 text-center">Profile Information</h2>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
                       Username
                     </label>
-                    <p className="mt-1 text-lg text-gray-900">
+                    <p className="mt-1 text-lg text-gray-900 text-center">
                       {profile.username}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
                       Email
                     </label>
-                    <p className="mt-1 text-lg text-gray-900">
+                    <p className="mt-1 text-lg text-gray-900 text-center">
                       {profile.email}
                     </p>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
                       Member Since
                     </label>
-                    <p className="mt-1 text-lg text-gray-900">
+                    <p className="mt-1 text-lg text-gray-900 text-center">
                       {new Date(profile.created_at).toLocaleDateString(
                         "en-US",
                         {
@@ -181,7 +181,7 @@ export const Settings: React.FC = () => {
               <StatsCard />
             </div>
           ) : (
-            <div className="text-gray-600">No profile data available.</div>
+            <div className="text-gray-600 text-center">No profile data available.</div>
           )}
         </>
       ) : activeTab === "preferences" ? (
@@ -190,7 +190,7 @@ export const Settings: React.FC = () => {
 
           {/* Appearance Settings */}
           <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100">Appearance</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">Appearance</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -213,7 +213,7 @@ export const Settings: React.FC = () => {
 
           {/* Notification Settings */}
           <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100">Notifications</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">Notifications</h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -265,7 +265,7 @@ export const Settings: React.FC = () => {
 
           {/* Language Settings */}
           <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100">Language</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">Language</h2>
             <div>
               <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Preferred Language

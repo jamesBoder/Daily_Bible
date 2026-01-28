@@ -25,7 +25,7 @@ export const API_ENDPOINTS = {
   PROFILE: '/api/profile',
 
   // OAuth
-  AUTH: '/api/oauth',
+  AUTH: '/api/auth',
 };
 
 export const STORAGE_KEYS = {
