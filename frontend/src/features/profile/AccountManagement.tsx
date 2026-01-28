@@ -301,7 +301,7 @@ export const AccountManagement: React.FC = () => {
                     {user.google_email || user.email}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                    Connected on {new Date(user.updated_at).toLocaleDateString()}
+                    Connected on {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Recently'}
                   </p>
                 </div>
               </div>
