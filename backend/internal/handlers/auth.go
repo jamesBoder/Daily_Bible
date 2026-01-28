@@ -209,9 +209,15 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
-func Logout(c *gin.Context) {
-	c.Writer.WriteHeader(http.StatusNotImplemented)
-	c.Writer.Write([]byte("Logout endpoint - to be implemented"))
+// Logout handler - since JWT is stateless, we just return success
+// The client will remove the token from localStorage
+func (h *AuthHandler) Logout(c *gin.Context) {
+	// In a stateless JWT system, logout is handled client-side by removing the token
+	// If you want to implement token blacklisting, you would add the token to a blacklist here
+	
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Logged out successfully",
+	})
 }
 
 //init GetMe struct

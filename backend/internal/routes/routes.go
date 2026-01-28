@@ -25,7 +25,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 		{
 			 auth.POST("/register", authHandler.Register)
 			 auth.POST("/login", authHandler.Login)
-			 auth.POST("/logout", handlers.Logout)
+			 auth.POST("/logout", authHandler.Logout)
 			 // /me endpoint requires authentication
 			 auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
 			 // Google OAuth routes
