@@ -268,7 +268,7 @@ export const AccountManagement: React.FC = () => {
         {/* Google Account - LINKED */}
         {user?.is_google_linked ? (
           <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col items-center justify-center gap-4">
               <div className="flex items-center gap-3">
                 {/* Google Logo */}
                 <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200">
@@ -314,41 +314,41 @@ export const AccountManagement: React.FC = () => {
                   className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700"
                 />
               )}
-            </div>
 
-            {/* Unlink Button */}
-            {!showUnlinkConfirm ? (
-              <Button
-                onClick={() => setShowUnlinkConfirm(true)}
-                variant="secondary"
-                className="mt-4 text-sm"
-              >
-                Unlink Google Account
-              </Button>
-            ) : (
-              <div className="mt-4 p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
-                <p className="text-sm text-yellow-800 dark:text-yellow-300 mb-3">
-                  Are you sure you want to unlink your Google account? You'll need to
-                  use your email and password to log in.
-                </p>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleUnlinkGoogle}
-                    isLoading={isUnlinkingGoogle}
-                    className="bg-yellow-600 hover:bg-yellow-700 text-sm"
-                  >
-                    Yes, Unlink
-                  </Button>
-                  <Button
-                    onClick={() => setShowUnlinkConfirm(false)}
-                    variant="secondary"
-                    className="text-sm"
-                  >
-                    Cancel
-                  </Button>
+              {/* Unlink Button */}
+              {!showUnlinkConfirm ? (
+                <Button
+                  onClick={() => setShowUnlinkConfirm(true)}
+                  variant="secondary"
+                  className="text-sm"
+                >
+                  Unlink Google Account
+                </Button>
+              ) : (
+                <div className="w-full p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
+                  <p className="text-sm text-yellow-800 dark:text-yellow-300 mb-3 text-center">
+                    Are you sure you want to unlink your Google account? You'll need to
+                    use your email and password to log in.
+                  </p>
+                  <div className="flex gap-2 justify-center">
+                    <Button
+                      onClick={handleUnlinkGoogle}
+                      isLoading={isUnlinkingGoogle}
+                      className="bg-yellow-600 hover:bg-yellow-700 text-sm"
+                    >
+                      Yes, Unlink
+                    </Button>
+                    <Button
+                      onClick={() => setShowUnlinkConfirm(false)}
+                      variant="secondary"
+                      className="text-sm"
+                    >
+                      Cancel
+                    </Button>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
         ) : (
           /* Google Account - NOT LINKED */
