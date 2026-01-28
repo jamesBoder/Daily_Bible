@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { oauthService } from "../../services/api/oauth";
 
 export const AccountManagement: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
 
   // Password change state
@@ -132,14 +132,9 @@ export const AccountManagement: React.FC = () => {
     setGoogleError(null);
 
     try {
-      // Generate state token for CSRF protection
-      const state = Math.random().toString(36).substring(7);
-      sessionStorage.setItem("oauth_state", state);
-
-      // Redirect to backend OAuth endpoint
-      // Backend will redirect to Google, then back to /auth/google/callback
-      window.location.href =
-        oauthService.getGoogleLoginUrl() + `?state=${state}&mode=link`;
+      // Redirect to Google OAuth for linking
+      // This will use the standard OAuth flow
+      window.location.href = oauthService.getGoogleLoginUrl();
     } catch (error: any) {
       setGoogleError(error.message || "Failed to initiate Google linking");
       setIsLinkingGoogle(false);
@@ -159,14 +154,14 @@ export const AccountManagement: React.FC = () => {
       // Call API to unlink Google account
       await oauthService.unlinkGoogle();
 
+      // Refresh user data to show updated state
+      await refreshUser();
+
       // Show success message
       alert("Google account unlinked successfully");
 
       // Reset state
       setShowUnlinkConfirm(false);
-
-      // Refresh page to update user data
-      window.location.reload();
     } catch (error: any) {
       setGoogleError(error.message || "Failed to unlink Google account");
     } finally {

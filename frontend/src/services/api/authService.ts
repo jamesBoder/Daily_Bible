@@ -1,15 +1,10 @@
 import apiClient from './api';
+import { User } from '../../types/user';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
 
-export interface User {
-  id: number;
-  email: string;
-  username: string;
-  created_at: string;
-  updated_at: string;
-}
+
 
 export interface AuthResponse {
   token: string;
@@ -74,7 +69,7 @@ export const authService = {
 
   // Get current user
   getCurrentUser: async (): Promise<User> => {
-    const response = await apiClient.get<{ user: User }>('/api/auth/me');
+    const response = await apiClient.get<{"user": User}>('/api/auth/me');
     return response.data.user;
   },
 

@@ -20,7 +20,7 @@ func GenerateStateToken() (string, error) {
 // state storage
 var stateStore = make(map[string]time.Time)
 
-// StoreState saves a teken with an expiration time
+// StoreState saves a token with an expiration time
 func StoreState(state string)  {
 	stateStore[state] = time.Now().Add(10 * time.Minute) // valid for 10 minutes
 }

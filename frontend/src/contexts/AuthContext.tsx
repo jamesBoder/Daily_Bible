@@ -12,6 +12,7 @@ interface AuthContextType {
   signup: (credentials: SignupCredentials) => Promise<void>;
   logout: () => Promise<void>;
   loginWithToken: (token: string) => Promise<void>;
+  refreshUser: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -33,9 +34,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (authService.isAuthenticated()) {
           const storedUser = authService.getStoredUser();
           if (storedUser) {
-            setUser(storedUser);
-          } else {
-            // Fetch user data from API
             const currentUser = await authService.getCurrentUser();
             setUser(currentUser);
           }
@@ -90,6 +88,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }
   };
 
+  const refreshUser = async () => {
+    try {
+      if (authService.isAuthenticated()) {
+        const currentUser = await authService.getCurrentUser();
+        setUser(currentUser);
+      }
+    } catch (error) {
+      console.error("Failed to refresh user:", error);
+      throw error;
+    }
+  };
+
   const value = {
     user,
     isAuthenticated: !!user,
@@ -99,7 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     logout,
     setAuthToken: authService.setAuthToken,
     loginWithToken,
-
+    refreshUser,
   };
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

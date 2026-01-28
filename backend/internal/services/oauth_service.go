@@ -72,8 +72,9 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
     // Check if user exists by Google ID
     user, err := s.userRepo.GetByGoogleID(googleUser.ID)
     if err != nil {
-        return nil, "", fmt.Errorf("failed to get user by Google ID: %w", err)
+        return nil, "", fmt.Errorf("failed to check Google ID: %w", err)
     }
+
 
     if user != nil {
         // User exists, update their info
@@ -128,7 +129,7 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
 	
 
 // LinkGoogleAccount links a Google account to an existing user
-func (s *OAuthService) LinkGoogleAccount(userID uint, googleID string) error {
+func (s *OAuthService) LinkGoogleAccount(userID uint, googleID string, googleEmail string, google_picture string) error {
 	user, err := s.userRepo.GetByID(userID)
 	if err != nil {
 		return fmt.Errorf("failed to get user: %w", err)
@@ -137,12 +138,30 @@ func (s *OAuthService) LinkGoogleAccount(userID uint, googleID string) error {
 		return fmt.Errorf("user not found")
 	}
 
+    // check if Google ID is already linked to another account
+    existingUser, err := s.userRepo.GetByGoogleID(googleID)
+    if err != nil {
+        return fmt.Errorf("failed to check existing Google ID: %w", err)
+    }
+    if existingUser != nil && existingUser.ID != userID {
+    return fmt.Errorf("Google account already linked to another user")
+    }
+
+    
+
+    // link Google account
+
 	user.GoogleID = googleID
 	user.IsGoogleLinked = true
+    user.GoogleEmail = googleEmail
+    user.GooglePicture = google_picture
+
+
 
 	if err := s.userRepo.Update(user); err != nil {
 		return fmt.Errorf("failed to link Google account: %w", err)
 	}
+    
 
 	return nil
 }

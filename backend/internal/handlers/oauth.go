@@ -34,7 +34,7 @@ func (h *OAuthHandler) GoogleLogin(c *gin.Context) {
 
 	// Store state token for validation
 	utils.StoreState(state)
-
+	
 	// Get Google OAuth URL
 	url := h.oauthService.GetGoogleLoginURL(state)
 
@@ -75,21 +75,19 @@ func (h *OAuthHandler) GoogleCallback(c *gin.Context) {
 
 	// Redirect to frontend with token
 	redirectURL := fmt.Sprintf("%s/auth/google/callback?token=%s", frontendURL, token)
-    c.Redirect(http.StatusTemporaryRedirect, redirectURL)
-
+	c.Redirect(http.StatusTemporaryRedirect, redirectURL)
 }
 
 // LinkGoogle - link Google account to existing user. endpoint: /api/auth/google/link requires authentication
 func (h *OAuthHandler) LinkGoogle(c *gin.Context) {
-	
-	// get authecticated user ID from context 
+	// Get authenticated user ID from context 
 	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	// Get Google aurthorization code from request body
+	// Get Google authorization code from request body
 	var req struct {
 		Code string `json:"code" binding:"required"`
 	}
@@ -98,22 +96,24 @@ func (h *OAuthHandler) LinkGoogle(c *gin.Context) {
 		return
 	}
 
-	// exchange code for Google user info
-	user, _, err := h.oauthService.HandleGoogleCallback(req.Code)
+	// Exchange code for Google user info
+	googleUser, _, err := h.oauthService.HandleGoogleCallback(req.Code)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to handle Google callback: " + err.Error()})
-	}
-
-	// verify the Google accoutn isn't already linked to another user 
-	if user.ID != userID.(uint) {
-		c.JSON(http.StatusConflict, gin.H{"error": "Google account already linked to another user"})
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get Google user info: " + err.Error()})
 		return
 	}
 
-	// return success response JSON
+	// Link Google account to the authenticated user
+	err = h.oauthService.LinkGoogleAccount(userID.(uint), googleUser.GoogleID, googleUser.GoogleEmail, googleUser.GooglePicture)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to link Google account: " + err.Error()})
+		return
+	}
+
+	// Return success response JSON
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Google account linked successfully",
-		"user":    user,
+		"user":    googleUser,
 	})
 }
 
