@@ -24,10 +24,10 @@ type User struct {
     Password string `gorm: json:"-"`
 
     // Google OAuth fields
-    GoogleID       string `gorm:"uniqueIndex" json:"google_id,omitempty"`    // Unique index for Google ID
-    GoogleEmail    string `json:"google_email,omitempty"` // Email from Google
-    GooglePicture  string `json:"google_picture,omitempty"` // Profile picture URL from Google
-    IsGoogleLinked bool   `gorm:"default:false" json:"is_google_linked"`  // Flag to indicate if Google account is linked
+    GoogleID       string `gorm:"unique" json:"google_id,omitempty"`
+    GoogleEmail    string `json:"google_email,omitempty"`
+    GooglePicture  string `json:"google_picture,omitempty"`
+    IsGoogleLinked bool   `json:"is_google_linked"`
     
     // Relationships (if you want to preload)
     Favorites []Favorite `gorm:"foreignKey:UserID" json:"favorites,omitempty"`

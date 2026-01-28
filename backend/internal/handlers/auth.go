@@ -51,6 +51,10 @@ type UserResponse struct {
 	Email    string `json:"email"`
 	Username string `json:"username"`
 	CreatedAt time.Time `json:"created_at"`
+	GoogleID       string    `json:"google_id,omitempty"`
+    GoogleEmail    string    `json:"google_email,omitempty"`
+    GooglePicture  string    `json:"google_picture,omitempty"`
+    IsGoogleLinked bool      `json:"is_google_linked"`
 }
 
 // Register handler
@@ -122,6 +126,10 @@ func (h *AuthHandler) Register(c *gin.Context) {
 			Email:     newUser.Email,
 			Username:  newUser.Username,
 			CreatedAt: newUser.CreatedAt,
+			GoogleID:       newUser.GoogleID,
+			GoogleEmail:    newUser.GoogleEmail,
+			GooglePicture:  newUser.GooglePicture,
+			IsGoogleLinked: newUser.IsGoogleLinked,
 		},
 		Token: token,
 	}
@@ -142,6 +150,7 @@ type LoginRequest struct {
 type LoginResponse struct {
 	User  UserResponse `json:"user"`
 	Token string       `json:"token"`
+
 }
 
 func (h *AuthHandler) Login(c *gin.Context) {
@@ -189,6 +198,10 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			Email:     user.Email,
 			Username:  user.Username,
 			CreatedAt: user.CreatedAt,
+			GoogleID:       user.GoogleID,
+			GoogleEmail:    user.GoogleEmail,
+			GooglePicture:  user.GooglePicture,
+			IsGoogleLinked: user.IsGoogleLinked,
 		},
 		Token: token,
 	}
@@ -229,6 +242,10 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 			Email:     user.Email,
 			Username:  user.Username,
 			CreatedAt: user.CreatedAt,
+			GoogleID:       user.GoogleID,
+			GoogleEmail:    user.GoogleEmail,
+			GooglePicture:  user.GooglePicture,
+			IsGoogleLinked: user.IsGoogleLinked,
 		},
 	}
 
