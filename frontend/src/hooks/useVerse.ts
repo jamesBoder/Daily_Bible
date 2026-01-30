@@ -1,34 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Verse } from '../types/verse';
+import { useQuery } from '@tanstack/react-query';
 import { verseService } from '../services/api/verse';
 
 export const useVerse = () => {
-  const [verse, setVerse] = useState<Verse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  const fetchDailyVerse = async () => {
-    setIsLoading(true);
-    setError(null);
-    
-    try {
-      const data = await verseService.getDailyVerse();
-      setVerse(data);
-    } catch (err: any) {
-      setError(err.response?.data?.error || 'Failed to load verse');
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    fetchDailyVerse();
-  }, []);
+  const { data, isLoading, error, refetch } = useQuery({
+    queryKey: ['dailyVerse'],
+    queryFn: verseService.getDailyVerse,
+  });
 
   return {
-    verse,
+    verse: data ?? null,
     isLoading,
-    error,
-    refetch: fetchDailyVerse,
+    error: error?.message ?? null,
+    refetch,
   };
 };
