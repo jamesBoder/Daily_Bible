@@ -1,48 +1,109 @@
-// useHook
+// Custom hook for history management with React Query
 
 // imports
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { historyService } from '../services/api/history';
-import { HistoryEntry } from '../types/history';
+
 
 // useHistory hook
 export const useHistory = () => {
-    const [history, setHistory] = useState<HistoryEntry[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [error, setError] = useState<string | null>(null);
+    // local state for pagination and search
+    const [page, setPageState] = useState(1);
+    const [pageSize, setPageSizeState] = useState(20);
+    const [search, setSearchState] = useState<string | undefined>(undefined);
 
-    const fetchHistory = async (page = 1, pageSize = 20, search?: string) => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const data = await historyService.getHistory(page, pageSize, search);
-            setHistory(data.history);
-        } catch (err: any) {
-            setError(err.response?.data?.error || 'Failed to load history');
-        } finally {
-            setIsLoading(false);
+
+    const { data, isLoading, error, refetch } = useQuery({
+        queryKey: ['history', page, pageSize, search],
+
+        queryFn: () => historyService.getHistory(page, pageSize, search) // Pass params!
+    });
+
+    const queryClient = useQueryClient();
+
+    // clearMutation
+    const clearMutation = useMutation({
+        mutationFn: () => historyService.clearHistory(),
+        onSuccess: () => {
+            // Automatically refetch history list
+            queryClient.invalidateQueries({ queryKey: ['history'] });
         }
+    });
+
+    
+
+    // helper functions for pagination, setPage(newPage), setPageSize(newSize), setSearch(query)
+    const setPage = (newPage: number) => {
+        setPageState(newPage);
     };
 
-    const clearHistory = async () => {
-        try {
-            await historyService.clearHistory();
-            setHistory([]); // Clear local history state
-            return true;
-        } catch (err: any) {
-            throw new Error(err.response?.data?.error || 'Failed to clear history');
-        }
+    const setPageSize = (newSize: number) => {
+        setPageSizeState(newSize);
     };
 
-    useEffect(() => {
-        fetchHistory();
-    }, []);
+    const setSearch = (query: string | undefined) => {
+        setSearchState(query === '' ? undefined : query);
+        setPageState(1); // reset to first page on new search
+    };
 
+    const hasNextPage = data?.pagination ? page < data.pagination.total_pages : false;
+
+    const hasPreviousPage = page > 1;
+
+    const goToNextPage = () => {
+        if (hasNextPage) setPage(page + 1);
+    };
+
+    const goToPreviousPage = () => {
+        if (hasPreviousPage) setPage(page - 1);
+    };
+
+    const goToFirstPage = () => setPage(1);
+
+    const goToLastPage = () => {
+        if (data?.pagination) setPage(data.pagination.total_pages);
+    };
+
+    const fetchHistory = (newPage = 1, newPageSize = 20, newSearch?: string) => {
+        setPageState(newPage);
+        setPageSizeState(newPageSize);
+        setSearchState(newSearch);
+    };
+
+   
     return {
-        history,
+        history: data?.history ?? [],
+        pagination: data?.pagination ?? null,
+        totalItems: data?.pagination?.total ?? 0,
+        totalPages: data?.pagination?.total_pages ?? 0,
         isLoading,
-        error,
+        error: error?.message ?? null,
+        
+        // pagination state
+        page,
+        pageSize,
+        search,
+
+        // pagination controls
+        setPage,
+        setPageSize,
+        setSearch,
+
+        // clear history
+        clearHistory: () => clearMutation.mutateAsync(),
+        isClearing: clearMutation.isPending,
+
+        refetch,
         fetchHistory,
-        clearHistory,
+
+        hasNextPage,
+        hasPreviousPage,
+        goToNextPage,
+        goToPreviousPage,
+        goToFirstPage,
+        goToLastPage,
     };
+
+    
 };

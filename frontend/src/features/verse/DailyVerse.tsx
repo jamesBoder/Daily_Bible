@@ -16,7 +16,7 @@ export const DailyVerse: React.FC = () => {
       <div className="max-w-2xl mx-auto px-4 py-8">
         <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
           <p className="text-red-700 dark:text-red-400 mb-4">{error}</p>
-          <Button onClick={refetch} variant="primary">
+          <Button onClick={() => refetch()} variant="primary">
             Try Again
           </Button>
         </div>
