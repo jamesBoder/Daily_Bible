@@ -17,7 +17,6 @@ interface SettingsState {
 type TabType = "profile" | "preferences" | "account";
 
 export const Settings: React.FC = () => {
-  const { user } = useAuth();
   const [activeTab, setActiveTab] = useState<TabType>("profile");
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(true);
