@@ -3,9 +3,9 @@
 // imports
 import React from "react";
 import { useHistory } from "../../hooks/useHistory";
-import { Loading } from "../../components/common/Loading";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
+import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 export const HistoryList: React.FC = () => {
   const { history, isLoading, error, clearHistory } = useHistory();
@@ -27,7 +27,7 @@ export const HistoryList: React.FC = () => {
   };
 
   if (isLoading) {
-    return <Loading />;
+    return <VerseCardSkeleton />;
   }
 
   if (error) {

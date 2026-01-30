@@ -3,6 +3,7 @@
 // imports
 import React, { useEffect, useState } from "react";
 import { profileService } from "../../services/api/profile";
+import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 // StatsCard component
 //- Total Verses Read
@@ -36,11 +37,11 @@ export const StatsCard: React.FC = () => {
   }, []);
 
   if (isLoading) {
-    return (
-      <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
-        <div className="text-gray-600 dark:text-gray-300">Loading stats...</div>
-      </div>
-    );
+      return (
+        <div className="bg-white dark:bg-gray-800 shadow-md rounded-lg p-6">
+          <VerseCardSkeleton />
+        </div>
+      );
   }
 
   if (error) {

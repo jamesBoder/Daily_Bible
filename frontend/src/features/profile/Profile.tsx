@@ -4,9 +4,9 @@ import { profileService } from "../../services/api/profile";
 import { UserProfile } from "../../types/profile";
 import { StatsCard } from "./StatsCard";
 import { ProfileEditForm } from "./ProfileEditForm";
-import { Loading } from "../../components/common/Loading";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
+import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 export const Profile: React.FC = () => {
   const { user } = useAuth(); // ✅ Get from auth context
@@ -36,7 +36,10 @@ export const Profile: React.FC = () => {
     setIsEditing(false);
   };
 
-  if (isLoading) return <Loading />;
+  if (isLoading) {
+      return <VerseCardSkeleton />;
+    }
+    
   if (error)
     return (
       <Card>

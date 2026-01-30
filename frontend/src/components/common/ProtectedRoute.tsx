@@ -1,7 +1,7 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
-import { Loading } from "./Loading";
+import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
@@ -12,7 +12,7 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const location = useLocation();
 
   if (isLoading) {
-    return <Loading />;
+    return <VerseCardSkeleton />;
   }
 
   if (!isAuthenticated) {

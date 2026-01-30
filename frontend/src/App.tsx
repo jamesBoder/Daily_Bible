@@ -8,9 +8,10 @@ import {
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute } from "./components/common/ProtectedRoute";
 import { Layout } from "./components/layout/Layout";
-import { Loading } from "./components/common/Loading";
+
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { Toaster } from "react-hot-toast";
+import { VerseCardSkeleton } from "./components/common/Skeleton";
 import "./App.css";
 
 // Eager load critical authentication components
@@ -92,7 +93,7 @@ function App() {
               <Route
                 path="/auth/google/callback"
                 element={
-                  <Suspense fallback={<Loading />}>
+                  <Suspense fallback={<VerseCardSkeleton />}>
                     <GoogleCallback />
                   </Suspense>
                 }
@@ -110,7 +111,7 @@ function App() {
                 <Route
                   index
                   element={
-                    <Suspense fallback={<Loading />}>
+                    <Suspense fallback={<VerseCardSkeleton />}>
                       <DailyVerse />
                     </Suspense>
                   }
@@ -118,7 +119,7 @@ function App() {
                 <Route
                   path="daily"
                   element={
-                    <Suspense fallback={<Loading />}>
+                    <Suspense fallback={<VerseCardSkeleton />}>
                       <DailyVerse />
                     </Suspense>
                   }
@@ -126,7 +127,7 @@ function App() {
                 <Route
                   path="favorites"
                   element={
-                    <Suspense fallback={<Loading />}>
+                    <Suspense fallback={<VerseCardSkeleton />}>
                       <FavoritesList />
                     </Suspense>
                   }
@@ -134,7 +135,7 @@ function App() {
                 <Route
                   path="history"
                   element={
-                    <Suspense fallback={<Loading />}>
+                    <Suspense fallback={<VerseCardSkeleton />}>
                       <HistoryList />
                     </Suspense>
                   }
@@ -142,7 +143,7 @@ function App() {
                 <Route
                   path="profile"
                   element={
-                    <Suspense fallback={<Loading />}>
+                    <Suspense fallback={<VerseCardSkeleton />}>
                       <Profile />
                     </Suspense>
                   }
@@ -150,7 +151,7 @@ function App() {
                 <Route
                   path="settings"
                   element={
-                    <Suspense fallback={<Loading />}>
+                    <Suspense fallback={<VerseCardSkeleton />}>
                       <Settings />
                     </Suspense>
                   }

@@ -1,9 +1,9 @@
 import React from "react";
 import { useFavorites } from "../../hooks/useFavorites";
-import { Loading } from "../../components/common/Loading";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { CommentSection } from "../verse/CommentSection";
+import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 export const FavoritesList: React.FC = () => {
   const { favorites, isLoading, error, removeFavorite } = useFavorites();
@@ -25,7 +25,7 @@ export const FavoritesList: React.FC = () => {
   };
 
   if (isLoading) {
-    return <Loading />;
+    return <VerseCardSkeleton />;
   }
 
   if (error) {

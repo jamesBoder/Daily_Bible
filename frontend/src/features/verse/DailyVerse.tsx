@@ -1,14 +1,14 @@
 import React from "react";
 import { useVerse } from "../../hooks/useVerse";
 import { VerseCard } from "./VerseCard";
-import { Loading } from "../../components/common/Loading";
 import { Button } from "../../components/common/Button";
+import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 export const DailyVerse: React.FC = () => {
   const { verse, isLoading, error, refetch } = useVerse();
 
   if (isLoading) {
-    return <Loading />;
+    return <VerseCardSkeleton />;
   }
 
   if (error) {
