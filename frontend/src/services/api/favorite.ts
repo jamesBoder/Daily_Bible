@@ -3,6 +3,7 @@ import apiClient from './client';
 import { API_ENDPOINTS } from '../../utils/constants';
 import {FavoritesResponse } from '../../types/favorite';
 import { AddFavoriteResponse } from '../../types/favorite';
+import { showToast } from '../../utils/toast';
 
 // init GetFavoritesParams interface
 export interface GetFavoritesParams {
@@ -42,12 +43,11 @@ export const favoriteService = {
         // Log the error for debugging
         console.error('Error fetching favorites:', error); 
 
-
         // Network error (no response)
         if (!error.response) {
+            showToast.error('Network error. Please check your connection.');
             throw new Error('Network error. Please check your connection.');
         }
-
 
         // Handle 404 separately if needed
         if (error.response?.status === 404) {
@@ -55,6 +55,13 @@ export const favoriteService = {
                 favorites: [], 
                 pagination: { total: 0, page, page_size: pageSize, total_pages: 0 }
             };
+        }
+        
+        // Server error
+        if (error.response?.status === 500) {
+            showToast.error('Server error. Please try again later.');
+        } else {
+            showToast.error('Failed to load favorites');
         }
         throw error;
     }
@@ -68,17 +75,19 @@ export const favoriteService = {
  */
   addFavorite: async (verseId: number) => {
     try {
-
         const response = await apiClient.post<AddFavoriteResponse>(
         API_ENDPOINTS.FAVORITES, 
         { verse_id: verseId }
         );
-        return response.data;; // { message: "Favorite added successfully" }
+        showToast.success('Added to favorites!');
+        return response.data; // { message: "Favorite added successfully" }
     } catch (error: any) {
       // Correct status code for conflict
       if (error.response?.status === 409) {
+        showToast.error('This verse is already in your favorites');
         throw new Error('This verse is already in your favorites');
       }
+      showToast.error('Failed to add favorite');
       throw error;
     }
   },
@@ -91,10 +100,13 @@ export const favoriteService = {
   removeFavorite: async (favoriteId: number) => {
     try {
       await apiClient.delete(`${API_ENDPOINTS.FAVORITES}/${favoriteId}`);
+      showToast.success('Removed from favorites');
     } catch (error: any) {
       if (error.response?.status === 404) {
+        showToast.error('Favorite not found');
         throw new Error('Favorite not found. It may have been already removed.');
       }
+      showToast.error('Failed to remove favorite');
       throw error;
     }
   },

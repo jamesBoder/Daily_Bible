@@ -1,5 +1,6 @@
 import apiClient from './api';
 import { User } from '../../types/user';
+import { showToast } from '../../utils/toast';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
@@ -26,40 +27,65 @@ export interface SignupCredentials {
 export const authService = {
   // Login
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>(
-      '/api/auth/login',
-      credentials
-    );
-    
-    // Store token and user data
-    if (response.data.token) {
-      localStorage.setItem(TOKEN_KEY, response.data.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        '/api/auth/login',
+        credentials
+      );
+      
+      // Store token and user data
+      if (response.data.token) {
+        localStorage.setItem(TOKEN_KEY, response.data.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+      }
+      
+      showToast.success('Welcome back!');
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 401) {
+        showToast.error('Invalid email or password');
+      } else if (error.response?.status === 429) {
+        showToast.error('Too many login attempts. Please try again later.');
+      } else {
+        showToast.error('Login failed. Please try again.');
+      }
+      throw error;
     }
-    
-    return response.data;
   },
 
   // Signup
   signup: async (credentials: SignupCredentials): Promise<AuthResponse> => {
-    const response = await apiClient.post<AuthResponse>(
-      '/api/auth/register',
-      credentials
-    );
-    
-    // Store token and user data
-    if (response.data.token) {
-      localStorage.setItem(TOKEN_KEY, response.data.token);
-      localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+    try {
+      const response = await apiClient.post<AuthResponse>(
+        '/api/auth/register',
+        credentials
+      );
+      
+      // Store token and user data
+      if (response.data.token) {
+        localStorage.setItem(TOKEN_KEY, response.data.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+      }
+      
+      showToast.success('Account created successfully! Welcome!');
+      return response.data;
+    } catch (error: any) {
+      if (error.response?.status === 409) {
+        showToast.error('Email already exists. Please use a different email.');
+      } else if (error.response?.status === 400) {
+        showToast.error('Invalid signup data. Please check your information.');
+      } else {
+        showToast.error('Signup failed. Please try again.');
+      }
+      throw error;
     }
-    
-    return response.data;
   },
 
   // Logout
   logout: async (): Promise<void> => {
     try {
       await apiClient.post('/api/auth/logout');
+      showToast.success('Logged out successfully');
     } finally {
       // Clear local storage regardless of API response
       localStorage.removeItem(TOKEN_KEY);
@@ -69,8 +95,13 @@ export const authService = {
 
   // Get current user
   getCurrentUser: async (): Promise<User> => {
-    const response = await apiClient.get<{"user": User}>('/api/auth/me');
-    return response.data.user;
+    try {
+      const response = await apiClient.get<{"user": User}>('/api/auth/me');
+      return response.data.user;
+    } catch (error: any) {
+      showToast.error('Failed to load user data');
+      throw error;
+    }
   },
 
   // Check if user is authenticated

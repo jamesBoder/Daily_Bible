@@ -4,6 +4,7 @@
 import apiClient from './client';
 import { API_ENDPOINTS } from '../../utils/constants';
 import { HistoryResponse } from '../../types/history';
+import { showToast } from '../../utils/toast';
 
 
 // init GetHistoryParams interface
@@ -39,6 +40,7 @@ export const historyService = {
 
             // network error (no response)
             if (!error.response) {
+                showToast.error('Network error. Please check your connection.');
                 throw new Error('Network error. Please check your connection.');
             }
 
@@ -49,6 +51,13 @@ export const historyService = {
                     pagination: { total: 0, page, page_size: pageSize, total_pages: 0 }
                 };
             }
+            
+            // Server error
+            if (error.response?.status === 500) {
+                showToast.error('Server error. Please try again later.');
+            } else {
+                showToast.error('Failed to load history');
+            }
             throw error;
         }
     },
@@ -57,8 +66,10 @@ export const historyService = {
     clearHistory: async (): Promise<void> => {
         try {
             await apiClient.delete(API_ENDPOINTS.HISTORY);
+            showToast.success('History cleared!');
         } catch (error: any) {
             console.error('Error clearing history:', error);
+            showToast.error('Failed to clear history');
             throw error;
         }
     }
