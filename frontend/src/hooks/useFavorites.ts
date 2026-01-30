@@ -23,23 +23,23 @@ export const useFavorites = () => {
 
 
   const removeMutation = useMutation({
-  mutationFn: (favoriteId: number) => favoriteService.removeFavorite(favoriteId),
-  onSuccess: () => {
-    // Automatically refetch favorites list
-    queryClient.invalidateQueries({ queryKey: ['favorites'] });
-  }
+    mutationFn: (favoriteId: number) => favoriteService.removeFavorite(favoriteId),
+    onSuccess: () => {
+      // Automatically refetch favorites list
+      queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    }
   });
 
 
 
   const isFavorited = (verseId: number): boolean => {
-  return (data ?? []).some(fav => fav.verse_id === verseId);
-};
+    return (data ?? []).some(fav => fav.verse_id === verseId);
+  };
 
 
   const getFavoriteId = (verseId: number): number | null => {
-  const favorite = (data ?? []).find(fav => fav.verse_id === verseId);
-  return favorite ? favorite.id : null;
+    const favorite = (data ?? []).find(fav => fav.verse_id === verseId);
+    return favorite ? favorite.id : null;
   };
 
 
