@@ -10,6 +10,7 @@ import { ProtectedRoute } from "./components/common/ProtectedRoute";
 import { Layout } from "./components/layout/Layout";
 import { Loading } from "./components/common/Loading";
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { Toaster } from "react-hot-toast";
 import "./App.css";
 
 // Eager load critical authentication components
@@ -58,79 +59,103 @@ function App() {
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          <Routes>
-            {/* Public routes - no Suspense needed for eager-loaded components */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            
-            {/* Lazy-loaded public route */}
-            <Route
-              path="/auth/google/callback"
-              element={
-                <Suspense fallback={<Loading />}>
-                  <GoogleCallback />
-                </Suspense>
-              }
-            />
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: '#363636',
+                color: '#fff',
+              },
+              success: {
+                duration: 3000,
+                iconTheme: {
+                  primary: '#10b981',
+                  secondary: '#fff',
+                },
+              },
+              error: {
+                duration: 4000,
+                iconTheme: {
+                  primary: '#ef4444',
+                  secondary: '#fff',
+                },
+              },
+            }}
+          />
+            <Routes>
+              {/* Public routes - no Suspense needed for eager-loaded components */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              
+              {/* Lazy-loaded public route */}
+              <Route
+                path="/auth/google/callback"
+                element={
+                  <Suspense fallback={<Loading />}>
+                    <GoogleCallback />
+                  </Suspense>
+                }
+              />
 
-            {/* Protected routes with layout */}
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute>
-                  <Layout />
-                </ProtectedRoute>
-              }
-            >
+              {/* Protected routes with layout */}
               <Route
-                index
+                path="/"
                 element={
-                  <Suspense fallback={<Loading />}>
-                    <DailyVerse />
-                  </Suspense>
+                  <ProtectedRoute>
+                    <Layout />
+                  </ProtectedRoute>
                 }
-              />
-              <Route
-                path="daily"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <DailyVerse />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="favorites"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <FavoritesList />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="history"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <HistoryList />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="profile"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <Profile />
-                  </Suspense>
-                }
-              />
-              <Route
-                path="settings"
-                element={
-                  <Suspense fallback={<Loading />}>
-                    <Settings />
-                  </Suspense>
-                }
-              />
-            </Route>
+              >
+                <Route
+                  index
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <DailyVerse />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="daily"
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <DailyVerse />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="favorites"
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <FavoritesList />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="history"
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <HistoryList />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="profile"
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <Profile />
+                    </Suspense>
+                  }
+                />
+                <Route
+                  path="settings"
+                  element={
+                    <Suspense fallback={<Loading />}>
+                      <Settings />
+                    </Suspense>
+                  }
+                />
+              </Route>
 
             {/* Catch all - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
