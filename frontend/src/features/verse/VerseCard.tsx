@@ -4,6 +4,7 @@ import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { CommentSection } from "../verse/CommentSection";
 import { useFavorites } from "../../hooks/useFavorites";
+import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 
 interface VerseCardProps {
   verse: Verse;
@@ -62,6 +63,18 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   };
 
   const isVerseAlreadyFavorited = isFavorited(verse.id);
+
+  // Keyboard shortcuts
+  useKeyboardShortcuts([
+    {
+      key: 'f',
+      callback: handleFavorite,
+    },
+    {
+      key: 's',
+      callback: handleShare,
+    },
+  ]);
 
   return (
     <Card className="relative">

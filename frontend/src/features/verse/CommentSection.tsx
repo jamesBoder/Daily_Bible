@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback, useRef } from "react";
 import { Button } from "../../components/common/Button";
 import { commentService } from "../../services/api/comment";
 import { Comment } from "../../types/comment";
-import { useCallback } from "react";
+import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 
 interface CommentSectionProps {
   verseId: number;
@@ -18,6 +18,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // define loadComment before using it in useEffect
   const loadComment = useCallback(async () => {
@@ -95,6 +96,24 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     setError("");
   };
 
+  // Keyboard shortcut to focus comment input
+  useKeyboardShortcuts([
+    {
+      key: 'c',
+      callback: () => {
+        if (!isEditing) {
+          setIsEditing(true);
+          // Focus textarea after state update
+          setTimeout(() => {
+            textareaRef.current?.focus();
+          }, 0);
+        } else {
+          textareaRef.current?.focus();
+        }
+      },
+    },
+  ]);
+
   return (
     <div className="mt-6 border-t border-gray-200 pt-6">
       <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
@@ -160,6 +179,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       {isEditing && (
         <div>
           <textarea
+            ref={textareaRef}
             value={commentText}
             onChange={(e) => setCommentText(e.target.value)}
             placeholder="Add your personal thoughts, reflections, or prayers about this verse..."
