@@ -97,9 +97,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   return (
     <div className="mt-6 border-t border-gray-200 pt-6">
-      <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
+      <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-3">
         Notes
-      </h3>
+      </h2>
 
       {error && (
         <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
