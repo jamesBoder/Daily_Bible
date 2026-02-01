@@ -52,6 +52,7 @@ export const Header: React.FC = () => {
             </Link>
             <button
               onClick={() => document.documentElement.classList.toggle("dark")}
+              aria-label="Toggle dark mode"
             >
               Toggle Dark
             </button>
@@ -75,6 +76,8 @@ export const Header: React.FC = () => {
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
             className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+            aria-label="Toggle navigation menu"
+            aria-expanded={isMenuOpen}
           >
             <svg
               className="h-6 w-6"

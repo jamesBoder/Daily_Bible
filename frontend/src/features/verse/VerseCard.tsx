@@ -103,6 +103,8 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
           variant="secondary"
           isLoading={isFavoriteLoading}
           className="flex items-center gap-2"
+          aria-label={isVerseAlreadyFavorited ? "Remove from favorites" : "Add to favorites"}
+          aria-pressed={isVerseAlreadyFavorited}
         >
           <svg
             className={`w-5 h-5 ${isVerseAlreadyFavorited ? "fill-red-500" : "fill-none"}`}
@@ -124,6 +126,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
           variant="secondary"
           isLoading={isSharing}
           className="flex items-center gap-2"
+          aria-label="Share verse"
         >
           <svg
             className="w-5 h-5"

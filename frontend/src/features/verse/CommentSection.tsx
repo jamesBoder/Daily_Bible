@@ -111,6 +111,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         <button
           onClick={() => setIsEditing(true)}
           className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center gap-2"
+          aria-label="Add a personal note"
         >
           <svg
             className="w-5 h-5"
@@ -138,12 +139,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             <button
               onClick={() => setIsEditing(true)}
               className="text-sm text-primary-600 hover:text-primary-700 font-medium"
+              aria-label="Edit note"
             >
               Edit
             </button>
             <button
               onClick={handleDelete}
               className="text-sm text-red-600 hover:text-red-700 font-medium"
+              aria-label="Delete note"
             >
               Delete
             </button>
@@ -163,6 +166,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
             rows={4}
             maxLength={1000}
+            aria-label="Personal note for this verse"
           />
           <div className="flex justify-between items-center mt-2">
             <span className="text-sm text-gray-500 dark:text-gray-400">
