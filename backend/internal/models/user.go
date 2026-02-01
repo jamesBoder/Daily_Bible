@@ -24,7 +24,7 @@ type User struct {
     Password string `gorm: json:"-"`
 
     // Google OAuth fields
-    GoogleID       string `gorm:"unique" json:"google_id,omitempty"`
+    GoogleID       string `gorm:"uniqueIndex:idx_users_google_id,where:google_id IS NOT NULL" json:"google_id,omitempty"`
     GoogleEmail    string `json:"google_email,omitempty"`
     GooglePicture  string `json:"google_picture,omitempty"`
     IsGoogleLinked bool   `json:"is_google_linked"`
