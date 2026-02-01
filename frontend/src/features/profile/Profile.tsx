@@ -70,17 +70,17 @@ export const Profile: React.FC = () => {
         <Card>
           <div className="space-y-4">
             <div>
-              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-600">Username</h2>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-600">Username</p>
               <p className="text-lg dark:text-gray-200">{profile.username}</p>
             </div>
             <div>
-              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-600">Email</h2>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-600">Email</p>
               <p className="text-lg dark:text-gray-200">{profile.email}</p>
             </div>
             <div>
-              <h2 className="text-sm font-medium text-gray-500 dark:text-gray-600">
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-600">
                 Member Since
-              </h2>
+              </p>
               <p className="text-lg dark:text-gray-200">
                 {new Date(profile.created_at).toLocaleDateString()}
               </p>

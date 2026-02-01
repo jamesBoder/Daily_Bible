@@ -78,9 +78,9 @@ export const HistoryList: React.FC = () => {
             <Card key={entry.id}>
               <div className="p-6">
                 <div className="mb-4">
-                  <h3 className="text-lg font-semibold text-primary-600 dark:text-primary-400 mb-2">
+                  <h2 className="text-lg font-semibold text-primary-600 dark:text-primary-400 mb-2">
                     {entry.verse?.reference || "Unknown Reference"}
-                  </h3>
+                  </h2>
                   <p className="text-gray-800 dark:text-gray-200 leading-relaxed">
                     {entry.verse?.text || "Verse text not available"}
                   </p>
