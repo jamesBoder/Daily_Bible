@@ -4,6 +4,7 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: "primary" | "secondary" | "danger";
   isLoading?: boolean;
   children: React.ReactNode;
+  size?: 'small' | 'medium' | 'large';
 }
 
 export const Button: React.FC<ButtonProps> = ({
@@ -12,10 +13,11 @@ export const Button: React.FC<ButtonProps> = ({
   children,
   className = "",
   disabled,
+  size = "medium",
   ...props
 }) => {
   const baseStyles =
-    "px-4 py-2 rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
+    "rounded-lg font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed";
 
   const variantStyles = {
     primary:
@@ -25,9 +27,15 @@ export const Button: React.FC<ButtonProps> = ({
     danger: "bg-red-600 text-white hover:bg-red-700",
   };
 
+  const sizeClasses = {
+  small: 'px-4 py-2 text-sm min-h-[44px]',
+  medium: 'px-6 py-3 text-base min-h-[44px]',
+  large: 'px-8 py-4 text-lg min-h-[48px]',
+  };
+  
   return (
     <button
-      className={`${baseStyles} ${variantStyles[variant]} ${className}`}
+      className={`${baseStyles} ${variantStyles[variant]} ${className} ${sizeClasses[size]}`}
       disabled={disabled || isLoading}
       {...props}
     >
