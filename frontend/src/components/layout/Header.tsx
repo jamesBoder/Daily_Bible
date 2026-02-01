@@ -50,12 +50,7 @@ export const Header: React.FC = () => {
             >
               Settings
             </Link>
-            <button
-              onClick={() => document.documentElement.classList.toggle("dark")}
-              aria-label="Toggle dark mode"
-            >
-              Toggle Dark
-            </button>
+            
           </div>
 
           {/* User Menu */}
