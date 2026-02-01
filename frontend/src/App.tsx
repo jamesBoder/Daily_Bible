@@ -14,6 +14,7 @@ import { Toaster } from "react-hot-toast";
 import { VerseCardSkeleton } from "./components/common/Skeleton";
 import "./App.css";
 
+
 // Eager load critical authentication components
 import { Login } from "./features/auth/Login";
 import { Signup } from "./features/auth/Signup";
@@ -104,7 +105,7 @@ function App() {
                 path="/"
                 element={
                   <ProtectedRoute>
-                    <Layout />
+                    <Layout  />
                   </ProtectedRoute>
                 }
               >
