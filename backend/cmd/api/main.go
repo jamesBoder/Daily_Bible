@@ -162,8 +162,15 @@ func main() {
     corsConfig := cors.DefaultConfig()
     log.Println("Setting up CORS middleware")
     corsConfig.AllowCredentials = true
-    corsConfig.AllowOrigins = []string{"http://localhost:3000"}
-    corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE"}
+    
+    // Get frontend URL from environment, default to localhost:3000
+    frontendURL := os.Getenv("FRONTEND_URL")
+    if frontendURL == "" {
+        frontendURL = "http://localhost:3000"
+    }
+    
+    corsConfig.AllowOrigins = []string{frontendURL, "http://localhost:3000", "http://localhost"}
+    corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
     corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
     router.Use(cors.New(corsConfig))
 

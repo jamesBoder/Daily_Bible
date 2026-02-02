@@ -78,8 +78,8 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
 
     if user != nil {
         // User exists, update their info
-        user.GoogleEmail = googleUser.Email
-        user.GooglePicture = googleUser.Picture
+        user.GoogleEmail = &googleUser.Email
+        user.GooglePicture = &googleUser.Picture
         user.IsGoogleLinked = true
         if err := s.userRepo.Update(user); err != nil {
             return nil, "", fmt.Errorf("failed to update user: %w", err)
@@ -89,9 +89,9 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
         existingUser, _ := s.userRepo.GetByEmail(googleUser.Email)
         if existingUser != nil {
             // Email exists - link Google to existing account
-            existingUser.GoogleID = googleUser.ID
-            existingUser.GoogleEmail = googleUser.Email
-            existingUser.GooglePicture = googleUser.Picture
+            existingUser.GoogleID = &googleUser.ID
+            existingUser.GoogleEmail = &googleUser.Email
+            existingUser.GooglePicture = &googleUser.Picture
             existingUser.IsGoogleLinked = true
             if err := s.userRepo.Update(existingUser); err != nil {
                 return nil, "", fmt.Errorf("failed to link Google account: %w", err)
@@ -108,9 +108,9 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
                 Email:          googleUser.Email,
                 Username:       username,
                 Password:       "",  // No password for OAuth-only users
-                GoogleID:       googleUser.ID,
-                GoogleEmail:    googleUser.Email,
-                GooglePicture:  googleUser.Picture,
+                GoogleID:       &googleUser.ID,
+                GoogleEmail:    &googleUser.Email,
+                GooglePicture:  &googleUser.Picture,
                 IsGoogleLinked: true,
             }
             if err := s.userRepo.Create(user); err != nil {
@@ -151,10 +151,10 @@ func (s *OAuthService) LinkGoogleAccount(userID uint, googleID string, googleEma
 
     // link Google account
 
-	user.GoogleID = googleID
+	user.GoogleID = &googleID
 	user.IsGoogleLinked = true
-    user.GoogleEmail = googleEmail
-    user.GooglePicture = google_picture
+    user.GoogleEmail = &googleEmail
+    user.GooglePicture = &google_picture
 
 
 

@@ -126,9 +126,9 @@ func (h *AuthHandler) Register(c *gin.Context) {
 			Email:     newUser.Email,
 			Username:  newUser.Username,
 			CreatedAt: newUser.CreatedAt,
-			GoogleID:       newUser.GoogleID,
-			GoogleEmail:    newUser.GoogleEmail,
-			GooglePicture:  newUser.GooglePicture,
+			GoogleID:       getStringValue(newUser.GoogleID),
+			GoogleEmail:    getStringValue(newUser.GoogleEmail),
+			GooglePicture:  getStringValue(newUser.GooglePicture),
 			IsGoogleLinked: newUser.IsGoogleLinked,
 		},
 		Token: token,
@@ -198,9 +198,9 @@ func (h *AuthHandler) Login(c *gin.Context) {
 			Email:     user.Email,
 			Username:  user.Username,
 			CreatedAt: user.CreatedAt,
-			GoogleID:       user.GoogleID,
-			GoogleEmail:    user.GoogleEmail,
-			GooglePicture:  user.GooglePicture,
+			GoogleID:       getStringValue(user.GoogleID),
+			GoogleEmail:    getStringValue(user.GoogleEmail),
+			GooglePicture:  getStringValue(user.GooglePicture),
 			IsGoogleLinked: user.IsGoogleLinked,
 		},
 		Token: token,
@@ -248,13 +248,21 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 			Email:     user.Email,
 			Username:  user.Username,
 			CreatedAt: user.CreatedAt,
-			GoogleID:       user.GoogleID,
-			GoogleEmail:    user.GoogleEmail,
-			GooglePicture:  user.GooglePicture,
+			GoogleID:       getStringValue(user.GoogleID),
+			GoogleEmail:    getStringValue(user.GoogleEmail),
+			GooglePicture:  getStringValue(user.GooglePicture),
 			IsGoogleLinked: user.IsGoogleLinked,
 		},
 	}
 
 	// return 200 ok with user data
 	c.JSON(http.StatusOK, resp)
+}
+
+// Helper function to safely get string value from pointer
+func getStringValue(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }

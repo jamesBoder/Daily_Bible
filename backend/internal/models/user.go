@@ -24,10 +24,10 @@ type User struct {
     Password string `gorm: json:"-"`
 
     // Google OAuth fields
-    GoogleID       string `gorm:"uniqueIndex:idx_users_google_id,where:google_id IS NOT NULL" json:"google_id,omitempty"`
-    GoogleEmail    string `json:"google_email,omitempty"`
-    GooglePicture  string `json:"google_picture,omitempty"`
-    IsGoogleLinked bool   `json:"is_google_linked"`
+    GoogleID       *string `gorm:"uniqueIndex:idx_users_google_id,where:google_id IS NOT NULL" json:"google_id,omitempty"`
+    GoogleEmail    *string `json:"google_email,omitempty"`
+    GooglePicture  *string `json:"google_picture,omitempty"`
+    IsGoogleLinked bool    `json:"is_google_linked"`
     
     // Relationships (if you want to preload)
     Favorites []Favorite `gorm:"foreignKey:UserID" json:"favorites,omitempty"`
@@ -63,7 +63,7 @@ func (u *User) CheckPassword(pwd string) bool {
 // create BeforeCreate hook to hash password
 func (u *User) BeforeCreate(tx *gorm.DB) error {
     // Skip password validation for OAuth users (they don't need a password)
-    if u.GoogleID != "" && u.Password == "" {
+    if u.GoogleID != nil && *u.GoogleID != "" && u.Password == "" {
         return nil
     }
     
@@ -80,7 +80,7 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 // create BeforeUpdate hook to hash password
 func (u *User) BeforeUpdate(tx *gorm.DB) error {
     // skip hashing for Oauth users
-    if u.Password == "" || u.GoogleID != "" {
+    if u.Password == "" || (u.GoogleID != nil && *u.GoogleID != "") {
         return nil
     }
     // Only hash password if it has been changed
