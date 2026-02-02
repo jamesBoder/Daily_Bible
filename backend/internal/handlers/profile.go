@@ -66,10 +66,14 @@ func (h *ProfileHandler) GetProfile(c *gin.Context) {
 
 	// respond with user profile data
 	c.JSON(http.StatusOK, gin.H{
-		"id":        user.ID,
-		"username":  user.Username,
-		"email":     user.Email,
-		"created_at": user.CreatedAt,
+		"id":             user.ID,
+		"username":       user.Username,
+		"email":          user.Email,
+		"created_at":     user.CreatedAt,
+		"google_id":      getStringValue(user.GoogleID),
+		"google_email":   getStringValue(user.GoogleEmail),
+		"google_picture": getStringValue(user.GooglePicture),
+		"is_google_linked": user.IsGoogleLinked,
 	})
 	
 }
@@ -139,11 +143,23 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 
 	// respond with updated profile data
 	c.JSON(http.StatusOK, gin.H{
-		"id":        user.ID,
-		"username":  user.Username,
-		"email":     user.Email,
-		"created_at": user.CreatedAt,
+		"id":             user.ID,
+		"username":       user.Username,
+		"email":          user.Email,
+		"created_at":     user.CreatedAt,
+		"google_id":      getStringValue(user.GoogleID),
+		"google_email":   getStringValue(user.GoogleEmail),
+		"google_picture": getStringValue(user.GooglePicture),
+		"is_google_linked": user.IsGoogleLinked,
 	})
+}
+
+// Helper function to safely get string value from pointer
+func getStringValue(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
 }
 
 // GetStats handler 

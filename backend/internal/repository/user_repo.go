@@ -100,9 +100,9 @@ func (r *userRepository) GetByGoogleID(googleID string) (*models.User, error) {
 // UpdateGoogleInfo updates the Google-related information for a user
 func (r *userRepository) UpdateGoogleInfo(userID uint, googleID, email, picture string) error {
     return r.db.Model(&models.User{}).Where("id = ?", userID).Updates(map[string]interface{}{
-        "google_id": googleID,
-        "google_email":     email,
-        "google_picture":   picture,
+        "google_id":        &googleID,
+        "google_email":     &email,
+        "google_picture":   &picture,
         "is_google_linked": true,
     }).Error
 }

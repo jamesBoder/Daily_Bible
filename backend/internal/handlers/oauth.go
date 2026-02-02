@@ -104,7 +104,12 @@ func (h *OAuthHandler) LinkGoogle(c *gin.Context) {
 	}
 
 	// Link Google account to the authenticated user
-	err = h.oauthService.LinkGoogleAccount(userID.(uint), googleUser.GoogleID, googleUser.GoogleEmail, googleUser.GooglePicture)
+	err = h.oauthService.LinkGoogleAccount(
+		userID.(uint), 
+		getStringValue(googleUser.GoogleID), 
+		getStringValue(googleUser.GoogleEmail), 
+		getStringValue(googleUser.GooglePicture),
+	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to link Google account: " + err.Error()})
 		return
