@@ -258,11 +258,3 @@ func (h *AuthHandler) GetMe(c *gin.Context) {
 	// return 200 ok with user data
 	c.JSON(http.StatusOK, resp)
 }
-
-// Helper function to safely get string value from pointer
-func getStringValue(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}

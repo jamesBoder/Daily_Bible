@@ -154,14 +154,6 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 	})
 }
 
-// Helper function to safely get string value from pointer
-func getStringValue(s *string) string {
-	if s == nil {
-		return ""
-	}
-	return *s
-}
-
 // GetStats handler 
 func (h *ProfileHandler) GetStats(c *gin.Context) {
 	// extract userID from context (set by auth middleware)

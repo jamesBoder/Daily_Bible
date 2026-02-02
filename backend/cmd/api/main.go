@@ -169,7 +169,16 @@ func main() {
         frontendURL = "http://localhost:3000"
     }
     
-    corsConfig.AllowOrigins = []string{frontendURL, "http://localhost:3000", "http://localhost"}
+    // Allow multiple origins for development and production
+    allowedOrigins := []string{
+        frontendURL,
+        "http://localhost:3000",
+        "http://localhost",
+        "http://localhost:80",
+    }
+    
+    // In production, you might want to use AllowOriginFunc for more flexible origin checking
+    corsConfig.AllowOrigins = allowedOrigins
     corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
     corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
     router.Use(cors.New(corsConfig))
