@@ -23,7 +23,12 @@ type Config struct {
 }
 
 func Load() (*Config, error) {
-    godotenv.Load()
+    // load .env from current directory (for dev mode)
+    // If it doesn't exist, that's fine - Docker provides env vars directly
+    _ = godotenv.Load()
+    
+    // Also try loading from parent directory (for when running from backend/)
+    _ = godotenv.Load("../.env")
     
     return &Config{
         DBHost:          os.Getenv("DB_HOST"),
