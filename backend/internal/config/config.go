@@ -37,12 +37,12 @@ func Load() (*Config, error) {
         DBPassword:      os.Getenv("DB_PASSWORD"),
         DBName:          os.Getenv("DB_NAME"),
         DBSSLMode:      os.Getenv("DB_SSLMODE"),
-        Port:            os.Getenv("PORT"),
+        Port:            getEnvOrDefault("PORT", "8080"),
         JWTSecret:       os.Getenv("JWT_SECRET"),
         BibleAPIKey:     os.Getenv("BIBLE_API_KEY"),
         BibleVersionID:  getEnvOrDefault("BIBLE_VERSION_ID", "de4e12af7f28f599-02"),
         BibleAPIBaseURL: getEnvOrDefault("BIBLE_API_BASE_URL", "https://rest.api.bible/v1"),
-        ServerAddress:   ":" + os.Getenv("PORT"),
+        ServerAddress:   "0.0.0.0:" + getEnvOrDefault("PORT", "8080"),
     }, nil
 }
 
