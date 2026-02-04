@@ -3,7 +3,6 @@ import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { AccountManagement } from "./AccountManagement";
 import { StatsCard } from "./StatsCard";
-import { useAuth } from "../../hooks/useAuth";
 import { profileService } from "../../services/api/profile";
 import { UserProfile } from "../../types/profile";
 import { useTheme } from "../../contexts/ThemeContext";
