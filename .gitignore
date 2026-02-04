@@ -56,3 +56,4 @@ frontend/.env
 # sh files
 .sh
 
+.blackboxcli/
