@@ -72,17 +72,25 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		for _, err := range err.(validator.ValidationErrors) {
 			errors = append(errors, err.Field()+" is "+err.Tag())
 		}
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": errors})
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Validation failed",
+			"details": errors,
+		})
 		return
 	}
 
 
 	// validate input password.ValidatePasswordStrength(req.Password)
 	validPassword, err := password.ValidatePasswordStrength(req.Password)
-	if !validPassword {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "Password does not meet strength requirements: " + err.Error()})
+		if !validPassword {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Password validation failed",
+			"details": err.Error(),
+			"field": "password"
+		})
 		return
 	}
+
 
 	// check if user with email or username already exists
 	existingUserByEmail, _ := h.userRepo.GetByEmail(req.Email)
@@ -183,6 +191,7 @@ func (h *AuthHandler) Login(c *gin.Context) {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Invalid email or password"})
 		return
 	}
+
 	
 	// generate JWT token
 	token, err := h.tokenService.GenerateToken(user.ID, user.Email)

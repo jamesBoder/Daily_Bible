@@ -42,13 +42,7 @@ export const authService = {
       showToast.success('Welcome back!');
       return response.data;
     } catch (error: any) {
-      if (error.response?.status === 401) {
-        showToast.error('Invalid email or password');
-      } else if (error.response?.status === 429) {
-        showToast.error('Too many login attempts. Please try again later.');
-      } else {
-        showToast.error('Login failed. Please try again.');
-      }
+      // throw error
       throw error;
     }
   },
@@ -70,13 +64,7 @@ export const authService = {
       showToast.success('Account created successfully! Welcome!');
       return response.data;
     } catch (error: any) {
-      if (error.response?.status === 409) {
-        showToast.error('Email already exists. Please use a different email.');
-      } else if (error.response?.status === 400) {
-        showToast.error('Invalid signup data. Please check your information.');
-      } else {
-        showToast.error('Signup failed. Please try again.');
-      }
+      // throw error
       throw error;
     }
   },
