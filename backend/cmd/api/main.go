@@ -171,11 +171,15 @@ func main() {
     
     // Allow multiple origins for development and production
     allowedOrigins := []string{
-        frontendURL,
-        "http://localhost:3000",
-        "http://localhost",
-        "http://localhost:80",
+        frontendURL,                                    // Production frontend URL from env
+        "http://localhost:3000",                        // Local development
+        "http://localhost",                             // Local development
+        "http://localhost:80",                          // Local development
+        "https://wordsofpraise-frontend.fly.dev",      // Production frontend (explicit)
+        "https://wordsofpraise-backend.fly.dev",       // Backend (for health checks)
     }
+    
+    log.Printf("CORS allowed origins: %v", allowedOrigins)
     
     // In production, you might want to use AllowOriginFunc for more flexible origin checking
     corsConfig.AllowOrigins = allowedOrigins
