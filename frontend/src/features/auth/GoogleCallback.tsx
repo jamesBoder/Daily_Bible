@@ -21,8 +21,8 @@ export const GoogleCallback: React.FC = () => {
       }
 
       try {
-        // Store token in localStorage
-        localStorage.setItem("authToken", token);
+        // Store token in localStorage with correct key
+        localStorage.setItem("auth_token", token);
 
         // Update auth context
         await loginWithToken(token);
