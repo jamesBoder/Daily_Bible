@@ -10,6 +10,7 @@ import (
 	"github.com/gin-gonic/gin"
 	
 	"dailybible/internal/repository"
+	"dailybible/internal/password"
 	"github.com/go-playground/validator/v10"
 
 
@@ -207,5 +208,90 @@ func (h *ProfileHandler) GetStats(c *gin.Context) {
 		"history_count":  histCount,
 		"comment_count":  commentCount,
 		"account_age_days": accountAge,
+	})
+}
+
+// UpdatePassword handler - allows users to change their password
+func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
+	// extract userID from context (set by auth middleware)
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// parse request body
+	var req struct {
+		CurrentPassword string `json:"currentPassword" validate:"required"`
+		NewPassword     string `json:"newPassword" validate:"required,min=8"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	// validate input
+	if err := h.validator.Struct(req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": err.Error()})
+		return
+	}
+
+	// fetch user from database
+	user, err := h.userRepo.GetByID(userID.(uint))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
+		return
+	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// check if user is OAuth-only (no password set)
+	if user.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Cannot change password for OAuth-only accounts",
+			"details": "Please set a password first or continue using Google login",
+		})
+		return
+	}
+
+	// verify current password
+	if !user.CheckPassword(req.CurrentPassword) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Current password is incorrect"})
+		return
+	}
+
+	// validate new password strength
+	validPassword, err := password.ValidatePasswordStrength(req.NewPassword)
+	if !validPassword {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "New password does not meet requirements",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// check if new password is same as current password
+	if req.CurrentPassword == req.NewPassword {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "New password must be different from current password"})
+		return
+	}
+
+	// update password (SetPassword will hash it)
+	if err := user.SetPassword(req.NewPassword); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
+		return
+	}
+
+	// save to database
+	if err := h.userRepo.Update(user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save password"})
+		return
+	}
+
+	// respond with success
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Password updated successfully",
 	})
 }

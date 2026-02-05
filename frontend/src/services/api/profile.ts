@@ -3,7 +3,7 @@
 // imports 
 import apiClient from './client';
 import { API_ENDPOINTS } from '../../utils/constants';
-import { UpdateUserSettingsRequest, UserProfile, UserSettingsResponse, UserStats } from '../../types/profile';
+import { UpdateUserSettingsRequest, UserProfile, UserSettingsResponse, UserStats, ChangePasswordRequest, ChangePasswordResponse } from '../../types/profile';
 import { showToast } from '../../utils/toast';
 
 // init GetUserProfileParams interface
@@ -88,6 +88,28 @@ export const profileService = {
                 showToast.error('Invalid settings data');
             } else {
                 showToast.error('Failed to save settings');
+            }
+            throw error;
+        }
+    },
+
+    // changePassword method
+    changePassword: async (data: ChangePasswordRequest): Promise<ChangePasswordResponse> => {
+        try {
+            const response = await apiClient.put<ChangePasswordResponse>(
+                `${API_ENDPOINTS.PROFILE}/password`,
+                data
+            );
+            showToast.success('Password updated successfully!');
+            return response.data;
+        } catch (error: any) {
+            if (error.response?.status === 400) {
+                const errorMsg = error.response?.data?.details || error.response?.data?.error || 'Invalid password data';
+                showToast.error(errorMsg);
+            } else if (error.response?.status === 401) {
+                showToast.error('Authentication required. Please login again.');
+            } else {
+                showToast.error('Failed to update password');
             }
             throw error;
         }

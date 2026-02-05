@@ -5,6 +5,7 @@ import { Input } from "../../components/common/Input";
 import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { oauthService } from "../../services/api/oauth";
+import { profileService } from "../../services/api/profile";
 
 export const AccountManagement: React.FC = () => {
   const { user, logout, refreshUser } = useAuth();
@@ -46,6 +47,7 @@ export const AccountManagement: React.FC = () => {
   const handlePasswordSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setPasswordError(null);
+    setPasswordSuccess(false);
 
     // Validation
     if (passwordData.newPassword !== passwordData.confirmPassword) {
@@ -58,21 +60,38 @@ export const AccountManagement: React.FC = () => {
       return;
     }
 
+    if (!passwordData.currentPassword) {
+      setPasswordError("Current password is required");
+      return;
+    }
+
     try {
-      // TODO: Implement password change API call
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Call the password change API
+      await profileService.changePassword({
+        currentPassword: passwordData.currentPassword,
+        newPassword: passwordData.newPassword,
+      });
+
+      // Show success message
       setPasswordSuccess(true);
+      
+      // Reset form
       setPasswordData({
         currentPassword: "",
         newPassword: "",
         confirmPassword: "",
       });
+
+      // Close form after delay
       setTimeout(() => {
         setPasswordSuccess(false);
         setShowPasswordForm(false);
       }, 2000);
     } catch (error: any) {
-      setPasswordError(error.message || "Failed to change password");
+      // Error handling is done in the service with toast notifications
+      // Set a generic error message for the form
+      const errorMsg = error.response?.data?.error || error.response?.data?.details || "Failed to change password";
+      setPasswordError(errorMsg);
     }
   };
 
@@ -86,7 +105,7 @@ export const AccountManagement: React.FC = () => {
     }
 
     try {
-      // TODO: Implement delete account API call
+      // Implement delete account API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
       await logout();
       navigate("/signup");
@@ -99,7 +118,7 @@ export const AccountManagement: React.FC = () => {
   const handleExportData = async () => {
     setIsExporting(true);
     try {
-      // TODO: Implement export data API call
+      // Implement export data API call
       await new Promise((resolve) => setTimeout(resolve, 1000));
 
       // Create mock data for now
