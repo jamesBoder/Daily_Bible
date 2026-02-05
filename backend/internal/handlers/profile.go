@@ -11,6 +11,7 @@ import (
 	
 	"dailybible/internal/repository"
 	"dailybible/internal/password"
+	"dailybible/internal/models"
 	"github.com/go-playground/validator/v10"
 
 
@@ -24,6 +25,7 @@ type ProfileHandler struct {
 	favoriteRepo repository.FavoriteRepository
 	historyRepo repository.HistoryRepository
 	commentRepo *repository.CommentRepository
+	passwordHistoryRepo repository.PasswordHistoryRepository
 	validator *validator.Validate
 } 
 
@@ -34,6 +36,7 @@ func NewProfileHandler(
 	favoriteRepo repository.FavoriteRepository,
 	historyRepo repository.HistoryRepository,
 	commentRepo *repository.CommentRepository,
+	passwordHistoryRepo repository.PasswordHistoryRepository,
 	validator *validator.Validate,
 ) *ProfileHandler {
 	return &ProfileHandler{
@@ -41,6 +44,7 @@ func NewProfileHandler(
 		favoriteRepo: favoriteRepo,
 		historyRepo: historyRepo,
 		commentRepo: commentRepo,
+		passwordHistoryRepo: passwordHistoryRepo,
 		validator:   validator,
 	}
 }
@@ -278,6 +282,36 @@ func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 		return
 	}
 
+	// check password history - prevent reuse of last 5 passwords
+	const passwordHistoryLimit = 5
+	recentPasswords, err := h.passwordHistoryRepo.GetRecentByUserID(userID.(uint), passwordHistoryLimit)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to check password history"})
+		return
+	}
+
+	// check if new password matches any recent passwords
+	for _, historyEntry := range recentPasswords {
+		if password.CheckPasswordHash(req.NewPassword, historyEntry.PasswordHash) {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Cannot reuse recent passwords",
+				"details": "This password was used recently. Please choose a different password.",
+			})
+			return
+		}
+	}
+
+	// save current password to history before updating
+	passwordHistory := &models.PasswordHistory{
+		UserID:       userID.(uint),
+		PasswordHash: user.Password, // Save current (old) password hash
+		ChangedAt:    time.Now(),
+	}
+	if err := h.passwordHistoryRepo.Create(passwordHistory); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save password history"})
+		return
+	}
+
 	// update password (SetPassword will hash it)
 	if err := user.SetPassword(req.NewPassword); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update password"})
@@ -288,6 +322,12 @@ func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 	if err := h.userRepo.Update(user); err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save password"})
 		return
+	}
+
+	// clean up old password history entries (keep only last 5)
+	if err := h.passwordHistoryRepo.DeleteOldestForUser(userID.(uint), passwordHistoryLimit); err != nil {
+		// Log error but don't fail the request
+		// Password was successfully changed, cleanup is not critical
 	}
 
 	// respond with success

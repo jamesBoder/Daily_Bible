@@ -63,6 +63,7 @@ func main() {
     favoriteRepo := repository.NewFavoriteRepository(db)
     historyRepo := repository.NewHistoryRepository(db)
     commentRepo := repository.NewCommentRepository(db)
+    passwordHistoryRepo := repository.NewPasswordHistoryRepository(db)
     googleOAuthConfig := config.GoogleOAuthConfig()
     
     
@@ -134,6 +135,7 @@ func main() {
         favoriteRepo,
         historyRepo,
         commentRepo,
+        passwordHistoryRepo,
         validate, // validator can be added later
     )
 
