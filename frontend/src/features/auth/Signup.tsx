@@ -5,6 +5,7 @@ import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
 import { Card } from "../../components/common/Card";
 import GoogleLoginButton from "../../components/common/GoogleLoginButton";
+import { PasswordInput } from "../../components/common/PasswordInput";
 
 export const Signup: React.FC = () => {
   const navigate = useNavigate();
@@ -37,9 +38,7 @@ export const Signup: React.FC = () => {
 
     if (!formData.password) {
       newErrors.password = "Password is required";
-    } else if (formData.password.length < 8) {
-      newErrors.password = "Password must be at least 8 characters";
-    }
+    } 
 
     if (formData.password !== formData.confirmPassword) {
       newErrors.confirmPassword = "Passwords do not match";
@@ -68,10 +67,17 @@ export const Signup: React.FC = () => {
       });
       navigate("/");
     } catch (err: any) {
-      setErrors({
-        general:
-          err.response?.data?.error || "Signup failed. Please try again.",
-      });
+      const errorMessage = err.response?.data?.details || 
+                     err.response?.data?.error || 
+                     "Signup failed. Please try again.";
+      const errorField = err.response?.data?.field;
+
+      if (errorField) {
+        setErrors({ [errorField]: errorMessage });
+      } else {
+        setErrors({ general: errorMessage });
+      }
+
     } finally {
       setIsLoading(false);
     }
@@ -116,9 +122,11 @@ export const Signup: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {errors.general && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
-                {errors.general}
+                <p className="font-semibold">Registration Failed</p>
+                <p className="text-sm mt-1">{errors.general}</p>
               </div>
             )}
+
 
             <Input
               label="Email"
@@ -154,14 +162,14 @@ export const Signup: React.FC = () => {
               autoComplete="name"
             />
 
-            <Input
+            <PasswordInput
               label="Password"
-              type="password"
               name="password"
               value={formData.password}
               onChange={handleChange}
               placeholder="••••••••"
               error={errors.password}
+              showRequirements={true}
               required
               autoComplete="new-password"
             />
@@ -177,6 +185,7 @@ export const Signup: React.FC = () => {
               required
               autoComplete="new-password"
             />
+
 
             <Button
               type="submit"

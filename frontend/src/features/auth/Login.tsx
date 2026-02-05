@@ -24,11 +24,14 @@ export const Login: React.FC = () => {
       await login({ email, password });
       navigate("/");
     } catch (err: any) {
-      setError(err.response?.data?.error || "Login failed. Please try again.");
+      const errorMessage = err.response?.data?.error || 
+                       err.response?.data?.message ||
+                       "Login failed. Please try again.";
+      setError(errorMessage);
     } finally {
-      setIsLoading(false);
-    }
-  };
+        setIsLoading(false);
+      }
+    };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -46,9 +49,11 @@ export const Login: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
-                {error}
+                <p className="font-semibold">Login Failed</p>
+                <p className="text-sm mt-1">{error}</p>
               </div>
             )}
+
 
             <Input
               label="Email"

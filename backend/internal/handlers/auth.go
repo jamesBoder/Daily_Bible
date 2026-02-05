@@ -86,7 +86,7 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{
 			"error": "Password validation failed",
 			"details": err.Error(),
-			"field": "password"
+			"field": "password",
 		})
 		return
 	}
