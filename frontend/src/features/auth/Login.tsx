@@ -12,6 +12,7 @@ export const Login: React.FC = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
@@ -21,7 +22,7 @@ export const Login: React.FC = () => {
     setIsLoading(true);
 
     try {
-      await login({ email, password });
+      await login({ email, password, rememberMe });
       navigate("/");
     } catch (err: any) {
       const errorMessage = err.response?.data?.error || 
@@ -74,6 +75,23 @@ export const Login: React.FC = () => {
               required
               autoComplete="current-password"
             />
+
+            <div className="flex items-center">
+              <input
+                id="remember-me"
+                name="remember-me"
+                type="checkbox"
+                checked={rememberMe}
+                onChange={(e) => setRememberMe(e.target.checked)}
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
+              />
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-gray-900 dark:text-gray-300 cursor-pointer"
+              >
+                Remember me for 30 days
+              </label>
+            </div>
 
             <Button
               type="submit"

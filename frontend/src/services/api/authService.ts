@@ -4,8 +4,9 @@ import { showToast } from '../../utils/toast';
 
 const TOKEN_KEY = 'auth_token';
 const USER_KEY = 'user_data';
-
-
+const TOKEN_EXPIRY_KEY = 'auth_token_expiry';
+const REMEMBER_ME_DAYS = 30;
+const DEFAULT_SESSION_HOURS = 24;
 
 export interface AuthResponse {
   token: string;
@@ -15,6 +16,7 @@ export interface AuthResponse {
 export interface LoginCredentials {
   email: string;
   password: string;
+  rememberMe?: boolean;
 }
 
 export interface SignupCredentials {
@@ -37,6 +39,15 @@ export const authService = {
       if (response.data.token) {
         localStorage.setItem(TOKEN_KEY, response.data.token);
         localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+        
+        // Set token expiry based on rememberMe
+        const expiryDate = new Date();
+        if (credentials.rememberMe) {
+          expiryDate.setDate(expiryDate.getDate() + REMEMBER_ME_DAYS);
+        } else {
+          expiryDate.setHours(expiryDate.getHours() + DEFAULT_SESSION_HOURS);
+        }
+        localStorage.setItem(TOKEN_EXPIRY_KEY, expiryDate.toISOString());
       }
       
       showToast.success('Welcome back!');
@@ -59,6 +70,11 @@ export const authService = {
       if (response.data.token) {
         localStorage.setItem(TOKEN_KEY, response.data.token);
         localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+        
+        // Set default session expiry (24 hours)
+        const expiryDate = new Date();
+        expiryDate.setHours(expiryDate.getHours() + DEFAULT_SESSION_HOURS);
+        localStorage.setItem(TOKEN_EXPIRY_KEY, expiryDate.toISOString());
       }
       
       showToast.success('Account created successfully! Welcome!');
@@ -78,6 +94,7 @@ export const authService = {
       // Clear local storage regardless of API response
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
+      localStorage.removeItem(TOKEN_EXPIRY_KEY);
     }
   },
 
@@ -92,9 +109,30 @@ export const authService = {
     }
   },
 
-  // Check if user is authenticated
+  // Check if user is authenticated and token is not expired
   isAuthenticated: (): boolean => {
-    return !!localStorage.getItem(TOKEN_KEY);
+    const token = localStorage.getItem(TOKEN_KEY);
+    const expiry = localStorage.getItem(TOKEN_EXPIRY_KEY);
+    
+    if (!token) {
+      return false;
+    }
+    
+    // Check if token has expired
+    if (expiry) {
+      const expiryDate = new Date(expiry);
+      const now = new Date();
+      
+      if (now > expiryDate) {
+        // Token expired, clear storage
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem(USER_KEY);
+        localStorage.removeItem(TOKEN_EXPIRY_KEY);
+        return false;
+      }
+    }
+    
+    return true;
   },
 
   // Get stored user data
@@ -113,6 +151,11 @@ export const authService = {
     
     // Store user data
     localStorage.setItem(USER_KEY, JSON.stringify(user));
+    
+    // Set default session expiry (24 hours) for OAuth logins
+    const expiryDate = new Date();
+    expiryDate.setHours(expiryDate.getHours() + DEFAULT_SESSION_HOURS);
+    localStorage.setItem(TOKEN_EXPIRY_KEY, expiryDate.toISOString());
     
     return {
       token,
