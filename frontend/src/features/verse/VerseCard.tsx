@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Verse } from "../../types/verse";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
@@ -11,6 +11,7 @@ interface VerseCardProps {
 }
 
 export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
+  const [isVisible, setIsVisible] = useState(false);
   const { isFavorited, getFavoriteId, addFavorite, removeFavorite } =
     useFavorites();
   const [isSharing, setIsSharing] = useState(false);
@@ -64,6 +65,19 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
 
   const isVerseAlreadyFavorited = isFavorited(verse.id);
 
+  // Fade in effect when verse changes
+  useEffect(() => {
+    // Fade out
+    setIsVisible(false);
+    
+    // Fade in after a brief delay
+    const timer = setTimeout(() => {
+      setIsVisible(true);
+    }, 100);
+
+    return () => clearTimeout(timer);
+  }, [verse.reference]); // Trigger when verse reference changes
+
   // Keyboard shortcuts
   useKeyboardShortcuts([
     {
@@ -77,7 +91,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   ]);
 
   return (
-    <Card className="relative">
+    <Card className={`relative transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
       {/* Decorative quote mark */}
       <div className="absolute top-4 left-4 text-6xl text-primary-100 dark:text-primary-900 font-serif">
         "

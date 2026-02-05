@@ -172,101 +172,103 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         </button>
       </div>
 
-      {isVisible && (
-        <>
-          {error && (
-            <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
+      <div 
+        className={`overflow-hidden transition-all duration-300 ease-in-out ${
+          isVisible ? 'max-h-[1000px] opacity-100' : 'max-h-0 opacity-0'
+        }`}
+      >
+        {error && (
+          <div className="mb-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 text-red-700 dark:text-red-400 px-4 py-3 rounded-lg text-sm">
+            {error}
+          </div>
+        )}
 
-          {!isEditing && !comment && (
-            <button
-              onClick={() => setIsEditing(true)}
-              className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-sm font-medium flex items-center gap-2"
-              aria-label="Add a personal note"
+        {!isEditing && !comment && (
+          <button
+            onClick={() => setIsEditing(true)}
+            className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-sm font-medium flex items-center gap-2"
+            aria-label="Add a personal note"
+          >
+            <svg
+              className="w-5 h-5"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
             >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M12 4v16m8-8H4"
-                />
-              </svg>
-              Add a personal note
-            </button>
-          )}
-
-          {!isEditing && comment && (
-            <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-              <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap mb-3">
-                {comment.comment_text}
-              </p>
-              <div className="flex gap-2">
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
-                  aria-label="Edit note"
-                >
-                  Edit
-                </button>
-                <button
-                  onClick={handleDelete}
-                  className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
-                  aria-label="Delete note"
-                >
-                  Delete
-                </button>
-              </div>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-                Last updated: {new Date(comment.updated_at).toLocaleDateString()}
-              </p>
-            </div>
-          )}
-
-          {isEditing && (
-            <div>
-              <textarea
-                ref={textareaRef}
-                value={commentText}
-                onChange={(e) => setCommentText(e.target.value)}
-                placeholder="Add your personal thoughts, reflections, or prayers about this verse..."
-                className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
-                rows={4}
-                maxLength={1000}
-                aria-label="Personal note for this verse"
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 4v16m8-8H4"
               />
-              <div className="flex justify-between items-center mt-2">
-                <span className="text-sm text-gray-500 dark:text-gray-400">
-                  {commentText.length}/1000 characters
-                </span>
-                <div className="flex gap-2">
-                  <Button
-                    onClick={handleCancel}
-                    variant="secondary"
-                    disabled={isSaving}
-                  >
-                    Cancel
-                  </Button>
-                  <Button
-                    onClick={handleSave}
-                    variant="primary"
-                    isLoading={isSaving}
-                  >
-                    Save Note
-                  </Button>
-                </div>
+            </svg>
+            Add a personal note
+          </button>
+        )}
+
+        {!isEditing && comment && (
+          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
+            <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap mb-3">
+              {comment.comment_text}
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={() => setIsEditing(true)}
+                className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
+                aria-label="Edit note"
+              >
+                Edit
+              </button>
+              <button
+                onClick={handleDelete}
+                className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
+                aria-label="Delete note"
+              >
+                Delete
+              </button>
+            </div>
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+              Last updated: {new Date(comment.updated_at).toLocaleDateString()}
+            </p>
+          </div>
+        )}
+
+        {isEditing && (
+          <div>
+            <textarea
+              ref={textareaRef}
+              value={commentText}
+              onChange={(e) => setCommentText(e.target.value)}
+              placeholder="Add your personal thoughts, reflections, or prayers about this verse..."
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+              rows={4}
+              maxLength={1000}
+              aria-label="Personal note for this verse"
+            />
+            <div className="flex justify-between items-center mt-2">
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {commentText.length}/1000 characters
+              </span>
+              <div className="flex gap-2">
+                <Button
+                  onClick={handleCancel}
+                  variant="secondary"
+                  disabled={isSaving}
+                >
+                  Cancel
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  variant="primary"
+                  isLoading={isSaving}
+                >
+                  Save Note
+                </Button>
               </div>
             </div>
-          )}
-        </>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 };
