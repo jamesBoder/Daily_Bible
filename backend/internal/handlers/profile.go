@@ -12,6 +12,7 @@ import (
 	"dailybible/internal/repository"
 	"dailybible/internal/password"
 	"dailybible/internal/models"
+	"dailybible/internal/services"
 	"github.com/go-playground/validator/v10"
 
 
@@ -26,6 +27,7 @@ type ProfileHandler struct {
 	historyRepo repository.HistoryRepository
 	commentRepo *repository.CommentRepository
 	passwordHistoryRepo repository.PasswordHistoryRepository
+	emailValidator *services.EmailValidationService
 	validator *validator.Validate
 } 
 
@@ -37,15 +39,17 @@ func NewProfileHandler(
 	historyRepo repository.HistoryRepository,
 	commentRepo *repository.CommentRepository,
 	passwordHistoryRepo repository.PasswordHistoryRepository,
+	emailValidator *services.EmailValidationService,
 	validator *validator.Validate,
 ) *ProfileHandler {
 	return &ProfileHandler{
-		userRepo:    userRepo,
-		favoriteRepo: favoriteRepo,
-		historyRepo: historyRepo,
-		commentRepo: commentRepo,
+		userRepo:            userRepo,
+		favoriteRepo:        favoriteRepo,
+		historyRepo:         historyRepo,
+		commentRepo:         commentRepo,
 		passwordHistoryRepo: passwordHistoryRepo,
-		validator:   validator,
+		emailValidator:      emailValidator,
+		validator:           validator,
 	}
 }
 
@@ -105,6 +109,20 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 	// validate input
 	if err := h.validator.Struct(req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": err.Error()})
+		return
+	}
+
+	// validate email (check for disposable domains and typos)
+	isValid, suggestion, errMsg := h.emailValidator.ValidateEmail(req.Email)
+	if !isValid {
+		response := gin.H{
+			"error": errMsg,
+			"field": "email",
+		}
+		if suggestion != "" {
+			response["suggestion"] = suggestion
+		}
+		c.JSON(http.StatusBadRequest, response)
 		return
 	}
 

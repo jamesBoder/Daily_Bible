@@ -70,6 +70,7 @@ func main() {
     // 5. Initialize services
     authService := services.NewAuthService(userRepo)
     tokenService := services.NewTokenService(cfg)
+    emailValidationService := services.NewEmailValidationService()
     oauthService := services.NewOAuthService(userRepo, tokenService, googleOAuthConfig)
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo, verseRepo)
@@ -104,6 +105,7 @@ func main() {
     authHandler := handlers.NewAuthHandler(
         userRepo, 
         tokenService,
+        emailValidationService,
     )
     
     // init verseHandler variable
@@ -136,6 +138,7 @@ func main() {
         historyRepo,
         commentRepo,
         passwordHistoryRepo,
+        emailValidationService,
         validate, // validator can be added later
     )
 

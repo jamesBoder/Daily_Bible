@@ -19,6 +19,7 @@ export const Signup: React.FC = () => {
     name: "",
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [suggestions, setSuggestions] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
 
   const validateForm = () => {
@@ -71,9 +72,13 @@ export const Signup: React.FC = () => {
                      err.response?.data?.error || 
                      "Signup failed. Please try again.";
       const errorField = err.response?.data?.field;
+      const suggestion = err.response?.data?.suggestion;
 
       if (errorField) {
         setErrors({ [errorField]: errorMessage });
+        if (suggestion) {
+          setSuggestions({ [errorField]: suggestion });
+        }
       } else {
         setErrors({ general: errorMessage });
       }
@@ -88,13 +93,34 @@ export const Signup: React.FC = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
-    // Clear error for this field
+    // Clear error and suggestion for this field
     if (errors[e.target.name]) {
       setErrors({
         ...errors,
         [e.target.name]: "",
       });
     }
+    if (suggestions[e.target.name]) {
+      setSuggestions({
+        ...suggestions,
+        [e.target.name]: "",
+      });
+    }
+  };
+
+  const applySuggestion = (field: string, value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value,
+    });
+    setSuggestions({
+      ...suggestions,
+      [field]: "",
+    });
+    setErrors({
+      ...errors,
+      [field]: "",
+    });
   };
 
   return (
@@ -128,17 +154,34 @@ export const Signup: React.FC = () => {
             )}
 
 
-            <Input
-              label="Email"
-              type="email"
-              name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="your@email.com"
-              error={errors.email}
-              required
-              autoComplete="email"
-            />
+            <div>
+              <Input
+                label="Email"
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleChange}
+                placeholder="your@email.com"
+                error={errors.email}
+                required
+                autoComplete="email"
+              />
+              {suggestions.email && (
+                <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    Did you mean{" "}
+                    <button
+                      type="button"
+                      onClick={() => applySuggestion("email", suggestions.email)}
+                      className="font-semibold underline hover:no-underline"
+                    >
+                      {suggestions.email}
+                    </button>
+                    ?
+                  </p>
+                </div>
+              )}
+            </div>
 
             <Input
               label="Username"

@@ -18,16 +18,18 @@ import (
 type AuthHandler struct {
 	userRepo repository.UserRepository
 	tokenService *services.TokenService
+	emailValidator *services.EmailValidationService
 	validator *validator.Validate
 	
 }
 
 // Constructor
-func NewAuthHandler(userRepo repository.UserRepository, tokenService *services.TokenService) *AuthHandler {
+func NewAuthHandler(userRepo repository.UserRepository, tokenService *services.TokenService, emailValidator *services.EmailValidationService) *AuthHandler {
 	return &AuthHandler{
-		userRepo:     userRepo,
-		tokenService: tokenService,
-		validator:    validator.New(),
+		userRepo:       userRepo,
+		tokenService:   tokenService,
+		emailValidator: emailValidator,
+		validator:      validator.New(),
 	}
 }
 
@@ -79,6 +81,19 @@ func (h *AuthHandler) Register(c *gin.Context) {
 		return
 	}
 
+	// validate email (check for disposable domains and typos)
+	isValid, suggestion, errMsg := h.emailValidator.ValidateEmail(req.Email)
+	if !isValid {
+		response := gin.H{
+			"error": errMsg,
+			"field": "email",
+		}
+		if suggestion != "" {
+			response["suggestion"] = suggestion
+		}
+		c.JSON(http.StatusBadRequest, response)
+		return
+	}
 
 	// validate input password.ValidatePasswordStrength(req.Password)
 	validPassword, err := password.ValidatePasswordStrength(req.Password)
