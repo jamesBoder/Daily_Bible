@@ -18,7 +18,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // define loadComment before using it in useEffect
