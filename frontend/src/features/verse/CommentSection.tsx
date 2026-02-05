@@ -28,14 +28,28 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       if (existingComment) {
         setComment(existingComment);
         setCommentText(existingComment.comment_text);
+      } else {
+        // No comment found for this verse - clear any existing comment
+        setComment(null);
+        setCommentText("");
       }
     } catch (err) {
       console.error("Failed to load comment:", err);
+      // On error, also clear to avoid showing stale data
+      setComment(null);
+      setCommentText("");
     }
   }, [verseReference]);
 
-  // Load existing comment
+  // Load existing comment and reset state when verse changes
   useEffect(() => {
+    // Reset state immediately when verse reference changes
+    setComment(null);
+    setCommentText("");
+    setIsEditing(false);
+    setError("");
+    
+    // Then load the comment for the new verse
     loadComment();
   }, [loadComment]);
 
