@@ -31,8 +31,21 @@ func NewDailyVerseService(
 }
 
 // GetDailyVerse returns the verse of the day
+// Uses UTC-12 timezone to ensure the verse updates early enough that users
+// worldwide see a fresh verse when they wake up in the morning.
+// UTC-12 is the earliest timezone, so when it's midnight there (new day),
+// it's already well into the day for most of the world.
 func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
-    today := time.Now().Format("2006-01-02")
+    // Use UTC-12 timezone (earliest timezone in the world)
+    // This ensures verse updates at noon UTC, which is early morning or previous evening
+    // for all users globally, guaranteeing they see a fresh verse when they wake up
+    loc, err := time.LoadLocation("Etc/GMT+12")
+    if err != nil {
+        // Fallback to UTC if timezone loading fails
+        loc = time.UTC
+    }
+    now := time.Now().In(loc)   
+    today := now.Format("2006-01-02")
     
     // Check cache first - see if we already have a verse for today
     cached, err := s.verseRepo.GetByDate(today)
