@@ -74,8 +74,14 @@ export const HistoryList: React.FC = () => {
         </Card>
       ) : (
         <div className="space-y-4">
-          {history.map((entry) => (
-            <Card key={entry.id}>
+          {history.map((entry, index) => (
+            <Card 
+              key={entry.id}
+              className={`transition-opacity duration-500 ${
+                index < 10 ? `opacity-0 animate-fade-in` : ''
+              }`}
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
               <div className="p-6">
                 <div className="mb-4">
                   <h2 className="text-lg font-semibold text-primary-600 dark:text-primary-400 mb-2">

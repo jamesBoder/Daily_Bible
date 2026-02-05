@@ -79,8 +79,14 @@ export const FavoritesList: React.FC = () => {
         </Card>
       ) : (
         <div className="space-y-4">
-          {favorites.map((favorite) => (
-            <Card key={favorite.id} className="relative">
+          {favorites.map((favorite, index) => (
+            <Card 
+              key={favorite.id} 
+              className={`relative transition-opacity duration-500 ${
+                index < 10 ? `opacity-0 animate-fade-in` : ''
+              }`}
+              style={{ animationDelay: `${index * 50}ms` }}
+            >
               {/* Verse content */}
               <div className="mb-4">
                 <p className="text-lg text-gray-800 dark:text-gray-200 font-serif leading-relaxed mb-4">
