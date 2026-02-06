@@ -57,3 +57,6 @@ frontend/.env
 .sh
 
 .blackboxcli/
+
+# ignore docs folder
+docs/
