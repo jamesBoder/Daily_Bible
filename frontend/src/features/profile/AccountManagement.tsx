@@ -21,6 +21,15 @@ export const AccountManagement: React.FC = () => {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [passwordSuccess, setPasswordSuccess] = useState(false);
 
+  // Set password state (for OAuth users)
+  const [showSetPasswordForm, setShowSetPasswordForm] = useState(false);
+  const [newPasswordData, setNewPasswordData] = useState({
+    newPassword: "",
+    confirmPassword: "",
+  });
+  const [newPasswordError, setNewPasswordError] = useState<string | null>(null);
+  const [newPasswordSuccess, setNewPasswordSuccess] = useState(false);
+
   // Delete account state
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [deletePassword, setDeletePassword] = useState("");
@@ -34,6 +43,61 @@ export const AccountManagement: React.FC = () => {
   const [isUnlinkingGoogle, setIsUnlinkingGoogle] = useState(false);
   const [googleError, setGoogleError] = useState<string | null>(null);
   const [showUnlinkConfirm, setShowUnlinkConfirm] = useState(false);
+
+  // Set password handlers (for OAuth users)
+  const handleSetPasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setNewPasswordData((prev) => ({
+      ...prev,
+      [e.target.name]: e.target.value,
+    }));
+    setNewPasswordError(null);
+  };
+
+  const handleSetPasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setNewPasswordError(null);
+    setNewPasswordSuccess(false);
+
+    // Validation
+    if (newPasswordData.newPassword !== newPasswordData.confirmPassword) {
+      setNewPasswordError("Passwords do not match");
+      return;
+    }
+
+    if (newPasswordData.newPassword.length < 8) {
+      setNewPasswordError("Password must be at least 8 characters");
+      return;
+    }
+
+    try {
+      // Call the set password API
+      await profileService.setPassword(
+        newPasswordData.newPassword,
+        newPasswordData.confirmPassword
+      );
+
+      // Show success message
+      setNewPasswordSuccess(true);
+      
+      // Reset form
+      setNewPasswordData({
+        newPassword: "",
+        confirmPassword: "",
+      });
+
+      // Refresh user data to update state
+      await refreshUser();
+
+      // Close form after delay
+      setTimeout(() => {
+        setNewPasswordSuccess(false);
+        setShowSetPasswordForm(false);
+      }, 2000);
+    } catch (error: any) {
+      const errorMsg = error.response?.data?.error || error.response?.data?.details || "Failed to set password";
+      setNewPasswordError(errorMsg);
+    }
+  };
 
   // Password change handlers
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -163,10 +227,6 @@ export const AccountManagement: React.FC = () => {
   const handleUnlinkGoogle = async () => {
     setGoogleError(null);
 
-    // Note: We can't check if user has password from frontend (it's hidden for security)
-    // The backend will validate this when unlinking
-    // If user has no password, backend will return an error
-
     setIsUnlinkingGoogle(true);
 
     try {
@@ -176,38 +236,108 @@ export const AccountManagement: React.FC = () => {
       // Refresh user data to show updated state
       await refreshUser();
 
-      // Show success message
-      alert("Google account unlinked successfully");
-
       // Reset state
       setShowUnlinkConfirm(false);
     } catch (error: any) {
-      setGoogleError(error.message || "Failed to unlink Google account");
+      // Check if error is about missing password
+      const errorMsg = error.response?.data?.error || error.message || "Failed to unlink Google account";
+      
+      if (errorMsg.includes("no password set") || errorMsg.includes("password")) {
+        setGoogleError("You must set a password before unlinking your Google account. Please set a password first in the 'Set Password' section above.");
+      } else {
+        setGoogleError(errorMsg);
+      }
     } finally {
       setIsUnlinkingGoogle(false);
     }
   };
 
-  /* add new Connected Accounts */
+  // Determine if user likely has a password set
+  // If user signed up with Google and email matches google_email, they likely don't have a password
+  const hasPassword = user?.email !== user?.google_email || !user?.is_google_linked;
+
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6 ">
-      {/* Change Password */}
+    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      {/* Set/Change Password */}
       <Card>
         <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
-          Change Password
+          {hasPassword ? "Change Password" : "Set Password"}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 dark:text-gray-400 mb-4 text-center">
-          Update your password to keep your account secure.
+        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+          {hasPassword 
+            ? "Update your password to keep your account secure."
+            : "Set a password to enable email/password login and allow unlinking your Google account."}
         </p>
 
-        {!showPasswordForm ? (
-          <span className="flex items-center justify-center"
-        >
+        {/* Set Password Form (for OAuth users without password) */}
+        {!hasPassword && !showSetPasswordForm && (
+          <span className="flex items-center justify-center">
+            <Button onClick={() => setShowSetPasswordForm(true)}>
+              Set Password
+            </Button>
+          </span>
+        )}
+
+        {!hasPassword && showSetPasswordForm && (
+          <form onSubmit={handleSetPasswordSubmit} className="space-y-4">
+            {newPasswordError && (
+              <div className="text-red-500 text-sm">
+                {newPasswordError}
+              </div>
+            )}
+            {newPasswordSuccess && (
+              <div className="text-green-500 dark:text-green-400 text-sm">
+                Password set successfully! You can now unlink your Google account if desired.
+              </div>
+            )}
+
+            <Input
+              type="password"
+              name="newPassword"
+              label="New Password"
+              value={newPasswordData.newPassword}
+              onChange={handleSetPasswordChange}
+              required
+            />
+
+            <Input
+              type="password"
+              name="confirmPassword"
+              label="Confirm Password"
+              value={newPasswordData.confirmPassword}
+              onChange={handleSetPasswordChange}
+              required
+            />
+
+            <div className="flex gap-2">
+              <Button type="submit">Set Password</Button>
+              <Button
+                type="button"
+                onClick={() => {
+                  setShowSetPasswordForm(false);
+                  setNewPasswordData({
+                    newPassword: "",
+                    confirmPassword: "",
+                  });
+                  setNewPasswordError(null);
+                }}
+              >
+                Cancel
+              </Button>
+            </div>
+          </form>
+        )}
+
+        {/* Change Password Form (for users with password) */}
+        {hasPassword && !showPasswordForm && (
+          <span className="flex items-center justify-center">
             <Button onClick={() => setShowPasswordForm(true)}>
               Change Password
             </Button>
           </span>
-        ) : (
+        )}
+
+        {hasPassword && showPasswordForm && (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
             {passwordError && (
               <div className="text-red-500 dark:text-gray-400 text-sm">
@@ -401,7 +531,6 @@ export const AccountManagement: React.FC = () => {
             <Button
               onClick={handleLinkGoogle}
               isLoading={isLinkingGoogle}
-              
             >
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
@@ -428,6 +557,7 @@ export const AccountManagement: React.FC = () => {
           </div>
         )}
       </Card>
+
       {/* Export Data */}
       <Card>
         <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">

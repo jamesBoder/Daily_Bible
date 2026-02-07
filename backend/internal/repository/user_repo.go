@@ -109,11 +109,11 @@ func (r *userRepository) UpdateGoogleInfo(userID uint, googleID, email, picture 
 
 // RemoveGoogleLink removes the Google link from a user's account
 func (r *userRepository) RemoveGoogleLink(userID uint) error {
-    return r.db.Model(&models.User{}).Where("id = ?", userID).Select("google_id", "google_email", "google_picture", "is_google_linked").Updates(map[string]interface{}{
+    // Use UpdateColumns instead of Updates to bypass hooks and update nil values
+    return r.db.Model(&models.User{}).Where("id = ?", userID).UpdateColumns(map[string]interface{}{
         "google_id":       nil,
         "google_email":    nil,
         "google_picture":  nil,
         "is_google_linked": false,
     }).Error
-
 }

@@ -93,6 +93,28 @@ export const profileService = {
         }
     },
 
+    // setPassword method - for OAuth users to set their first password
+    setPassword: async (newPassword: string, confirmPassword: string): Promise<{ message: string }> => {
+        try {
+            const response = await apiClient.post<{ message: string }>(
+                `${API_ENDPOINTS.PROFILE}/password/set`,
+                { newPassword, confirmPassword }
+            );
+            showToast.success('Password set successfully!');
+            return response.data;
+        } catch (error: any) {
+            if (error.response?.status === 400) {
+                const errorMsg = error.response?.data?.details || error.response?.data?.error || 'Invalid password data';
+                showToast.error(errorMsg);
+            } else if (error.response?.status === 401) {
+                showToast.error('Authentication required. Please login again.');
+            } else {
+                showToast.error('Failed to set password');
+            }
+            throw error;
+        }
+    },
+
     // changePassword method
     changePassword: async (data: ChangePasswordRequest): Promise<ChangePasswordResponse> => {
         try {

@@ -233,6 +233,96 @@ func (h *ProfileHandler) GetStats(c *gin.Context) {
 	})
 }
 
+// SetPassword handler - allows OAuth users to set their first password
+func (h *ProfileHandler) SetPassword(c *gin.Context) {
+	// extract userID from context (set by auth middleware)
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// parse request body
+	var req struct {
+		NewPassword     string `json:"newPassword" validate:"required,min=8"`
+		ConfirmPassword string `json:"confirmPassword" validate:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
+		return
+	}
+
+	// validate input
+	if err := h.validator.Struct(req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": err.Error()})
+		return
+	}
+
+	// check if passwords match
+	if req.NewPassword != req.ConfirmPassword {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Passwords do not match"})
+		return
+	}
+
+	// fetch user from database
+	user, err := h.userRepo.GetByID(userID.(uint))
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
+		return
+	}
+	if user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	// check if user already has a password
+	if user.Password != "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Password already set",
+			"details": "Use the change password feature to update your existing password",
+		})
+		return
+	}
+
+	// validate new password strength
+	validPassword, err := password.ValidatePasswordStrength(req.NewPassword)
+	if !validPassword {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Password does not meet requirements",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	// set password (SetPassword will hash it)
+	if err := user.SetPassword(req.NewPassword); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to set password"})
+		return
+	}
+
+	// save to database
+	if err := h.userRepo.Update(user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to save password"})
+		return
+	}
+
+	// save to password history
+	passwordHistory := &models.PasswordHistory{
+		UserID:       userID.(uint),
+		PasswordHash: user.Password,
+		ChangedAt:    time.Now(),
+	}
+	if err := h.passwordHistoryRepo.Create(passwordHistory); err != nil {
+		// Log error but don't fail the request
+		// Password was successfully set, history is not critical
+	}
+
+	// respond with success
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Password set successfully. You can now unlink your Google account if desired.",
+	})
+}
+
 // UpdatePassword handler - allows users to change their password
 func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 	// extract userID from context (set by auth middleware)

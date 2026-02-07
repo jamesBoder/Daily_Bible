@@ -81,6 +81,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 				profile.GET("", profileHandler.GetProfile)
 				profile.PUT("", profileHandler.UpdateProfile)
 				profile.GET("/stats", profileHandler.GetStats)
+				profile.POST("/password/set", profileHandler.SetPassword)
 				profile.PUT("/password", profileHandler.UpdatePassword)
 			}
 		}	
