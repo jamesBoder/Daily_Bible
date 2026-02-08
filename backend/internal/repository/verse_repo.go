@@ -15,6 +15,7 @@ type VerseRepository interface {
     GetDailyVerse() (*models.Verse, error)
     List(limit, offset int) ([]models.Verse, error)
     GetByDate(date string) (*models.Verse, error)
+    GetRecentlyUsedReferences(daysBack int) ([]string, error)
 }
 
 // init the struct that implements VerseRepository
@@ -91,4 +92,29 @@ func (r *verseRepository) GetByDate(date string) (*models.Verse, error) {
         return nil, err
     }
     return &verse, nil
+}
+
+// GetRecentlyUsedReferences returns verse references used in the last N days
+func (r *verseRepository) GetRecentlyUsedReferences(daysBack int) ([]string, error) {
+    var verses []models.Verse
+    
+    // Calculate the cutoff date
+    // We'll use a raw SQL query to ensure compatibility across databases
+    err := r.db.
+        Select("reference").
+        Where("daily_date IS NOT NULL").
+        Where("daily_date >= date('now', '-' || ? || ' days')", daysBack).
+        Find(&verses).Error
+    
+    if err != nil {
+        return nil, err
+    }
+    
+    // Extract references into a slice
+    references := make([]string, len(verses))
+    for i, verse := range verses {
+        references[i] = verse.Reference
+    }
+    
+    return references, nil
 }
