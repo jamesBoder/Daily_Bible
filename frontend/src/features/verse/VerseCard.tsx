@@ -106,7 +106,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
 
       {/* Reference */}
       <div className="text-center mb-6">
-        <p className="text-lg font-semibold text-primary-700 dark:text-primary-400">
+        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400">
           {verse.reference}
         </p>
         {verse.version && (

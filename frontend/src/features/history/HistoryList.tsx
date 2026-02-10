@@ -43,7 +43,7 @@ export const HistoryList: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8 flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">My History</h1>
+        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-primary-400 mb-2">History</h1>
         <Button
           onClick={handleClearHistory}
           disabled={clearing || history.length === 0}
@@ -84,7 +84,7 @@ export const HistoryList: React.FC = () => {
             >
               <div className="p-6">
                 <div className="mb-4">
-                  <h2 className="text-lg font-semibold text-primary-600 dark:text-primary-400 mb-2">
+                  <h2 className="text-lg font-display font-semibold text-primary-600 dark:text-primary-400 mb-2">
                     {entry.verse?.reference || "Unknown Reference"}
                   </h2>
                   <p className="text-gray-800 dark:text-gray-200 leading-relaxed">

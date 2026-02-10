@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
           <Link to="/" className="flex items-center">
-            <span className="text-2xl font-bold text-primary-600 dark:text-primary-600">
+            <span className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400">
               Words of Praise
             </span>
           </Link>
@@ -40,7 +40,7 @@ export const Header: React.FC = () => {
             </Link>
             <Link
               to="/history"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary- dark:hover:text-primary-400 font-medium transition-colors"
+              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
             >
               History
             </Link>

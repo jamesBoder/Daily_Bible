@@ -41,7 +41,7 @@ export const FavoritesList: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">My Favorites</h1>
+        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-primary-400 mb-2">My Favorites</h1>
         <p className="text-gray-600 dark:text-gray-400">
           {favorites.length} {favorites.length === 1 ? "verse" : "verses"} saved
         </p>
@@ -92,7 +92,7 @@ export const FavoritesList: React.FC = () => {
                 <p className="text-lg text-gray-800 dark:text-gray-200 font-serif leading-relaxed mb-4">
                   {favorite.verse?.text}
                 </p>
-                <p className="text-md font-semibold text-primary-700 dark:text-primary-400">
+                <p className="text-lg font-display font-semibold text-primary-700 dark:text-primary-400">
                   {favorite.verse?.reference}
                 </p>
                 {favorite.verse?.version && (

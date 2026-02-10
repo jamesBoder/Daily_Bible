@@ -5,12 +5,13 @@
 @layer base {
   body {
     @apply text-gray-900;
-    /* Gradient background from white to blue */
+    font-size: 16px;
+    /* Subtle gradient background for better contrast with white verse card */
     background: linear-gradient(
       to bottom,
-      #ffffff 0%,
-      #f0f9ff 50%,
-      #e0f2fe 100%
+      #f8fafc 0%,
+      #e2e8f0 50%,
+      #cbd5e1 100%
     );
     min-height: 100vh;
     background-attachment: fixed;
@@ -103,7 +104,18 @@
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-md p-6
+    @apply bg-white rounded-lg shadow-lg p-6
            dark:bg-gray-800 dark:shadow-xl;
+  }
+
+  /* Logo/Brand Text Styling */
+  .font-display {
+    letter-spacing: 0.02em;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+  }
+
+  .dark .font-display {
+    text-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
   }
 }
