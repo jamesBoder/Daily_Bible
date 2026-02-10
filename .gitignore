@@ -49,12 +49,10 @@ frontend/.env
 
 # Any file or folder with test in its name
 *test*
-
-# md files
-.md 
+ 
 
 # sh files
-.sh
+*.sh
 
 .blackboxcli/
 
