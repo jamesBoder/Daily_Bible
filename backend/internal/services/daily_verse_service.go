@@ -31,17 +31,18 @@ func NewDailyVerseService(
 }
 
 // GetDailyVerse returns the verse of the day
-// Uses UTC+14 timezone to ensure the verse updates early in the morning for users
-// worldwide, so they see a fresh verse when they wake up.
-// UTC+14 is the furthest timezone ahead of UTC, so when it's midnight there (new day),
-// it's 10 AM the previous day UTC, which translates to early morning (5-6 AM Eastern,
-// 2-3 AM Pacific) ensuring all users see a fresh verse when they wake up.
+// Uses UTC-10 timezone (Hawaii) to ensure the verse updates early in the morning for users
+// worldwide. When it's midnight in Hawaii (UTC-10), it's 10 AM UTC, which is:
+// - 5-6 AM Eastern Time
+// - 2-3 AM Pacific Time
+// - Early morning for most users globally
+// This prevents the verse from updating in the evening (7 PM Eastern).
 func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
-    // Use UTC+14 timezone (Pacific/Kiritimati - furthest timezone ahead of UTC)
-    // This ensures verse updates at 10 AM UTC (previous day), which is early morning
-    // for all users globally (5-6 AM Eastern, 2-3 AM Pacific), guaranteeing they see
-    // a fresh verse when they wake up, not in the evening
-    loc, err := time.LoadLocation("Pacific/Kiritimati")
+    // Use UTC-10 timezone (Pacific/Honolulu - Hawaii)
+    // When it's midnight in Hawaii (new day starts), it's 10 AM UTC
+    // This translates to 5-6 AM Eastern, ensuring users see a fresh verse
+    // when they wake up in the morning, not in the evening
+    loc, err := time.LoadLocation("Pacific/Honolulu")
     if err != nil {
         // Fallback to UTC if timezone loading fails
         loc = time.UTC
