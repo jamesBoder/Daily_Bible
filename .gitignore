@@ -60,3 +60,8 @@ frontend/.env
 
 # ignore docs folder
 docs/
+
+
+# ignore all .md files except for README.md
+*.md
+!README.md
