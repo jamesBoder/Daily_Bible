@@ -98,12 +98,12 @@ func (r *verseRepository) GetByDate(date string) (*models.Verse, error) {
 func (r *verseRepository) GetRecentlyUsedReferences(daysBack int) ([]string, error) {
     var verses []models.Verse
     
-    // Calculate the cutoff date
-    // We'll use a raw SQL query to ensure compatibility across databases
+    // Calculate the cutoff date using PostgreSQL syntax
+    // CURRENT_DATE - INTERVAL 'N days' works in PostgreSQL
     err := r.db.
         Select("reference").
         Where("daily_date IS NOT NULL").
-        Where("daily_date >= date('now', '-' || ? || ' days')", daysBack).
+        Where("daily_date >= CURRENT_DATE - INTERVAL '1 day' * ?", daysBack).
         Find(&verses).Error
     
     if err != nil {

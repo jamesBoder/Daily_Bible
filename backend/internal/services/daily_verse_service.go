@@ -38,17 +38,13 @@ func NewDailyVerseService(
 // - Early morning for most users globally
 // This prevents the verse from updating in the evening (7 PM Eastern).
 func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
-    // Use UTC-10 timezone (Pacific/Honolulu - Hawaii)
-    // When it's midnight in Hawaii (new day starts), it's 10 AM UTC
-    // This translates to 5-6 AM Eastern, ensuring users see a fresh verse
-    // when they wake up in the morning, not in the evening
-    loc, err := time.LoadLocation("Pacific/Honolulu")
-    if err != nil {
-        // Fallback to UTC if timezone loading fails
-        loc = time.UTC
-    }
-    now := time.Now().In(loc)   
-    today := now.Format("2006-01-02")
+    // Get current UTC time
+    now := time.Now().UTC()
+    
+    // Subtract 10 hours to get the "effective date"
+    // When it's 10 AM UTC (5-6 AM Eastern), this becomes midnight (new day)
+    effectiveTime := now.Add(-10 * time.Hour)
+    today := effectiveTime.Format("2006-01-02")
     
     // Check cache first - see if we already have a verse for today
     cached, err := s.verseRepo.GetByDate(today)
