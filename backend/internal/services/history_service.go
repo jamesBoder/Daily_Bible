@@ -35,14 +35,24 @@ func (s *HistoryService) GetUserHistoryPaginated(userID uint, page, pageSize int
     return s.historyRepo.GetByUserIDPaginated(userID, pageSize, offset)
 }
 
-// AddToHistory records a verse view (updates timestamp if already exists)
+// AddToHistory records a verse view (updates timestamp only if viewed on a different day)
 func (s *HistoryService) AddToHistory(userID, verseID uint) error {
     // Check if this verse is already in the user's history
     existingHistory, err := s.historyRepo.FindByUserAndVerse(userID, verseID)
     
     if err == nil && existingHistory != nil {
-        // Entry exists, update the viewed_at timestamp
-        return s.historyRepo.UpdateViewedAt(existingHistory.ID, time.Now())
+        // Entry exists, check if it was viewed today
+        now := time.Now()
+        viewedDate := existingHistory.ViewedAt.Format("2006-01-02")
+        todayDate := now.Format("2006-01-02")
+        
+        // Only update if viewed on a different day
+        if viewedDate != todayDate {
+            return s.historyRepo.UpdateViewedAt(existingHistory.ID, now)
+        }
+        
+        // Already viewed today, no update needed
+        return nil
     }
     
     // Entry doesn't exist, create a new one
