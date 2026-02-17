@@ -41,7 +41,7 @@ export const FavoritesList: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8">
-        <h1 className="text-4xl font-display font-bold text-gray-900 dark:text-primary-400 mb-2">My Favorites</h1>
+        <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">My Favorites</h1>
         <p className="text-gray-600 dark:text-gray-400">
           {favorites.length} {favorites.length === 1 ? "verse" : "verses"} saved
         </p>

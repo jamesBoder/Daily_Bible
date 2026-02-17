@@ -18,8 +18,8 @@ export const Header: React.FC = () => {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <Link to="/" className="flex items-center">
-            <span className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400">
+          <Link to="/" className="flex items-center group">
+            <span className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 group-hover:brightness-125 group-hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.4)] dark:group-hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]">
               Words of Praise
             </span>
           </Link>

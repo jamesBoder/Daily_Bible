@@ -48,13 +48,13 @@ export const About: React.FC = () => {
       </section>
 
       {/* Mission Statement Section */}
-      <section className="max-w-4xl mx-auto py-16 px-6">
-        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 md:p-12 border border-gray-200 dark:border-gray-700">
-          <h2 className="text-3xl font-bold mb-6 text-gray-900 dark:text-white flex items-center">
-            <span className="text-4xl mr-3">🙏</span>
+      <section className="max-w-4xl mx-auto py-16 px-4 sm:px-6">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 md:p-12 border border-gray-200 dark:border-gray-700">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center justify-center sm:justify-start">
+            <span className="text-3xl sm:text-4xl mr-3">🙏</span>
             Our Mission
           </h2>
-          <p className="text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300">
             Words of Praise was created to provide a simple, accessible way to experience daily inspiration through Bible verses. We believe that God's Word has the power to transform lives, and we want to make it easy for everyone to connect with Scripture every day. Whether you're looking for a moment of reflection, a source of encouragement, or a way to deepen your faith, Words of Praise is here to support you on your spiritual journey.
           </p>
         </div>
@@ -62,53 +62,53 @@ export const About: React.FC = () => {
 
       {/* Features Overview Section */}
       <section className="py-16 px-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
-        <h2 className="text-4xl font-bold mb-12 text-center text-gray-900 dark:text-white">
+        <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center text-primary-600 dark:text-primary-400">
           Features
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
-            <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform">📖</div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Daily Verse</h3>
+          <div className="group bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400 text-center">
+            <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">📖</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">Daily Verse</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Receive a new inspirational Bible verse every day at midnight
             </p>
           </div>
           
-          <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
-            <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform">⭐</div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Favorites</h3>
+          <div className="group bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400 text-center">
+            <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">⭐</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">Favorites</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Save and organize your favorite verses for easy access
             </p>
           </div>
           
-          <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
-            <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform">📜</div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">History</h3>
+          <div className="group bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400 text-center">
+            <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">📜</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">History</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Track your spiritual journey with automatic reading history
             </p>
           </div>
           
-          <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
-            <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform">💬</div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Personal Notes</h3>
+          <div className="group bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400 text-center">
+            <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">💬</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">Personal Notes</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Add your own reflections and comments to verses
             </p>
           </div>
           
-          <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
-            <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform">🌙</div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Dark Mode</h3>
+          <div className="group bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400 text-center">
+            <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">🌙</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">Dark Mode</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Comfortable reading experience day or night
             </p>
           </div>
           
-          <div className="group bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400">
-            <div className="text-5xl mb-4 transform group-hover:scale-110 transition-transform">📱</div>
-            <h3 className="text-2xl font-bold mb-3 text-gray-900 dark:text-white">Mobile Friendly</h3>
+          <div className="group bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400 text-center">
+            <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">📱</div>
+            <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">Mobile Friendly</h3>
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Beautiful and responsive on all devices
             </p>
@@ -117,24 +117,24 @@ export const About: React.FC = () => {
       </section>
 
       {/* Get in Touch Section */}
-      <section id="contact" className="max-w-4xl mx-auto py-16 px-6">
-        <div className="bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/30 dark:to-purple-900/30 rounded-2xl shadow-xl p-10 border-2 border-primary-200 dark:border-primary-800">
-          <h2 className="text-3xl font-bold mb-6 text-center text-gray-900 dark:text-white flex items-center justify-center">
-            <span className="text-4xl mr-3">✉️</span>
+      <section id="contact" className="max-w-4xl mx-auto py-16 px-4 sm:px-6">
+        <div className="bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/30 dark:to-purple-900/30 rounded-2xl shadow-xl p-6 sm:p-10 border-2 border-primary-200 dark:border-primary-800">
+          <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-primary-600 dark:text-primary-400 flex items-center justify-center">
+            <span className="text-3xl sm:text-4xl mr-3">✉️</span>
             Get in Touch
           </h2>
-          <p className="text-center mb-6 text-lg text-gray-700 dark:text-gray-300">
+          <p className="text-center mb-6 text-base sm:text-lg text-gray-700 dark:text-gray-300">
             We'd love to hear from you! Whether you've found a bug, have a suggestion, or just want to share your thoughts, please reach out.
           </p>
-          <div className="text-center bg-white dark:bg-gray-800 rounded-xl p-6 shadow-md">
-            <p className="text-gray-600 dark:text-gray-400 mb-2">Email us at:</p>
+          <div className="text-center bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-md">
+            <p className="text-gray-600 dark:text-gray-400 mb-2 text-sm sm:text-base">Email us at:</p>
             <a
               href="mailto:wordsofpraiseapp@gmail.com"
-              className="text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors inline-block hover:scale-105 transform"
+              className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors inline-block hover:scale-105 transform break-all"
             >
               wordsofpraiseapp@gmail.com
             </a>
-            <p className="text-sm mt-4 text-gray-500 dark:text-gray-500">
+            <p className="text-xs sm:text-sm mt-4 text-gray-500 dark:text-gray-500">
               ⏱️ We typically respond within 24-48 hours
             </p>
           </div>
@@ -142,8 +142,8 @@ export const About: React.FC = () => {
       </section>
 
       {/* Dedication Section */}
-      <section className="max-w-4xl mx-auto py-16 px-6 mb-8">
-        <div className="bg-gradient-to-br from-white to-primary-50 dark:from-gray-800 dark:to-primary-900/20 rounded-2xl shadow-2xl p-10 md:p-12 border-l-8 border-primary-600 dark:border-primary-400 relative overflow-hidden">
+      <section className="max-w-4xl mx-auto py-16 px-4 sm:px-6 mb-8">
+        <div className="bg-gradient-to-br from-white to-primary-50 dark:from-gray-800 dark:to-primary-900/20 rounded-2xl shadow-2xl p-8 sm:p-10 md:p-12 border-l-8 border-primary-600 dark:border-primary-400 relative overflow-hidden">
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary-100 dark:bg-primary-900/30 rounded-full -mr-16 -mt-16"></div>
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-100 dark:bg-purple-900/30 rounded-full -ml-12 -mb-12"></div>
           
