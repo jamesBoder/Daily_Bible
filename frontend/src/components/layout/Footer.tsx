@@ -2,17 +2,29 @@ import React from "react";
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-t border-gray-200 dark:border-gray-700 mt-auto">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div className="text-center text-gray-600 dark:text-gray-400 text-sm">
-          <p>
-            © {new Date().getFullYear()} Words of Praise. All rights reserved.
-          </p>
-          <p className="mt-2">
-            Bringing you daily inspiration through God's Word
-          </p>
+    <footer className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-6 mt-12">
+      <div className="container mx-auto px-4 flex flex-col md:flex-row items-center justify-between">
+        {/* Links Section */}
+        <div className="flex space-x-4 mb-4 md:mb-0">
+          <a
+            href="/about"
+            className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          >
+            About
+          </a>
+          <a
+            href="/about#contact"
+            className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          >
+            Contact
+          </a>
+        </div>  
+        <div className="text-sm">
+          &copy; {new Date().getFullYear()} Words of Praise. All rights reserved.
         </div>
       </div>
     </footer>
   );
 };
+
+

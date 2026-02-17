@@ -56,6 +56,13 @@ const GoogleCallback = lazy(() =>
   }))
 );
 
+// lazy load About page for non-authenticated users
+const About = lazy(() =>
+  import("./features/about/About").then((module) => ({
+    default: module.About,
+  }))
+);
+
 function App() {
   return (
     <Router>
@@ -89,7 +96,14 @@ function App() {
               {/* Public routes - no Suspense needed for eager-loaded components */}
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              
+              <Route
+                path="/about"
+                element={
+                  <Suspense fallback={<VerseCardSkeleton />}>
+                    <About />
+                  </Suspense>
+                }
+              />
               {/* Lazy-loaded public route */}
               <Route
                 path="/auth/google/callback"
@@ -157,6 +171,7 @@ function App() {
                     </Suspense>
                   }
                 />
+                
               </Route>
 
             {/* Catch all - redirect to home */}

@@ -45,6 +45,12 @@ export const Header: React.FC = () => {
               History
             </Link>
             <Link
+              to="/about"
+              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+            >
+              About
+            </Link>
+            <Link
               to="/settings"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
             >
@@ -123,6 +129,13 @@ export const Header: React.FC = () => {
                 onClick={() => setIsMenuOpen(false)}
               >
                 History
+              </Link>
+              <Link
+                to="/about"
+                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+                onClick={() => setIsMenuOpen(false)}
+              >
+                About
               </Link>
               <Link
                 to="/settings"
