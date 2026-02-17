@@ -79,7 +79,7 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">Settings</h1>
+      <h1 className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">Settings</h1>
 
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
@@ -145,7 +145,7 @@ export const Settings: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
                       Username
                     </label>
-                    <p className="mt-1 text-lg text-gray-900 text-center">
+                    <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
                       {profile.username}
                     </p>
                   </div>
@@ -153,7 +153,7 @@ export const Settings: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
                       Email
                     </label>
-                    <p className="mt-1 text-lg text-gray-900 text-center">
+                    <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
                       {profile.email}
                     </p>
                   </div>
@@ -161,7 +161,7 @@ export const Settings: React.FC = () => {
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
                       Member Since
                     </label>
-                    <p className="mt-1 text-lg text-gray-900 text-center">
+                    <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
                       {new Date(profile.created_at).toLocaleDateString(
                         "en-US",
                         {

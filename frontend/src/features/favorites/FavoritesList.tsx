@@ -92,7 +92,7 @@ export const FavoritesList: React.FC = () => {
                 <p className="text-lg text-gray-800 dark:text-gray-200 font-serif leading-relaxed mb-4">
                   {favorite.verse?.text}
                 </p>
-                <p className="text-lg font-display font-semibold text-primary-700 dark:text-primary-400">
+                <p className="text-lg font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
                   {favorite.verse?.reference}
                 </p>
                 {favorite.verse?.version && (
