@@ -14,7 +14,7 @@ export const Footer: React.FC = () => {
               About
             </a>
             <a
-              href="mailto:wordsofpraiseapp@gmail.com"
+              href="mailto:wordsofpraiseapp@gmail.com?subject=Words%20of%20Praise%20-%20Inquiry"
               className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
             >
               Contact

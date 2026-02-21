@@ -161,7 +161,7 @@ export const About: React.FC = () => {
           <div className="text-center bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-md mb-6">
             <p className="text-gray-600 dark:text-gray-400 mb-2 text-sm sm:text-base">Email us at:</p>
             <a
-              href="mailto:wordsofpraiseapp@gmail.com"
+              href="mailto:wordsofpraiseapp@gmail.com?subject=Words%20of%20Praise%20-%20Inquiry"
               className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors inline-block hover:scale-105 transform break-all"
             >
               wordsofpraiseapp@gmail.com
