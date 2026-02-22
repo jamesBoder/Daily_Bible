@@ -7,11 +7,13 @@ import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 interface CommentSectionProps {
   verseId: number;
   verseReference: string;
+  onCommentSaved?: () => void;
 }
 
 export const CommentSection: React.FC<CommentSectionProps> = ({
   verseId,
   verseReference,
+  onCommentSaved,
 }) => {
   const [comment, setComment] = useState<Comment | null>(null);
   const [commentText, setCommentText] = useState("");
@@ -77,6 +79,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
       setComment(savedComment);
       setIsEditing(false);
+      onCommentSaved?.();
     } catch (err: any) {
       setError(err.response?.data?.error || "Failed to save comment");
     } finally {

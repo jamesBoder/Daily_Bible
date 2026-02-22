@@ -1,5 +1,5 @@
 // Remove trailing slash if present to avoid double slashes in URL concatenation
-export const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost:8080').replace(/\/$/, '');
+export const API_BASE_URL = (process.env.REACT_APP_API_URL || 'http://localhost').replace(/\/$/, '');
 
 export const API_ENDPOINTS = {
   // Auth

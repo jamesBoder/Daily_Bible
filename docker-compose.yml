@@ -32,16 +32,20 @@ services:
       JWT_SECRET: ${JWT_SECRET}
       GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
-      GOOGLE_REDIRECT_URL: ${GOOGLE_REDIRECT_URL}
+      GOOGLE_REDIRECT_URL: ${GOOGLE_REDIRECT_URL:-http://localhost/api/auth/google/callback}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
       BIBLE_API_KEY: ${BIBLE_API_KEY}
       BIBLE_API_BASE_URL: ${BIBLE_API_BASE_URL:-https://rest.api.bible/v1}
       BIBLE_VERSION_ID: ${BIBLE_VERSION_ID:-de4e12af7f28f599-02}
-    ports:
-      - "8080:8080"
     depends_on:
       postgres:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "wget -qO- http://localhost:8080/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 15s
     restart: unless-stopped
 
   frontend:
@@ -49,13 +53,14 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
       args:
-        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost:8080}
+        REACT_APP_API_URL: ${REACT_APP_API_URL:-http://localhost}
         REACT_APP_GOOGLE_CLIENT_ID: ${GOOGLE_CLIENT_ID}
     container_name: dailybible-frontend
     ports:
       - "80:80"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     restart: unless-stopped
 
 volumes:

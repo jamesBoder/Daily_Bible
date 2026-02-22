@@ -18,6 +18,16 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const [favoriteError, setFavoriteError] = useState<string | null>(null);
 
+  const handleCommentSaved = async () => {
+    if (!isFavorited(verse.id)) {
+      try {
+        await addFavorite(verse.id);
+      } catch {
+        // Silently ignore errors (e.g. already favorited race condition)
+      }
+    }
+  };
+
   const handleFavorite = async () => {
     setIsFavoriteLoading(true);
     setFavoriteError(null);
@@ -171,7 +181,11 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
           Share
         </Button>
       </div>
-      <CommentSection verseId={verse.id} verseReference={verse.reference} />
+      <CommentSection
+        verseId={verse.id}
+        verseReference={verse.reference}
+        onCommentSaved={handleCommentSaved}
+      />
     </Card>
   );
 };
