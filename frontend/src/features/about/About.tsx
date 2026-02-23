@@ -134,8 +134,8 @@ export const About: React.FC = () => {
                 <span>Daily Reading Streaks</span>
               </li>
               <li className="flex items-center gap-3">
-                <span className="text-2xl">📧</span>
-                <span>Newsletter Signup</span>
+                <span className="text-2xl">🌐</span>
+                <span>Multiple Translations</span>
               </li>
               <li className="flex items-center gap-3">
                 <span className="text-2xl">✨</span>
