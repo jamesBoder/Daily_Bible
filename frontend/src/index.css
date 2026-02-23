@@ -108,6 +108,21 @@
            dark:bg-gray-800 dark:shadow-xl;
   }
 
+  /* Selected card glow — matches the title/header glow aesthetic */
+  .card-selected-glow {
+    box-shadow:
+      0 0 0 2px #38bdf8,
+      0 0 18px 5px rgba(56, 189, 248, 0.45),
+      0 20px 40px -8px rgba(0, 0, 0, 0.2);
+  }
+
+  .dark .card-selected-glow {
+    box-shadow:
+      0 0 0 2px #7dd3fc,
+      0 0 22px 7px rgba(125, 211, 252, 0.5),
+      0 20px 40px -8px rgba(0, 0, 0, 0.5);
+  }
+
   /* Logo/Brand Text Styling */
   .font-display {
     letter-spacing: 0.02em;
