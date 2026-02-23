@@ -24,8 +24,10 @@ RUN npm run build
 # Runtime stage
 FROM nginx:alpine
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/nginx.conf
+# Copy nginx config — defaults to nginx.fly.conf for Fly.io production.
+# Docker overrides this via docker-compose.yml build arg: NGINX_CONF=nginx.conf
+ARG NGINX_CONF=nginx.fly.conf
+COPY ${NGINX_CONF} /etc/nginx/nginx.conf
 
 # Copy built app
 COPY --from=builder /app/build /usr/share/nginx/html
