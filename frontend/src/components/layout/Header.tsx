@@ -4,7 +4,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../common/Button";
 
 export const Header: React.FC = () => {
-  const { user, logout } = useAuth();
+  const { user, logout, isGuest } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
@@ -32,18 +32,23 @@ export const Header: React.FC = () => {
             >
               Daily Verse
             </Link>
-            <Link
-              to="/favorites"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
-            >
-              Favorites
-            </Link>
-            <Link
-              to="/history"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
-            >
-              History
-            </Link>
+            {/* Favorites & History hidden for guests */}
+            {!isGuest && (
+              <Link
+                to="/favorites"
+                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+              >
+                Favorites
+              </Link>
+            )}
+            {!isGuest && (
+              <Link
+                to="/history"
+                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+              >
+                History
+              </Link>
+            )}
             <Link
               to="/about"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
@@ -56,20 +61,28 @@ export const Header: React.FC = () => {
             >
               Settings
             </Link>
-            
           </div>
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
             <span className="text-gray-700 dark:text-gray-300">
-              Welcome, {user?.username}
+              {isGuest ? "Browsing as Guest" : `Welcome, ${user?.username}`}
             </span>
+            {isGuest && (
+              <Button
+                onClick={() => navigate("/signup")}
+                variant="primary"
+                className="text-sm"
+              >
+                Sign Up
+              </Button>
+            )}
             <Button
               onClick={handleLogout}
               variant="secondary"
               className="text-sm"
             >
-              Logout
+              {isGuest ? "Exit Guest" : "Logout"}
             </Button>
           </div>
 
@@ -116,20 +129,25 @@ export const Header: React.FC = () => {
               >
                 Daily Verse
               </Link>
-              <Link
-                to="/favorites"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                Favorites
-              </Link>
-              <Link
-                to="/history"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                History
-              </Link>
+              {/* Favorites & History hidden for guests */}
+              {!isGuest && (
+                <Link
+                  to="/favorites"
+                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  Favorites
+                </Link>
+              )}
+              {!isGuest && (
+                <Link
+                  to="/history"
+                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  History
+                </Link>
+              )}
               <Link
                 to="/about"
                 className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
@@ -146,14 +164,23 @@ export const Header: React.FC = () => {
               </Link>
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-gray-700 dark:text-gray-300 mb-2">
-                  Welcome, {user?.username}
+                  {isGuest ? "Browsing as Guest" : `Welcome, ${user?.username}`}
                 </p>
+                {isGuest && (
+                  <Button
+                    onClick={() => { navigate("/signup"); setIsMenuOpen(false); }}
+                    variant="primary"
+                    className="w-full mb-2"
+                  >
+                    Sign Up
+                  </Button>
+                )}
                 <Button
                   onClick={handleLogout}
                   variant="secondary"
                   className="w-full"
                 >
-                  Logout
+                  {isGuest ? "Exit Guest" : "Logout"}
                 </Button>
               </div>
             </div>

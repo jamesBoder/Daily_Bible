@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import { ProtectedRoute } from "./components/common/ProtectedRoute";
+import { ProtectedRoute, GuestBlockedRoute } from "./components/common/ProtectedRoute";
 import { Layout } from "./components/layout/Layout";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -142,25 +142,31 @@ function App() {
                 <Route
                   path="favorites"
                   element={
-                    <Suspense fallback={<VerseCardSkeleton />}>
-                      <FavoritesList />
-                    </Suspense>
+                    <GuestBlockedRoute>
+                      <Suspense fallback={<VerseCardSkeleton />}>
+                        <FavoritesList />
+                      </Suspense>
+                    </GuestBlockedRoute>
                   }
                 />
                 <Route
                   path="history"
                   element={
-                    <Suspense fallback={<VerseCardSkeleton />}>
-                      <HistoryList />
-                    </Suspense>
+                    <GuestBlockedRoute>
+                      <Suspense fallback={<VerseCardSkeleton />}>
+                        <HistoryList />
+                      </Suspense>
+                    </GuestBlockedRoute>
                   }
                 />
                 <Route
                   path="profile"
                   element={
-                    <Suspense fallback={<VerseCardSkeleton />}>
-                      <Profile />
-                    </Suspense>
+                    <GuestBlockedRoute>
+                      <Suspense fallback={<VerseCardSkeleton />}>
+                        <Profile />
+                      </Suspense>
+                    </GuestBlockedRoute>
                   }
                 />
                 <Route
