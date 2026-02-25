@@ -48,6 +48,18 @@ export const showToast = {
         return toast.promise(promise, messages);
     },
 
+    // info toast
+    info: (message: string) => {
+        toast(message, {
+            duration: 3000,
+            icon: 'ℹ️',
+            style: {
+                background: '#3b82f6',
+                color: '#fff',
+            },
+        });
+    },
+
     // dismiss toast
     dismiss: (toastId?: string) => {
         toast.dismiss(toastId);

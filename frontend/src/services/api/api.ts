@@ -33,10 +33,14 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Unauthorized - clear token and redirect to login
-      localStorage.removeItem(TOKEN_KEY);
-      localStorage.removeItem('user_data');
-      window.location.href = '/login';
+      // Safety net: do NOT redirect guests — they have no token to clear
+      const isGuestSession = sessionStorage.getItem('is_guest') === 'true';
+      if (!isGuestSession) {
+        // Unauthorized - clear token and redirect to login
+        localStorage.removeItem(TOKEN_KEY);
+        localStorage.removeItem('user_data');
+        window.location.href = '/login';
+      }
     }
     return Promise.reject(error);
   }
