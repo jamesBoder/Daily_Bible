@@ -2,10 +2,12 @@ import React, { useState, useEffect } from "react";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { AccountManagement } from "./AccountManagement";
+import { GuestAccountManagement } from "./GuestAccountManagement";
 import { StatsCard } from "./StatsCard";
 import { profileService } from "../../services/api/profile";
 import { UserProfile } from "../../types/profile";
 import { useTheme } from "../../contexts/ThemeContext";
+import { useAuth } from "../../hooks/useAuth";
 
 interface SettingsState {
   emailNotifications: boolean;
@@ -16,9 +18,14 @@ interface SettingsState {
 type TabType = "profile" | "preferences" | "account";
 
 export const Settings: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<TabType>("profile");
+  const { isGuest } = useAuth();
+  // Pitfall 6/12: lazy initializer — guests skip "profile" tab (no API call)
+  const [activeTab, setActiveTab] = useState<TabType>(() =>
+    isGuest ? "preferences" : "profile"
+  );
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(true);
+  // Guests never fetch profile data, so start as false; non-guests start as true (fetch runs on mount)
+  const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(!isGuest);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [settings, setSettings] = useState<SettingsState>({
     emailNotifications: true,
@@ -30,7 +37,7 @@ export const Settings: React.FC = () => {
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { isDarkMode, toggleTheme } = useTheme();
 
-  // Fetch profile data
+  // Fetch profile data — skip entirely for guests (Pitfall 3)
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -44,10 +51,10 @@ export const Settings: React.FC = () => {
       }
     };
 
-    if (activeTab === "profile") {
+    if (activeTab === "profile" && !isGuest) {
       fetchProfile();
     }
-  }, [activeTab]);
+  }, [activeTab, isGuest]);
 
   const handleToggle = (key: keyof SettingsState) => {
     setSettings((prev) => ({
@@ -84,16 +91,19 @@ export const Settings: React.FC = () => {
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
         <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab("profile")}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "profile"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
-            }`}
-          >
-            Profile
-          </button>
+          {/* Profile tab hidden for guests — they have no real profile */}
+          {!isGuest && (
+            <button
+              onClick={() => setActiveTab("profile")}
+              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                activeTab === "profile"
+                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
+              }`}
+            >
+              Profile
+            </button>
+          )}
           <button
             onClick={() => setActiveTab("preferences")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
@@ -289,8 +299,8 @@ export const Settings: React.FC = () => {
           </div>
         </>
       ) : (
-        /* Account Management Content */
-        <AccountManagement />
+        /* Account Management Content — GuestAccountManagement for guests */
+        isGuest ? <GuestAccountManagement /> : <AccountManagement />
       )}
     </div>
   );

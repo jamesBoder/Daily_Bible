@@ -1,5 +1,5 @@
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 
 // About Page Component
@@ -112,6 +112,38 @@ export const About: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-400 leading-relaxed">
               Beautiful and responsive on all devices
             </p>
+          </div>
+        </div>
+      </section>
+
+      {/* Sign-Up CTA — always shown in Features section */}
+      <section className="py-8 px-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+        <div className="max-w-3xl mx-auto">
+          <div className="bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-500 dark:to-purple-500 rounded-2xl shadow-xl p-8 text-center text-white">
+            <div className="text-4xl mb-4">🌟</div>
+            <h3 className="text-2xl font-bold mb-3">
+              Unlock the Full Experience
+            </h3>
+            <p className="text-primary-100 mb-6 text-lg leading-relaxed">
+              Create a free account to save your favorite verses, track your reading history, add personal reflections, and more. Sign up takes less than a minute!
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3 justify-center">
+              <Link
+                to="/signup"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-white text-primary-600 font-bold rounded-xl hover:bg-primary-50 transition-colors shadow-md"
+              >
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
+                </svg>
+                Create Free Account
+              </Link>
+              <Link
+                to="/login"
+                className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-white/20 text-white font-semibold rounded-xl hover:bg-white/30 transition-colors border border-white/40"
+              >
+                Already have an account? Sign In
+              </Link>
+            </div>
           </div>
         </div>
       </section>
