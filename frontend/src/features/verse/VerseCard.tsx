@@ -5,11 +5,14 @@ import { Button } from "../../components/common/Button";
 import { CommentSection } from "../verse/CommentSection";
 import { useFavorites } from "../../hooks/useFavorites";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
+import { useAuth } from "../../hooks/useAuth";
+import { showToast } from "../../utils/toast";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
 const buildShareText = (verse: Verse): string => {
   const version = verse.version || verse.translation;
-  return `"${verse.text}" — ${verse.reference}${version ? ` (${version})` : ""}\n\nvia Words of Praise app`;
+  const appUrl = window.location.hostname;
+  return `"${verse.text}" — ${verse.reference}${version ? ` (${version})` : ""}\n\nvia Words of Praise 👉 ${appUrl}`;
 };
 
 interface VerseCardProps {
@@ -17,6 +20,7 @@ interface VerseCardProps {
 }
 
 export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
+  const { isGuest } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const { isFavorited, getFavoriteId, addFavorite, removeFavorite } =
     useFavorites();
@@ -25,6 +29,8 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   const [favoriteError, setFavoriteError] = useState<string | null>(null);
 
   const handleCommentSaved = async () => {
+    // Pitfall 13: guard — CommentSection is hidden for guests, but safety net
+    if (isGuest) return;
     if (!isFavorited(verse.id)) {
       try {
         await addFavorite(verse.id);
@@ -35,6 +41,12 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   };
 
   const handleFavorite = async () => {
+    // Guest mode: show sign-up prompt instead of calling the API
+    if (isGuest) {
+      showToast.info("Sign up to save your favorite verses!");
+      return;
+    }
+
     setIsFavoriteLoading(true);
     setFavoriteError(null);
 
@@ -276,11 +288,14 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
           )}
         </div>
       </div>
-      <CommentSection
-        verseId={verse.id}
-        verseReference={verse.reference}
-        onCommentSaved={handleCommentSaved}
-      />
+      {/* Comment section — hidden for guests (Pitfall 5: also removes 'c' keyboard shortcut) */}
+      {!isGuest && (
+        <CommentSection
+          verseId={verse.id}
+          verseReference={verse.reference}
+          onCommentSaved={handleCommentSaved}
+        />
+      )}
     </Card>
   );
 };

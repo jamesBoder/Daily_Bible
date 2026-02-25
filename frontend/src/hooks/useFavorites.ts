@@ -1,33 +1,39 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-
 import { favoriteService } from '../services/api/favorite';
+import { useAuth } from './useAuth';
 
 export const useFavorites = () => {
+  const { isGuest } = useAuth();
+
   const { data, isLoading, error, refetch } = useQuery({
-  queryKey: ['favorites'],
-  queryFn: () => favoriteService.getFavorites(1, 100), // Pass params!
-  select: (response) => response.favorites // Extract just the array
-});
-
-
+    queryKey: ['favorites'],
+    queryFn: () => favoriteService.getFavorites(1, 100),
+    enabled: !isGuest, // Pitfall 1: skip API call entirely for guests (prevents 401)
+    select: (response) => response.favorites,
+  });
 
   const queryClient = useQueryClient();
 
   const addMutation = useMutation({
-    mutationFn: (verseId: number) => favoriteService.addFavorite(verseId),
+    mutationFn: (verseId: number) => {
+      // Pitfall 14: guard mutations — guests should never reach here, but safety net
+      if (isGuest) return Promise.resolve(null as any);
+      return favoriteService.addFavorite(verseId);
+    },
     onSuccess: () => {
-      // Automatically refetch favorites list
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
-    }
+      if (!isGuest) queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    },
   });
 
-
   const removeMutation = useMutation({
-    mutationFn: (favoriteId: number) => favoriteService.removeFavorite(favoriteId),
+    mutationFn: (favoriteId: number) => {
+      // Pitfall 14: guard mutations — guests should never reach here, but safety net
+      if (isGuest) return Promise.resolve(null as any);
+      return favoriteService.removeFavorite(favoriteId);
+    },
     onSuccess: () => {
-      // Automatically refetch favorites list
-      queryClient.invalidateQueries({ queryKey: ['favorites'] });
-    }
+      if (!isGuest) queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    },
   });
 
 
