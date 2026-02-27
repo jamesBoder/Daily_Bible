@@ -122,7 +122,15 @@
     "totalViews": "Versículos Vistos",
     "totalComments": "Notas Agregadas",
     "readingStreak": "Racha de Lectura",
-    "days": "días"
+    "days": "días",
+    "yourStatistics": "Tus Estadísticas",
+    "versesRead": "Versículos Leídos",
+    "favorites": "Favoritos",
+    "notes": "Notas",
+    "daysActive": "Días Activo",
+    "noStats": "No hay estadísticas disponibles.",
+    "editProfile": "Editar Perfil",
+    "failedToLoad": "Error al cargar el perfil"
   },
   "settings": {
     "title": "Configuración",

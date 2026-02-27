@@ -122,7 +122,15 @@
     "totalViews": "Vèsè Gade",
     "totalComments": "Nòt Ajoute",
     "readingStreak": "Seri Lekti",
-    "days": "jou"
+    "days": "jou",
+    "yourStatistics": "Estatistik Ou",
+    "versesRead": "Vèsè Li",
+    "favorites": "Favori",
+    "notes": "Nòt",
+    "daysActive": "Jou Aktif",
+    "noStats": "Pa gen estatistik disponib.",
+    "editProfile": "Modifye Pwofil",
+    "failedToLoad": "Pa rive chaje pwofil"
   },
   "settings": {
     "title": "Paramèt",

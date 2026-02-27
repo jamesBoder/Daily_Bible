@@ -122,7 +122,15 @@
     "totalViews": "Verses Viewed",
     "totalComments": "Notes Added",
     "readingStreak": "Reading Streak",
-    "days": "days"
+    "days": "days",
+    "yourStatistics": "Your Statistics",
+    "versesRead": "Verses Read",
+    "favorites": "Favorites",
+    "notes": "Notes",
+    "daysActive": "Days Active",
+    "noStats": "No statistics available.",
+    "editProfile": "Edit Profile",
+    "failedToLoad": "Failed to load profile"
   },
   "settings": {
     "title": "Settings",

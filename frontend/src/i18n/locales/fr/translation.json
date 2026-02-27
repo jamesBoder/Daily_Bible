@@ -122,7 +122,15 @@
     "totalViews": "Versets Consultés",
     "totalComments": "Notes Ajoutées",
     "readingStreak": "Série de Lecture",
-    "days": "jours"
+    "days": "jours",
+    "yourStatistics": "Vos Statistiques",
+    "versesRead": "Versets Lus",
+    "favorites": "Favoris",
+    "notes": "Notes",
+    "daysActive": "Jours Actifs",
+    "noStats": "Aucune statistique disponible.",
+    "editProfile": "Modifier le Profil",
+    "failedToLoad": "Échec du chargement du profil"
   },
   "settings": {
     "title": "Paramètres",
