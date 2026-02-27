@@ -2,11 +2,13 @@ import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../common/Button";
+import { useTranslation } from "react-i18next";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const { t } = useTranslation();
 
   const handleLogout = async () => {
     await logout();
@@ -30,7 +32,7 @@ export const Header: React.FC = () => {
               to="/daily"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
             >
-              Daily Verse
+              {t('nav.home')}
             </Link>
             {/* Favorites & History hidden for guests */}
             {!isGuest && (
@@ -38,7 +40,7 @@ export const Header: React.FC = () => {
                 to="/favorites"
                 className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
               >
-                Favorites
+                {t('nav.favorites')}
               </Link>
             )}
             {!isGuest && (
@@ -46,27 +48,27 @@ export const Header: React.FC = () => {
                 to="/history"
                 className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
               >
-                History
+                {t('nav.history')}
               </Link>
             )}
             <Link
               to="/about"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
             >
-              About
+              {t('nav.about')}
             </Link>
             <Link
               to="/settings"
               className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
             >
-              Settings
+              {t('nav.settings')}
             </Link>
           </div>
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
             <span className="text-gray-700 dark:text-gray-300">
-              {isGuest ? "Browsing as Guest" : `Welcome, ${user?.username}`}
+              {isGuest ? t('auth.browsingAsGuest') : t('auth.welcome', { username: user?.username })}
             </span>
             {isGuest && (
               <Button
@@ -74,7 +76,7 @@ export const Header: React.FC = () => {
                 variant="primary"
                 className="text-sm"
               >
-                Sign Up
+                {t('nav.signup')}
               </Button>
             )}
             <Button
@@ -82,7 +84,7 @@ export const Header: React.FC = () => {
               variant="secondary"
               className="text-sm"
             >
-              {isGuest ? "Exit Guest" : "Logout"}
+              {isGuest ? t('auth.exitGuest') : t('nav.logout')}
             </Button>
           </div>
 
@@ -127,7 +129,7 @@ export const Header: React.FC = () => {
                 className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Daily Verse
+                {t('nav.home')}
               </Link>
               {/* Favorites & History hidden for guests */}
               {!isGuest && (
@@ -136,7 +138,7 @@ export const Header: React.FC = () => {
                   className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  Favorites
+                  {t('nav.favorites')}
                 </Link>
               )}
               {!isGuest && (
@@ -145,7 +147,7 @@ export const Header: React.FC = () => {
                   className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
                   onClick={() => setIsMenuOpen(false)}
                 >
-                  History
+                  {t('nav.history')}
                 </Link>
               )}
               <Link
@@ -153,18 +155,18 @@ export const Header: React.FC = () => {
                 className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
                 onClick={() => setIsMenuOpen(false)}
               >
-                About
+                {t('nav.about')}
               </Link>
               <Link
                 to="/settings"
                 className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
                 onClick={() => setIsMenuOpen(false)}
               >
-                Settings
+                {t('nav.settings')}
               </Link>
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-gray-700 dark:text-gray-300 mb-2">
-                  {isGuest ? "Browsing as Guest" : `Welcome, ${user?.username}`}
+                  {isGuest ? t('auth.browsingAsGuest') : t('auth.welcome', { username: user?.username })}
                 </p>
                 {isGuest && (
                   <Button
@@ -172,7 +174,7 @@ export const Header: React.FC = () => {
                     variant="primary"
                     className="w-full mb-2"
                   >
-                    Sign Up
+                    {t('nav.signup')}
                   </Button>
                 )}
                 <Button
@@ -180,7 +182,7 @@ export const Header: React.FC = () => {
                   variant="secondary"
                   className="w-full"
                 >
-                  {isGuest ? "Exit Guest" : "Logout"}
+                  {isGuest ? t('auth.exitGuest') : t('nav.logout')}
                 </Button>
               </div>
             </div>

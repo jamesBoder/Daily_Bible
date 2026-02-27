@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
+import { useTranslation } from "react-i18next";
 import { Button } from "../../components/common/Button";
 import { commentService } from "../../services/api/comment";
 import { Comment } from "../../types/comment";
@@ -15,6 +16,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   verseReference,
   onCommentSaved,
 }) => {
+  const { t } = useTranslation();
   const [comment, setComment] = useState<Comment | null>(null);
   const [commentText, setCommentText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -58,12 +60,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   const handleSave = async () => {
     if (!commentText.trim()) {
-      setError("Comment cannot be empty");
+      setError(t('notes.emptyError'));
       return;
     }
 
     if (commentText.length > 1000) {
-      setError("Comment must be less than 1000 characters");
+      setError(t('notes.tooLongError'));
       return;
     }
 
@@ -81,17 +83,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       setIsEditing(false);
       onCommentSaved?.();
     } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to save comment");
+      setError(err.response?.data?.error || t('notes.saveFailed'));
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (
-      !comment ||
-      !window.confirm("Are you sure you want to delete this comment?")
-    ) {
+    if (!comment || !window.confirm(t('notes.deleteConfirm'))) {
       return;
     }
 
@@ -102,7 +101,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       setCommentText("");
       setIsEditing(false);
     } catch (err: any) {
-      setError(err.response?.data?.error || "Failed to delete comment");
+      setError(err.response?.data?.error || t('notes.deleteFailed'));
     } finally {
       setIsSaving(false);
     }
@@ -136,12 +135,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          Notes
+          {t('notes.title')}
         </h2>
         <button
           onClick={() => setIsVisible(!isVisible)}
           className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-          aria-label={isVisible ? "Hide notes" : "Show notes"}
+          aria-label={isVisible ? t('notes.hideNotes') : t('notes.showNotes')}
         >
           {isVisible ? (
             <svg
@@ -190,22 +189,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           <button
             onClick={() => setIsEditing(true)}
             className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-sm font-medium flex items-center gap-2"
-            aria-label="Add a personal note"
+            aria-label={t('notes.addNote')}
           >
-            <svg
-              className="w-5 h-5"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M12 4v16m8-8H4"
-              />
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            Add a personal note
+            {t('notes.addNote')}
           </button>
         )}
 
@@ -218,20 +207,20 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               <button
                 onClick={() => setIsEditing(true)}
                 className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
-                aria-label="Edit note"
+                aria-label={t('notes.edit')}
               >
-                Edit
+                {t('notes.edit')}
               </button>
               <button
                 onClick={handleDelete}
                 className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
-                aria-label="Delete note"
+                aria-label={t('notes.delete')}
               >
-                Delete
+                {t('notes.delete')}
               </button>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              Last updated: {new Date(comment.updated_at).toLocaleDateString()}
+              {t('notes.lastUpdated')} {new Date(comment.updated_at).toLocaleDateString()}
             </p>
           </div>
         )}
@@ -242,30 +231,22 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               ref={textareaRef}
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder="Add your personal thoughts, reflections, or prayers about this verse..."
+              placeholder={t('notes.placeholder')}
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
               rows={4}
               maxLength={1000}
-              aria-label="Personal note for this verse"
+              aria-label={t('notes.addNote')}
             />
             <div className="flex justify-between items-center mt-2">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {commentText.length}/1000 characters
+                {commentText.length}/1000 {t('notes.characters')}
               </span>
               <div className="flex gap-2">
-                <Button
-                  onClick={handleCancel}
-                  variant="secondary"
-                  disabled={isSaving}
-                >
-                  Cancel
+                <Button onClick={handleCancel} variant="secondary" disabled={isSaving}>
+                  {t('common.cancel')}
                 </Button>
-                <Button
-                  onClick={handleSave}
-                  variant="primary"
-                  isLoading={isSaving}
-                >
-                  Save Note
+                <Button onClick={handleSave} variant="primary" isLoading={isSaving}>
+                  {t('notes.saveNote')}
                 </Button>
               </div>
             </div>

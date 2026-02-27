@@ -7,6 +7,7 @@ import { useFavorites } from "../../hooks/useFavorites";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { useAuth } from "../../hooks/useAuth";
 import { showToast } from "../../utils/toast";
+import { useTranslation } from "react-i18next";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
 const buildShareText = (verse: Verse): string => {
@@ -21,6 +22,7 @@ interface VerseCardProps {
 
 export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   const { isGuest } = useAuth();
+  const { t } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const { isFavorited, getFavoriteId, addFavorite, removeFavorite } =
     useFavorites();
@@ -193,14 +195,14 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
               d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
             />
           </svg>
-          {isVerseAlreadyFavorited ? "Favorited" : "Favorite"}
+          {isVerseAlreadyFavorited ? t('verse.removeFromFavorites') : t('verse.addToFavorites')}
         </Button>
       </div>
 
       {/* Share panel — always visible on Daily Verse page */}
       <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 text-center">
-          Share this verse
+          {t('verse.share')}
         </p>
         <div className="flex items-center justify-center gap-2">
           {/* Copy */}

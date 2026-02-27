@@ -10,6 +10,7 @@ import { ProtectedRoute, GuestBlockedRoute } from "./components/common/Protected
 import { Layout } from "./components/layout/Layout";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
+import { LanguageProvider } from "./contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
 import { VerseCardSkeleton } from "./components/common/Skeleton";
 import "./App.css";
@@ -68,7 +69,8 @@ function App() {
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          <Toaster
+          <LanguageProvider>
+            <Toaster
             position="top-right"
             toastOptions={{
               duration: 3000,
@@ -183,6 +185,7 @@ function App() {
             {/* Catch all - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          </LanguageProvider>
         </AuthProvider>
       </ThemeProvider>
     </Router>
