@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
 import { profileService } from "../../services/api/profile";
 import { UserProfile } from "../../types/profile";
@@ -9,6 +10,7 @@ import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 export const Profile: React.FC = () => {
+  const { t } = useTranslation();
   const { user } = useAuth(); // ✅ Get from auth context
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -25,7 +27,7 @@ export const Profile: React.FC = () => {
       const data = await profileService.getProfile(); // ✅ No userId
       setProfile(data);
     } catch (err: any) {
-      setError(err.message || "Failed to load profile");
+      setError(err.message || t("profile.failedToLoad"));
     } finally {
       setIsLoading(false);
     }
@@ -49,16 +51,16 @@ export const Profile: React.FC = () => {
   if (!profile)
     return (
       <Card>
-        <div>No profile data available.</div>
+        <div>{t("profile.noData")}</div>
       </Card>
     );
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Profile</h1>
+        <h1 className="text-3xl font-bold">{t("profile.title")}</h1>
         <Button onClick={() => setIsEditing(!isEditing)}>
-          {isEditing ? "Cancel" : "Edit Profile"}
+          {isEditing ? t("common.cancel") : t("profile.editProfile")}
         </Button>
       </div>
 
@@ -70,16 +72,16 @@ export const Profile: React.FC = () => {
         <Card>
           <div className="space-y-4">
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-600">Username</p>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-600">{t("profile.username")}</p>
               <p className="text-lg dark:text-gray-200">{profile.username}</p>
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-600">Email</p>
+              <p className="text-sm font-medium text-gray-500 dark:text-gray-600">{t("profile.email")}</p>
               <p className="text-lg dark:text-gray-200">{profile.email}</p>
             </div>
             <div>
               <p className="text-sm font-medium text-gray-500 dark:text-gray-600">
-                Member Since
+                {t("profile.memberSince")}
               </p>
               <p className="text-lg dark:text-gray-200">
                 {new Date(profile.created_at).toLocaleDateString()}
