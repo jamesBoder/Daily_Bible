@@ -82,6 +82,16 @@ export const Settings: React.FC = () => {
     loadSettings();
   }, [isGuest]);
 
+  // Keep the language select in sync with the LanguageContext.
+  // currentLanguage is set asynchronously (from API or localStorage) after mount,
+  // so the initial useState value can be stale. This effect corrects it.
+  useEffect(() => {
+    setSettings(prev => ({
+      ...prev,
+      language: currentLanguage,
+    }));
+  }, [currentLanguage]);
+
   const handleToggle = (key: keyof SettingsState) => {
     setSettings((prev) => ({
       ...prev,
