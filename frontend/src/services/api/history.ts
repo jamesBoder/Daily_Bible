@@ -17,13 +17,12 @@ export interface GetHistoryParams {
 // service object
 export const historyService = {
     // fetch user's history with pagination and optional search
-    getHistory: async (page = 1, pageSize = 20, search?: string) => {
+    getHistory: async (page = 1, pageSize = 20, search?: string, lang?: string) => {
         try {
             // calculate offset
-            const params = { page, page_size: pageSize, ...(search && { search }) };
-            if (search) {
-                params.search = search;
-            }
+            const params: Record<string, any> = { page, page_size: pageSize };
+            if (search) params.search = search;
+            if (lang && lang !== 'en') params.lang = lang;
 
             // API call with correct response type
             const response = await apiClient.get<HistoryResponse>(

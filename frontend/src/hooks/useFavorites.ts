@@ -1,13 +1,16 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { favoriteService } from '../services/api/favorite';
 import { useAuth } from './useAuth';
 
 export const useFavorites = () => {
   const { isGuest } = useAuth();
+  const { i18n } = useTranslation();
+  const lang = i18n.language;
 
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['favorites'],
-    queryFn: () => favoriteService.getFavorites(1, 100),
+    queryKey: ['favorites', lang],
+    queryFn: () => favoriteService.getFavorites(1, 100, undefined, lang),
     enabled: !isGuest, // Pitfall 1: skip API call entirely for guests (prevents 401)
     select: (response) => response.favorites,
   });
