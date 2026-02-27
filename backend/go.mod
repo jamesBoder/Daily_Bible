@@ -1,6 +1,6 @@
 module dailybible
 
-go 1.25.2
+go 1.24
 
 require (
 	github.com/gin-contrib/cors v1.7.6
