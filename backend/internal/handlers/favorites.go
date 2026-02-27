@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"strconv"
 	"strings"
+	"sync"
 	"dailybible/internal/services"
 	"dailybible/internal/utils"
 	"github.com/gin-gonic/gin"
@@ -12,13 +13,15 @@ import (
 
 // init FavoriteHandler struct 
 type FavoriteHandler struct {
-	favoriteService *services.FavoriteService 
+	favoriteService *services.FavoriteService
+	bibleAPIService services.BibleAPIService
 }
 
 // Constructor
-func NewFavoriteHandler(favoriteService *services.FavoriteService) *FavoriteHandler {
+func NewFavoriteHandler(favoriteService *services.FavoriteService, bibleAPIService services.BibleAPIService) *FavoriteHandler {
 	return &FavoriteHandler{
 		favoriteService: favoriteService,
+		bibleAPIService: bibleAPIService,
 	}
 }
 
@@ -35,6 +38,7 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
 	page, _ := strconv.Atoi(c.DefaultQuery("page", "1"))
 	pageSize, _ := strconv.Atoi(c.DefaultQuery("page_size", "10"))
 	search := c.Query("search")
+	lang := c.DefaultQuery("lang", "en")
 
 	// get favorites from service
 	favorites, total, err := h.favoriteService.GetUserFavoritesPaginated(
@@ -46,6 +50,24 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get favorites"})
 		return
+	}
+
+	// If a non-English language is requested, translate verse text concurrently
+	if lang != "en" && h.bibleAPIService != nil {
+		var wg sync.WaitGroup
+		for i := range favorites {
+			if favorites[i].Verse.Reference != "" {
+				wg.Add(1)
+				go func(idx int) {
+					defer wg.Done()
+					translated, err := h.bibleAPIService.GetVerseWithLanguage(favorites[idx].Verse.Reference, lang)
+					if err == nil && translated.Text != "" {
+						favorites[idx].Verse.Text = translated.Text
+					}
+				}(i)
+			}
+		}
+		wg.Wait()
 	}
 
 	// prepare response
