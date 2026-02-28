@@ -56,6 +56,13 @@ func main() {
     if err := database.RunMigrations(db); err != nil {
         log.Fatal("Failed to run migrations:", err)
     }
+
+    // 3b. Grandfather existing users as verified (one-time, idempotent)
+    if result := db.Exec(`UPDATE users SET email_verified = true WHERE email_verified = false AND deleted_at IS NULL`); result.Error != nil {
+        log.Printf("Warning: grandfathering SQL failed: %v", result.Error)
+    } else {
+        log.Printf("Grandfathering: %d existing users marked as email_verified", result.RowsAffected)
+    }
     
     // 4. Initialize repositories
     userRepo := repository.NewUserRepository(db)
@@ -71,6 +78,7 @@ func main() {
     authService := services.NewAuthService(userRepo)
     tokenService := services.NewTokenService(cfg)
     emailValidationService := services.NewEmailValidationService()
+    emailService := services.NewEmailService(cfg.ResendAPIKey, cfg.FromEmail, cfg.FrontendURL)
     oauthService := services.NewOAuthService(userRepo, tokenService, googleOAuthConfig)
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo, verseRepo)
@@ -101,12 +109,15 @@ func main() {
     _ = dailyVerseService
     _ = historyService
     _ = commentService
+    _ = emailService
 
     // init authHandler variable
     authHandler := handlers.NewAuthHandler(
-        userRepo, 
+        userRepo,
         tokenService,
         emailValidationService,
+        emailService,
+        passwordHistoryRepo,
     )
     
     // init verseHandler variable
@@ -141,8 +152,9 @@ func main() {
         historyRepo,
         commentRepo,
         passwordHistoryRepo,
+        emailService,
         emailValidationService,
-        validate, // validator can be added later
+        validate,
     )
 
     // init oauthHandler variable

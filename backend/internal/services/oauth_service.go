@@ -77,10 +77,11 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
 
 
     if user != nil {
-        // User exists, update their info
+        // Path 3: Existing Google user — update their info and ensure verified
         user.GoogleEmail = &googleUser.Email
         user.GooglePicture = &googleUser.Picture
         user.IsGoogleLinked = true
+        user.EmailVerified = true
         if err := s.userRepo.Update(user); err != nil {
             return nil, "", fmt.Errorf("failed to update user: %w", err)
         }
@@ -88,17 +89,18 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
         // Check if email already exists (user signed up with email/password)
         existingUser, _ := s.userRepo.GetByEmail(googleUser.Email)
         if existingUser != nil {
-            // Email exists - link Google to existing account
+            // Path 2: Email exists — link Google to existing account + mark verified
             existingUser.GoogleID = &googleUser.ID
             existingUser.GoogleEmail = &googleUser.Email
             existingUser.GooglePicture = &googleUser.Picture
             existingUser.IsGoogleLinked = true
+            existingUser.EmailVerified = true
             if err := s.userRepo.Update(existingUser); err != nil {
                 return nil, "", fmt.Errorf("failed to link Google account: %w", err)
             }
             user = existingUser
         } else {
-            // Create new user
+            // Path 1: Create new Google user — pre-verified
             username, err := s.generateUsername(googleUser.Email)
             if err != nil {
                 return nil, "", fmt.Errorf("failed to generate username: %w", err)
@@ -112,6 +114,7 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
                 GoogleEmail:    &googleUser.Email,
                 GooglePicture:  &googleUser.Picture,
                 IsGoogleLinked: true,
+                EmailVerified:  true,
             }
             if err := s.userRepo.Create(user); err != nil {
                 return nil, "", fmt.Errorf("failed to create user: %w", err)
@@ -149,14 +152,12 @@ func (s *OAuthService) LinkGoogleAccount(userID uint, googleID string, googleEma
 
     
 
-    // link Google account
-
+    // Path 4: Link Google account to existing user — mark as verified
 	user.GoogleID = &googleID
 	user.IsGoogleLinked = true
-    user.GoogleEmail = &googleEmail
-    user.GooglePicture = &google_picture
-
-
+	user.GoogleEmail = &googleEmail
+	user.GooglePicture = &google_picture
+	user.EmailVerified = true
 
 	if err := s.userRepo.Update(user); err != nil {
 		return fmt.Errorf("failed to link Google account: %w", err)
