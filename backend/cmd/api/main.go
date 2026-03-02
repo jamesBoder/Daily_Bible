@@ -57,11 +57,14 @@ func main() {
         log.Fatal("Failed to run migrations:", err)
     }
 
-    // 3b. Grandfather existing users as verified (one-time, idempotent)
-    if result := db.Exec(`UPDATE users SET email_verified = true WHERE email_verified = false AND deleted_at IS NULL`); result.Error != nil {
+    // 3b. Grandfather pre-existing users as verified (runs on every start, idempotent).
+    // The WHERE clause `verification_token IS NULL` ensures only users created before the
+    // email verification feature was added are grandfathered. New unverified users who have
+    // a pending verification token are intentionally excluded.
+    if result := db.Exec(`UPDATE users SET email_verified = true WHERE email_verified = false AND verification_token IS NULL AND deleted_at IS NULL`); result.Error != nil {
         log.Printf("Warning: grandfathering SQL failed: %v", result.Error)
     } else {
-        log.Printf("Grandfathering: %d existing users marked as email_verified", result.RowsAffected)
+        log.Printf("Grandfathering: %d pre-existing users marked as email_verified", result.RowsAffected)
     }
     
     // 4. Initialize repositories
