@@ -106,24 +106,31 @@ type BibleAPIVerse struct {
     ChapterID string `json:"chapterId"`
 }
 
-// stripHTML removes HTML tags from a string
+// stripHTML removes HTML tags and embedded verse numbers from a string.
+// The Bible API sometimes returns verse numbers inline even when
+// include-verse-numbers=false is set, so we strip them here.
 func stripHTML(html string) string {
     // Remove HTML tags
     re := regexp.MustCompile(`<[^>]*>`)
     text := re.ReplaceAllString(html, "")
 
-	// Remove verse numbers at the beginning of text
+    // Remove verse numbers at the beginning of text
     // Matches: "1", "1 ", "12", "123 " at start (with or without space)
     text = regexp.MustCompile(`^\d+\s*`).ReplaceAllString(text, "")
 
-	// Remove verse numbers in the middle of text (after punctuation)
-    // Matches patterns like ". 2 ", "; 3", ": 9Not" etc.
-    text = regexp.MustCompile(`([.;!?:])\s*\d+\s*`).ReplaceAllString(text, "$1 ")
-    
+    // Remove verse numbers directly concatenated with the next word
+    // e.g. "promised;) 24And" → "promised;) And"
+    // Digits immediately followed by a capital letter indicate an inline verse number
+    text = regexp.MustCompile(`\d+([A-Z])`).ReplaceAllString(text, "$1")
+
+    // Remove verse numbers in the middle of text (after punctuation or closing brackets)
+    // Matches patterns like ". 2 ", "; 3 ", ": 9 ", ") 24 " etc.
+    text = regexp.MustCompile(`([.;!?:\)])\s*\d+\s*`).ReplaceAllString(text, "$1 ")
+
     // Clean up extra whitespace
     text = strings.TrimSpace(text)
     text = regexp.MustCompile(`\s+`).ReplaceAllString(text, " ")
-    
+
     return text
 }
 
@@ -246,7 +253,7 @@ func (s *bibleApiService) GetVerseWithLanguage(reference string, languageCode st
 		ID:        apiResp.Data.ID,
 		Reference: apiResp.Data.Reference,
 		Content:   apiResp.Data.Content,
-		Text:      strings.TrimSpace(apiResp.Data.Content), // content-type=text returns plain text
+		Text:      stripHTML(apiResp.Data.Content), // strip HTML tags and embedded verse numbers
 	}
 
 	return verse, nil
