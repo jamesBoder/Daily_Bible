@@ -4,6 +4,7 @@ import { Button } from "../../components/common/Button";
 import { AccountManagement } from "./AccountManagement";
 import { GuestAccountManagement } from "./GuestAccountManagement";
 import { StatsCard } from "./StatsCard";
+import { ProfileEditForm } from "./ProfileEditForm";
 import { profileService } from "../../services/api/profile";
 import { UserProfile } from "../../types/profile";
 import { useTheme } from "../../contexts/ThemeContext";
@@ -33,6 +34,7 @@ export const Settings: React.FC = () => {
   // Guests never fetch profile data, so start as false; non-guests start as true (fetch runs on mount)
   const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(!isGuest);
   const [profileError, setProfileError] = useState<string | null>(null);
+  const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [settings, setSettings] = useState<SettingsState>({
     emailNotifications: true,
     dailyVerseReminder: true,
@@ -108,6 +110,11 @@ export const Settings: React.FC = () => {
     
     // Change the language immediately
     await changeLanguage(newLanguage);
+  };
+
+  const handleProfileUpdate = (updatedProfile: UserProfile) => {
+    setProfile(updatedProfile);
+    setIsEditingProfile(false);
   };
 
   const handleSave = async () => {
@@ -194,40 +201,50 @@ export const Settings: React.FC = () => {
             <div className="space-y-6">
               {/* Profile Information Card */}
               <Card>
-                <h2 className="text-2xl font-semibold mb-4 text-gray-600 dark:text-gray-300 text-center">{t('profile.information')}</h2>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                      {t('profile.username')}
-                    </label>
-                    <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
-                      {profile.username}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                      {t('profile.email')}
-                    </label>
-                    <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
-                      {profile.email}
-                    </p>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                      {t('profile.memberSince')}
-                    </label>
-                    <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
-                      {new Date(profile.created_at).toLocaleDateString(
-                        "en-US",
-                        {
-                          year: "numeric",
-                          month: "long",
-                          day: "numeric",
-                        },
-                      )}
-                    </p>
-                  </div>
+                <div className="flex justify-between items-center mb-4">
+                  <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-300">{t('profile.information')}</h2>
+                  <Button onClick={() => setIsEditingProfile(!isEditingProfile)} variant="secondary">
+                    {isEditingProfile ? t('common.cancel') : t('profile.editProfile')}
+                  </Button>
                 </div>
+
+                {isEditingProfile ? (
+                  <ProfileEditForm initialProfile={profile} onUpdate={handleProfileUpdate} />
+                ) : (
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
+                        {t('profile.username')}
+                      </label>
+                      <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
+                        {profile.username}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
+                        {t('profile.email')}
+                      </label>
+                      <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
+                        {profile.email}
+                      </p>
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
+                        {t('profile.memberSince')}
+                      </label>
+                      <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
+                        {new Date(profile.created_at).toLocaleDateString(
+                          "en-US",
+                          {
+                            year: "numeric",
+                            month: "long",
+                            day: "numeric",
+                          },
+                        )}
+                      </p>
+                    </div>
+                  </div>
+                )}
               </Card>
 
               {/* Statistics Card */}
