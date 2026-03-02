@@ -34,6 +34,8 @@ services:
       GOOGLE_CLIENT_SECRET: ${GOOGLE_CLIENT_SECRET}
       GOOGLE_REDIRECT_URL: ${GOOGLE_REDIRECT_URL:-http://localhost/api/auth/google/callback}
       FRONTEND_URL: ${FRONTEND_URL:-http://localhost}
+      RESEND_API_KEY: ${RESEND_API_KEY}
+      FROM_EMAIL: ${FROM_EMAIL:-noreply@wordsofpraise.app}
       BIBLE_API_KEY: ${BIBLE_API_KEY}
       BIBLE_API_BASE_URL: ${BIBLE_API_BASE_URL:-https://rest.api.bible/v1}
       BIBLE_VERSION_ID: ${BIBLE_VERSION_ID:-de4e12af7f28f599-02}
