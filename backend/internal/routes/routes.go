@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -83,6 +83,15 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 				profile.GET("/stats", profileHandler.GetStats)
 				profile.POST("/password/set", profileHandler.SetPassword)
 				profile.PUT("/password", profileHandler.UpdatePassword)
+			}
+			
+			// settings routes
+			settings := protected.Group("/settings")
+			{
+				settings.GET("", settingsHandler.GetSettings)
+				settings.PUT("", settingsHandler.UpdateSettings)
+				settings.GET("/language", settingsHandler.GetLanguage)
+				settings.PUT("/language", settingsHandler.UpdateLanguage)
 			}
 		}	
 			

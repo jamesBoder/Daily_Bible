@@ -86,6 +86,7 @@ func main() {
     historyService := services.NewHistoryService(historyRepo)
 
     commentService := services.NewCommentService(commentRepo)
+    settingsService := services.NewSettingsService(db)
 
     // create validator instance
     validate := validator.New()
@@ -119,11 +120,13 @@ func main() {
     // init favoriteHandler variable
     favoriteHandler := handlers.NewFavoriteHandler(
         favoriteService,
+        bibleAPIService,
     )
 
     // init historyHandler variable
     historyHandler := handlers.NewHistoryHandler(
         historyService,
+        bibleAPIService,
     )
 
     // init commentService variable
@@ -145,6 +148,11 @@ func main() {
     // init oauthHandler variable
     oauthHandler := handlers.NewOAuthHandler(
         oauthService,
+    )
+    
+    // init settingsHandler variable
+    settingsHandler := handlers.NewSettingsHandler(
+        settingsService,
     )
     
     // 7. Setup router and start server
@@ -196,7 +204,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

@@ -4,18 +4,12 @@ import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { CommentSection } from "../verse/CommentSection";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
+import { useTranslation } from "react-i18next";
 
 type SortField = "date" | "reference" | "book" | "translation" | "chapter" | "verseNumber";
 type SortDirection = "asc" | "desc";
 
-const SORT_OPTIONS: { value: SortField; label: string }[] = [
-  { value: "date",        label: "Date Added"    },
-  { value: "book",        label: "Book"          },
-  { value: "reference",   label: "Verse Reference"},
-  { value: "translation", label: "Translation"   },
-  { value: "chapter",     label: "Chapter"       },
-  { value: "verseNumber", label: "Verse Number"  },
-];
+const SORT_FIELDS: SortField[] = ["date", "book", "reference", "translation", "chapter", "verseNumber"];
 
 // ── Share helpers ────────────────────────────────────────────────────────────
 interface VerseData {
@@ -47,6 +41,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
   verse, cardId, copiedId,
   onCopy, onTwitter, onWhatsApp, onFacebook, onInstagram, onNativeShare,
 }) => {
+  const { t } = useTranslation();
   const isCopied = copiedId === cardId;
   const supportsNativeShare = typeof navigator !== "undefined" && !!navigator.share;
 
@@ -61,7 +56,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
       onClick={(e) => e.stopPropagation()}
     >
       <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-        Share this verse
+        {t('favorites.shareVerse')}
       </p>
       <div className="flex items-center gap-2">
         {/* Copy */}
@@ -154,6 +149,16 @@ const SharePanel: React.FC<SharePanelProps> = ({
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export const FavoritesList: React.FC = () => {
+  const { t } = useTranslation();
+
+  const SORT_OPTIONS: { value: SortField; label: string }[] = [
+    { value: "date",        label: t('favorites.sortOptions.date')        },
+    { value: "book",        label: t('favorites.sortOptions.book')        },
+    { value: "reference",   label: t('favorites.sortOptions.reference')   },
+    { value: "translation", label: t('favorites.sortOptions.translation') },
+    { value: "chapter",     label: t('favorites.sortOptions.chapter')     },
+    { value: "verseNumber", label: t('favorites.sortOptions.verseNumber') },
+  ];
   const { favorites, isLoading, error, removeFavorite } = useFavorites();
   const [removingId, setRemovingId] = React.useState<number | null>(null);
 
@@ -281,7 +286,7 @@ export const FavoritesList: React.FC = () => {
   }, [favorites, sortField, sortDirection, keyword]);
 
   const handleRemove = async (favoriteId: number) => {
-    if (!window.confirm("Remove this verse from favorites?")) {
+    if (!window.confirm(t('favorites.removeConfirm'))) {
       return;
     }
 
@@ -289,7 +294,7 @@ export const FavoritesList: React.FC = () => {
     try {
       await removeFavorite(favoriteId);
     } catch (err) {
-      alert("Failed to remove favorite");
+      alert(t('favorites.removeFailed'));
     } finally {
       setRemovingId(null);
     }
@@ -316,12 +321,12 @@ export const FavoritesList: React.FC = () => {
         {/* Left: title + count */}
         <div>
           <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-1 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
-            My Favorites
+            {t('favorites.title')}
           </h1>
           <p className="text-gray-600 dark:text-gray-400 text-sm">
             {keyword.trim()
-              ? `${sortedFavorites.length} of ${favorites.length} ${favorites.length === 1 ? "verse" : "verses"}`
-              : `${favorites.length} ${favorites.length === 1 ? "verse" : "verses"} saved`}
+              ? `${sortedFavorites.length} ${t('favorites.of')} ${favorites.length} ${favorites.length === 1 ? t('favorites.verse') : t('favorites.verses')}`
+              : `${favorites.length} ${favorites.length === 1 ? t('favorites.verse') : t('favorites.verses')} ${t('favorites.saved')}`}
           </p>
         </div>
 
@@ -331,7 +336,7 @@ export const FavoritesList: React.FC = () => {
             htmlFor="sort-field"
             className="text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap"
           >
-            Sort by:
+            {t('favorites.sortBy')}:
           </label>
           <select
             id="sort-field"
@@ -349,7 +354,7 @@ export const FavoritesList: React.FC = () => {
           {/* Asc / Desc toggle */}
           <button
             onClick={toggleDirection}
-            title={sortDirection === "asc" ? "Ascending — click to switch to Descending" : "Descending — click to switch to Ascending"}
+            title={sortDirection === "asc" ? t('favorites.ascending') : t('favorites.descending')}
             className="flex items-center gap-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             {sortDirection === "asc" ? (
@@ -357,14 +362,14 @@ export const FavoritesList: React.FC = () => {
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9M3 12h5m8 0l4-4m0 0l4 4m-4-4v12" />
                 </svg>
-                <span>Asc</span>
+                <span>{t('favorites.ascending')}</span>
               </>
             ) : (
               <>
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 4h13M3 8h9M3 12h5m8 8l4-4m0 0l4 4m-4-4V8" />
                 </svg>
-                <span>Desc</span>
+                <span>{t('favorites.descending')}</span>
               </>
             )}
           </button>
@@ -382,7 +387,7 @@ export const FavoritesList: React.FC = () => {
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
-          placeholder="Filter by keyword (verse text, reference, book, translation…)"
+          placeholder={t('favorites.filterPlaceholder')}
           className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
         />
         {keyword && (
@@ -415,16 +420,16 @@ export const FavoritesList: React.FC = () => {
               />
             </svg>
             <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
-              No favorites yet
+              {t('favorites.empty')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 mb-4">
-              Start adding verses to your favorites to see them here
+              {t('favorites.emptyDescription')}
             </p>
             <Button
               onClick={() => (window.location.href = "/daily")}
               variant="primary"
             >
-              View Daily Verse
+              {t('favorites.viewDailyVerse')}
             </Button>
           </div>
         </Card>
@@ -440,13 +445,13 @@ export const FavoritesList: React.FC = () => {
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <p className="text-gray-600 dark:text-gray-400">
-              No favorites match <span className="font-medium">"{keyword}"</span>
+              {t('favorites.noMatch')} <span className="font-medium">"{keyword}"</span>
             </p>
             <button
               onClick={() => setKeyword("")}
               className="mt-3 text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
-              Clear filter
+              {t('favorites.clearFilter')}
             </button>
           </div>
         </Card>
@@ -493,7 +498,7 @@ export const FavoritesList: React.FC = () => {
 
                   {/* Date — always visible */}
                   <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
-                    Added {new Date(favorite.created_at).toLocaleDateString()}
+                    {t('favorites.added')} {new Date(favorite.created_at).toLocaleDateString()}
                   </p>
 
                   {/* Expanded content — only visible when card is selected */}
@@ -525,7 +530,7 @@ export const FavoritesList: React.FC = () => {
                           isLoading={removingId === favorite.id}
                           className="text-sm"
                         >
-                          Remove
+                          {t('favorites.remove')}
                         </Button>
                       </div>
 

@@ -30,10 +30,25 @@ func NewVerseHandler(
 
 // GetDailyVerse returns the verse of the day
 func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
+	// Get language preference from query parameter or default to English
+	language := c.DefaultQuery("lang", "en")
+	
+	// For now, we'll get the daily verse in English and then fetch it in the requested language
+	// In a future update, we could store daily verses for each language
 	verse, err := h.dailyVerseService.GetDailyVerse()
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get daily verse"})
 		return
+	}
+	
+	// If a different language is requested, fetch the verse in that language
+	if language != "en" {
+		translatedVerse, err := h.bibleAPIService.GetVerseWithLanguage(verse.Reference, language)
+		if err == nil {
+			// Update the text with the translated version
+			verse.Text = translatedVerse.Text
+		}
+		// If translation fails, we'll return the English version
 	}
 
 	// Record verse view in history if user is authenticated
@@ -55,6 +70,7 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
             "chapter":   verse.Chapter,
             "verse":     verse.VerseNumber,
             "version":   verse.Version,
+            "language":  language,
         },
     })
 }
@@ -62,7 +78,10 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 // GetVerseByReference fetches a verse by its reference
 func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 	reference := c.Param("reference")
-	verse, err := h.bibleAPIService.GetVerse(reference)
+	// Get language preference from query parameter or default to English
+	language := c.DefaultQuery("lang", "en")
+	
+	verse, err := h.bibleAPIService.GetVerseWithLanguage(reference, language)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch verse"})
 		return
@@ -81,6 +100,7 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 			"text":      verse.Text,
 			"bookId":    verse.BookID,
 			"chapterId": verse.ChapterID,
+			"language":  language,
 		},
 	})
 }
@@ -89,12 +109,15 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 func (h *VerseHandler) SearchVerses(c *gin.Context) {
 	query := c.Query("q")
 	limitStr := c.DefaultQuery("limit", "10")
+	// Get language preference from query parameter or default to English
+	language := c.DefaultQuery("lang", "en")
+	
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit <= 0 {
 		limit = 10
 	}
 
-	verses, err := h.bibleAPIService.SearchVerses(query, limit)
+	verses, err := h.bibleAPIService.SearchVersesWithLanguage(query, limit, language)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to search verses"})
 		return
@@ -108,6 +131,7 @@ func (h *VerseHandler) SearchVerses(c *gin.Context) {
 			"text":      verse.Text,
 			"bookId":    verse.BookID,
 			"chapterId": verse.ChapterID,
+			"language":  language,
 		})
 	}
 

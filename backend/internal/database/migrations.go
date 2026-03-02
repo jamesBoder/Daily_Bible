@@ -13,5 +13,6 @@ func RunMigrations(db *gorm.DB) error {
         &models.History{},
         &models.Comment{},
         &models.PasswordHistory{},
+        &models.UserSettings{},
     )
 }

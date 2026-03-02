@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
@@ -10,6 +11,7 @@ import { profileService } from "../../services/api/profile";
 export const AccountManagement: React.FC = () => {
   const { user, logout, refreshUser } = useAuth();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   // Password change state
   const [showPasswordForm, setShowPasswordForm] = useState(false);
@@ -60,12 +62,12 @@ export const AccountManagement: React.FC = () => {
 
     // Validation
     if (newPasswordData.newPassword !== newPasswordData.confirmPassword) {
-      setNewPasswordError("Passwords do not match");
+      setNewPasswordError(t('account.passwordsDoNotMatch'));
       return;
     }
 
     if (newPasswordData.newPassword.length < 8) {
-      setNewPasswordError("Password must be at least 8 characters");
+      setNewPasswordError(t('account.passwordTooShort'));
       return;
     }
 
@@ -94,7 +96,7 @@ export const AccountManagement: React.FC = () => {
         setShowSetPasswordForm(false);
       }, 2000);
     } catch (error: any) {
-      const errorMsg = error.response?.data?.error || error.response?.data?.details || "Failed to set password";
+      const errorMsg = error.response?.data?.error || error.response?.data?.details || t('account.failedToSetPassword');
       setNewPasswordError(errorMsg);
     }
   };
@@ -115,17 +117,17 @@ export const AccountManagement: React.FC = () => {
 
     // Validation
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setPasswordError("New passwords do not match");
+      setPasswordError(t('account.newPasswordsDoNotMatch'));
       return;
     }
 
     if (passwordData.newPassword.length < 8) {
-      setPasswordError("Password must be at least 8 characters");
+      setPasswordError(t('account.passwordTooShort'));
       return;
     }
 
     if (!passwordData.currentPassword) {
-      setPasswordError("Current password is required");
+      setPasswordError(t('account.currentPasswordRequired'));
       return;
     }
 
@@ -154,7 +156,7 @@ export const AccountManagement: React.FC = () => {
     } catch (error: any) {
       // Error handling is done in the service with toast notifications
       // Set a generic error message for the form
-      const errorMsg = error.response?.data?.error || error.response?.data?.details || "Failed to change password";
+      const errorMsg = error.response?.data?.error || error.response?.data?.details || t('account.failedToChangePassword');
       setPasswordError(errorMsg);
     }
   };
@@ -164,7 +166,7 @@ export const AccountManagement: React.FC = () => {
     setDeleteError(null);
 
     if (!deletePassword) {
-      setDeleteError("Please enter your password to confirm");
+      setDeleteError(t('account.enterPasswordConfirm'));
       return;
     }
 
@@ -174,7 +176,7 @@ export const AccountManagement: React.FC = () => {
       await logout();
       navigate("/signup");
     } catch (error: any) {
-      setDeleteError(error.message || "Failed to delete account");
+      setDeleteError(error.message || t('account.failedToDeleteAccount'));
     }
   };
 
@@ -215,11 +217,9 @@ export const AccountManagement: React.FC = () => {
     setGoogleError(null);
 
     try {
-      // Redirect to Google OAuth for linking
-      // This will use the standard OAuth flow
       window.location.href = oauthService.getGoogleLoginUrl();
     } catch (error: any) {
-      setGoogleError(error.message || "Failed to initiate Google linking");
+      setGoogleError(error.message || t('account.failedToLinkGoogle'));
       setIsLinkingGoogle(false);
     }
   };
@@ -243,7 +243,7 @@ export const AccountManagement: React.FC = () => {
       const errorMsg = error.response?.data?.error || error.message || "Failed to unlink Google account";
       
       if (errorMsg.includes("no password set") || errorMsg.includes("password")) {
-        setGoogleError("You must set a password before unlinking your Google account. Please set a password first in the 'Set Password' section above.");
+        setGoogleError(t('account.unlinkGooglePasswordRequired'));
       } else {
         setGoogleError(errorMsg);
       }
@@ -261,68 +261,35 @@ export const AccountManagement: React.FC = () => {
       {/* Set/Change Password */}
       <Card>
         <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
-          {hasPassword ? "Change Password" : "Set Password"}
+          {hasPassword ? t('settings.account.changePassword') : t('account.setPassword')}
         </h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
-          {hasPassword 
-            ? "Update your password to keep your account secure."
-            : "Set a password to enable email/password login and allow unlinking your Google account."}
+          {hasPassword ? t('account.changePasswordDesc') : t('account.setPasswordDesc')}
         </p>
 
         {/* Set Password Form (for OAuth users without password) */}
         {!hasPassword && !showSetPasswordForm && (
           <span className="flex items-center justify-center">
             <Button onClick={() => setShowSetPasswordForm(true)}>
-              Set Password
+              {t('account.setPassword')}
             </Button>
           </span>
         )}
 
         {!hasPassword && showSetPasswordForm && (
           <form onSubmit={handleSetPasswordSubmit} className="space-y-4">
-            {newPasswordError && (
-              <div className="text-red-500 text-sm">
-                {newPasswordError}
-              </div>
-            )}
+            {newPasswordError && <div className="text-red-500 text-sm">{newPasswordError}</div>}
             {newPasswordSuccess && (
               <div className="text-green-500 dark:text-green-400 text-sm">
-                Password set successfully! You can now unlink your Google account if desired.
+                {t('account.passwordSetSuccess')}
               </div>
             )}
-
-            <Input
-              type="password"
-              name="newPassword"
-              label="New Password"
-              value={newPasswordData.newPassword}
-              onChange={handleSetPasswordChange}
-              required
-            />
-
-            <Input
-              type="password"
-              name="confirmPassword"
-              label="Confirm Password"
-              value={newPasswordData.confirmPassword}
-              onChange={handleSetPasswordChange}
-              required
-            />
-
+            <Input type="password" name="newPassword" label={t('settings.account.newPassword')} value={newPasswordData.newPassword} onChange={handleSetPasswordChange} required />
+            <Input type="password" name="confirmPassword" label={t('settings.account.confirmPassword')} value={newPasswordData.confirmPassword} onChange={handleSetPasswordChange} required />
             <div className="flex gap-2">
-              <Button type="submit">Set Password</Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  setShowSetPasswordForm(false);
-                  setNewPasswordData({
-                    newPassword: "",
-                    confirmPassword: "",
-                  });
-                  setNewPasswordError(null);
-                }}
-              >
-                Cancel
+              <Button type="submit">{t('account.setPassword')}</Button>
+              <Button type="button" onClick={() => { setShowSetPasswordForm(false); setNewPasswordData({ newPassword: "", confirmPassword: "" }); setNewPasswordError(null); }}>
+                {t('common.cancel')}
               </Button>
             </div>
           </form>
@@ -332,66 +299,26 @@ export const AccountManagement: React.FC = () => {
         {hasPassword && !showPasswordForm && (
           <span className="flex items-center justify-center">
             <Button onClick={() => setShowPasswordForm(true)}>
-              Change Password
+              {t('settings.account.changePassword')}
             </Button>
           </span>
         )}
 
         {hasPassword && showPasswordForm && (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            {passwordError && (
-              <div className="text-red-500 dark:text-gray-400 text-sm">
-                {passwordError}
-              </div>
-            )}
+            {passwordError && <div className="text-red-500 dark:text-gray-400 text-sm">{passwordError}</div>}
             {passwordSuccess && (
               <div className="text-green-500 dark:text-green-400 text-sm">
-                Password changed successfully!
+                {t('account.passwordChangedSuccess')}
               </div>
             )}
-
-            <Input
-              type="password"
-              name="currentPassword"
-              label="Current Password"
-              value={passwordData.currentPassword}
-              onChange={handlePasswordChange}
-              required
-            />
-
-            <Input
-              type="password"
-              name="newPassword"
-              label="New Password"
-              value={passwordData.newPassword}
-              onChange={handlePasswordChange}
-              required
-            />
-
-            <Input
-              type="password"
-              name="confirmPassword"
-              label="Confirm New Password"
-              value={passwordData.confirmPassword}
-              onChange={handlePasswordChange}
-              required
-            />
-
+            <Input type="password" name="currentPassword" label={t('settings.account.currentPassword')} value={passwordData.currentPassword} onChange={handlePasswordChange} required />
+            <Input type="password" name="newPassword" label={t('settings.account.newPassword')} value={passwordData.newPassword} onChange={handlePasswordChange} required />
+            <Input type="password" name="confirmPassword" label={t('account.confirmNewPassword')} value={passwordData.confirmPassword} onChange={handlePasswordChange} required />
             <div className="flex gap-2">
-              <Button type="submit">Save Password</Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  setShowPasswordForm(false);
-                  setPasswordData({
-                    currentPassword: "",
-                    newPassword: "",
-                    confirmPassword: "",
-                  });
-                  setPasswordError(null);
-                }}
-              >
-                Cancel
+              <Button type="submit">{t('account.savePassword')}</Button>
+              <Button type="button" onClick={() => { setShowPasswordForm(false); setPasswordData({ currentPassword: "", newPassword: "", confirmPassword: "" }); setPasswordError(null); }}>
+                {t('common.cancel')}
               </Button>
             </div>
           </form>
@@ -401,10 +328,10 @@ export const AccountManagement: React.FC = () => {
       {/* Connected Accounts */}
       <Card>
         <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
-          Connected Accounts
+          {t('account.connectedAccounts')}
         </h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
-          Manage your connected social accounts for easy login.
+          {t('account.connectedAccountsDesc')}
         </p>
 
         {/* Error message */}
@@ -444,13 +371,13 @@ export const AccountManagement: React.FC = () => {
                 {/* Account Info */}
                 <div>
                   <p className="font-medium text-gray-900 dark:text-gray-100">
-                    Google Account
+                    {t('account.googleAccount')}
                   </p>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {user.google_email || user.email}
                   </p>
                   <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
-                    Connected on {user.created_at ? new Date(user.created_at).toLocaleDateString() : 'Recently'}
+                    {t('account.connectedOn')} {user.created_at ? new Date(user.created_at).toLocaleDateString() : t('account.recently')}
                   </p>
                 </div>
               </div>
@@ -466,33 +393,20 @@ export const AccountManagement: React.FC = () => {
 
               {/* Unlink Button */}
               {!showUnlinkConfirm ? (
-                <Button
-                  onClick={() => setShowUnlinkConfirm(true)}
-                  variant="secondary"
-                  className="text-sm"
-                >
-                  Unlink Google Account
+                <Button onClick={() => setShowUnlinkConfirm(true)} variant="secondary" className="text-sm">
+                  {t('settings.account.unlinkGoogle')}
                 </Button>
               ) : (
                 <div className="w-full p-3 bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 rounded">
                   <p className="text-sm text-yellow-800 dark:text-yellow-300 mb-3 text-center">
-                    Are you sure you want to unlink your Google account? You'll need to
-                    use your email and password to log in.
+                    {t('account.unlinkConfirm')}
                   </p>
                   <div className="flex gap-2 justify-center">
-                    <Button
-                      onClick={handleUnlinkGoogle}
-                      isLoading={isUnlinkingGoogle}
-                      className="bg-yellow-600 hover:bg-yellow-700 text-sm"
-                    >
-                      Yes, Unlink
+                    <Button onClick={handleUnlinkGoogle} isLoading={isUnlinkingGoogle} className="bg-yellow-600 hover:bg-yellow-700 text-sm">
+                      {t('account.yesUnlink')}
                     </Button>
-                    <Button
-                      onClick={() => setShowUnlinkConfirm(false)}
-                      variant="secondary"
-                      className="text-sm"
-                    >
-                      Cancel
+                    <Button onClick={() => setShowUnlinkConfirm(false)} variant="secondary" className="text-sm">
+                      {t('common.cancel')}
                     </Button>
                   </div>
                 </div>
@@ -523,15 +437,12 @@ export const AccountManagement: React.FC = () => {
               </svg>
             </div>
             <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              No Google Account Connected
+              {t('account.noGoogleConnected')}
             </h3>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-              Link your Google account for faster and easier sign-in
+              {t('account.noGoogleDesc')}
             </p>
-            <Button
-              onClick={handleLinkGoogle}
-              isLoading={isLinkingGoogle}
-            >
+            <Button onClick={handleLinkGoogle} isLoading={isLinkingGoogle}>
               <span className="flex items-center justify-center gap-2">
                 <svg className="w-5 h-5 mr-2" viewBox="0 0 24 24">
                   <path
@@ -552,7 +463,7 @@ export const AccountManagement: React.FC = () => {
                   />
                 </svg>
               </span>
-              Link Google Account
+              {t('settings.account.linkGoogle')}
             </Button>
           </div>
         )}
@@ -561,14 +472,14 @@ export const AccountManagement: React.FC = () => {
       {/* Export Data */}
       <Card>
         <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
-          Export Your Data
+          {t('account.exportData')}
         </h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
-          Download all your data including favorites, history, and comments.
+          {t('account.exportDataDesc')}
         </p>
         <div className="flex justify-center">
           <Button onClick={handleExportData} disabled={isExporting}>
-            {isExporting ? "Exporting..." : "Export Data"}
+            {isExporting ? t('account.exporting') : t('account.exportDataBtn')}
           </Button>
         </div>
       </Card>
@@ -576,63 +487,42 @@ export const AccountManagement: React.FC = () => {
       {/* Delete Account */}
       <Card>
         <h2 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-400 text-center">
-          Danger Zone
+          {t('account.dangerZone')}
         </h2>
         <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
-          <strong>Warning:</strong> This action is irreversible. All your data
-          will be permanently deleted.
+          <strong>⚠️</strong> {t('account.dangerZoneDesc')}
         </p>
 
         {!showDeleteConfirm ? (
           <div className="flex justify-center">
-            <Button
-              onClick={() => setShowDeleteConfirm(true)}
-              className="bg-red-500 hover:bg-red-600"
-            >
-              Delete Account
+            <Button onClick={() => setShowDeleteConfirm(true)} className="bg-red-500 hover:bg-red-600">
+              {t('settings.account.deleteAccount')}
             </Button>
           </div>
         ) : (
           <div className="space-y-4">
-            {deleteError && (
-              <div className="text-red-500 dark:text-gray-400 text-sm">
-                {deleteError}
-              </div>
-            )}
-
+            {deleteError && <div className="text-red-500 dark:text-gray-400 text-sm">{deleteError}</div>}
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-4">
               <p className="font-semibold text-red-800 dark:text-red-300 mb-2">
-                Are you absolutely sure?
+                {t('account.areYouSure')}
               </p>
               <p className="text-sm text-red-700 mb-4">
-                This will permanently delete your account and all associated
-                data. This action cannot be undone.
+                {t('account.deleteConfirmDesc')}
               </p>
-
               <Input
                 type="password"
-                label="Enter your password to confirm"
+                label={t('account.enterPasswordConfirm')}
                 value={deletePassword}
                 onChange={(e) => setDeletePassword(e.target.value)}
                 placeholder="Password"
               />
             </div>
-
             <div className="flex gap-2">
-              <Button
-                onClick={handleDeleteAccount}
-                className="bg-red-500 hover:bg-red-600"
-              >
-                Yes, Delete My Account
+              <Button onClick={handleDeleteAccount} className="bg-red-500 hover:bg-red-600">
+                {t('account.yesDeleteAccount')}
               </Button>
-              <Button
-                onClick={() => {
-                  setShowDeleteConfirm(false);
-                  setDeletePassword("");
-                  setDeleteError(null);
-                }}
-              >
-                Cancel
+              <Button onClick={() => { setShowDeleteConfirm(false); setDeletePassword(""); setDeleteError(null); }}>
+                {t('common.cancel')}
               </Button>
             </div>
           </div>

@@ -3,6 +3,7 @@
 // imports
 import { useState} from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { historyService } from '../services/api/history';
 
 
@@ -13,11 +14,13 @@ export const useHistory = () => {
     const [pageSize, setPageSizeState] = useState(20);
     const [search, setSearchState] = useState<string | undefined>(undefined);
 
+    const { i18n } = useTranslation();
+    const lang = i18n.language;
 
     const { data, isLoading, error, refetch } = useQuery({
-        queryKey: ['history', page, pageSize, search],
+        queryKey: ['history', page, pageSize, search, lang],
 
-        queryFn: () => historyService.getHistory(page, pageSize, search) // Pass params!
+        queryFn: () => historyService.getHistory(page, pageSize, search, lang)
     });
 
     const queryClient = useQueryClient();

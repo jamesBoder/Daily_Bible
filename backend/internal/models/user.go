@@ -29,6 +29,9 @@ type User struct {
     GooglePicture  *string `json:"google_picture,omitempty"`
     IsGoogleLinked bool    `json:"is_google_linked"`
     
+    // User preferences
+    PreferredLanguage string `gorm:"size:10;default:'en'" json:"preferred_language"`
+    
     // Relationships (if you want to preload)
     Favorites []Favorite `gorm:"foreignKey:UserID" json:"favorites,omitempty"`
     History   []History  `gorm:"foreignKey:UserID" json:"history,omitempty"`

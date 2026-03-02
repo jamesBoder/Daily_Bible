@@ -26,7 +26,7 @@ class SettingsService {
     if (!token) {
       throw new Error('Not authenticated');
     }
-    const response = await apiClient.get<UserSettings>('/settings');
+    const response = await apiClient.get<UserSettings>('/api/settings');
     return response.data;
   }
 
@@ -37,7 +37,7 @@ class SettingsService {
       throw new Error('Not authenticated');
     }
     const response = await apiClient.put<{ message: string; settings: UserSettings }>(
-      '/settings',
+      '/api/settings',
       settings
     );
     return response.data.settings;
@@ -49,7 +49,7 @@ class SettingsService {
     if (!token) {
       throw new Error('Not authenticated');
     }
-    const response = await apiClient.get<{ language: string }>('/settings/language');
+    const response = await apiClient.get<{ language: string }>('/api/settings/language');
     return response.data.language;
   }
 
@@ -59,7 +59,7 @@ class SettingsService {
     if (!token) {
       throw new Error('Not authenticated');
     }
-    await apiClient.put('/settings/language', { language });
+    await apiClient.put('/api/settings/language', { language });
   }
 }
 
