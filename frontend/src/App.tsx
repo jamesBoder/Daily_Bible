@@ -6,7 +6,7 @@ import {
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import { ProtectedRoute, GuestBlockedRoute } from "./components/common/ProtectedRoute";
+import { ProtectedRoute, GuestBlockedRoute, PublicOnlyRoute } from "./components/common/ProtectedRoute";
 import { Layout } from "./components/layout/Layout";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -19,6 +19,10 @@ import "./App.css";
 // Eager load critical authentication components
 import { Login } from "./features/auth/Login";
 import { Signup } from "./features/auth/Signup";
+import { VerifyEmailPending } from "./features/auth/VerifyEmailPending";
+import { VerifyEmail } from "./features/auth/VerifyEmail";
+import { ForgotPassword } from "./features/auth/ForgotPassword";
+import { ResetPassword } from "./features/auth/ResetPassword";
 
 // Lazy load non-critical components (with named export handling)
 const DailyVerse = lazy(() =>
@@ -95,9 +99,15 @@ function App() {
             }}
           />
             <Routes>
-              {/* Public routes - no Suspense needed for eager-loaded components */}
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<Signup />} />
+              {/* Public-only routes — redirect authenticated users to home */}
+              <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
+              <Route path="/signup" element={<PublicOnlyRoute><Signup /></PublicOnlyRoute>} />
+
+              {/* Email verification & password reset — public routes */}
+              <Route path="/verify-email-pending" element={<VerifyEmailPending />} />
+              <Route path="/verify-email" element={<VerifyEmail />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
               <Route
                 path="/about"
                 element={
