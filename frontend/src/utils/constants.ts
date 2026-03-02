@@ -7,6 +7,13 @@ export const API_ENDPOINTS = {
   SIGNUP: '/api/auth/register',
   LOGOUT: '/api/auth/logout',
   ME: '/api/auth/me',
+
+  // Email verification & password reset
+  VERIFY_EMAIL: '/api/auth/verify-email',
+  RESEND_VERIFICATION: '/api/auth/resend-verification',
+  FORGOT_PASSWORD: '/api/auth/forgot-password',
+  RESET_PASSWORD: '/api/auth/reset-password',
+  PROFILE_RESEND_VERIFICATION: '/api/profile/resend-verification',
   
   // Verses
   DAILY_VERSE: '/api/verses/daily',
@@ -42,4 +49,8 @@ export const ROUTES = {
   FAVORITES: '/favorites',
   HISTORY: '/history',
   PROFILE: '/profile',
+  VERIFY_EMAIL_PENDING: '/verify-email-pending',
+  VERIFY_EMAIL: '/verify-email',
+  FORGOT_PASSWORD: '/forgot-password',
+  RESET_PASSWORD: '/reset-password',
 };

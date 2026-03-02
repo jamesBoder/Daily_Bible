@@ -58,29 +58,17 @@ export const authService = {
     }
   },
 
-  // Signup
-  signup: async (credentials: SignupCredentials): Promise<AuthResponse> => {
+  // Signup — returns message only; user must verify email before logging in
+  signup: async (credentials: SignupCredentials): Promise<{ message: string }> => {
     try {
-      const response = await apiClient.post<AuthResponse>(
+      const response = await apiClient.post<{ message: string }>(
         '/api/auth/register',
         credentials
       );
-      
-      // Store token and user data
-      if (response.data.token) {
-        localStorage.setItem(TOKEN_KEY, response.data.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
-        
-        // Set default session expiry (24 hours)
-        const expiryDate = new Date();
-        expiryDate.setHours(expiryDate.getHours() + DEFAULT_SESSION_HOURS);
-        localStorage.setItem(TOKEN_EXPIRY_KEY, expiryDate.toISOString());
-      }
-      
-      showToast.success('Account created successfully! Welcome!');
+      // DO NOT store token — user is not verified yet
+      // DO NOT show success toast — Signup.tsx navigates to /verify-email-pending
       return response.data;
     } catch (error: any) {
-      // throw error
       throw error;
     }
   },
