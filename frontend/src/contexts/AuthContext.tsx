@@ -90,11 +90,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const signup = async (credentials: SignupCredentials) => {
     try {
-      const response = await authService.signup(credentials);
-      // Clear any guest session before setting real user
-      sessionStorage.removeItem(GUEST_SESSION_KEY);
-      queryClient.clear();
-      setUser(response.user);
+      await authService.signup(credentials);
+      // DO NOT call setUser() — user is not verified yet
+      // DO NOT clear guest session — user isn't logged in
+      // DO NOT clear queryClient — nothing to clear
+      // Signup.tsx handles navigation to /verify-email-pending
     } catch (error) {
       throw error;
     }

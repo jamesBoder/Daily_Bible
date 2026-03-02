@@ -20,6 +20,10 @@ type Config struct {
     BibleAPIBaseURL  string
     ServerAddress   string
 
+    // Email service
+    ResendAPIKey string
+    FromEmail    string
+    FrontendURL  string
 }
 
 func Load() (*Config, error) {
@@ -43,6 +47,9 @@ func Load() (*Config, error) {
         BibleVersionID:  getEnvOrDefault("BIBLE_VERSION_ID", "de4e12af7f28f599-02"),
         BibleAPIBaseURL: getEnvOrDefault("BIBLE_API_BASE_URL", "https://rest.api.bible/v1"),
         ServerAddress:   "0.0.0.0:" + getEnvOrDefault("PORT", "8888"),
+        ResendAPIKey:    os.Getenv("RESEND_API_KEY"),
+        FromEmail:       getEnvOrDefault("FROM_EMAIL", "noreply@wordsofpraise.app"),
+        FrontendURL:     getEnvOrDefault("FRONTEND_URL", "http://localhost:3000"),
     }, nil
 }
 

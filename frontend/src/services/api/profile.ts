@@ -135,6 +135,47 @@ export const profileService = {
             }
             throw error;
         }
-    }
+    },
+
+    // resendVerification — protected route (requires JWT); for already-logged-in unverified users
+    resendVerification: async (): Promise<{ message: string }> => {
+        try {
+            const response = await apiClient.post<{ message: string }>(
+                API_ENDPOINTS.PROFILE_RESEND_VERIFICATION
+            );
+            showToast.success('Verification email sent! Check your inbox.');
+            return response.data;
+        } catch (error: any) {
+            const errorMsg = error.response?.data?.error || 'Failed to resend verification email';
+            showToast.error(errorMsg);
+            throw error;
+        }
+    },
+
+    // forgotPassword — public; no toast (ForgotPassword.tsx shows its own success state)
+    forgotPassword: async (email: string): Promise<{ message: string }> => {
+        try {
+            const response = await apiClient.post<{ message: string }>(
+                API_ENDPOINTS.FORGOT_PASSWORD,
+                { email }
+            );
+            return response.data;
+        } catch (error: any) {
+            throw error;
+        }
+    },
+
+    // resetPassword — public; no toast (ResetPassword.tsx handles error display)
+    resetPassword: async (token: string, newPassword: string): Promise<{ message: string }> => {
+        try {
+            const response = await apiClient.post<{ message: string }>(
+                API_ENDPOINTS.RESET_PASSWORD,
+                { token, new_password: newPassword }
+            );
+            return response.data;
+        } catch (error: any) {
+            throw error;
+        }
+    },
 };
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import { useAuth } from "../../hooks/useAuth";
+import { authService } from "../../services/api/authService";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
 import { Card } from "../../components/common/Card";
@@ -9,7 +9,6 @@ import { PasswordInput } from "../../components/common/PasswordInput";
 
 export const Signup: React.FC = () => {
   const navigate = useNavigate();
-  const { signup } = useAuth();
 
   const [formData, setFormData] = useState({
     email: "",
@@ -60,13 +59,13 @@ export const Signup: React.FC = () => {
     setErrors({});
 
     try {
-      await signup({
+      await authService.signup({
         email: formData.email,
         username: formData.username,
         password: formData.password,
         name: formData.name,
       });
-      navigate("/");
+      navigate("/verify-email-pending", { state: { email: formData.email } });
     } catch (err: any) {
       const errorMessage = err.response?.data?.details || 
                      err.response?.data?.error || 

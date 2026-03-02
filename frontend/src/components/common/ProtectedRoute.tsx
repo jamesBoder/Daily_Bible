@@ -25,6 +25,26 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 };
 
 /**
+ * PublicOnlyRoute — wraps routes that authenticated (non-guest) users should NOT access.
+ * Redirects logged-in users to "/" (home). Guests and unauthenticated users pass through.
+ * Used for /login and /signup.
+ */
+export const PublicOnlyRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated, isGuest, isLoading } = useAuth();
+
+  if (isLoading) {
+    return <VerseCardSkeleton />;
+  }
+
+  // Authenticated non-guest users should not see login/signup
+  if (isAuthenticated && !isGuest) {
+    return <Navigate to="/" replace />;
+  }
+
+  return <>{children}</>;
+};
+
+/**
  * GuestBlockedRoute — wraps routes that guests cannot access.
  * Redirects guests to /daily with a one-time toast notification.
  * Non-guests pass through normally.

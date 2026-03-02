@@ -4,7 +4,10 @@ import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
 import { Card } from "../../components/common/Card";
-import GoogleLoginButton  from "../../components/common/GoogleLoginButton";
+import GoogleLoginButton from "../../components/common/GoogleLoginButton";
+import apiClient from "../../services/api/api";
+import { showToast } from "../../utils/toast";
+import { API_ENDPOINTS } from "../../utils/constants";
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -15,6 +18,8 @@ export const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showResendLink, setShowResendLink] = useState(false);
+  const [isResending, setIsResending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -25,14 +30,34 @@ export const Login: React.FC = () => {
       await login({ email, password, rememberMe });
       navigate("/");
     } catch (err: any) {
-      const errorMessage = err.response?.data?.error || 
-                       err.response?.data?.message ||
-                       "Login failed. Please try again.";
+      const errorMessage = err.response?.data?.error ||
+                           err.response?.data?.message ||
+                           "Login failed. Please try again.";
+      const errorCode = err.response?.data?.code;
+
+      if (errorCode === "EMAIL_NOT_VERIFIED") {
+        setShowResendLink(true);
+      } else {
+        setShowResendLink(false);
+      }
       setError(errorMessage);
     } finally {
-        setIsLoading(false);
-      }
-    };
+      setIsLoading(false);
+    }
+  };
+
+  const handleResendVerification = async () => {
+    setIsResending(true);
+    try {
+      await apiClient.post(API_ENDPOINTS.RESEND_VERIFICATION, { email });
+      showToast.success("Verification email sent! Check your inbox.");
+      setShowResendLink(false);
+    } catch {
+      showToast.error("Failed to resend. Please try again.");
+    } finally {
+      setIsResending(false);
+    }
+  };
 
   return (
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
@@ -55,6 +80,21 @@ export const Login: React.FC = () => {
               </div>
             )}
 
+            {showResendLink && (
+              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 px-4 py-3 rounded-lg text-sm">
+                <p>
+                  Didn't receive the email?{" "}
+                  <button
+                    type="button"
+                    onClick={handleResendVerification}
+                    disabled={isResending}
+                    className="font-semibold underline hover:no-underline disabled:opacity-50"
+                  >
+                    {isResending ? "Sending..." : "Resend verification email"}
+                  </button>
+                </p>
+              </div>
+            )}
 
             <Input
               label="Email"
@@ -66,15 +106,28 @@ export const Login: React.FC = () => {
               autoComplete="email"
             />
 
-            <Input
-              label="Password"
-              type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              autoComplete="current-password"
-            />
+            {/* Password field with Forgot Password link */}
+            <div>
+              <div className="flex items-center justify-between mb-1">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                  Password
+                </label>
+                <Link
+                  to="/forgot-password"
+                  className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="current-password"
+              />
+            </div>
 
             <div className="flex items-center">
               <input

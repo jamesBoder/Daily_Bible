@@ -21,14 +21,23 @@ type User struct {
     // Your existing fields (add GORM tags)
     Email    string `gorm:"uniqueIndex;not null" json:"email"`
     Username string `gorm:"size:50" json:"username"`
-    Password string `gorm: json:"-"`
+    Password string `json:"-"`
 
     // Google OAuth fields
     GoogleID       *string `gorm:"uniqueIndex:idx_users_google_id,where:google_id IS NOT NULL" json:"google_id,omitempty"`
     GoogleEmail    *string `json:"google_email,omitempty"`
     GooglePicture  *string `json:"google_picture,omitempty"`
     IsGoogleLinked bool    `json:"is_google_linked"`
-    
+
+    // Email verification
+    EmailVerified              bool       `gorm:"default:false" json:"email_verified"`
+    VerificationToken          *string    `gorm:"size:128" json:"-"`
+    VerificationTokenExpiresAt *time.Time `json:"-"`
+
+    // Password reset
+    ResetToken          *string    `gorm:"size:128" json:"-"`
+    ResetTokenExpiresAt *time.Time `json:"-"`
+
     // User preferences
     PreferredLanguage string `gorm:"size:10;default:'en'" json:"preferred_language"`
     

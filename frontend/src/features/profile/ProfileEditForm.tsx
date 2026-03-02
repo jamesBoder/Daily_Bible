@@ -5,6 +5,7 @@ import React, { useState } from "react";
 import { UserProfile } from "../../types/profile";
 import { profileService } from "../../services/api/profile";
 import { Button } from "../../components/common/Button";
+import { showToast } from "../../utils/toast";
 
 interface ProfileEditFormProps {
   initialProfile: UserProfile;
@@ -34,15 +35,27 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
     setProfileData((prev) => ({ ...prev, [name]: value }));
   };
 
+  const emailChanged = profileData.email !== initialProfile.email;
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSaving(true);
     setError(null);
     try {
       const updatedProfile = await profileService.updateProfile(profileData);
+      if (emailChanged) {
+        showToast.success(
+          "Profile updated. A verification email has been sent to your new address."
+        );
+      }
       onUpdate(updatedProfile);
     } catch (err: any) {
-      setError(err.message || "Failed to update profile");
+      const errorMsg =
+        err.response?.data?.error ||
+        err.response?.data?.details ||
+        err.message ||
+        "Failed to update profile";
+      setError(errorMsg);
     } finally {
       setIsSaving(false);
     }
@@ -76,6 +89,11 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           className="mt-1 block w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-md p-2"
           required
         />
+        {emailChanged && (
+          <p className="mt-1 text-xs text-yellow-600 dark:text-yellow-400">
+            ⚠ Changing your email will require re-verification. A new verification email will be sent.
+          </p>
+        )}
       </div>
 
       <div>

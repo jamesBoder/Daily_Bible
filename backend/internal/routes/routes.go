@@ -23,16 +23,21 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 		// auth routes
 		auth := api.Group("/auth")
 		{
-			 auth.POST("/register", authHandler.Register)
-			 auth.POST("/login", authHandler.Login)
-			 auth.POST("/logout", authHandler.Logout)
-			 // /me endpoint requires authentication
-			 auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
-			 // Google OAuth routes
-			 auth.GET("/google/login", oauthHandler.GoogleLogin)
-			 auth.GET("/google/callback", oauthHandler.GoogleCallback)
-			 auth.POST("/google/link", middleware.AuthMiddleware(tokenService), oauthHandler.LinkGoogle)
-			 auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService), oauthHandler.UnlinkGoogle)
+			auth.POST("/register", authHandler.Register)
+			auth.POST("/login", authHandler.Login)
+			auth.POST("/logout", authHandler.Logout)
+			// /me endpoint requires authentication
+			auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
+			// Email verification & password reset (public)
+			auth.POST("/verify-email", authHandler.VerifyEmail)
+			auth.POST("/resend-verification", authHandler.ResendVerification)
+			auth.POST("/forgot-password", authHandler.ForgotPassword)
+			auth.POST("/reset-password", authHandler.ResetPassword)
+			// Google OAuth routes
+			auth.GET("/google/login", oauthHandler.GoogleLogin)
+			auth.GET("/google/callback", oauthHandler.GoogleCallback)
+			auth.POST("/google/link", middleware.AuthMiddleware(tokenService), oauthHandler.LinkGoogle)
+			auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService), oauthHandler.UnlinkGoogle)
 		}
 
 		// verses routes - use optional auth to track history for authenticated users
@@ -83,6 +88,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 				profile.GET("/stats", profileHandler.GetStats)
 				profile.POST("/password/set", profileHandler.SetPassword)
 				profile.PUT("/password", profileHandler.UpdatePassword)
+				profile.POST("/resend-verification", profileHandler.ResendVerificationFromProfile)
 			}
 			
 			// settings routes

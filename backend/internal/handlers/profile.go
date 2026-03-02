@@ -1,35 +1,33 @@
 package handlers
 
-// imports 
+// imports
 
 import (
+	"log"
 	"net/http"
-	
 	"time"
 
 	"github.com/gin-gonic/gin"
-	
-	"dailybible/internal/repository"
-	"dailybible/internal/password"
+
 	"dailybible/internal/models"
+	"dailybible/internal/password"
+	"dailybible/internal/repository"
 	"dailybible/internal/services"
 	"github.com/go-playground/validator/v10"
-
-
-
 )
 
 // ProfileHandler struct
 
 type ProfileHandler struct {
-	userRepo repository.UserRepository
-	favoriteRepo repository.FavoriteRepository
-	historyRepo repository.HistoryRepository
-	commentRepo *repository.CommentRepository
+	userRepo            repository.UserRepository
+	favoriteRepo        repository.FavoriteRepository
+	historyRepo         repository.HistoryRepository
+	commentRepo         *repository.CommentRepository
 	passwordHistoryRepo repository.PasswordHistoryRepository
-	emailValidator *services.EmailValidationService
-	validator *validator.Validate
-} 
+	emailService        *services.EmailService
+	emailValidator      *services.EmailValidationService
+	validator           *validator.Validate
+}
 
 // constructor init handler with dependencies
 
@@ -39,6 +37,7 @@ func NewProfileHandler(
 	historyRepo repository.HistoryRepository,
 	commentRepo *repository.CommentRepository,
 	passwordHistoryRepo repository.PasswordHistoryRepository,
+	emailService *services.EmailService,
 	emailValidator *services.EmailValidationService,
 	validator *validator.Validate,
 ) *ProfileHandler {
@@ -48,6 +47,7 @@ func NewProfileHandler(
 		historyRepo:         historyRepo,
 		commentRepo:         commentRepo,
 		passwordHistoryRepo: passwordHistoryRepo,
+		emailService:        emailService,
 		emailValidator:      emailValidator,
 		validator:           validator,
 	}
@@ -75,16 +75,16 @@ func (h *ProfileHandler) GetProfile(c *gin.Context) {
 
 	// respond with user profile data
 	c.JSON(http.StatusOK, gin.H{
-		"id":             user.ID,
-		"username":       user.Username,
-		"email":          user.Email,
-		"created_at":     user.CreatedAt,
-		"google_id":      getStringValue(user.GoogleID),
-		"google_email":   getStringValue(user.GoogleEmail),
-		"google_picture": getStringValue(user.GooglePicture),
+		"id":               user.ID,
+		"username":         user.Username,
+		"email":            user.Email,
+		"created_at":       user.CreatedAt,
+		"email_verified":   user.EmailVerified,
+		"google_id":        getStringValue(user.GoogleID),
+		"google_email":     getStringValue(user.GoogleEmail),
+		"google_picture":   getStringValue(user.GooglePicture),
 		"is_google_linked": user.IsGoogleLinked,
 	})
-	
 }
 
 // UpdateProfile handler
@@ -155,6 +155,9 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 		}
 	}
 
+	// Detect email change before updating
+	emailChanged := req.Email != user.Email
+
 	// update user via userRepo.Update()
 	user.Username = req.Username
 	user.Email = req.Email
@@ -164,15 +167,46 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	// respond with updated profile data
+	// If email changed, reset verification and send new verification email
+	if emailChanged {
+		token, err := services.GenerateToken()
+		if err != nil {
+			log.Printf("Failed to generate verification token after email change for user %d: %v", user.ID, err)
+		} else {
+			if err := h.userRepo.UpdateVerificationToken(user.ID, token, time.Now().Add(24*time.Hour)); err != nil {
+				log.Printf("Failed to store verification token after email change for user %d: %v", user.ID, err)
+			} else {
+				if err := h.emailService.SendVerificationEmail(user.Email, user.Username, token); err != nil {
+					log.Printf("Failed to send verification email to %s: %v", user.Email, err)
+				}
+			}
+		}
+
+		c.JSON(http.StatusOK, gin.H{
+			"id":               user.ID,
+			"username":         user.Username,
+			"email":            user.Email,
+			"created_at":       user.CreatedAt,
+			"email_verified":   false,
+			"google_id":        getStringValue(user.GoogleID),
+			"google_email":     getStringValue(user.GoogleEmail),
+			"google_picture":   getStringValue(user.GooglePicture),
+			"is_google_linked": user.IsGoogleLinked,
+			"message":          "Profile updated. A verification email has been sent to your new address.",
+		})
+		return
+	}
+
+	// respond with updated profile data (no email change)
 	c.JSON(http.StatusOK, gin.H{
-		"id":             user.ID,
-		"username":       user.Username,
-		"email":          user.Email,
-		"created_at":     user.CreatedAt,
-		"google_id":      getStringValue(user.GoogleID),
-		"google_email":   getStringValue(user.GoogleEmail),
-		"google_picture": getStringValue(user.GooglePicture),
+		"id":               user.ID,
+		"username":         user.Username,
+		"email":            user.Email,
+		"created_at":       user.CreatedAt,
+		"email_verified":   user.EmailVerified,
+		"google_id":        getStringValue(user.GoogleID),
+		"google_email":     getStringValue(user.GoogleEmail),
+		"google_picture":   getStringValue(user.GooglePicture),
 		"is_google_linked": user.IsGoogleLinked,
 	})
 }
@@ -441,5 +475,47 @@ func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 	// respond with success
 	c.JSON(http.StatusOK, gin.H{
 		"message": "Password updated successfully",
+	})
+}
+
+// ResendVerificationFromProfile sends a new verification email for the currently
+// authenticated user. Protected route — requires valid JWT.
+func (h *ProfileHandler) ResendVerificationFromProfile(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	user, err := h.userRepo.GetByID(userID.(uint))
+	if err != nil || user == nil {
+		c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+		return
+	}
+
+	if user.EmailVerified {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Email is already verified"})
+		return
+	}
+
+	token, err := services.GenerateToken()
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate verification token"})
+		return
+	}
+
+	if err := h.userRepo.UpdateVerificationToken(user.ID, token, time.Now().Add(24*time.Hour)); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to store verification token"})
+		return
+	}
+
+	if err := h.emailService.SendVerificationEmail(user.Email, user.Username, token); err != nil {
+		log.Printf("Failed to send verification email to %s: %v", user.Email, err)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to send verification email"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Verification email sent. Please check your inbox.",
 	})
 }
