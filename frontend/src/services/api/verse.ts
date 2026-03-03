@@ -7,7 +7,8 @@ export const verseService = {
   getDailyVerse: async (): Promise<Verse> => {
     try {
       const response = await apiClient.get(API_ENDPOINTS.DAILY_VERSE);
-      return response.data;
+      // Backend returns { verse: {...} } — unwrap the nested object
+      return response.data.verse ?? response.data;
     } catch (error) {
       console.error('Error fetching daily verse:', error);
       throw error;
@@ -18,7 +19,7 @@ export const verseService = {
   getVerseByReference: async (reference: string): Promise<Verse> => {
     try {
       const response = await apiClient.get(
-        `${API_ENDPOINTS.VERSES}/${encodeURIComponent(reference)}`
+        `${API_ENDPOINTS.VERSE_BY_REFERENCE}/${encodeURIComponent(reference)}`
       );
       return response.data;
     } catch (error) {
