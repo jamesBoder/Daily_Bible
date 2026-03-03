@@ -1,12 +1,19 @@
 // imports
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 
-
-interface PasswordRequirement {
+interface PasswordRequirementDef {
   label: string;
   test: (password: string) => boolean;
-  met: boolean;
 }
+
+// Static requirement definitions — defined outside component to avoid re-creation on every render
+const PASSWORD_REQUIREMENTS: PasswordRequirementDef[] = [
+  { label: 'At least 8 characters',      test: (pw) => pw.length >= 8 },
+  { label: 'Contains uppercase letter',  test: (pw) => /[A-Z]/.test(pw) },
+  { label: 'Contains lowercase letter',  test: (pw) => /[a-z]/.test(pw) },
+  { label: 'Contains number',            test: (pw) => /[0-9]/.test(pw) },
+  { label: 'Contains special character', test: (pw) => /[!@#$%^&*(),.?":{}|<>]/.test(pw) },
+];
 
 interface PasswordInputProps {
   label: string;
@@ -20,7 +27,6 @@ interface PasswordInputProps {
   autoComplete?: string;
 }
 
-
 // PasswordInput component // Display password requirements // Real-time validation // Visual State Indicators
 export const PasswordInput: React.FC<PasswordInputProps> = ({
   label,
@@ -29,43 +35,13 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
   showRequirements = false,
   error,
   required,
-    ...props
+  ...props
 }) => {
-  const [requirements, setRequirements] = useState<PasswordRequirement[]>([
-    {
-      label: 'At least 8 characters',
-      test: (pw) => pw.length >= 8,
-      met: false,
-    },
-    {
-      label: 'Contains uppercase letter',
-      test: (pw) => /[A-Z]/.test(pw),
-      met: false,
-    },
-    {
-      label: 'Contains lowercase letter',
-      test: (pw) => /[a-z]/.test(pw),
-      met: false,
-    },
-    {
-      label: 'Contains number',
-      test: (pw) => /[0-9]/.test(pw),
-      met: false,
-    },
-    {
-      label: 'Contains special character',
-      test: (pw) => /[!@#$%^&*(),.?":{}|<>]/.test(pw),
-      met: false,
-    },
-  ]);
-
-  useEffect(() => {
-    const updatedRequirements = requirements.map((req) => ({
-      ...req,
-      met: req.test(value),
-    }));
-    setRequirements(updatedRequirements);
-  }, [value]);
+  // Derive met status directly from value — no useState/useEffect needed
+  const requirements = PASSWORD_REQUIREMENTS.map((req) => ({
+    ...req,
+    met: req.test(value),
+  }));
 
   return (
     <div>
