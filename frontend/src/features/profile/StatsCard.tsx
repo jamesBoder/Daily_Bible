@@ -1,6 +1,5 @@
 // display user stats
 import React, { useEffect, useState, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { profileService } from "../../services/api/profile";
 import { UserStats } from "../../types/profile";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
@@ -92,7 +91,6 @@ const AnimatedStatCard: React.FC<StatCardProps> = ({
 
 // --- Main StatsCard ---
 export const StatsCard: React.FC = () => {
-  const { t } = useTranslation();
   const [stats, setStats] = useState<UserStats | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
@@ -104,7 +102,7 @@ export const StatsCard: React.FC = () => {
         const data = await profileService.getStats();
         setStats(data);
       } catch (err: any) {
-        setError(err.message || "Failed to load stats");
+        setError(err.message || "Failed to load statistics");
       } finally {
         setIsLoading(false);
       }
@@ -132,7 +130,7 @@ export const StatsCard: React.FC = () => {
   const statCards = [
     {
       icon: "📖",
-      label: t("profile.versesRead"),
+      label: "Verses Read",
       value: stats?.history_count || 0,
       glowClass: "stat-card-blue-glow",
       gradientLight: "from-blue-100 to-blue-200",
@@ -146,7 +144,7 @@ export const StatsCard: React.FC = () => {
     },
     {
       icon: "❤️",
-      label: t("profile.favorites"),
+      label: "Favorites",
       value: stats?.favorite_count || 0,
       glowClass: "stat-card-red-glow",
       gradientLight: "from-red-100 to-rose-200",
@@ -160,7 +158,7 @@ export const StatsCard: React.FC = () => {
     },
     {
       icon: "📝",
-      label: t("profile.notes"),
+      label: "Notes",
       value: stats?.comment_count || 0,
       glowClass: "stat-card-green-glow",
       gradientLight: "from-green-100 to-emerald-200",
@@ -174,7 +172,7 @@ export const StatsCard: React.FC = () => {
     },
     {
       icon: "🔥",
-      label: t("profile.daysActive"),
+      label: "Days Active",
       value: stats?.account_age_days || 0,
       glowClass: "stat-card-purple-glow",
       gradientLight: "from-purple-100 to-violet-200",
@@ -195,7 +193,7 @@ export const StatsCard: React.FC = () => {
         <span
           className="bg-gradient-to-r from-blue-600 to-primary-500 dark:from-blue-300 dark:to-primary-400 bg-clip-text text-transparent drop-shadow-[0_0_6px_rgba(14,165,233,0.35)] dark:drop-shadow-[0_0_10px_rgba(56,189,248,0.55)]"
         >
-          {t("profile.yourStatistics")}
+          Your Statistics
         </span>
       </h2>
 
@@ -207,7 +205,7 @@ export const StatsCard: React.FC = () => {
         </div>
       ) : (
         <p className="text-gray-600 dark:text-gray-400 text-center">
-          {t("profile.noStats")}
+          No statistics available yet
         </p>
       )}
     </div>
