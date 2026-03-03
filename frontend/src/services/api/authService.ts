@@ -58,15 +58,21 @@ export const authService = {
     }
   },
 
-  // Signup — returns message only; user must verify email before logging in
-  signup: async (credentials: SignupCredentials): Promise<{ message: string }> => {
+  // Signup — returns token immediately (portfolio-mvp: no email verification required)
+  signup: async (credentials: SignupCredentials): Promise<AuthResponse> => {
     try {
-      const response = await apiClient.post<{ message: string }>(
+      const response = await apiClient.post<AuthResponse>(
         '/api/auth/register',
         credentials
       );
-      // DO NOT store token — user is not verified yet
-      // DO NOT show success toast — Signup.tsx navigates to /verify-email-pending
+      // Store token immediately — no email verification in portfolio-mvp
+      if (response.data.token) {
+        localStorage.setItem(TOKEN_KEY, response.data.token);
+        localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+        const expiryDate = new Date();
+        expiryDate.setHours(expiryDate.getHours() + DEFAULT_SESSION_HOURS);
+        localStorage.setItem(TOKEN_EXPIRY_KEY, expiryDate.toISOString());
+      }
       return response.data;
     } catch (error: any) {
       throw error;
