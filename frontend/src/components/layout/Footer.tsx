@@ -1,9 +1,6 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 
 export const Footer: React.FC = () => {
-  const { t } = useTranslation();
-  
   return (
     <footer className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-6 mt-12">
       <div className="container mx-auto px-4">
@@ -14,13 +11,13 @@ export const Footer: React.FC = () => {
               href="/about"
               className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
             >
-              {t('nav.about')}
+              About
             </a>
             <a
               href="mailto:wordsofpraiseapp@gmail.com?subject=Words%20of%20Praise%20-%20Inquiry"
               className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
             >
-              {t('common.contact', 'Contact')}
+              Contact
             </a>
           </div>
 
