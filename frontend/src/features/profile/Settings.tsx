@@ -9,43 +9,37 @@ import { profileService } from "../../services/api/profile";
 import { UserProfile } from "../../types/profile";
 import { useTheme } from "../../contexts/ThemeContext";
 import { useAuth } from "../../hooks/useAuth";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useTranslation } from "react-i18next";
 import { settingsService } from "../../services/api/settings";
 
 interface SettingsState {
   emailNotifications: boolean;
   dailyVerseReminder: boolean;
-  language: string;
 }
 
 type TabType = "profile" | "preferences" | "account";
 
 export const Settings: React.FC = () => {
   const { isGuest } = useAuth();
-  const { t } = useTranslation();
-  const { currentLanguage, changeLanguage, supportedLanguages } = useLanguage();
-  
-  // Pitfall 6/12: lazy initializer — guests skip "profile" tab (no API call)
+
+  // Guests skip "profile" tab (no API call needed)
   const [activeTab, setActiveTab] = useState<TabType>(() =>
     isGuest ? "preferences" : "profile"
   );
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  // Guests never fetch profile data, so start as false; non-guests start as true (fetch runs on mount)
+  // Guests never fetch profile data, so start as false; non-guests start as true
   const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(!isGuest);
   const [profileError, setProfileError] = useState<string | null>(null);
   const [isEditingProfile, setIsEditingProfile] = useState(false);
   const [settings, setSettings] = useState<SettingsState>({
     emailNotifications: true,
     dailyVerseReminder: true,
-    language: currentLanguage,
   });
 
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const { isDarkMode, toggleTheme } = useTheme();
 
-  // Fetch profile data — skip entirely for guests (Pitfall 3)
+  // Fetch profile data — skip entirely for guests
   useEffect(() => {
     const fetchProfile = async () => {
       try {
@@ -63,7 +57,7 @@ export const Settings: React.FC = () => {
       fetchProfile();
     }
   }, [activeTab, isGuest]);
-  
+
   // Load user settings when component mounts
   useEffect(() => {
     const loadSettings = async () => {
@@ -73,43 +67,18 @@ export const Settings: React.FC = () => {
           setSettings({
             emailNotifications: userSettings.email_notifications,
             dailyVerseReminder: userSettings.daily_verse_reminder,
-            language: userSettings.preferred_language,
           });
         } catch (error) {
           console.error("Failed to load settings:", error);
         }
       }
     };
-    
+
     loadSettings();
   }, [isGuest]);
 
-  // Keep the language select in sync with the LanguageContext.
-  // currentLanguage is set asynchronously (from API or localStorage) after mount,
-  // so the initial useState value can be stale. This effect corrects it.
-  useEffect(() => {
-    setSettings(prev => ({
-      ...prev,
-      language: currentLanguage,
-    }));
-  }, [currentLanguage]);
-
   const handleToggle = (key: keyof SettingsState) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = e.target.value;
-    setSettings((prev) => ({
-      ...prev,
-      language: newLanguage,
-    }));
-    
-    // Change the language immediately
-    await changeLanguage(newLanguage);
+    setSettings((prev) => ({ ...prev, [key]: !prev[key] }));
   };
 
   const handleProfileUpdate = (updatedProfile: UserProfile) => {
@@ -124,10 +93,9 @@ export const Settings: React.FC = () => {
         await settingsService.updateSettings({
           email_notifications: settings.emailNotifications,
           daily_verse_reminder: settings.dailyVerseReminder,
-          preferred_language: settings.language,
         });
       }
-      setSuccessMessage(t('settings.saved'));
+      setSuccessMessage("Settings saved!");
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error("Failed to save settings:", error);
@@ -138,22 +106,24 @@ export const Settings: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">{t('settings.title')}</h1>
+      <h1 className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+        Settings
+      </h1>
 
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
         <nav className="-mb-px flex space-x-8">
-          {/* Profile tab hidden for guests — they have no real profile */}
+          {/* Profile tab hidden for guests */}
           {!isGuest && (
             <button
               onClick={() => setActiveTab("profile")}
               className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
                 activeTab === "profile"
                   ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300"
               }`}
             >
-              {t('settings.tabs.profile')}
+              Profile
             </button>
           )}
           <button
@@ -161,20 +131,20 @@ export const Settings: React.FC = () => {
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === "preferences"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300"
             }`}
           >
-            {t('settings.tabs.preferences')}
+            Preferences
           </button>
           <button
             onClick={() => setActiveTab("account")}
             className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
               activeTab === "account"
                 ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
+                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300"
             }`}
           >
-            {t('settings.tabs.account')}
+            Account
           </button>
         </nav>
       </div>
@@ -185,13 +155,12 @@ export const Settings: React.FC = () => {
         </div>
       )}
 
-      {/* Tab Content */}
+      {/* ── Profile Tab ─────────────────────────────────────────────────────── */}
       {activeTab === "profile" ? (
         <>
-          {/* Profile Content */}
           {isLoadingProfile ? (
             <div className="flex justify-center items-center py-12">
-              <div className="text-gray-600">{t('common.loading')}</div>
+              <div className="text-gray-600">Loading...</div>
             </div>
           ) : profileError ? (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
@@ -202,19 +171,27 @@ export const Settings: React.FC = () => {
               {/* Profile Information Card */}
               <Card>
                 <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-300">{t('profile.information')}</h2>
-                  <Button onClick={() => setIsEditingProfile(!isEditingProfile)} variant="secondary">
-                    {isEditingProfile ? t('common.cancel') : t('profile.editProfile')}
+                  <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-300">
+                    Profile Information
+                  </h2>
+                  <Button
+                    onClick={() => setIsEditingProfile(!isEditingProfile)}
+                    variant="secondary"
+                  >
+                    {isEditingProfile ? "Cancel" : "Edit Profile"}
                   </Button>
                 </div>
 
                 {isEditingProfile ? (
-                  <ProfileEditForm initialProfile={profile} onUpdate={handleProfileUpdate} />
+                  <ProfileEditForm
+                    initialProfile={profile}
+                    onUpdate={handleProfileUpdate}
+                  />
                 ) : (
                   <div className="space-y-4">
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                        {t('profile.username')}
+                        Username
                       </label>
                       <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
                         {profile.username}
@@ -222,7 +199,7 @@ export const Settings: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                        {t('profile.email')}
+                        Email
                       </label>
                       <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
                         {profile.email}
@@ -230,17 +207,14 @@ export const Settings: React.FC = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                        {t('profile.memberSince')}
+                        Member Since
                       </label>
                       <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
-                        {new Date(profile.created_at).toLocaleDateString(
-                          "en-US",
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
-                        )}
+                        {new Date(profile.created_at).toLocaleDateString("en-US", {
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
+                        })}
                       </p>
                     </div>
                   </div>
@@ -251,45 +225,51 @@ export const Settings: React.FC = () => {
               <StatsCard />
             </div>
           ) : (
-            <div className="text-gray-600 text-center">{t('profile.noData')}</div>
+            <div className="text-gray-600 text-center">No profile data available</div>
           )}
         </>
       ) : activeTab === "preferences" ? (
         <>
-          {/* Preferences Content */}
-
-          {/* Appearance Settings */}
+          {/* ── Appearance ──────────────────────────────────────────────────── */}
           <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.appearance.title')}</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">
+              Appearance
+            </h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold">{t('settings.appearance.darkMode')}</h3>
+                  <h3 className="font-semibold">Dark Mode</h3>
                   <p className="text-sm text-gray-600">
-                    {t('settings.appearance.darkModeDescription')}
+                    Switch between light and dark theme
                   </p>
                 </div>
                 <button
                   onClick={() => toggleTheme()}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isDarkMode ? "bg-blue-600" : "bg-gray-300"}`}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
+                    isDarkMode ? "bg-blue-600" : "bg-gray-300"
+                  }`}
                 >
                   <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isDarkMode ? "translate-x-6" : "translate-x-1"}`}
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      isDarkMode ? "translate-x-6" : "translate-x-1"
+                    }`}
                   />
                 </button>
               </div>
             </div>
           </Card>
 
-          {/* Notification Settings */}
+          {/* ── Notifications ───────────────────────────────────────────────── */}
           <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.notifications.title')}</h2>
+            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">
+              Notifications
+            </h2>
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold">{t('settings.notifications.emailNotifications')}</h3>
+                  <h3 className="font-semibold">Email Notifications</h3>
                   <p className="text-sm text-gray-600">
-                    {t('settings.notifications.emailDescription')}
+                    Receive email updates and announcements
                   </p>
                 </div>
                 <button
@@ -300,9 +280,7 @@ export const Settings: React.FC = () => {
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.emailNotifications
-                        ? "translate-x-6"
-                        : "translate-x-1"
+                      settings.emailNotifications ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -310,9 +288,9 @@ export const Settings: React.FC = () => {
 
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-semibold">{t('settings.notifications.dailyReminder')}</h3>
+                  <h3 className="font-semibold">Daily Verse Reminder</h3>
                   <p className="text-sm text-gray-600">
-                    {t('settings.notifications.reminderDescription')}
+                    Get a daily reminder to read your verse
                   </p>
                 </div>
                 <button
@@ -323,9 +301,7 @@ export const Settings: React.FC = () => {
                 >
                   <span
                     className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.dailyVerseReminder
-                        ? "translate-x-6"
-                        : "translate-x-1"
+                      settings.dailyVerseReminder ? "translate-x-6" : "translate-x-1"
                     }`}
                   />
                 </button>
@@ -333,36 +309,15 @@ export const Settings: React.FC = () => {
             </div>
           </Card>
 
-          {/* Language Settings */}
-          <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.language.title')}</h2>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                {t('settings.language.preferredLanguage')}
-              </label>
-              <select
-                value={settings.language}
-                onChange={handleLanguageChange}
-                className="block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              >
-                {supportedLanguages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {t(`settings.language.languages.${lang.code}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </Card>
-
           {/* Save Button */}
           <div className="flex justify-end">
             <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? t('settings.saving') : t('settings.save')}
+              {isSaving ? "Saving..." : "Save Settings"}
             </Button>
           </div>
         </>
       ) : (
-        /* Account Management Content — GuestAccountManagement for guests */
+        /* ── Account Tab ──────────────────────────────────────────────────── */
         isGuest ? <GuestAccountManagement /> : <AccountManagement />
       )}
     </div>
