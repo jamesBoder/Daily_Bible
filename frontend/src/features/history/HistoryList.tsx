@@ -1,12 +1,10 @@
 // History List component
 
-// imports
 import React, { useRef, useEffect } from "react";
 import { useHistory } from "../../hooks/useHistory";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
-import { useTranslation } from "react-i18next";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
 interface VerseData {
@@ -38,7 +36,6 @@ const SharePanel: React.FC<SharePanelProps> = ({
   verse, cardId, copiedId,
   onCopy, onTwitter, onWhatsApp, onFacebook, onInstagram, onNativeShare,
 }) => {
-  const { t } = useTranslation();
   const isCopied = copiedId === cardId;
   const supportsNativeShare = typeof navigator !== "undefined" && !!navigator.share;
 
@@ -53,7 +50,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
       onClick={(e) => e.stopPropagation()}
     >
       <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
-        {t('history.shareVerse')}
+        Share Verse
       </p>
       <div className="flex items-center gap-2">
         {/* Copy */}
@@ -146,7 +143,6 @@ const SharePanel: React.FC<SharePanelProps> = ({
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export const HistoryList: React.FC = () => {
-  const { t } = useTranslation();
   const { history, isLoading, error, clearHistory } = useHistory();
   const [clearing, setClearing] = React.useState(false);
 
@@ -204,7 +200,6 @@ export const HistoryList: React.FC = () => {
 
   const handleInstagramShare = async (verse: VerseData, id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    // Instagram has no public URL share API — copy text then open Instagram
     try {
       await navigator.clipboard.writeText(buildShareText(verse));
       setCopiedId(id);
@@ -221,7 +216,7 @@ export const HistoryList: React.FC = () => {
   };
 
   const handleClearHistory = async () => {
-    if (!window.confirm(t('history.clearConfirm'))) {
+    if (!window.confirm("Are you sure you want to clear your reading history?")) {
       return;
     }
 
@@ -229,7 +224,7 @@ export const HistoryList: React.FC = () => {
     try {
       await clearHistory();
     } catch (err) {
-      alert(t('history.clearFailed'));
+      alert("Failed to clear history. Please try again.");
     } finally {
       setClearing(false);
     }
@@ -252,13 +247,15 @@ export const HistoryList: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       <div className="mb-8 flex justify-between items-center">
-        <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">{t('history.title')}</h1>
+        <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+          Reading History
+        </h1>
         <Button
           onClick={handleClearHistory}
           disabled={clearing || history.length === 0}
           variant="danger"
         >
-          {clearing ? t('history.clearing') : t('history.clear')}
+          {clearing ? "Clearing..." : "Clear History"}
         </Button>
       </div>
 
@@ -278,7 +275,7 @@ export const HistoryList: React.FC = () => {
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
               />
             </svg>
-            <p className="text-gray-600 dark:text-gray-400">{t('history.empty')}</p>
+            <p className="text-gray-600 dark:text-gray-400">No reading history yet</p>
           </div>
         </Card>
       ) : (
@@ -345,7 +342,7 @@ export const HistoryList: React.FC = () => {
                         : ""}
                     </span>
                     <span>
-                      {t('history.viewed')}: {new Date(entry.viewed_at).toLocaleDateString()} at{" "}
+                      Viewed: {new Date(entry.viewed_at).toLocaleDateString()} at{" "}
                       {new Date(entry.viewed_at).toLocaleTimeString()}
                     </span>
                   </div>
