@@ -3,7 +3,7 @@ import { API_BASE_URL, STORAGE_KEYS } from '../../utils/constants';
 
 // Create axios instance
 const apiClient: AxiosInstance = axios.create({
-  baseURL: API_BASE_URL,
+  baseURL: API_BASE_URL || 'http://localhost:8888',
   headers: {
     'Content-Type': 'application/json',
   },
