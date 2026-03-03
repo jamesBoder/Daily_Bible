@@ -1,12 +1,18 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { useTranslation } from 'react-i18next';
-
 
 // About Page Component
 export const About: React.FC = () => {
   const navigate = useNavigate();
-  const { t } = useTranslation();
+
+  const features = [
+    { emoji: '📖', title: 'Daily Bible Verses', desc: 'Start each day with an inspiring verse from the Bible, carefully selected to uplift and guide you.' },
+    { emoji: '⭐', title: 'Save Favorites', desc: 'Bookmark verses that speak to your heart and revisit them anytime from your favorites list.' },
+    { emoji: '📜', title: 'Reading History', desc: 'Keep track of every verse you have read and revisit your spiritual journey over time.' },
+    { emoji: '💬', title: 'Personal Notes', desc: 'Add your own reflections and notes to any verse to deepen your understanding and connection.' },
+    { emoji: '🌙', title: 'Dark Mode', desc: 'Comfortable reading day or night with a beautiful dark mode that is easy on the eyes.' },
+    { emoji: '📱', title: 'Mobile Friendly', desc: 'Fully responsive design that works seamlessly on any device — phone, tablet, or desktop.' },
+  ];
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
@@ -24,7 +30,7 @@ export const About: React.FC = () => {
           >
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
-          {t('about.back')}
+          Back
         </button>
       </div>
 
@@ -36,7 +42,7 @@ export const About: React.FC = () => {
             Words of Praise
           </h1>
           <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light">
-            {t('about.subtitle')}
+            Your Daily Source of Spiritual Inspiration
           </p>
           <div className="mt-6 flex justify-center">
             <div className="h-1 w-24 bg-gradient-to-r from-primary-600 to-purple-600 rounded-full"></div>
@@ -49,10 +55,12 @@ export const About: React.FC = () => {
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-6 sm:p-8 md:p-12 border border-gray-200 dark:border-gray-700">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center justify-center sm:justify-start">
             <span className="text-3xl sm:text-4xl mr-3">🙏</span>
-            {t('about.mission')}
+            Our Mission
           </h2>
           <p className="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300">
-            {t('about.missionText')}
+            Words of Praise is dedicated to bringing daily spiritual nourishment through Bible verses,
+            helping you grow in faith and find peace in God's word. We believe that a moment with
+            scripture each day can transform your perspective and strengthen your walk with God.
           </p>
         </div>
       </section>
@@ -60,24 +68,17 @@ export const About: React.FC = () => {
       {/* Features Overview Section */}
       <section className="py-16 px-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
         <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center text-primary-600 dark:text-primary-400">
-          {t('about.features')}
+          Features
         </h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-          {[
-            { emoji: '📖', titleKey: 'about.feature1Title', descKey: 'about.feature1Desc' },
-            { emoji: '⭐', titleKey: 'about.feature2Title', descKey: 'about.feature2Desc' },
-            { emoji: '📜', titleKey: 'about.feature3Title', descKey: 'about.feature3Desc' },
-            { emoji: '💬', titleKey: 'about.feature4Title', descKey: 'about.feature4Desc' },
-            { emoji: '🌙', titleKey: 'about.feature5Title', descKey: 'about.feature5Desc' },
-            { emoji: '📱', titleKey: 'about.feature6Title', descKey: 'about.feature6Desc' },
-          ].map(({ emoji, titleKey, descKey }) => (
+          {features.map(({ emoji, title, desc }) => (
             <div
-              key={titleKey}
+              key={title}
               className="group bg-white dark:bg-gray-800 p-6 sm:p-8 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 border-2 border-transparent hover:border-primary-500 dark:hover:border-primary-400 text-center"
             >
               <div className="text-4xl sm:text-5xl mb-4 transform group-hover:scale-110 transition-transform">{emoji}</div>
-              <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">{t(titleKey)}</h3>
-              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{t(descKey)}</p>
+              <h3 className="text-xl sm:text-2xl font-bold mb-3 text-primary-600 dark:text-primary-400">{title}</h3>
+              <p className="text-gray-600 dark:text-gray-400 leading-relaxed">{desc}</p>
             </div>
           ))}
         </div>
@@ -88,8 +89,10 @@ export const About: React.FC = () => {
         <div className="max-w-3xl mx-auto">
           <div className="bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-500 dark:to-purple-500 rounded-2xl shadow-xl p-8 text-center text-white">
             <div className="text-4xl mb-4">🌟</div>
-            <h3 className="text-2xl font-bold mb-3">{t('about.ctaTitle')}</h3>
-            <p className="text-primary-100 mb-6 text-lg leading-relaxed">{t('about.ctaDesc')}</p>
+            <h3 className="text-2xl font-bold mb-3">Start Your Spiritual Journey</h3>
+            <p className="text-primary-100 mb-6 text-lg leading-relaxed">
+              Join thousands of believers who start their day with Words of Praise.
+            </p>
             <div className="flex flex-col sm:flex-row gap-3 justify-center">
               <Link
                 to="/signup"
@@ -98,13 +101,13 @@ export const About: React.FC = () => {
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z" />
                 </svg>
-                {t('about.createAccount')}
+                Create Free Account
               </Link>
               <Link
                 to="/login"
                 className="inline-flex items-center justify-center gap-2 px-8 py-3 bg-white/20 text-white font-semibold rounded-xl hover:bg-white/30 transition-colors border border-white/40"
               >
-                {t('about.alreadyHaveAccount')}
+                Already have an account?
               </Link>
             </div>
           </div>
@@ -115,14 +118,14 @@ export const About: React.FC = () => {
       <section className="py-16 px-4 bg-white dark:bg-gray-800">
         <div className="max-w-4xl mx-auto">
           <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-primary-600 dark:text-primary-400">
-            🚀 {t('about.comingSoon')}
+            🚀 Coming Soon
           </h2>
           <div className="bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-2xl p-8 border-2 border-primary-200 dark:border-primary-800">
             <ul className="space-y-4 text-lg text-gray-700 dark:text-gray-300">
-              <li className="flex items-center gap-3"><span className="text-2xl">💬</span><span>{t('about.comingSoon1')}</span></li>
-              <li className="flex items-center gap-3"><span className="text-2xl">🔥</span><span>{t('about.comingSoon2')}</span></li>
-              <li className="flex items-center gap-3"><span className="text-2xl">🌐</span><span>{t('about.comingSoon3')}</span></li>
-              <li className="flex items-center gap-3"><span className="text-2xl">✨</span><span>{t('about.comingSoon4')}</span></li>
+              <li className="flex items-center gap-3"><span className="text-2xl">💬</span><span>Community discussions and prayer requests</span></li>
+              <li className="flex items-center gap-3"><span className="text-2xl">🔥</span><span>Reading streaks and spiritual milestones</span></li>
+              <li className="flex items-center gap-3"><span className="text-2xl">🌐</span><span>Multi-language Bible support</span></li>
+              <li className="flex items-center gap-3"><span className="text-2xl">✨</span><span>AI-powered verse recommendations</span></li>
             </ul>
           </div>
         </div>
@@ -133,15 +136,15 @@ export const About: React.FC = () => {
         <div className="bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/30 dark:to-purple-900/30 rounded-2xl shadow-xl p-6 sm:p-10 border-2 border-primary-200 dark:border-primary-800">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-center text-primary-600 dark:text-primary-400 flex items-center justify-center">
             <span className="text-3xl sm:text-4xl mr-3">✉️</span>
-            {t('about.getInTouch')}
+            Get in Touch
           </h2>
           <p className="text-center mb-6 text-base sm:text-lg text-gray-700 dark:text-gray-300">
-            {t('about.contactDesc')}
+            We'd love to hear from you! Questions, feedback, or just want to say hello?
           </p>
 
           {/* Email Contact */}
           <div className="text-center bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-md mb-6">
-            <p className="text-gray-600 dark:text-gray-400 mb-2 text-sm sm:text-base">{t('about.emailUs')}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-2 text-sm sm:text-base">Email us at</p>
             <a
               href="mailto:wordsofpraiseapp@gmail.com?subject=Words%20of%20Praise%20-%20Inquiry"
               className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors inline-block hover:scale-105 transform break-all"
@@ -149,13 +152,13 @@ export const About: React.FC = () => {
               wordsofpraiseapp@gmail.com
             </a>
             <p className="text-xs sm:text-sm mt-4 text-gray-500 dark:text-gray-500">
-              {t('about.responseTime')}
+              We typically respond within 24–48 hours
             </p>
           </div>
 
           {/* Social Media */}
           <div className="text-center bg-white dark:bg-gray-800 rounded-xl p-4 sm:p-6 shadow-md">
-            <p className="text-gray-600 dark:text-gray-400 mb-3 text-sm sm:text-base">{t('about.followInstagram')}</p>
+            <p className="text-gray-600 dark:text-gray-400 mb-3 text-sm sm:text-base">Follow us on Instagram</p>
             <a
               href="https://instagram.com/wordsofpraiseapp"
               target="_blank"
@@ -172,7 +175,7 @@ export const About: React.FC = () => {
               @wordsofpraiseapp
             </a>
             <p className="text-xs sm:text-sm mt-3 text-gray-500 dark:text-gray-500">
-              {t('about.instagramUpdate')}
+              Follow for daily verse updates and inspiration
             </p>
           </div>
         </div>
@@ -185,13 +188,13 @@ export const About: React.FC = () => {
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-100 dark:bg-purple-900/30 rounded-full -ml-12 -mb-12"></div>
           <div className="relative text-center">
             <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
-              {t('about.inLovingMemory')}
+              In Loving Memory
             </h2>
             <p className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               Clairemena Jean-Pierre
             </p>
             <p className="text-lg text-gray-600 dark:text-gray-400 italic">
-              {t('about.devotedChild')}
+              A devoted child of God whose faith inspired this app
             </p>
           </div>
         </div>
