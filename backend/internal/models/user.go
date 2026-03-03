@@ -18,28 +18,10 @@ type User struct {
     UpdatedAt time.Time      `json:"updated_at"`
     DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
     
-    // Your existing fields (add GORM tags)
+    // Core user fields
     Email    string `gorm:"uniqueIndex;not null" json:"email"`
     Username string `gorm:"size:50" json:"username"`
     Password string `json:"-"`
-
-    // Google OAuth fields
-    GoogleID       *string `gorm:"uniqueIndex:idx_users_google_id,where:google_id IS NOT NULL" json:"google_id,omitempty"`
-    GoogleEmail    *string `json:"google_email,omitempty"`
-    GooglePicture  *string `json:"google_picture,omitempty"`
-    IsGoogleLinked bool    `json:"is_google_linked"`
-
-    // Email verification
-    EmailVerified              bool       `gorm:"default:false" json:"email_verified"`
-    VerificationToken          *string    `gorm:"size:128" json:"-"`
-    VerificationTokenExpiresAt *time.Time `json:"-"`
-
-    // Password reset
-    ResetToken          *string    `gorm:"size:128" json:"-"`
-    ResetTokenExpiresAt *time.Time `json:"-"`
-
-    // User preferences
-    PreferredLanguage string `gorm:"size:10;default:'en'" json:"preferred_language"`
     
     // Relationships (if you want to preload)
     Favorites []Favorite `gorm:"foreignKey:UserID" json:"favorites,omitempty"`
@@ -74,12 +56,7 @@ func (u *User) CheckPassword(pwd string) bool {
 
 // create BeforeCreate hook to hash password
 func (u *User) BeforeCreate(tx *gorm.DB) error {
-    // Skip password validation for OAuth users (they don't need a password)
-    if u.GoogleID != nil && *u.GoogleID != "" && u.Password == "" {
-        return nil
-    }
-    
-    // For non-OAuth users, password is required
+    // Password is required for all users
     if u.Password == "" {
         return errors.New("password cannot be empty")
     }
@@ -91,8 +68,7 @@ func (u *User) BeforeCreate(tx *gorm.DB) error {
 
 // create BeforeUpdate hook to hash password
 func (u *User) BeforeUpdate(tx *gorm.DB) error {
-    // skip hashing for Oauth users
-    if u.Password == "" || (u.GoogleID != nil && *u.GoogleID != "") {
+    if u.Password == "" {
         return nil
     }
     // Only hash password if it has been changed

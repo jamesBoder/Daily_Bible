@@ -22,12 +22,11 @@ export const favoriteService = {
  * @param search - Optional search query to filter favorites
  * @returns Promise with favorites and pagination metadata
  */
-  getFavorites: async (page = 1, pageSize = 20, search?: string, lang?: string) => {
+  getFavorites: async (page = 1, pageSize = 20, search?: string) => {
     try {
       // Calculate offset
       const params: Record<string, any> = { page, page_size: pageSize };
       if (search) params.search = search;
-      if (lang && lang !== 'en') params.lang = lang;
 
       // API call with correct response type
       const response = await apiClient.get<FavoritesResponse>(

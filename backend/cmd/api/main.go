@@ -56,16 +56,6 @@ func main() {
     if err := database.RunMigrations(db); err != nil {
         log.Fatal("Failed to run migrations:", err)
     }
-
-    // 3b. Grandfather pre-existing users as verified (runs on every start, idempotent).
-    // The WHERE clause `verification_token IS NULL` ensures only users created before the
-    // email verification feature was added are grandfathered. New unverified users who have
-    // a pending verification token are intentionally excluded.
-    if result := db.Exec(`UPDATE users SET email_verified = true WHERE email_verified = false AND verification_token IS NULL AND deleted_at IS NULL`); result.Error != nil {
-        log.Printf("Warning: grandfathering SQL failed: %v", result.Error)
-    } else {
-        log.Printf("Grandfathering: %d pre-existing users marked as email_verified", result.RowsAffected)
-    }
     
     // 4. Initialize repositories
     userRepo := repository.NewUserRepository(db)
@@ -74,15 +64,11 @@ func main() {
     historyRepo := repository.NewHistoryRepository(db)
     commentRepo := repository.NewCommentRepository(db)
     passwordHistoryRepo := repository.NewPasswordHistoryRepository(db)
-    googleOAuthConfig := config.GoogleOAuthConfig()
     
     
     // 5. Initialize services
     authService := services.NewAuthService(userRepo)
     tokenService := services.NewTokenService(cfg)
-    emailValidationService := services.NewEmailValidationService()
-    emailService := services.NewEmailService(cfg.ResendAPIKey, cfg.FromEmail, cfg.FrontendURL)
-    oauthService := services.NewOAuthService(userRepo, tokenService, googleOAuthConfig)
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo, verseRepo)
     bibleAPIService := services.NewBibleAPIService(
@@ -112,15 +98,11 @@ func main() {
     _ = dailyVerseService
     _ = historyService
     _ = commentService
-    _ = emailService
 
     // init authHandler variable
     authHandler := handlers.NewAuthHandler(
         userRepo,
         tokenService,
-        emailValidationService,
-        emailService,
-        passwordHistoryRepo,
     )
     
     // init verseHandler variable
@@ -148,21 +130,16 @@ func main() {
         commentService,
     )
 
-    // init profileHandler variable
+    // init profileHandler variable (simplified - removed email service dependencies)
     profileHandler := handlers.NewProfileHandler(
         userRepo,
         favoriteRepo,
         historyRepo,
         commentRepo,
         passwordHistoryRepo,
-        emailService,
-        emailValidationService,
+        nil, // email service removed
+        nil, // email validation service removed
         validate,
-    )
-
-    // init oauthHandler variable
-    oauthHandler := handlers.NewOAuthHandler(
-        oauthService,
     )
     
     // init settingsHandler variable
@@ -172,7 +149,7 @@ func main() {
     
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
-    log.Println("Backend is ready. TODO: Add HTTP server and routes")
+    log.Println("Backend is ready. Starting HTTP server...")
 
     
     // init gin router
@@ -197,19 +174,16 @@ func main() {
         frontendURL = "http://localhost:3000"
     }
     
-    // Allow multiple origins for development and production
+    // Allow multiple origins for development
     allowedOrigins := []string{
-        frontendURL,                                    // Production frontend URL from env
+        frontendURL,                                    // Frontend URL from env
         "http://localhost:3000",                        // Local development
         "http://localhost",                             // Local development
         "http://localhost:80",                          // Local development
-        "https://wordsofpraise-frontend.fly.dev",      // Production frontend (explicit)
-        "https://wordsofpraise-backend.fly.dev",       // Backend (for health checks)
     }
     
     log.Printf("CORS allowed origins: %v", allowedOrigins)
     
-    // In production, you might want to use AllowOriginFunc for more flexible origin checking
     corsConfig.AllowOrigins = allowedOrigins
     corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
     corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
@@ -218,8 +192,8 @@ func main() {
     // debug print
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
-    // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler)
+    // setup routes (removed oauthHandler parameter)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, settingsHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
@@ -270,5 +244,4 @@ func main() {
     
     }
     
-
 

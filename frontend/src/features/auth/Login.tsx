@@ -4,10 +4,6 @@ import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
 import { Card } from "../../components/common/Card";
-import GoogleLoginButton from "../../components/common/GoogleLoginButton";
-import apiClient from "../../services/api/api";
-import { showToast } from "../../utils/toast";
-import { API_ENDPOINTS } from "../../utils/constants";
 
 export const Login: React.FC = () => {
   const navigate = useNavigate();
@@ -18,8 +14,6 @@ export const Login: React.FC = () => {
   const [rememberMe, setRememberMe] = useState(false);
   const [error, setError] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [showResendLink, setShowResendLink] = useState(false);
-  const [isResending, setIsResending] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,29 +27,9 @@ export const Login: React.FC = () => {
       const errorMessage = err.response?.data?.error ||
                            err.response?.data?.message ||
                            "Login failed. Please try again.";
-      const errorCode = err.response?.data?.code;
-
-      if (errorCode === "EMAIL_NOT_VERIFIED") {
-        setShowResendLink(true);
-      } else {
-        setShowResendLink(false);
-      }
       setError(errorMessage);
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleResendVerification = async () => {
-    setIsResending(true);
-    try {
-      await apiClient.post(API_ENDPOINTS.RESEND_VERIFICATION, { email });
-      showToast.success("Verification email sent! Check your inbox.");
-      setShowResendLink(false);
-    } catch {
-      showToast.error("Failed to resend. Please try again.");
-    } finally {
-      setIsResending(false);
     }
   };
 
@@ -80,22 +54,6 @@ export const Login: React.FC = () => {
               </div>
             )}
 
-            {showResendLink && (
-              <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 px-4 py-3 rounded-lg text-sm">
-                <p>
-                  Didn't receive the email?{" "}
-                  <button
-                    type="button"
-                    onClick={handleResendVerification}
-                    disabled={isResending}
-                    className="font-semibold underline hover:no-underline disabled:opacity-50"
-                  >
-                    {isResending ? "Sending..." : "Resend verification email"}
-                  </button>
-                </p>
-              </div>
-            )}
-
             <Input
               label="Email"
               type="email"
@@ -106,28 +64,15 @@ export const Login: React.FC = () => {
               autoComplete="email"
             />
 
-            {/* Password field with Forgot Password link */}
-            <div>
-              <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Password
-                </label>
-                <Link
-                  to="/forgot-password"
-                  className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-              />
-            </div>
+            <Input
+              label="Password"
+              type="password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              placeholder="••••••••"
+              required
+              autoComplete="current-password"
+            />
 
             <div className="flex items-center">
               <input
@@ -155,7 +100,8 @@ export const Login: React.FC = () => {
               Sign In
             </Button>
           </form>
-          {/* Continue as Guest — above Google login */}
+          
+          {/* Continue as Guest */}
           <div className="mt-4">
             <button
               type="button"
@@ -171,16 +117,6 @@ export const Login: React.FC = () => {
               Continue as Guest
             </button>
           </div>
-
-          <div className="my-6 flex items-center">
-            <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-            <span className="mx-4 text-gray-500 dark:text-gray-400">OR</span>
-            <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-          </div>
-          <GoogleLoginButton
-            mode="login"
-            onError={(err) => setError(err.message)}
-          />
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">

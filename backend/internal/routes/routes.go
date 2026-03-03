@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, settingsHandler *handlers.SettingsHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -28,16 +28,6 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			auth.POST("/logout", authHandler.Logout)
 			// /me endpoint requires authentication
 			auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
-			// Email verification & password reset (public)
-			auth.POST("/verify-email", authHandler.VerifyEmail)
-			auth.POST("/resend-verification", authHandler.ResendVerification)
-			auth.POST("/forgot-password", authHandler.ForgotPassword)
-			auth.POST("/reset-password", authHandler.ResetPassword)
-			// Google OAuth routes
-			auth.GET("/google/login", oauthHandler.GoogleLogin)
-			auth.GET("/google/callback", oauthHandler.GoogleCallback)
-			auth.POST("/google/link", middleware.AuthMiddleware(tokenService), oauthHandler.LinkGoogle)
-			auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService), oauthHandler.UnlinkGoogle)
 		}
 
 		// verses routes - use optional auth to track history for authenticated users
@@ -88,7 +78,6 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 				profile.GET("/stats", profileHandler.GetStats)
 				profile.POST("/password/set", profileHandler.SetPassword)
 				profile.PUT("/password", profileHandler.UpdatePassword)
-				profile.POST("/resend-verification", profileHandler.ResendVerificationFromProfile)
 			}
 			
 			// settings routes
@@ -96,8 +85,6 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			{
 				settings.GET("", settingsHandler.GetSettings)
 				settings.PUT("", settingsHandler.UpdateSettings)
-				settings.GET("/language", settingsHandler.GetLanguage)
-				settings.PUT("/language", settingsHandler.UpdateLanguage)
 			}
 		}	
 			

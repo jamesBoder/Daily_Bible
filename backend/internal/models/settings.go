@@ -16,9 +16,6 @@ type UserSettings struct {
     UserID uint `gorm:"uniqueIndex;not null" json:"user_id"`
     User   User `gorm:"foreignKey:UserID" json:"-"`
     
-    // Language and localization
-    PreferredLanguage string `gorm:"size:10;default:'en'" json:"preferred_language"`
-    
     // Notification preferences
     EmailNotifications   bool `gorm:"default:true" json:"email_notifications"`
     DailyVerseReminder   bool `gorm:"default:true" json:"daily_verse_reminder"`

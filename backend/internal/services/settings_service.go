@@ -36,7 +36,6 @@ func (s *SettingsService) GetUserSettings(userID uint) (*models.UserSettings, er
 func (s *SettingsService) CreateDefaultSettings(userID uint) (*models.UserSettings, error) {
     settings := models.UserSettings{
         UserID:               userID,
-        PreferredLanguage:    "en",
         EmailNotifications:   true,
         DailyVerseReminder:   true,
         DarkMode:            false,
@@ -62,7 +61,6 @@ func (s *SettingsService) UpdateUserSettings(userID uint, updates map[string]int
         // If there's an error getting settings, try to create them
         settings = &models.UserSettings{
             UserID:               userID,
-            PreferredLanguage:    "en",
             EmailNotifications:   true,
             DailyVerseReminder:   true,
             DarkMode:            false,
@@ -77,58 +75,5 @@ func (s *SettingsService) UpdateUserSettings(userID uint, updates map[string]int
         return nil, err
     }
     
-    // Also update the User model's PreferredLanguage if language is being updated
-    if lang, ok := updates["preferred_language"].(string); ok {
-        if err := s.db.Model(&models.User{}).Where("id = ?", userID).Update("preferred_language", lang).Error; err != nil {
-            // Log error but don't fail - settings are still updated
-            // This is for backward compatibility with the User model
-        }
-    }
-    
     return settings, nil
-}
-
-// GetUserLanguage gets just the language preference for a user
-func (s *SettingsService) GetUserLanguage(userID uint) (string, error) {
-    var user models.User
-    err := s.db.Select("preferred_language").Where("id = ?", userID).First(&user).Error
-    if err != nil {
-        if errors.Is(err, gorm.ErrRecordNotFound) {
-            return "en", nil // Default to English
-        }
-        return "", err
-    }
-    
-    if user.PreferredLanguage == "" {
-        return "en", nil
-    }
-    
-    return user.PreferredLanguage, nil
-}
-
-// UpdateUserLanguage updates just the language preference
-func (s *SettingsService) UpdateUserLanguage(userID uint, language string) error {
-    // Validate language code
-    validLanguages := map[string]bool{
-        "en": true,
-        "es": true,
-        "fr": true,
-        "ht": true, // Haitian Creole
-    }
-    
-    if !validLanguages[language] {
-        return errors.New("invalid language code")
-    }
-    
-    // Update both User and UserSettings tables
-    if err := s.db.Model(&models.User{}).Where("id = ?", userID).Update("preferred_language", language).Error; err != nil {
-        return err
-    }
-    
-    // Update or create settings
-    _, err := s.UpdateUserSettings(userID, map[string]interface{}{
-        "preferred_language": language,
-    })
-    
-    return err
 }

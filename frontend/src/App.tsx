@@ -10,7 +10,6 @@ import { ProtectedRoute, GuestBlockedRoute, PublicOnlyRoute } from "./components
 import { Layout } from "./components/layout/Layout";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
-import { LanguageProvider } from "./contexts/LanguageContext";
 import { Toaster } from "react-hot-toast";
 import { VerseCardSkeleton } from "./components/common/Skeleton";
 import "./App.css";
@@ -19,10 +18,6 @@ import "./App.css";
 // Eager load critical authentication components
 import { Login } from "./features/auth/Login";
 import { Signup } from "./features/auth/Signup";
-import { VerifyEmailPending } from "./features/auth/VerifyEmailPending";
-import { VerifyEmail } from "./features/auth/VerifyEmail";
-import { ForgotPassword } from "./features/auth/ForgotPassword";
-import { ResetPassword } from "./features/auth/ResetPassword";
 
 // Lazy load non-critical components (with named export handling)
 const DailyVerse = lazy(() =>
@@ -55,12 +50,6 @@ const Settings = lazy(() =>
   }))
 );
 
-const GoogleCallback = lazy(() =>
-  import("./features/auth/GoogleCallback").then((module) => ({
-    default: module.GoogleCallback,
-  }))
-);
-
 // lazy load About page for non-authenticated users
 const About = lazy(() =>
   import("./features/about/About").then((module) => ({
@@ -73,8 +62,7 @@ function App() {
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          <LanguageProvider>
-            <Toaster
+          <Toaster
             position="top-right"
             toastOptions={{
               duration: 3000,
@@ -98,104 +86,89 @@ function App() {
               },
             }}
           />
-            <Routes>
-              {/* Public-only routes — redirect authenticated users to home */}
-              <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
-              <Route path="/signup" element={<PublicOnlyRoute><Signup /></PublicOnlyRoute>} />
+          <Routes>
+            {/* Public-only routes — redirect authenticated users to home */}
+            <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
+            <Route path="/signup" element={<PublicOnlyRoute><Signup /></PublicOnlyRoute>} />
 
-              {/* Email verification & password reset — public routes */}
-              <Route path="/verify-email-pending" element={<VerifyEmailPending />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
+            <Route
+              path="/about"
+              element={
+                <Suspense fallback={<VerseCardSkeleton />}>
+                  <About />
+                </Suspense>
+              }
+            />
+
+            {/* Protected routes with layout */}
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute>
+                  <Layout  />
+                </ProtectedRoute>
+              }
+            >
               <Route
-                path="/about"
+                index
                 element={
                   <Suspense fallback={<VerseCardSkeleton />}>
-                    <About />
+                    <DailyVerse />
                   </Suspense>
                 }
               />
-              {/* Lazy-loaded public route */}
               <Route
-                path="/auth/google/callback"
+                path="daily"
                 element={
                   <Suspense fallback={<VerseCardSkeleton />}>
-                    <GoogleCallback />
+                    <DailyVerse />
                   </Suspense>
                 }
               />
-
-              {/* Protected routes with layout */}
               <Route
-                path="/"
+                path="favorites"
                 element={
-                  <ProtectedRoute>
-                    <Layout  />
-                  </ProtectedRoute>
+                  <GuestBlockedRoute>
+                    <Suspense fallback={<VerseCardSkeleton />}>
+                      <FavoritesList />
+                    </Suspense>
+                  </GuestBlockedRoute>
                 }
-              >
-                <Route
-                  index
-                  element={
+              />
+              <Route
+                path="history"
+                element={
+                  <GuestBlockedRoute>
                     <Suspense fallback={<VerseCardSkeleton />}>
-                      <DailyVerse />
+                      <HistoryList />
                     </Suspense>
-                  }
-                />
-                <Route
-                  path="daily"
-                  element={
+                  </GuestBlockedRoute>
+                }
+              />
+              <Route
+                path="profile"
+                element={
+                  <GuestBlockedRoute>
                     <Suspense fallback={<VerseCardSkeleton />}>
-                      <DailyVerse />
+                      <Profile />
                     </Suspense>
-                  }
-                />
-                <Route
-                  path="favorites"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <FavoritesList />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="history"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <HistoryList />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="profile"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <Profile />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="settings"
-                  element={
-                    <Suspense fallback={<VerseCardSkeleton />}>
-                      <Settings />
-                    </Suspense>
-                  }
-                />
-                
-              </Route>
+                  </GuestBlockedRoute>
+                }
+              />
+              <Route
+                path="settings"
+                element={
+                  <Suspense fallback={<VerseCardSkeleton />}>
+                    <Settings />
+                  </Suspense>
+                }
+              />
+              
+            </Route>
 
             {/* Catch all - redirect to home */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          </LanguageProvider>
         </AuthProvider>
       </ThemeProvider>
     </Router>

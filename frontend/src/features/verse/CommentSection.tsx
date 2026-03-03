@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
-import { useTranslation } from "react-i18next";
 import { Button } from "../../components/common/Button";
 import { commentService } from "../../services/api/comment";
 import { Comment } from "../../types/comment";
@@ -16,7 +15,6 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   verseReference,
   onCommentSaved,
 }) => {
-  const { t } = useTranslation();
   const [comment, setComment] = useState<Comment | null>(null);
   const [commentText, setCommentText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -60,12 +58,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
   const handleSave = async () => {
     if (!commentText.trim()) {
-      setError(t('notes.emptyError'));
+      setError("Please enter a note");
       return;
     }
 
     if (commentText.length > 1000) {
-      setError(t('notes.tooLongError'));
+      setError("Note is too long (max 1000 characters)");
       return;
     }
 
@@ -83,14 +81,14 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       setIsEditing(false);
       onCommentSaved?.();
     } catch (err: any) {
-      setError(err.response?.data?.error || t('notes.saveFailed'));
+      setError(err.response?.data?.error || "Failed to save note");
     } finally {
       setIsSaving(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!comment || !window.confirm(t('notes.deleteConfirm'))) {
+    if (!comment || !window.confirm("Are you sure you want to delete this note?")) {
       return;
     }
 
@@ -101,7 +99,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       setCommentText("");
       setIsEditing(false);
     } catch (err: any) {
-      setError(err.response?.data?.error || t('notes.deleteFailed'));
+      setError(err.response?.data?.error || "Failed to delete note");
     } finally {
       setIsSaving(false);
     }
@@ -135,12 +133,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
       <div className="flex items-center justify-between mb-3">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {t('notes.title')}
+          Personal Notes
         </h2>
         <button
           onClick={() => setIsVisible(!isVisible)}
           className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
-          aria-label={isVisible ? t('notes.hideNotes') : t('notes.showNotes')}
+          aria-label={isVisible ? "Hide notes" : "Show notes"}
         >
           {isVisible ? (
             <svg
@@ -189,12 +187,12 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
           <button
             onClick={() => setIsEditing(true)}
             className="text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 text-sm font-medium flex items-center gap-2"
-            aria-label={t('notes.addNote')}
+            aria-label="Add a note"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
             </svg>
-            {t('notes.addNote')}
+            Add a note
           </button>
         )}
 
@@ -207,20 +205,20 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               <button
                 onClick={() => setIsEditing(true)}
                 className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
-                aria-label={t('notes.edit')}
+                aria-label="Edit"
               >
-                {t('notes.edit')}
+                Edit
               </button>
               <button
                 onClick={handleDelete}
                 className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
-                aria-label={t('notes.delete')}
+                aria-label="Delete"
               >
-                {t('notes.delete')}
+                Delete
               </button>
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
-              {t('notes.lastUpdated')} {new Date(comment.updated_at).toLocaleDateString()}
+              Last updated: {new Date(comment.updated_at).toLocaleDateString()}
             </p>
           </div>
         )}
@@ -231,22 +229,22 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               ref={textareaRef}
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
-              placeholder={t('notes.placeholder')}
+              placeholder="Write your thoughts about this verse..."
               className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
               rows={4}
               maxLength={1000}
-              aria-label={t('notes.addNote')}
+              aria-label="Add a note"
             />
             <div className="flex justify-between items-center mt-2">
               <span className="text-sm text-gray-500 dark:text-gray-400">
-                {commentText.length}/1000 {t('notes.characters')}
+                {commentText.length}/1000 characters
               </span>
               <div className="flex gap-2">
                 <Button onClick={handleCancel} variant="secondary" disabled={isSaving}>
-                  {t('common.cancel')}
+                  Cancel
                 </Button>
                 <Button onClick={handleSave} variant="primary" isLoading={isSaving}>
-                  {t('notes.saveNote')}
+                  Save Note
                 </Button>
               </div>
             </div>
