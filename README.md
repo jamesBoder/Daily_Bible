@@ -20,6 +20,41 @@
 
 ---
 
+## 📸 Screenshots
+
+### Daily Verse
+<img src="frontend/public/photos/dailyverse.png" alt="Daily Verse" width="800"/>
+
+### Authentication
+
+<table>
+  <tr>
+    <td><strong>Login</strong></td>
+    <td><strong>Sign Up</strong></td>
+  </tr>
+  <tr>
+    <td><img src="frontend/public/photos/login.png" alt="Login Page" width="400"/></td>
+    <td><img src="frontend/public/photos/signup.png" alt="Sign Up Page" width="400"/></td>
+  </tr>
+</table>
+
+### Features Overview
+<img src="frontend/public/photos/features.png" alt="Features Overview" width="800"/>
+
+### Favorites
+<img src="frontend/public/photos/favorites.png" alt="Favorites List" width="800"/>
+
+### Personal Notes
+<img src="frontend/public/photos/comments.png" alt="Personal Notes / Comments" width="800"/>
+
+### Reading History
+<img src="frontend/public/photos/history.png" alt="Reading History" width="800"/>
+
+### Light Mode
+<img src="frontend/public/photos/light.png" alt="Light Mode" width="800"/>
+
+---
+
 ## 🌟 Features
 
 ### Core Features
