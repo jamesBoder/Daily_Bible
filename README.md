@@ -1,280 +1,217 @@
-# Words of Praise - Daily Bible App
+# Words of Praise — Daily Bible App
 
-> A modern web application for daily Bible verses with favorites, comments, and history tracking. Dedicated to my grandma, Clairemena Jean-Pierre, a child of God, who passed away last year. ❤️
+> A production-ready, full-stack web application delivering daily Bible verses with a rich, accessible user experience. Dedicated to Clairemena Jean-Pierre. ❤️
 
-## 🌟 Features
+🌐 **Live:** [wordsofpraise-frontend.fly.dev](https://wordsofpraise-frontend.fly.dev)
 
-### Core Features
-- 📖 **Daily Bible Verse** - New inspirational verse every day at midnight
-- 🔐 **User Authentication** - Secure login with email or Google OAuth
-- ⭐ **Favorites System** - Save and organize your favorite verses
-- 💬 **Personal Notes** - Add comments and reflections to verses
-- 📜 **Reading History** - Track your spiritual journey with automatic history
-- 👤 **User Profiles** - Manage your account and view activity statistics
-- 🌙 **Dark Mode** - Comfortable reading experience day or night
-- 📱 **Mobile Responsive** - Beautiful on all devices
+---
 
-### Additional Features
-- 🔗 Share verses with friends and family
-- 🔍 Search functionality for verses
-- 📊 Personal statistics and reading streaks
-- 🎨 Clean, minimal design focused on readability
+## ✨ Features
+
+- 📖 **Daily Bible Verse** — Deterministic daily verse, updates at midnight, accessible without an account
+- 🔐 **Authentication** — Email/password with verification flow, Google OAuth 2.0, JWT sessions
+- 👤 **Guest Mode** — Full browse experience without an account; session persists in `sessionStorage`
+- ⭐ **Favorites** — One-click save/unsave with optimistic UI updates
+- 💬 **Personal Notes** — Private comments and reflections per verse (up to 1,000 characters)
+- 📜 **Reading History** — Automatic tracking of viewed verses with pagination
+- 📤 **Share** — 6 channels: Copy, Twitter/X, WhatsApp, Facebook, Instagram, native Web Share API
+- 🌍 **4 Languages** — English, Spanish, French, Haitian Creole (UI + Bible text via API.Bible)
+- 🌙 **Dark Mode** — System preference detection with manual toggle
+- 📱 **Mobile-First** — Responsive design, WCAG AA accessible, keyboard navigable
+
+---
 
 ## 💻 Tech Stack
 
-### Frontend
-- **React 19** with TypeScript
-- **Tailwind CSS** for styling
-- **React Query** for data fetching and caching
-- **React Router** for navigation
-- **React Hot Toast** for notifications
+| Layer | Technology |
+|---|---|
+| **Frontend** | React 19, TypeScript, Tailwind CSS, React Query, i18next, React Router |
+| **Backend** | Go 1.21+, Gin, GORM, PostgreSQL 15 |
+| **Auth** | JWT (168h expiry), Google OAuth 2.0, Bcrypt (cost 12) |
+| **Email** | Resend (verification & password reset) |
+| **Bible API** | API.Bible (language-specific version IDs) |
+| **Deployment** | Fly.io (frontend + backend), Docker Compose (local dev) |
+| **Infra** | Nginx, Docker multi-stage builds, PostgreSQL Cloud |
 
-### Backend
-- **Go** with Gin framework
-- **PostgreSQL** database
-- **JWT** authentication
-- **Google OAuth 2.0** integration
-- **GORM** for database ORM
+---
 
-## 🛠️ Getting Started
+## 🛠️ Local Development
+
+The recommended way to run the app locally is with **Docker Compose** — it starts the frontend, backend, and PostgreSQL together.
 
 ### Prerequisites
-- Node.js 18+
-- Go 1.21+
-- PostgreSQL 15+
-- Git
+- [Docker](https://docs.docker.com/get-docker/) & Docker Compose
+- A `.env` file in the project root (see below)
 
-### Installation
-
-#### 1. Clone the Repository
+### 1. Clone the Repository
 ```bash
 git clone https://github.com/jamesboder/Daily_Bible.git
 cd Daily_Bible
 ```
 
-#### 2. Set Up Environment Variables
-```bash
-# Copy the example environment file
-cp .env.example .env
+### 2. Configure Environment Variables
+Create a `.env` file in the project root with the following:
 
-# Edit .env with your configuration
-# Required variables:
-# - DB_USER, DB_PASSWORD (PostgreSQL credentials)
-# - JWT_SECRET (minimum 32 characters)
-# - GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET (for OAuth)
+```env
+# Server
+PORT=8080
+
+# Database
+DB_HOST=localhost
+DB_PORT=5433
+DB_USER=your_db_user
+DB_PASSWORD=your_db_password
+DB_NAME=your_db_name
+POSTGRES_DB=your_db_name
+
+# Auth
+JWT_SECRET=your_jwt_secret_min_32_chars
+
+# Google OAuth
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+GOOGLE_REDIRECT_URL=http://localhost/api/auth/google/callback
+
+# Frontend
+FRONTEND_URL=http://localhost
+REACT_APP_API_URL=http://localhost
+REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
+
+# Bible API
+BIBLE_API_KEY=your_api_bible_key
+BIBLE_API_BASE_URL=https://rest.api.bible/v1
+
+# Email (Resend) — use shared test sender for local dev
+RESEND_API_KEY=re_xxxxxxxxxxxx
+FROM_EMAIL=onboarding@resend.dev
 ```
 
-#### 3. Backend Setup
+> For Google OAuth locally, register `http://localhost/api/auth/google/callback` as an Authorized Redirect URI in Google Cloud Console.
+
+### 3. Start the App
+
+**First run or after major changes (full rebuild):**
 ```bash
-cd backend
-
-# Install dependencies
-go mod download
-
-# Run database migrations
-go run cmd/migrate/main.go
-
-# Start the backend server
-go run cmd/api/main.go
-# Server runs on http://localhost:8080
+docker-compose down -v && docker-compose up --build
 ```
 
-#### 4. Frontend Setup
+**Normal restart (keeps database data):**
 ```bash
-cd frontend
-
-# Install dependencies
-npm install
-
-# Start the development server
-npm start
-# App runs on http://localhost:3000
+docker-compose down && docker-compose up --build
 ```
+
+**Rebuild a single service:**
+```bash
+docker-compose up --build -d frontend   # after React/nginx changes
+docker-compose up --build -d backend    # after Go changes
+```
+
+### 4. Access the App
+
+| Service | URL |
+|---|---|
+| Frontend | http://localhost |
+| API (via nginx) | http://localhost/api/... |
+| PostgreSQL (host) | localhost:5433 |
+
+---
 
 ## 📦 Project Structure
 
 ```
 Daily_Bible/
 ├── backend/
-│   ├── cmd/
-│   │   └── api/          # Main application entry point
-│   ├── internal/
-│   │   ├── handlers/     # HTTP request handlers
-│   │   ├── models/       # Database models
-│   │   ├── services/     # Business logic
-│   │   └── middleware/   # HTTP middleware
-│   ├── pkg/              # Reusable packages
-│   └── go.mod
+│   ├── cmd/api/              # Application entry point
+│   └── internal/
+│       ├── handlers/         # HTTP request handlers
+│       ├── services/         # Business logic
+│       ├── repository/       # Data access layer
+│       ├── models/           # Domain models
+│       ├── middleware/       # Auth, CORS, logging
+│       └── config/           # App & OAuth config
 │
 ├── frontend/
-│   ├── src/
-│   │   ├── components/   # Reusable UI components
-│   │   ├── features/     # Feature-specific components
-│   │   ├── contexts/     # React contexts
-│   │   ├── hooks/        # Custom React hooks
-│   │   ├── services/     # API services
-│   │   └── utils/        # Utility functions
-│   ├── public/
-│   └── package.json
+│   └── src/
+│       ├── components/       # Shared UI components
+│       ├── features/         # Feature modules (auth, favorites, history, …)
+│       ├── contexts/         # AuthContext, ThemeContext, LanguageContext
+│       ├── hooks/            # Custom React hooks
+│       ├── services/api/     # API client & service functions
+│       └── i18n/             # Translation files (en, es, fr, ht)
 │
-├── .env.example          # Environment variables template
-└── README.md
+├── docker-compose.yml
+└── .env
 ```
 
-## 🔧 Available Scripts
+---
 
-### Backend Commands
+## 🔐 Security
+
+- **Email verification** required before login — unverified users receive HTTP 403 with a resend link
+- **Password reset** via single-use 1-hour token (Resend); last 5 passwords blocked on reset
+- **Google OAuth users** are auto-verified on all sign-in paths
+- **Bcrypt** password hashing (cost factor 12)
+- **JWT** tokens with 168-hour expiry
+- **Guest sessions** use `sessionStorage` (cleared on tab close); 401 interceptor skips redirect for guests
+- **User enumeration prevention** — forgot password & resend verification always return generic responses
+- Parameterized queries, CORS configuration, input validation on all endpoints
+
+---
+
+## 🚀 Deployment
+
+The app is deployed on **Fly.io** as two separate apps:
+
+| App | URL |
+|---|---|
+| Frontend | https://wordsofpraise-frontend.fly.dev |
+| Backend | https://wordsofpraise-backend.fly.dev |
+
+**Deploy commands:**
 ```bash
-# Run development server
-go run cmd/api/main.go
-
-# Run tests
-go test ./...
-
-# Build for production
-go build -o main cmd/api/main.go
-
-# Run database migrations
-go run cmd/migrate/main.go
+cd backend && fly deploy
+cd frontend && fly deploy
 ```
 
-### Frontend Commands
+**Check status / logs:**
 ```bash
-# Start development server
-npm start
-
-# Run tests
-npm test
-
-# Build for production
-npm run build
-
-# Analyze bundle size
-npm run analyze
-
-# Run linting
-npm run lint
+fly status -a wordsofpraise-backend
+fly logs -a wordsofpraise-backend
 ```
+
+Database migrations run automatically on backend startup via GORM `AutoMigrate`.
+
+---
 
 ## 🧪 Testing
 
-### Running Tests
 ```bash
-# Backend tests
+# Backend unit & integration tests
 cd backend && go test ./...
 
 # Frontend tests
 cd frontend && npm test
+
+# TypeScript type check
+cd frontend && npx tsc --noEmit
 ```
 
-### Manual Testing
-The application has been tested for:
-- ✅ Cross-browser compatibility (Chrome, Firefox, Safari, Edge)
-- ✅ Mobile responsiveness (iOS, Android)
-- ✅ Accessibility (WCAG AA compliance)
-- ✅ Performance optimization
-- ✅ Security best practices
+Tested across Chrome, Firefox, Safari, Edge, iOS Safari, and Android Chrome.
 
-## 📊 Performance
-
-The application is optimized for:
-- **Fast Loading**: < 2 seconds initial load
-- **Responsive UI**: 60 FPS animations
-- **Efficient Caching**: React Query for data management
-- **Code Splitting**: Lazy loading for better performance
-- **Mobile First**: Optimized for mobile devices
-
-## 🔐 Security Features
-
-- JWT-based authentication with refresh tokens
-- Bcrypt password hashing
-- Secure session management
-- Input validation and sanitization
-- SQL injection prevention
-- XSS protection
-- CORS properly configured
-
-## 🎯 Core Features Overview
-
-### Daily Verse
-- Automatically updates at midnight
-- Beautiful card display with verse text and reference
-- Works without login for public access
-
-### User Authentication
-- Email and password registration
-- Google OAuth integration
-- Secure password reset functionality
-- Session persistence
-
-### Favorites System
-- One-click save to favorites
-- Organized favorites list
-- Search within favorites
-- Remove favorites easily
-
-### Comments & Notes
-- Add personal reflections to any verse
-- Private notes visible only to you
-- Edit or delete comments anytime
-- Character limit for optimal display
-
-### Reading History
-- Automatic tracking of viewed verses
-- Chronological history view
-- Clear history option
-- Privacy-focused design
+---
 
 ## 🤝 Contributing
 
-Contributions are welcome! Please follow these steps:
-
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add amazing feature'`)
-4. Push to the branch (`git push origin feature/amazing-feature`)
-5. Open a Pull Request
+2. Create a feature branch: `git checkout -b feature/your-feature`
+3. Commit your changes: `git commit -m 'Add your feature'`
+4. Push and open a Pull Request
+
+---
 
 ## 📝 License
 
-This project is licensed under the MIT License.
-
-## 🙏 Acknowledgments
-
-- Dedicated to Clairemena Jean-Pierre, whose love for God's Word inspired this project
-- Built with love for those seeking daily spiritual inspiration
-- Designed for simplicity - targeting people who normally don't use apps
-- Special thanks to all contributors and testers
-
-## 📞 Support
-
-For issues, questions, or suggestions:
-- Open a GitHub issue
-- Submit a pull request with improvements
-
-## 🎯 Project Vision
-
-This project was created to:
-- Provide a simple, accessible Bible experience
-- Help people experience the Bible through modern technology
-- Honor the memory of Clairemena Jean-Pierre
-- Build a tool that's functional and easy to use - simplicity first
-
-### Current Status: MVP Complete ✅
-- Daily verse display
-- User authentication system
-- Favorites and history tracking
-- Comments and notes system
-- Mobile responsive design
-- Dark mode support
-
-### Future Enhancements
-- Multiple Bible translations
-- Advanced search functionality
-- Reading plans and streaks
-- Prayer journal features
-- Verse sharing enhancements
-- Offline support
+MIT License
 
 ---
 
