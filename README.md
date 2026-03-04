@@ -10,9 +10,13 @@
 
 ## 🌐 Live Demo
 
-🚀 **[Coming Soon — Deployment in Progress](#)**
+🚀 **[https://daily-bible-beta.vercel.app](https://daily-bible-beta.vercel.app)**
 
-> Will be deployed with Docker on a VPS / cloud platform.
+| Service | Platform | URL |
+|---------|----------|-----|
+| Frontend | Vercel | [daily-bible-beta.vercel.app](https://daily-bible-beta.vercel.app) |
+| Backend API | Railway | [dailybible-production.up.railway.app](https://dailybible-production.up.railway.app) |
+| Database | Railway PostgreSQL | Managed |
 
 ---
 
@@ -237,10 +241,29 @@ cd backend && go test ./...
 
 ## 🚀 Deployment
 
-This branch is designed for Docker-based deployment on any VPS or cloud platform.
+This branch is deployed on **Vercel** (frontend) + **Railway** (backend + PostgreSQL).
 
+### Live Deployment Stack
+| Layer | Platform | Notes |
+|-------|----------|-------|
+| Frontend | [Vercel](https://vercel.com) | Auto-deploys on push to `portfolio-mvp` |
+| Backend (Go/Gin) | [Railway](https://railway.app) | Dockerized, auto-deploys on push |
+| Database | Railway PostgreSQL | Managed, persistent |
+
+### Deploy Your Own Fork
+
+**Frontend → Vercel:**
+1. Import repo on [vercel.com](https://vercel.com) → set Root Directory to `frontend`
+2. Set Production Branch to `portfolio-mvp`
+3. Add env var: `REACT_APP_API_URL=https://your-railway-backend-url`
+
+**Backend → Railway:**
+1. New project on [railway.app](https://railway.app) → Deploy from GitHub → set Root Directory to `backend`
+2. Add a PostgreSQL service to the same project
+3. Set env vars: `DB_HOST`, `DB_PORT`, `DB_USER`, `DB_PASSWORD`, `DB_NAME`, `DB_SSLMODE=require`, `JWT_SECRET`, `BIBLE_API_KEY`, `FRONTEND_URL=https://your-vercel-url`
+
+### Local Docker (Alternative)
 ```bash
-# On your server:
 git clone -b portfolio-mvp https://github.com/jamesboder/Daily_Bible.git
 cd Daily_Bible
 cp .env.example .env
