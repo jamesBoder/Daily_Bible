@@ -428,6 +428,16 @@ func (h *AuthHandler) ResetPassword(c *gin.Context) {
 		return
 	}
 
+	// Defensive check: Google-only accounts have no password to reset.
+	// ForgotPassword already blocks these accounts from receiving a reset token,
+	// but this guard ensures correctness even if that check is ever bypassed.
+	if user.IsGoogleLinked && user.Password == "" {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "This account uses Google Sign-In. Password reset is not available. Please sign in with Google.",
+		})
+		return
+	}
+
 	// Validate new password strength
 	if valid, err := password.ValidatePasswordStrength(req.NewPassword); !valid {
 		c.JSON(http.StatusBadRequest, gin.H{

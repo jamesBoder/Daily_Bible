@@ -81,6 +81,11 @@ func main() {
     authService := services.NewAuthService(userRepo)
     tokenService := services.NewTokenService(cfg)
     emailValidationService := services.NewEmailValidationService()
+
+    // Log resolved email config before creating the service so any misconfiguration
+    // (wrong FROM_EMAIL, missing RESEND_API_KEY) is immediately visible in logs.
+    log.Printf("Email config: FROM_EMAIL=%q  FRONTEND_URL=%q  RESEND_API_KEY_SET=%v",
+        cfg.FromEmail, cfg.FrontendURL, cfg.ResendAPIKey != "")
     emailService := services.NewEmailService(cfg.ResendAPIKey, cfg.FromEmail, cfg.FrontendURL)
     oauthService := services.NewOAuthService(userRepo, tokenService, googleOAuthConfig)
     verseService := services.NewVerseService(verseRepo)

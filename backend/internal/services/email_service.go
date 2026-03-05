@@ -4,6 +4,7 @@ import (
 	"crypto/rand"
 	"encoding/hex"
 	"fmt"
+	"log"
 
 	"github.com/resend/resend-go/v2"
 )
@@ -15,8 +16,17 @@ type EmailService struct {
 	frontendURL string
 }
 
-// NewEmailService creates a new EmailService with the given Resend API key and config
+// NewEmailService creates a new EmailService with the given Resend API key and config.
+// Logs the resolved configuration on startup so misconfiguration is immediately
+// visible in `docker-compose logs backend` or `fly logs`.
 func NewEmailService(apiKey, fromEmail, frontendURL string) *EmailService {
+	if apiKey == "" {
+		log.Println("WARNING: RESEND_API_KEY is not set — all email sending will fail silently")
+	} else {
+		log.Printf("EmailService: RESEND_API_KEY is set (length=%d)", len(apiKey))
+	}
+	log.Printf("EmailService: from=%q  frontendURL=%q", fromEmail, frontendURL)
+
 	return &EmailService{
 		client:      resend.NewClient(apiKey),
 		fromEmail:   fromEmail,
