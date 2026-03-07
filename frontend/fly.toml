@@ -8,7 +8,7 @@ primary_region = 'ewr'
 
 [build]
   [build.args]
-    REACT_APP_API_URL = "https://wordsofpraise-backend.fly.dev"
+    REACT_APP_API_URL = "https://api.wordsofpraise.app"
 
 [http_service]
   internal_port = 80
