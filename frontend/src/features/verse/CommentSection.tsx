@@ -133,9 +133,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   return (
     <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
       <div className="flex items-center justify-between mb-3">
-        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {t('notes.title')}
-        </h2>
+        <div className="flex items-center gap-2">
+          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            {t('notes.title')}
+          </h2>
+          {!isVisible && comment && (
+            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-primary-100 dark:bg-primary-900/40 text-primary-700 dark:text-primary-300">
+              1
+            </span>
+          )}
+        </div>
         <button
           onClick={() => setIsVisible(!isVisible)}
           className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"

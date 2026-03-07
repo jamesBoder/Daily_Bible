@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
+import { Link, NavLink, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../common/Button";
 import { useTranslation } from "react-i18next";
@@ -9,6 +9,12 @@ export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location = useLocation();
+
+  // Close mobile menu when route changes (back/forward navigation)
+  useEffect(() => {
+    setIsMenuOpen(false);
+  }, [location.pathname]);
   const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentLanguage: _lang } = useLanguage(); // Subscribe to language context so Header re-renders on language change
