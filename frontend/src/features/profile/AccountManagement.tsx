@@ -7,6 +7,9 @@ import { useAuth } from "../../hooks/useAuth";
 import { useNavigate } from "react-router-dom";
 import { oauthService } from "../../services/api/oauth";
 import { profileService } from "../../services/api/profile";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { historyService } from "../../services/api/history";
+import { showToast } from "../../utils/toast";
 
 export const AccountManagement: React.FC = () => {
   const { user, logout, refreshUser } = useAuth();
@@ -39,6 +42,20 @@ export const AccountManagement: React.FC = () => {
 
   // Export data state
   const [isExporting, setIsExporting] = useState(false);
+
+  // Clear history state
+  const [confirmingClearHistory, setConfirmingClearHistory] = useState(false);
+  const queryClient = useQueryClient();
+  const clearHistoryMutation = useMutation({
+    mutationFn: () => historyService.clearHistory(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["history"] });
+      setConfirmingClearHistory(false);
+    },
+    onError: () => {
+      showToast.error(t("history.clearFailed"));
+    },
+  });
 
   // Google account linking state
   const [isLinkingGoogle, setIsLinkingGoogle] = useState(false);
@@ -258,6 +275,49 @@ export const AccountManagement: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
+      {/* Clear History */}
+      <Card>
+        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
+          {t("history.title")}
+        </h2>
+        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+          {t("history.clearDesc")}
+        </p>
+        {confirmingClearHistory ? (
+          <div className="flex flex-col items-center gap-3">
+            <span className="text-sm text-gray-600 dark:text-gray-400">
+              {t("history.clearConfirm")}
+            </span>
+            <div className="flex gap-2">
+              <Button
+                onClick={() => clearHistoryMutation.mutate()}
+                variant="danger"
+                isLoading={clearHistoryMutation.isPending}
+                className="text-sm"
+              >
+                {t("common.confirm")}
+              </Button>
+              <Button
+                onClick={() => setConfirmingClearHistory(false)}
+                variant="secondary"
+                className="text-sm"
+              >
+                {t("common.cancel")}
+              </Button>
+            </div>
+          </div>
+        ) : (
+          <div className="flex justify-center">
+            <Button
+              onClick={() => setConfirmingClearHistory(true)}
+              variant="danger"
+            >
+              {t("history.clear")}
+            </Button>
+          </div>
+        )}
+      </Card>
+
       {/* Set/Change Password */}
       <Card>
         <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
