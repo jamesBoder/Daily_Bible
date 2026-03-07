@@ -216,9 +216,8 @@ export const Signup: React.FC = () => {
               autoComplete="new-password"
             />
 
-            <Input
+            <PasswordInput
               label="Confirm Password"
-              type="password"
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
