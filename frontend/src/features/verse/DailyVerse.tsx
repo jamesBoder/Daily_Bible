@@ -8,9 +8,6 @@ import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
 
-// Helper: local-timezone date string for duplicate detection
-const toLocalDateStr = (d: Date): string =>
-  `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
 // NavArrow button component
 interface NavArrowProps {
@@ -92,12 +89,10 @@ export const DailyVerse: React.FC = () => {
   }, [i18n.language]);
 
   // Skip history[0] if it matches today (local tz) to avoid duplicating today's verse.
-  // Use created_at (immutable, set when the record was first inserted) rather than
-  // viewed_at (which the backend may update on every access).
-  const todayStr = toLocalDateStr(new Date());
-  const firstEntryStr =
-    history.length > 0 ? toLocalDateStr(new Date(history[0].created_at)) : "";
-  const offset = firstEntryStr === todayStr ? 1 : 0;
+  // Use verse.daily_date (plain YYYY-MM-DD, timezone-safe) as the canonical date source.
+  const todayStr = new Date().toLocaleDateString("en-CA"); // produces YYYY-MM-DD in local tz
+  const firstEntryDate = history.length > 0 ? history[0].verse?.daily_date : undefined;
+  const offset = firstEntryDate === todayStr ? 1 : 0;
   const effectiveHistory = history.slice(offset);
 
   // Derive display state
@@ -151,9 +146,12 @@ export const DailyVerse: React.FC = () => {
     );
   }
 
+  // Use verse.daily_date as the authoritative date; append T12:00:00 so the Date
+  // constructor parses it at local noon rather than UTC midnight (avoids off-by-one
+  // for users in negative UTC offsets).
   const displayDate: Date =
-    historyIndex > 0 && currentEntry != null
-      ? new Date(currentEntry.created_at)
+    historyIndex > 0 && currentEntry?.verse.daily_date
+      ? new Date(currentEntry.verse.daily_date + "T12:00:00")
       : new Date();
 
   return (

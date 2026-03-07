@@ -9,6 +9,7 @@ export interface Verse {
   verse: number;
   version: string;
   translation?: string;
+  daily_date?: string; // YYYY-MM-DD — the calendar date this verse was the daily verse
 }
 
 
