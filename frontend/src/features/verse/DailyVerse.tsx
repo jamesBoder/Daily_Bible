@@ -151,13 +151,40 @@ export const DailyVerse: React.FC = () => {
     );
   }
 
-  // Use verse.daily_date as the authoritative date; append T12:00:00 so the Date
-  // constructor parses it at local noon rather than UTC midnight (avoids off-by-one
-  // for users in negative UTC offsets).
-  const displayDate: Date =
-    historyIndex > 0 && currentEntry?.verse.daily_date
-      ? new Date(currentEntry.verse.daily_date.slice(0, 10) + "T12:00:00")
-      : new Date();
+  // Clamp historyIndex in case effectiveHistory shrank (e.g. after a history clear).
+  const safeIndex = Math.min(historyIndex, effectiveHistory.length);
+
+  // Build the display date from verse.daily_date with layered guards:
+  //   1. Slice to YYYY-MM-DD and validate the format before constructing Date
+  //      (PostgreSQL returns "2026-03-07T00:00:00Z"; appending T12:00:00 to the
+  //       raw value produces an invalid string → "Invalid Date")
+  //   2. Check isNaN after construction — corrupt or missing data falls back to today
+  const rawDailyDate = currentEntry?.verse.daily_date;
+  const datePart = rawDailyDate?.slice(0, 10);
+  const isValidDateStr = typeof datePart === "string" && /^\d{4}-\d{2}-\d{2}$/.test(datePart);
+  const parsedHistoryDate = isValidDateStr ? new Date(datePart + "T12:00:00") : null;
+  const isValidHistoryDate = parsedHistoryDate !== null && !isNaN(parsedHistoryDate.getTime());
+
+  const displayDate: Date = safeIndex > 0 && isValidHistoryDate ? parsedHistoryDate! : new Date();
+
+  // Guard toLocaleDateString: a bad locale tag can throw in some environments.
+  const formattedDate = (() => {
+    try {
+      return displayDate.toLocaleDateString(i18n.language, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    } catch {
+      return displayDate.toLocaleDateString(undefined, {
+        weekday: "long",
+        year: "numeric",
+        month: "long",
+        day: "numeric",
+      });
+    }
+  })();
 
   return (
     <div className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8">
@@ -190,14 +217,9 @@ export const DailyVerse: React.FC = () => {
         <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
           {t("dailyVerse.title")}
         </h1>
-        {/* Date line: always shows the full date of whichever verse is displayed */}
-        <p className="text-gray-600">
-          {displayDate.toLocaleDateString(i18n.language, {
-            weekday: "long",
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-          })}
+        {/* Date line: key changes on every new date, triggering the fade-in animation */}
+        <p key={formattedDate} className="text-gray-600 dark:text-gray-400 animate-fade-in">
+          {formattedDate}
         </p>
         {/* Desktop Today shortcut — only shown when browsing history */}
         {historyIndex > 0 && (
