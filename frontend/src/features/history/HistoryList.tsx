@@ -147,7 +147,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
 
 // ── Main Component ────────────────────────────────────────────────────────────
 export const HistoryList: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { history, isLoading, error, clearHistory } = useHistory();
   const [clearing, setClearing] = React.useState(false);
   const [confirmingClear, setConfirmingClear] = React.useState(false);
