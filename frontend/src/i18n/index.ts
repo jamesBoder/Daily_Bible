@@ -29,8 +29,8 @@ i18n
   .init({
     resources,
     fallbackLng: 'en',
-    debug: true, // Enable debug to see what's happening
-    
+    debug: false,
+
     detection: {
       order: ['localStorage', 'cookie', 'htmlTag', 'path', 'subdomain'],
       caches: ['localStorage', 'cookie'],

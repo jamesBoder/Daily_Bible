@@ -4,13 +4,11 @@ import { VerseCard } from "./VerseCard";
 import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
-import { useLanguage } from "../../contexts/LanguageContext";
 
 export const DailyVerse: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { currentLanguage } = useLanguage();
-  // language is in the queryKey, so React Query refetches automatically on change
-  const { verse, isLoading, error, refetch } = useVerse(currentLanguage);
+  // i18n.language already reflects the active language — useLanguage() is redundant here
+  const { verse, isLoading, error, refetch } = useVerse(i18n.language);
 
   if (isLoading) {
     return <VerseCardSkeleton />;

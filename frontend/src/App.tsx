@@ -16,13 +16,25 @@ import { VerseCardSkeleton } from "./components/common/Skeleton";
 import "./App.css";
 
 
-// Eager load critical authentication components
-import { Login } from "./features/auth/Login";
-import { Signup } from "./features/auth/Signup";
-import { VerifyEmailPending } from "./features/auth/VerifyEmailPending";
-import { VerifyEmail } from "./features/auth/VerifyEmail";
-import { ForgotPassword } from "./features/auth/ForgotPassword";
-import { ResetPassword } from "./features/auth/ResetPassword";
+// Lazy-load auth pages — authenticated users never visit these
+const Login = lazy(() =>
+  import("./features/auth/Login").then((m) => ({ default: m.Login }))
+);
+const Signup = lazy(() =>
+  import("./features/auth/Signup").then((m) => ({ default: m.Signup }))
+);
+const VerifyEmailPending = lazy(() =>
+  import("./features/auth/VerifyEmailPending").then((m) => ({ default: m.VerifyEmailPending }))
+);
+const VerifyEmail = lazy(() =>
+  import("./features/auth/VerifyEmail").then((m) => ({ default: m.VerifyEmail }))
+);
+const ForgotPassword = lazy(() =>
+  import("./features/auth/ForgotPassword").then((m) => ({ default: m.ForgotPassword }))
+);
+const ResetPassword = lazy(() =>
+  import("./features/auth/ResetPassword").then((m) => ({ default: m.ResetPassword }))
+);
 
 // Lazy load non-critical components (with named export handling)
 const DailyVerse = lazy(() =>
@@ -100,14 +112,14 @@ function App() {
           />
             <Routes>
               {/* Public-only routes — redirect authenticated users to home */}
-              <Route path="/login" element={<PublicOnlyRoute><Login /></PublicOnlyRoute>} />
-              <Route path="/signup" element={<PublicOnlyRoute><Signup /></PublicOnlyRoute>} />
+              <Route path="/login" element={<PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Login /></Suspense></PublicOnlyRoute>} />
+              <Route path="/signup" element={<PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Signup /></Suspense></PublicOnlyRoute>} />
 
               {/* Email verification & password reset — public routes */}
-              <Route path="/verify-email-pending" element={<VerifyEmailPending />} />
-              <Route path="/verify-email" element={<VerifyEmail />} />
-              <Route path="/forgot-password" element={<ForgotPassword />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email-pending" element={<Suspense fallback={<VerseCardSkeleton />}><VerifyEmailPending /></Suspense>} />
+              <Route path="/verify-email" element={<Suspense fallback={<VerseCardSkeleton />}><VerifyEmail /></Suspense>} />
+              <Route path="/forgot-password" element={<Suspense fallback={<VerseCardSkeleton />}><ForgotPassword /></Suspense>} />
+              <Route path="/reset-password" element={<Suspense fallback={<VerseCardSkeleton />}><ResetPassword /></Suspense>} />
               <Route
                 path="/about"
                 element={
