@@ -121,10 +121,10 @@ export const Settings: React.FC = () => {
     setIsSaving(true);
     try {
       if (!isGuest) {
+        // Language is already saved immediately on change via changeLanguage()
         await settingsService.updateSettings({
           email_notifications: settings.emailNotifications,
           daily_verse_reminder: settings.dailyVerseReminder,
-          preferred_language: settings.language,
         });
       }
       setSuccessMessage(t('settings.saved'));

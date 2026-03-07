@@ -32,9 +32,10 @@ apiClient.interceptors.response.use(
       // Safety net: do NOT redirect guests — they have no token to clear
       const isGuestSession = sessionStorage.getItem('is_guest') === 'true';
       if (!isGuestSession) {
-        // Unauthorized - clear token and redirect to login
+        // Unauthorized - clear all auth storage and redirect to login
         localStorage.removeItem(STORAGE_KEYS.TOKEN);
         localStorage.removeItem(STORAGE_KEYS.USER);
+        localStorage.removeItem(STORAGE_KEYS.EXPIRY);
         window.location.href = '/login';
       }
     }

@@ -39,6 +39,7 @@ export const API_ENDPOINTS = {
 export const STORAGE_KEYS = {
   TOKEN: 'auth_token',
   USER: 'user_data',
+  EXPIRY: 'auth_token_expiry',
 };
 
 export const ROUTES = {

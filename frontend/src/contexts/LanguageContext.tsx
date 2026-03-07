@@ -26,13 +26,15 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language || 'en');
   const [isChangingLanguage, setIsChangingLanguage] = useState(false);
 
-  // Load user's language preference on mount or when user changes
+  // Load user's language preference on mount or when user changes.
+  // Compare against i18n.language (not currentLanguage state) to avoid adding
+  // currentLanguage to deps, which would cause an infinite update loop.
   useEffect(() => {
     const loadUserLanguage = async () => {
       if (isAuthenticated && user) {
         try {
           const settings = await settingsService.getSettings();
-          if (settings.preferred_language && settings.preferred_language !== currentLanguage) {
+          if (settings.preferred_language && settings.preferred_language !== i18n.language) {
             await i18n.changeLanguage(settings.preferred_language);
             setCurrentLanguage(settings.preferred_language);
           }
@@ -43,7 +45,7 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
       } else {
         // For guest users, check localStorage
         const savedLanguage = localStorage.getItem('preferredLanguage');
-        if (savedLanguage && savedLanguage !== currentLanguage) {
+        if (savedLanguage && savedLanguage !== i18n.language) {
           await i18n.changeLanguage(savedLanguage);
           setCurrentLanguage(savedLanguage);
         }
@@ -51,7 +53,10 @@ export const LanguageProvider: React.FC<{ children: ReactNode }> = ({ children }
     };
 
     loadUserLanguage();
-  }, [isAuthenticated, user]);
+  // user?.id scopes the dep to identity changes only — full `user` would re-run on every
+  // reference change, and adding `currentLanguage` would cause an infinite update loop.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isAuthenticated, user?.id, i18n]);
 
   const changeLanguage = async (language: string) => {
     setIsChangingLanguage(true);

@@ -55,7 +55,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         if (authService.isAuthenticated()) {
           const storedUser = authService.getStoredUser();
           if (storedUser) {
-            const currentUser = await authService.getCurrentUser();
+            const currentUser = await authService.getCurrentUser(true); // silent — no toast on init
             setUser(currentUser);
           }
         }
@@ -77,27 +77,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const login = async (credentials: LoginCredentials) => {
-    try {
-      const response = await authService.login(credentials);
-      // Clear any guest session before setting real user
-      sessionStorage.removeItem(GUEST_SESSION_KEY);
-      queryClient.clear();
-      setUser(response.user);
-    } catch (error) {
-      throw error;
-    }
+    const response = await authService.login(credentials);
+    // Clear any guest session before setting real user
+    sessionStorage.removeItem(GUEST_SESSION_KEY);
+    queryClient.clear();
+    setUser(response.user);
   };
 
   const signup = async (credentials: SignupCredentials) => {
-    try {
-      await authService.signup(credentials);
-      // DO NOT call setUser() — user is not verified yet
-      // DO NOT clear guest session — user isn't logged in
-      // DO NOT clear queryClient — nothing to clear
-      // Signup.tsx handles navigation to /verify-email-pending
-    } catch (error) {
-      throw error;
-    }
+    await authService.signup(credentials);
+    // DO NOT call setUser() — user is not verified yet
+    // DO NOT clear guest session — user isn't logged in
+    // DO NOT clear queryClient — nothing to clear
+    // Signup.tsx handles navigation to /verify-email-pending
   };
 
   const logout = async () => {
@@ -118,15 +110,11 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const loginWithToken = async (token: string) => {
-    try {
-      const response = await authService.loginWithToken(token);
-      // Clear any guest session before setting real user (OAuth flow)
-      sessionStorage.removeItem(GUEST_SESSION_KEY);
-      queryClient.clear();
-      setUser(response.user);
-    } catch (error) {
-      throw error;
-    }
+    const response = await authService.loginWithToken(token);
+    // Clear any guest session before setting real user (OAuth flow)
+    sessionStorage.removeItem(GUEST_SESSION_KEY);
+    queryClient.clear();
+    setUser(response.user);
   };
 
   const refreshUser = async () => {

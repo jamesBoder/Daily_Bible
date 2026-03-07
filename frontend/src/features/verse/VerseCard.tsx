@@ -78,7 +78,9 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       await navigator.clipboard.writeText(buildShareText(verse));
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch {}
+    } catch {
+      showToast.error('Could not copy to clipboard');
+    }
   };
 
   const handleTwitterShare = (e: React.MouseEvent) => {
@@ -105,7 +107,9 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       await navigator.clipboard.writeText(buildShareText(verse));
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
-    } catch {}
+    } catch {
+      showToast.error('Could not copy to clipboard');
+    }
     window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
   };
 
@@ -113,7 +117,12 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
     e.stopPropagation();
     try {
       await navigator.share({ title: "Bible Verse", text: buildShareText(verse) });
-    } catch {}
+    } catch (err: any) {
+      // AbortError = user cancelled the share sheet — ignore it
+      if (err?.name !== 'AbortError') {
+        showToast.error('Could not share verse');
+      }
+    }
   };
 
 

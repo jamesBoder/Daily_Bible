@@ -1,10 +1,11 @@
 import apiClient from './api';
 import { User } from '../../types/user';
 import { showToast } from '../../utils/toast';
+import { STORAGE_KEYS } from '../../utils/constants';
 
-const TOKEN_KEY = 'auth_token';
-const USER_KEY = 'user_data';
-const TOKEN_EXPIRY_KEY = 'auth_token_expiry';
+const TOKEN_KEY = STORAGE_KEYS.TOKEN;
+const USER_KEY = STORAGE_KEYS.USER;
+const TOKEN_EXPIRY_KEY = STORAGE_KEYS.EXPIRY;
 const REMEMBER_ME_DAYS = 30;
 const DEFAULT_SESSION_HOURS = 24;
 
@@ -86,13 +87,13 @@ export const authService = {
     }
   },
 
-  // Get current user
-  getCurrentUser: async (): Promise<User> => {
+  // Get current user. Pass silent=true during auth init to suppress the toast.
+  getCurrentUser: async (silent = false): Promise<User> => {
     try {
       const response = await apiClient.get<{"user": User}>('/api/auth/me');
       return response.data.user;
     } catch (error: any) {
-      showToast.error('Failed to load user data');
+      if (!silent) showToast.error('Failed to load user data');
       throw error;
     }
   },
@@ -126,7 +127,14 @@ export const authService = {
   // Get stored user data
   getStoredUser: (): User | null => {
     const userData = localStorage.getItem(USER_KEY);
-    return userData ? JSON.parse(userData) : null;
+    if (!userData) return null;
+    try {
+      return JSON.parse(userData);
+    } catch {
+      // Corrupted data — clear it so the app doesn't stay broken
+      localStorage.removeItem(USER_KEY);
+      return null;
+    }
   },
 
   // Login with token (for OAuth)

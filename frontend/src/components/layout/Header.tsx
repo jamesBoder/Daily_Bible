@@ -3,12 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../common/Button";
 import { useTranslation } from "react-i18next";
+import { useLanguage } from "../../contexts/LanguageContext";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { t } = useTranslation();
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { currentLanguage: _lang } = useLanguage(); // Subscribe to language context so Header re-renders on language change
 
   const handleLogout = async () => {
     await logout();
