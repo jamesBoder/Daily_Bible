@@ -134,7 +134,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
             {t('notes.title')}
           </h2>
           {!isVisible && comment && (
@@ -206,7 +206,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
         {!isEditing && comment && (
           <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-            <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap mb-3">
+            <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap mb-3">
               {comment.comment_text}
             </p>
             <div className="flex items-center gap-2 flex-wrap">
@@ -259,16 +259,16 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder={t('notes.placeholder')}
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
               rows={4}
               maxLength={1000}
               aria-label={t('notes.addNote')}
             />
-            <div className="flex justify-between items-center mt-2">
-              <span className="text-sm text-gray-500 dark:text-gray-400">
+            <div className="flex flex-wrap justify-between items-center mt-2 gap-2">
+              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
                 {commentText.length}/1000 {t('notes.characters')}
               </span>
-              <div className="flex gap-2">
+              <div className="flex gap-2 flex-shrink-0">
                 <Button onClick={handleCancel} variant="secondary" disabled={isSaving}>
                   {t('common.cancel')}
                 </Button>
