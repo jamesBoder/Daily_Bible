@@ -1,4 +1,5 @@
 import React, { useMemo, useRef, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { useFavorites } from "../../hooks/useFavorites";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
@@ -161,6 +162,7 @@ export const FavoritesList: React.FC = () => {
     { value: "verseNumber", label: t('favorites.sortOptions.verseNumber') },
   ];
   const { favorites, isLoading, error, removeFavorite } = useFavorites();
+  const navigate = useNavigate();
   const [removingId, setRemovingId] = React.useState<number | null>(null);
   const [confirmingRemoveId, setConfirmingRemoveId] = React.useState<number | null>(null);
 
@@ -425,7 +427,7 @@ export const FavoritesList: React.FC = () => {
               {t('favorites.emptyDescription')}
             </p>
             <Button
-              onClick={() => (window.location.href = "/daily")}
+              onClick={() => navigate("/daily")}
               variant="primary"
             >
               {t('favorites.viewDailyVerse')}

@@ -39,7 +39,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
   verse, cardId, copiedId,
   onCopy, onTwitter, onWhatsApp, onFacebook, onInstagram, onNativeShare,
 }) => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const isCopied = copiedId === cardId;
   const supportsNativeShare = typeof navigator !== "undefined" && !!navigator.share;
 
@@ -183,7 +183,9 @@ export const HistoryList: React.FC = () => {
       await navigator.clipboard.writeText(buildShareText(verse));
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
-    } catch {}
+    } catch {
+      showToast.error('Could not copy to clipboard');
+    }
   };
 
   const handleTwitterShare = (verse: VerseData, e: React.MouseEvent) => {
@@ -211,7 +213,9 @@ export const HistoryList: React.FC = () => {
       await navigator.clipboard.writeText(buildShareText(verse));
       setCopiedId(id);
       setTimeout(() => setCopiedId(null), 2000);
-    } catch {}
+    } catch {
+      showToast.error('Could not copy to clipboard');
+    }
     window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
   };
 
@@ -219,7 +223,11 @@ export const HistoryList: React.FC = () => {
     e.stopPropagation();
     try {
       await navigator.share({ title: "Bible Verse", text: buildShareText(verse) });
-    } catch {}
+    } catch (err: any) {
+      if (err?.name !== 'AbortError') {
+        showToast.error('Could not share verse');
+      }
+    }
   };
 
   const handleClearHistory = async () => {
@@ -360,8 +368,7 @@ export const HistoryList: React.FC = () => {
                         : ""}
                     </span>
                     <span>
-                      {t('history.viewed')}: {new Date(entry.viewed_at).toLocaleDateString()} at{" "}
-                      {new Date(entry.viewed_at).toLocaleTimeString()}
+                      {t('history.viewed')}: {new Date(entry.viewed_at).toLocaleString(i18n.language)}
                     </span>
                   </div>
                 </Card>

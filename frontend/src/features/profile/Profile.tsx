@@ -10,7 +10,7 @@ import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 
 export const Profile: React.FC = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { user } = useAuth(); // ✅ Get from auth context
   const [profile, setProfile] = useState<UserProfile | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -124,7 +124,7 @@ export const Profile: React.FC = () => {
                 {t("profile.memberSince")}
               </p>
               <p className="text-lg dark:text-gray-200">
-                {new Date(profile.created_at).toLocaleDateString()}
+                {new Date(profile.created_at).toLocaleDateString(i18n.language, { year: "numeric", month: "long", day: "numeric" })}
               </p>
             </div>
           </div>

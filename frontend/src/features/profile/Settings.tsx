@@ -24,7 +24,7 @@ type TabType = "profile" | "preferences" | "account";
 
 export const Settings: React.FC = () => {
   const { isGuest } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { currentLanguage, changeLanguage, supportedLanguages } = useLanguage();
   
   // Pitfall 6/12: lazy initializer — guests skip "profile" tab (no API call)
@@ -236,7 +236,7 @@ export const Settings: React.FC = () => {
                       </label>
                       <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
                         {new Date(profile.created_at).toLocaleDateString(
-                          "en-US",
+                          i18n.language,
                           {
                             year: "numeric",
                             month: "long",
