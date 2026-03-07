@@ -15,6 +15,7 @@
     );
     min-height: 100vh;
     background-attachment: fixed;
+    transition: background 0.3s ease, color 0.3s ease;
 
     /* Safe area insets for devices with notches */
     padding-top: env(safe-area-inset-top);
@@ -81,6 +82,31 @@
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
   }
+
+  @keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50%       { transform: translateY(-10px); }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-in {
+      animation: none;
+      opacity: 1;
+      transform: none;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
 }
 
 @layer components {
@@ -124,10 +150,15 @@
   }
 
   /* Stats card hover glows — light mode: subtle ring + soft glow */
-  .stat-card-blue-glow:hover   { box-shadow: 0 0 0 2px #3b82f6, 0 0 18px 5px rgba(59, 130, 246, 0.40); }
-  .stat-card-red-glow:hover    { box-shadow: 0 0 0 2px #ef4444, 0 0 18px 5px rgba(239, 68, 68, 0.40); }
-  .stat-card-green-glow:hover  { box-shadow: 0 0 0 2px #22c55e, 0 0 18px 5px rgba(34, 197, 94, 0.40); }
-  .stat-card-purple-glow:hover { box-shadow: 0 0 0 2px #a855f7, 0 0 18px 5px rgba(168, 85, 247, 0.40); }
+  .stat-card-blue-glow,
+  .stat-card-red-glow,
+  .stat-card-green-glow,
+  .stat-card-purple-glow { transition: box-shadow 0.25s ease, transform 0.2s ease; }
+
+  .stat-card-blue-glow:hover   { box-shadow: 0 0 0 2px #3b82f6, 0 0 18px 5px rgba(59, 130, 246, 0.40); transform: translateY(-2px); }
+  .stat-card-red-glow:hover    { box-shadow: 0 0 0 2px #ef4444, 0 0 18px 5px rgba(239, 68, 68, 0.40); transform: translateY(-2px); }
+  .stat-card-green-glow:hover  { box-shadow: 0 0 0 2px #22c55e, 0 0 18px 5px rgba(34, 197, 94, 0.40); transform: translateY(-2px); }
+  .stat-card-purple-glow:hover { box-shadow: 0 0 0 2px #a855f7, 0 0 18px 5px rgba(168, 85, 247, 0.40); transform: translateY(-2px); }
 
   /* Stats card hover glows — dark mode: stronger ring + wider, more vivid glow */
   .dark .stat-card-blue-glow:hover   { box-shadow: 0 0 0 2px #60a5fa, 0 0 24px 8px rgba(96, 165, 250, 0.60); }

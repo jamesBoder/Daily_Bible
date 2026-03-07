@@ -9,12 +9,19 @@ export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
   const navigate = useNavigate();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
   // Close mobile menu when route changes (back/forward navigation)
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
+
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 8);
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
   const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentLanguage: _lang } = useLanguage(); // Subscribe to language context so Header re-renders on language change
@@ -25,7 +32,7 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm">
+    <header className={`bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-40 transition-shadow duration-300 ${isScrolled ? "shadow-md" : "shadow-sm"}`}>
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
@@ -40,9 +47,9 @@ export const Header: React.FC = () => {
             <NavLink
               to="/daily"
               className={({ isActive }) =>
-                `font-medium transition-colors ${isActive
-                  ? "text-primary-600 dark:text-primary-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
+                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
                 }`
               }
             >
@@ -78,9 +85,9 @@ export const Header: React.FC = () => {
             <NavLink
               to="/about"
               className={({ isActive }) =>
-                `font-medium transition-colors ${isActive
-                  ? "text-primary-600 dark:text-primary-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
+                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
                 }`
               }
             >
@@ -89,9 +96,9 @@ export const Header: React.FC = () => {
             <NavLink
               to="/settings"
               className={({ isActive }) =>
-                `font-medium transition-colors ${isActive
-                  ? "text-primary-600 dark:text-primary-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
+                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
                 }`
               }
             >
@@ -155,8 +162,12 @@ export const Header: React.FC = () => {
         </div>
 
         {/* Mobile menu */}
-        {isMenuOpen && (
-          <div className="md:hidden py-4 border-t border-gray-200">
+        <div
+          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
+            isMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+          }`}
+        >
+          <div className="py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
               <NavLink
                 to="/daily"
@@ -246,7 +257,7 @@ export const Header: React.FC = () => {
               </div>
             </div>
           </div>
-        )}
+        </div>
       </nav>
     </header>
   );

@@ -289,7 +289,7 @@ export const HistoryList: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <svg
-              className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4"
+              className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4 animate-float"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -319,7 +319,7 @@ export const HistoryList: React.FC = () => {
                     ? "scale-[1.02] z-10 relative"
                     : isAnySelected
                     ? "opacity-60 scale-100"
-                    : "scale-100 opacity-100"
+                    : "scale-100 opacity-100 hover:-translate-y-1 hover:shadow-xl"
                   }
                   ${index < 10 ? "opacity-0 animate-fade-in" : ""}
                 `}

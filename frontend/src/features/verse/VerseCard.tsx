@@ -150,7 +150,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   ]);
 
   return (
-    <Card className={`relative transition-opacity duration-500 ${isVisible ? 'opacity-100' : 'opacity-0'}`}>
+    <Card className={`relative transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
       {/* Decorative quote mark */}
       <div className="absolute top-4 left-4 text-6xl text-primary-100 dark:text-primary-900 font-serif">
         "

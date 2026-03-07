@@ -389,7 +389,7 @@ export const FavoritesList: React.FC = () => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder={t('favorites.filterPlaceholder')}
-          className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow duration-200"
         />
         {keyword && (
           <button
@@ -408,7 +408,7 @@ export const FavoritesList: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <svg
-              className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4"
+              className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4 animate-float"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -471,7 +471,7 @@ export const FavoritesList: React.FC = () => {
                     ? "scale-[1.02] z-10 relative"
                     : isAnySelected
                     ? "opacity-60 scale-100"
-                    : "scale-100 opacity-100"
+                    : "scale-100 opacity-100 hover:-translate-y-1 hover:shadow-xl"
                   }
                   ${index < 10 ? "opacity-0 animate-fade-in" : ""}
                 `}
