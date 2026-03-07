@@ -12,8 +12,8 @@
 - 🔐 **Authentication** — Email/password with verification flow, Google OAuth 2.0, JWT sessions
 - 👤 **Guest Mode** — Full browse experience without an account; session persists in `sessionStorage`
 - ⭐ **Favorites** — One-click save/unsave with optimistic UI updates
-- 💬 **Personal Notes** — Private comments and reflections per verse (up to 1,000 characters)
-- 📜 **Reading History** — Automatic tracking of viewed verses with pagination
+- 💬 **Personal Reflections** — Private reflections per verse (up to 1,000 characters)
+- 📜 **Verse History** — Navigate up to 30 days of past daily verses with back/forward arrows directly on the home screen (signed-in users only)
 - 📤 **Share** — 6 channels: Copy, Twitter/X, WhatsApp, Facebook, Instagram, native Web Share API
 - 🌍 **4 Languages** — English, Spanish, French, Haitian Creole (UI + Bible text via API.Bible)
 - 🌙 **Dark Mode** — System preference detection with manual toggle
