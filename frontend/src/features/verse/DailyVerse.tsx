@@ -91,7 +91,9 @@ export const DailyVerse: React.FC = () => {
   // Skip history[0] if it matches today (local tz) to avoid duplicating today's verse.
   // Use verse.daily_date (plain YYYY-MM-DD, timezone-safe) as the canonical date source.
   const todayStr = new Date().toLocaleDateString("en-CA"); // produces YYYY-MM-DD in local tz
-  const firstEntryDate = history.length > 0 ? history[0].verse?.daily_date : undefined;
+  // daily_date comes back as a full ISO timestamp from PostgreSQL (e.g. "2026-03-07T00:00:00Z")
+  // so we slice to the date portion before comparing.
+  const firstEntryDate = history.length > 0 ? history[0].verse?.daily_date?.slice(0, 10) : undefined;
   const offset = firstEntryDate === todayStr ? 1 : 0;
   const effectiveHistory = history.slice(offset);
 
@@ -151,7 +153,7 @@ export const DailyVerse: React.FC = () => {
   // for users in negative UTC offsets).
   const displayDate: Date =
     historyIndex > 0 && currentEntry?.verse.daily_date
-      ? new Date(currentEntry.verse.daily_date + "T12:00:00")
+      ? new Date(currentEntry.verse.daily_date.slice(0, 10) + "T12:00:00")
       : new Date();
 
   return (
