@@ -7,6 +7,7 @@ import (
     "net/http"
     "regexp"
     "strings"
+    "sync"
     "time"
     "dailybible/internal/config"
 )
@@ -77,11 +78,20 @@ type BibleAPIService interface {
     SearchVersesWithLanguage(query string, limit int, languageCode string) ([]BibleAPIVerse, error)
 }
 
+type translationCacheEntry struct {
+    text      string
+    cachedAt  time.Time
+}
+
 type bibleApiService struct {
 	apiKey     string
 	baseURL    string
 	versionID  string
 	httpClient *http.Client
+	// translationCache stores non-English verse text keyed by "reference:lang".
+	// Entries are reused for the lifetime of the process (verses don't change).
+	translationCache   map[string]translationCacheEntry
+	translationCacheMu sync.RWMutex
 }
 
 // NewBibleAPIService creates a new instance of BibleAPIService
@@ -93,6 +103,7 @@ func NewBibleAPIService(apiKey, baseURL, versionID string) BibleAPIService {
 		httpClient: &http.Client{
 			Timeout: 10 * time.Second,
 		},
+		translationCache: make(map[string]translationCacheEntry),
 	}
 }
 
@@ -106,31 +117,25 @@ type BibleAPIVerse struct {
     ChapterID string `json:"chapterId"`
 }
 
+// Pre-compiled regexes for stripHTML — compiled once at startup, not per call.
+var (
+    reHTMLTag        = regexp.MustCompile(`<[^>]*>`)
+    reLeadingVerseNum = regexp.MustCompile(`^\d+\s*`)
+    reInlineVerseNum  = regexp.MustCompile(`\d+([A-Z])`)
+    reMidVerseNum     = regexp.MustCompile(`([.;!?:\)])\s*\d+\s*`)
+    reMultiSpace      = regexp.MustCompile(`\s+`)
+)
+
 // stripHTML removes HTML tags and embedded verse numbers from a string.
 // The Bible API sometimes returns verse numbers inline even when
 // include-verse-numbers=false is set, so we strip them here.
 func stripHTML(html string) string {
-    // Remove HTML tags
-    re := regexp.MustCompile(`<[^>]*>`)
-    text := re.ReplaceAllString(html, "")
-
-    // Remove verse numbers at the beginning of text
-    // Matches: "1", "1 ", "12", "123 " at start (with or without space)
-    text = regexp.MustCompile(`^\d+\s*`).ReplaceAllString(text, "")
-
-    // Remove verse numbers directly concatenated with the next word
-    // e.g. "promised;) 24And" → "promised;) And"
-    // Digits immediately followed by a capital letter indicate an inline verse number
-    text = regexp.MustCompile(`\d+([A-Z])`).ReplaceAllString(text, "$1")
-
-    // Remove verse numbers in the middle of text (after punctuation or closing brackets)
-    // Matches patterns like ". 2 ", "; 3 ", ": 9 ", ") 24 " etc.
-    text = regexp.MustCompile(`([.;!?:\)])\s*\d+\s*`).ReplaceAllString(text, "$1 ")
-
-    // Clean up extra whitespace
+    text := reHTMLTag.ReplaceAllString(html, "")
+    text = reLeadingVerseNum.ReplaceAllString(text, "")
+    text = reInlineVerseNum.ReplaceAllString(text, "$1")
+    text = reMidVerseNum.ReplaceAllString(text, "$1 ")
     text = strings.TrimSpace(text)
-    text = regexp.MustCompile(`\s+`).ReplaceAllString(text, " ")
-
+    text = reMultiSpace.ReplaceAllString(text, " ")
     return text
 }
 
@@ -201,6 +206,15 @@ func (s *bibleApiService) GetVerseWithLanguage(reference string, languageCode st
 		return nil, fmt.Errorf("reference cannot be empty")
 	}
 
+	// Check in-memory translation cache (keyed by "reference:lang")
+	cacheKey := reference + ":" + languageCode
+	s.translationCacheMu.RLock()
+	if entry, ok := s.translationCache[cacheKey]; ok {
+		s.translationCacheMu.RUnlock()
+		return &BibleAPIVerse{Reference: reference, Text: entry.text}, nil
+	}
+	s.translationCacheMu.RUnlock()
+
 	// Convert English reference (e.g. "John 3:16") to passage ID (e.g. "JHN.3.16")
 	passageID, err := referenceToPassageID(reference)
 	if err != nil {
@@ -249,11 +263,18 @@ func (s *bibleApiService) GetVerseWithLanguage(reference string, languageCode st
 		return nil, fmt.Errorf("no content found for passage: %s", passageID)
 	}
 
+	verseText := stripHTML(apiResp.Data.Content)
+
+	// Store in cache so subsequent requests for this reference+language skip the API call
+	s.translationCacheMu.Lock()
+	s.translationCache[cacheKey] = translationCacheEntry{text: verseText, cachedAt: time.Now()}
+	s.translationCacheMu.Unlock()
+
 	verse := &BibleAPIVerse{
 		ID:        apiResp.Data.ID,
 		Reference: apiResp.Data.Reference,
 		Content:   apiResp.Data.Content,
-		Text:      stripHTML(apiResp.Data.Content), // strip HTML tags and embedded verse numbers
+		Text:      verseText,
 	}
 
 	return verse, nil

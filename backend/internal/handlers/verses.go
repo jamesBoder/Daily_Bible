@@ -61,6 +61,10 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 		}
 	}
 
+	// Cache for 1 hour on the client; CDN/proxy may cache publicly for the same period.
+	// The verse changes at most once per day so this is safe.
+	c.Header("Cache-Control", "public, max-age=3600, stale-while-revalidate=60")
+
 	c.JSON(http.StatusOK, gin.H{
         "verse": gin.H{
             "id":        verse.ID,

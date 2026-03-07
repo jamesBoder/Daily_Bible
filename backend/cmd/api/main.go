@@ -21,6 +21,7 @@ import (
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
+    "github.com/gin-contrib/gzip"
     "github.com/go-playground/validator/v10"
     
 )
@@ -219,6 +220,7 @@ func main() {
     corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
     corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
     router.Use(cors.New(corsConfig))
+    router.Use(gzip.Gzip(gzip.DefaultCompression))
 
     // debug print
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
