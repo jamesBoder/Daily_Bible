@@ -174,7 +174,8 @@
     },
     "save": "Enregistrer les Paramètres",
     "saving": "Enregistrement...",
-    "saved": "Paramètres enregistrés avec succès !"
+    "saved": "Paramètres enregistrés avec succès !",
+    "saveFailed": "Échec de l'enregistrement des paramètres"
   },
   "about": {
     "title": "À Propos de Paroles de Louange",

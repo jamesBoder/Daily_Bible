@@ -174,7 +174,8 @@
     },
     "save": "Save Settings",
     "saving": "Saving...",
-    "saved": "Settings saved successfully!"
+    "saved": "Settings saved successfully!",
+    "saveFailed": "Failed to save settings"
   },
   "about": {
     "title": "About Words of Praise",

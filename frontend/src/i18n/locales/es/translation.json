@@ -174,7 +174,8 @@
     },
     "save": "Guardar Configuración",
     "saving": "Guardando...",
-    "saved": "¡Configuración guardada exitosamente!"
+    "saved": "¡Configuración guardada exitosamente!",
+    "saveFailed": "Error al guardar la configuración"
   },
   "about": {
     "title": "Acerca de Palabras de Alabanza",

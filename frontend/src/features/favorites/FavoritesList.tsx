@@ -5,6 +5,7 @@ import { Button } from "../../components/common/Button";
 import { CommentSection } from "../verse/CommentSection";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
+import { showToast } from "../../utils/toast";
 
 type SortField = "date" | "reference" | "book" | "translation" | "chapter" | "verseNumber";
 type SortDirection = "asc" | "desc";
@@ -161,6 +162,7 @@ export const FavoritesList: React.FC = () => {
   ];
   const { favorites, isLoading, error, removeFavorite } = useFavorites();
   const [removingId, setRemovingId] = React.useState<number | null>(null);
+  const [confirmingRemoveId, setConfirmingRemoveId] = React.useState<number | null>(null);
 
   // Card selection state
   const [selectedId, setSelectedId] = React.useState<number | null>(null);
@@ -286,15 +288,12 @@ export const FavoritesList: React.FC = () => {
   }, [favorites, sortField, sortDirection, keyword]);
 
   const handleRemove = async (favoriteId: number) => {
-    if (!window.confirm(t('favorites.removeConfirm'))) {
-      return;
-    }
-
+    setConfirmingRemoveId(null);
     setRemovingId(favoriteId);
     try {
       await removeFavorite(favoriteId);
     } catch (err) {
-      alert(t('favorites.removeFailed'));
+      showToast.error(t('favorites.removeFailed'));
     } finally {
       setRemovingId(null);
     }
@@ -521,17 +520,39 @@ export const FavoritesList: React.FC = () => {
 
                       {/* Remove button */}
                       <div
-                        className="flex justify-end mt-3 pt-3 border-t border-gray-200 dark:border-gray-700"
+                        className="flex justify-end items-center gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <Button
-                          onClick={() => handleRemove(favorite.id)}
-                          variant="danger"
-                          isLoading={removingId === favorite.id}
-                          className="text-sm"
-                        >
-                          {t('favorites.remove')}
-                        </Button>
+                        {confirmingRemoveId === favorite.id ? (
+                          <>
+                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                              {t('favorites.removeConfirm')}
+                            </span>
+                            <Button
+                              onClick={() => handleRemove(favorite.id)}
+                              variant="danger"
+                              isLoading={removingId === favorite.id}
+                              className="text-sm"
+                            >
+                              {t('common.confirm')}
+                            </Button>
+                            <Button
+                              onClick={() => setConfirmingRemoveId(null)}
+                              variant="secondary"
+                              className="text-sm"
+                            >
+                              {t('common.cancel')}
+                            </Button>
+                          </>
+                        ) : (
+                          <Button
+                            onClick={() => setConfirmingRemoveId(favorite.id)}
+                            variant="danger"
+                            className="text-sm"
+                          >
+                            {t('favorites.remove')}
+                          </Button>
+                        )}
                       </div>
 
                       {/* Comment Section (Notes) */}

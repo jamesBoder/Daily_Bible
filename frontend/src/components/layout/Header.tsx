@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../common/Button";
 import { useTranslation } from "react-i18next";
@@ -31,41 +31,66 @@ export const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link
+            <NavLink
               to="/daily"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+              className={({ isActive }) =>
+                `font-medium transition-colors ${isActive
+                  ? "text-primary-600 dark:text-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                }`
+              }
             >
               {t('nav.home')}
-            </Link>
+            </NavLink>
             {/* Favorites & History hidden for guests */}
             {!isGuest && (
-              <Link
+              <NavLink
                 to="/favorites"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+                className={({ isActive }) =>
+                  `font-medium transition-colors ${isActive
+                    ? "text-primary-600 dark:text-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  }`
+                }
               >
                 {t('nav.favorites')}
-              </Link>
+              </NavLink>
             )}
             {!isGuest && (
-              <Link
+              <NavLink
                 to="/history"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+                className={({ isActive }) =>
+                  `font-medium transition-colors ${isActive
+                    ? "text-primary-600 dark:text-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  }`
+                }
               >
                 {t('nav.history')}
-              </Link>
+              </NavLink>
             )}
-            <Link
+            <NavLink
               to="/about"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+              className={({ isActive }) =>
+                `font-medium transition-colors ${isActive
+                  ? "text-primary-600 dark:text-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                }`
+              }
             >
               {t('nav.about')}
-            </Link>
-            <Link
+            </NavLink>
+            <NavLink
               to="/settings"
-              className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+              className={({ isActive }) =>
+                `font-medium transition-colors ${isActive
+                  ? "text-primary-600 dark:text-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                }`
+              }
             >
               {t('nav.settings')}
-            </Link>
+            </NavLink>
           </div>
 
           {/* User Menu */}
@@ -127,46 +152,71 @@ export const Header: React.FC = () => {
         {isMenuOpen && (
           <div className="md:hidden py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
-              <Link
+              <NavLink
                 to="/daily"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
+                className={({ isActive }) =>
+                  `font-medium transition-colors ${isActive
+                    ? "text-primary-600 dark:text-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  }`
+                }
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.home')}
-              </Link>
+              </NavLink>
               {/* Favorites & History hidden for guests */}
               {!isGuest && (
-                <Link
+                <NavLink
                   to="/favorites"
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
+                  className={({ isActive }) =>
+                    `font-medium transition-colors ${isActive
+                      ? "text-primary-600 dark:text-primary-400"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                    }`
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.favorites')}
-                </Link>
+                </NavLink>
               )}
               {!isGuest && (
-                <Link
+                <NavLink
                   to="/history"
-                  className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
+                  className={({ isActive }) =>
+                    `font-medium transition-colors ${isActive
+                      ? "text-primary-600 dark:text-primary-400"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                    }`
+                  }
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.history')}
-                </Link>
+                </NavLink>
               )}
-              <Link
+              <NavLink
                 to="/about"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium transition-colors"
+                className={({ isActive }) =>
+                  `font-medium transition-colors ${isActive
+                    ? "text-primary-600 dark:text-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  }`
+                }
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.about')}
-              </Link>
-              <Link
+              </NavLink>
+              <NavLink
                 to="/settings"
-                className="text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 font-medium"
+                className={({ isActive }) =>
+                  `font-medium transition-colors ${isActive
+                    ? "text-primary-600 dark:text-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  }`
+                }
                 onClick={() => setIsMenuOpen(false)}
               >
                 {t('nav.settings')}
-              </Link>
+              </NavLink>
               <div className="pt-4 border-t border-gray-200">
                 <p className="text-gray-700 dark:text-gray-300 mb-2">
                   {isGuest ? t('auth.browsingAsGuest') : t('auth.welcome', { username: user?.username })}

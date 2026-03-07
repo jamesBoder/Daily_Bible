@@ -174,7 +174,8 @@
     },
     "save": "Anrejistre Paramèt",
     "saving": "Ap anrejistre...",
-    "saved": "Paramèt anrejistre avèk siksè!"
+    "saved": "Paramèt anrejistre avèk siksè!",
+    "saveFailed": "Echèk pou anrejistre paramèt yo"
   },
   "about": {
     "title": "Konsènan Pawòl Lwanj",

@@ -12,6 +12,7 @@ import { useAuth } from "../../hooks/useAuth";
 import { useLanguage } from "../../contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { settingsService } from "../../services/api/settings";
+import { showToast } from "../../utils/toast";
 
 interface SettingsState {
   emailNotifications: boolean;
@@ -131,6 +132,7 @@ export const Settings: React.FC = () => {
       setTimeout(() => setSuccessMessage(null), 3000);
     } catch (error) {
       console.error("Failed to save settings:", error);
+      showToast.error(t('settings.saveFailed'));
     } finally {
       setIsSaving(false);
     }

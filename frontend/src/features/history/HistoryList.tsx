@@ -7,6 +7,7 @@ import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
+import { showToast } from "../../utils/toast";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
 interface VerseData {
@@ -149,6 +150,7 @@ export const HistoryList: React.FC = () => {
   const { t } = useTranslation();
   const { history, isLoading, error, clearHistory } = useHistory();
   const [clearing, setClearing] = React.useState(false);
+  const [confirmingClear, setConfirmingClear] = React.useState(false);
 
   // Card selection state
   const [selectedId, setSelectedId] = React.useState<string | null>(null);
@@ -221,15 +223,12 @@ export const HistoryList: React.FC = () => {
   };
 
   const handleClearHistory = async () => {
-    if (!window.confirm(t('history.clearConfirm'))) {
-      return;
-    }
-
+    setConfirmingClear(false);
     setClearing(true);
     try {
       await clearHistory();
     } catch (err) {
-      alert(t('history.clearFailed'));
+      showToast.error(t('history.clearFailed'));
     } finally {
       setClearing(false);
     }
@@ -251,15 +250,31 @@ export const HistoryList: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
-      <div className="mb-8 flex justify-between items-center">
+      <div className="mb-8 flex justify-between items-start gap-3">
         <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">{t('history.title')}</h1>
-        <Button
-          onClick={handleClearHistory}
-          disabled={clearing || history.length === 0}
-          variant="danger"
-        >
-          {clearing ? t('history.clearing') : t('history.clear')}
-        </Button>
+        <div className="flex items-center gap-2 flex-shrink-0">
+          {confirmingClear ? (
+            <>
+              <span className="text-sm text-gray-600 dark:text-gray-400">
+                {t('history.clearConfirm')}
+              </span>
+              <Button onClick={handleClearHistory} variant="danger" isLoading={clearing} className="text-sm">
+                {t('common.confirm')}
+              </Button>
+              <Button onClick={() => setConfirmingClear(false)} variant="secondary" className="text-sm">
+                {t('common.cancel')}
+              </Button>
+            </>
+          ) : (
+            <Button
+              onClick={() => setConfirmingClear(true)}
+              disabled={history.length === 0}
+              variant="danger"
+            >
+              {t('history.clear')}
+            </Button>
+          )}
+        </div>
       </div>
 
       {history.length === 0 ? (

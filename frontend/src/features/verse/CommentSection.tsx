@@ -23,6 +23,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState("");
   const [isVisible, setIsVisible] = useState(false);
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   // define loadComment before using it in useEffect
@@ -90,10 +91,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   };
 
   const handleDelete = async () => {
-    if (!comment || !window.confirm(t('notes.deleteConfirm'))) {
-      return;
-    }
-
+    if (!comment) return;
+    setConfirmingDelete(false);
     setIsSaving(true);
     try {
       await commentService.deleteComment(comment.id);
@@ -203,21 +202,42 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
             <p className="text-gray-800 dark:text-gray-200 whitespace-pre-wrap mb-3">
               {comment.comment_text}
             </p>
-            <div className="flex gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               <button
-                onClick={() => setIsEditing(true)}
+                onClick={() => { setIsEditing(true); setConfirmingDelete(false); }}
                 className="text-sm text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300 font-medium"
                 aria-label={t('notes.edit')}
               >
                 {t('notes.edit')}
               </button>
-              <button
-                onClick={handleDelete}
-                className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
-                aria-label={t('notes.delete')}
-              >
-                {t('notes.delete')}
-              </button>
+              {confirmingDelete ? (
+                <>
+                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                    {t('notes.deleteConfirm')}
+                  </span>
+                  <button
+                    onClick={handleDelete}
+                    disabled={isSaving}
+                    className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium disabled:opacity-50"
+                  >
+                    {t('common.confirm')}
+                  </button>
+                  <button
+                    onClick={() => setConfirmingDelete(false)}
+                    className="text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium"
+                  >
+                    {t('common.cancel')}
+                  </button>
+                </>
+              ) : (
+                <button
+                  onClick={() => setConfirmingDelete(true)}
+                  className="text-sm text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 font-medium"
+                  aria-label={t('notes.delete')}
+                >
+                  {t('notes.delete')}
+                </button>
+              )}
             </div>
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
               {t('notes.lastUpdated')} {new Date(comment.updated_at).toLocaleDateString()}
