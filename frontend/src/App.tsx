@@ -49,12 +49,6 @@ const FavoritesList = lazy(() =>
   }))
 );
 
-const HistoryList = lazy(() =>
-  import("./features/history/HistoryList").then((module) => ({
-    default: module.HistoryList,
-  }))
-);
-
 const Profile = lazy(() =>
   import("./features/profile/Profile").then((module) => ({
     default: module.Profile,
@@ -169,16 +163,6 @@ function App() {
                     <GuestBlockedRoute>
                       <Suspense fallback={<VerseCardSkeleton />}>
                         <FavoritesList />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="history"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <HistoryList />
                       </Suspense>
                     </GuestBlockedRoute>
                   }

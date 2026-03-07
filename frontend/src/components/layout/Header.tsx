@@ -55,7 +55,7 @@ export const Header: React.FC = () => {
             >
               {t('nav.home')}
             </NavLink>
-            {/* Favorites & History hidden for guests */}
+            {/* Favorites hidden for guests */}
             {!isGuest && (
               <NavLink
                 to="/favorites"
@@ -67,19 +67,6 @@ export const Header: React.FC = () => {
                 }
               >
                 {t('nav.favorites')}
-              </NavLink>
-            )}
-            {!isGuest && (
-              <NavLink
-                to="/history"
-                className={({ isActive }) =>
-                  `font-medium transition-colors ${isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                  }`
-                }
-              >
-                {t('nav.history')}
               </NavLink>
             )}
             <NavLink
@@ -181,7 +168,7 @@ export const Header: React.FC = () => {
               >
                 {t('nav.home')}
               </NavLink>
-              {/* Favorites & History hidden for guests */}
+              {/* Favorites hidden for guests */}
               {!isGuest && (
                 <NavLink
                   to="/favorites"
@@ -194,20 +181,6 @@ export const Header: React.FC = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.favorites')}
-                </NavLink>
-              )}
-              {!isGuest && (
-                <NavLink
-                  to="/history"
-                  className={({ isActive }) =>
-                    `font-medium transition-colors ${isActive
-                      ? "text-primary-600 dark:text-primary-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    }`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.history')}
                 </NavLink>
               )}
               <NavLink
