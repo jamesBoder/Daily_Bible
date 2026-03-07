@@ -12,19 +12,6 @@ import { useTranslation } from "react-i18next";
 const toLocalDateStr = (d: Date): string =>
   `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
 
-// Helper: relative date label via Intl.RelativeTimeFormat — no date-fns needed
-const getRelativeLabel = (viewed_at: string, lang: string): string => {
-  const entry = new Date(viewed_at);
-  const today = new Date();
-  const entryMidnight = new Date(entry.getFullYear(), entry.getMonth(), entry.getDate());
-  const todayMidnight = new Date(today.getFullYear(), today.getMonth(), today.getDate());
-  const diffDays = Math.round(
-    (todayMidnight.getTime() - entryMidnight.getTime()) / (1000 * 60 * 60 * 24)
-  );
-  const rtf = new Intl.RelativeTimeFormat(lang, { numeric: "auto" });
-  return rtf.format(-diffDays, "day");
-};
-
 // NavArrow button component
 interface NavArrowProps {
   direction: "back" | "forward";
@@ -104,10 +91,12 @@ export const DailyVerse: React.FC = () => {
     setHistoryIndex(0);
   }, [i18n.language]);
 
-  // Skip history[0] if it matches today (local tz) to avoid duplicating today's verse
+  // Skip history[0] if it matches today (local tz) to avoid duplicating today's verse.
+  // Use created_at (immutable, set when the record was first inserted) rather than
+  // viewed_at (which the backend may update on every access).
   const todayStr = toLocalDateStr(new Date());
   const firstEntryStr =
-    history.length > 0 ? toLocalDateStr(new Date(history[0].viewed_at)) : "";
+    history.length > 0 ? toLocalDateStr(new Date(history[0].created_at)) : "";
   const offset = firstEntryStr === todayStr ? 1 : 0;
   const effectiveHistory = history.slice(offset);
 
@@ -134,10 +123,6 @@ export const DailyVerse: React.FC = () => {
     [goBack, goForward]
   );
   useKeyboardShortcuts(shortcuts);
-
-  const relativeLabel = currentEntry
-    ? getRelativeLabel(currentEntry.viewed_at, i18n.language)
-    : "";
 
   if (isLoading) {
     return <VerseCardSkeleton />;
@@ -166,11 +151,16 @@ export const DailyVerse: React.FC = () => {
     );
   }
 
+  const displayDate: Date =
+    historyIndex > 0 && currentEntry != null
+      ? new Date(currentEntry.created_at)
+      : new Date();
+
   return (
-    <div className="max-w-3xl mx-auto px-4 py-8">
+    <div className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8">
       {/* Mobile control row — sits between nav header and h1, hidden on desktop */}
       {!isGuest && (
-        <div className="flex items-center justify-between px-4 py-2 md:hidden mb-2">
+        <div className="flex items-center justify-between px-4 py-2 md:hidden mb-8">
           {/* Left zone — fixed width so center stays centered */}
           <div className="w-11 flex justify-start">
             {showBack && (
@@ -180,13 +170,8 @@ export const DailyVerse: React.FC = () => {
             )}
           </div>
 
-          {/* Center zone — relative label + Today shortcut */}
-          <div className="flex flex-col items-center gap-1">
-            {historyIndex > 0 && (
-              <span className="text-sm font-medium text-gray-600 dark:text-gray-300">
-                {relativeLabel}
-              </span>
-            )}
+          {/* Center zone — Today shortcut */}
+          <div className="flex items-center justify-center">
             {historyIndex > 0 && <TodayButton onClick={() => setHistoryIndex(0)} />}
           </div>
 
@@ -202,25 +187,25 @@ export const DailyVerse: React.FC = () => {
         <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
           {t("dailyVerse.title")}
         </h1>
-        {/* Date line: full date at index 0, relative label at index > 0 */}
+        {/* Date line: always shows the full date of whichever verse is displayed */}
         <p className="text-gray-600">
-          {historyIndex === 0
-            ? new Date().toLocaleDateString(i18n.language, {
-                weekday: "long",
-                year: "numeric",
-                month: "long",
-                day: "numeric",
-              })
-            : relativeLabel}
+          {displayDate.toLocaleDateString(i18n.language, {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
         </p>
-        {/* "Today" shortcut — desktop only, appears below date line */}
+        {/* Desktop Today shortcut — only shown when browsing history */}
         {historyIndex > 0 && (
-          <button
-            onClick={() => setHistoryIndex(0)}
-            className="mt-1 text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline hidden md:inline-block transition-colors duration-200"
-          >
-            ← Today
-          </button>
+          <p className="mt-1 hidden md:block">
+            <button
+              onClick={() => setHistoryIndex(0)}
+              className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline transition-colors duration-200"
+            >
+              ← Today
+            </button>
+          </p>
         )}
       </div>
 
