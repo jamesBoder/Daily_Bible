@@ -158,14 +158,32 @@ export const DailyVerse: React.FC = () => {
   //   1. Slice to YYYY-MM-DD and validate the format before constructing Date
   //      (PostgreSQL returns "2026-03-07T00:00:00Z"; appending T12:00:00 to the
   //       raw value produces an invalid string → "Invalid Date")
-  //   2. Check isNaN after construction — corrupt or missing data falls back to today
+  //   2. Check isNaN after construction — corrupt or missing data triggers fallback
   const rawDailyDate = currentEntry?.verse.daily_date;
   const datePart = rawDailyDate?.slice(0, 10);
   const isValidDateStr = typeof datePart === "string" && /^\d{4}-\d{2}-\d{2}$/.test(datePart);
   const parsedHistoryDate = isValidDateStr ? new Date(datePart + "T12:00:00") : null;
   const isValidHistoryDate = parsedHistoryDate !== null && !isNaN(parsedHistoryDate.getTime());
 
-  const displayDate: Date = safeIndex > 0 && isValidHistoryDate ? parsedHistoryDate! : new Date();
+  // For pre-migration rows where daily_date is NULL, derive the date from viewed_at
+  // using the same UTC-10 offset the backend uses to assign verse dates. Using UTC
+  // getters on the offset-adjusted timestamp avoids any local-timezone conversion.
+  let viewedAtFallback: Date | null = null;
+  if (safeIndex > 0 && !isValidHistoryDate && currentEntry?.viewed_at) {
+    const effectiveMs = new Date(currentEntry.viewed_at).getTime() - 10 * 60 * 60 * 1000;
+    const d = new Date(effectiveMs);
+    const ymd =
+      `${d.getUTCFullYear()}-` +
+      `${String(d.getUTCMonth() + 1).padStart(2, "0")}-` +
+      `${String(d.getUTCDate()).padStart(2, "0")}`;
+    const candidate = new Date(ymd + "T12:00:00");
+    if (!isNaN(candidate.getTime())) viewedAtFallback = candidate;
+  }
+
+  const displayDate: Date =
+    safeIndex > 0 && isValidHistoryDate ? parsedHistoryDate! :
+    viewedAtFallback !== null ? viewedAtFallback :
+    new Date();
 
   // Guard toLocaleDateString: a bad locale tag can throw in some environments.
   const formattedDate = (() => {

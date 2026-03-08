@@ -58,6 +58,15 @@ func main() {
         log.Fatal("Failed to run migrations:", err)
     }
 
+    // 3a. Backfill daily_date for pre-migration verses (idempotent — rows with a
+    // non-NULL daily_date are untouched). Derives the date from the earliest
+    // history view using the same UTC-10 offset the backend uses to assign dates.
+    if n, err := database.BackfillDailyDates(db); err != nil {
+        log.Printf("Warning: daily_date backfill failed: %v", err)
+    } else {
+        log.Printf("Backfill: %d verse(s) had daily_date populated from history", n)
+    }
+
     // 3b. Grandfather pre-existing users as verified (runs on every start, idempotent).
     // The WHERE clause `verification_token IS NULL` ensures only users created before the
     // email verification feature was added are grandfathered. New unverified users who have
