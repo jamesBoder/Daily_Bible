@@ -7,6 +7,9 @@ import { VerseCard } from "./VerseCard";
 import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
+import GraceDayBanner from "../../components/GraceDayBanner";
+import StreakResetAcknowledgment from "../../components/StreakResetAcknowledgment";
+import FirstEngagementOnboarding from "../../components/FirstEngagementOnboarding";
 
 
 // NavArrow button component
@@ -206,9 +209,18 @@ export const DailyVerse: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8">
+      {/* Streak-related banners and notifications */}
+      {!isGuest && (
+        <>
+          <GraceDayBanner />
+          <StreakResetAcknowledgment />
+          <FirstEngagementOnboarding />
+        </>
+      )}
+      
       {/* Mobile control row — sits between nav header and h1, hidden on desktop */}
       {!isGuest && (
-        <div className="flex items-center justify-between px-4 py-2 md:hidden mb-8">
+        <div className="flex items-center justify-between px-4 py-1 md:hidden mb-2">
           {/* Left zone — fixed width so center stays centered */}
           <div className="w-11 flex justify-start">
             {showBack && (
