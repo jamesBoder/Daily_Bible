@@ -5,6 +5,7 @@ package handlers
 import (
 	"log"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -27,6 +28,9 @@ type ProfileHandler struct {
 	emailService        *services.EmailService
 	emailValidator      *services.EmailValidationService
 	validator           *validator.Validate
+	streakService       *services.StreakService
+	blessingsService    *services.BlessingsService
+	settingsService     *services.SettingsService
 }
 
 // constructor init handler with dependencies
@@ -40,6 +44,9 @@ func NewProfileHandler(
 	emailService *services.EmailService,
 	emailValidator *services.EmailValidationService,
 	validator *validator.Validate,
+	streakService *services.StreakService,
+	blessingsService *services.BlessingsService,
+	settingsService *services.SettingsService,
 ) *ProfileHandler {
 	return &ProfileHandler{
 		userRepo:            userRepo,
@@ -50,6 +57,9 @@ func NewProfileHandler(
 		emailService:        emailService,
 		emailValidator:      emailValidator,
 		validator:           validator,
+		streakService:       streakService,
+		blessingsService:    blessingsService,
+		settingsService:     settingsService,
 	}
 }
 
@@ -84,6 +94,103 @@ func (h *ProfileHandler) GetProfile(c *gin.Context) {
 		"google_email":     getStringValue(user.GoogleEmail),
 		"google_picture":   getStringValue(user.GooglePicture),
 		"is_google_linked": user.IsGoogleLinked,
+	})
+}
+
+// GetProfileAggregate returns aggregated profile data for the profile page
+func (h *ProfileHandler) GetProfileAggregate(c *gin.Context) {
+	// extract userID from context (set by auth middleware)
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	// fetch user from userRepo
+	user, err := h.userRepo.GetByID(userID.(uint))
+	if err != nil || user == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
+		return
+	}
+
+	// Get user's timezone preference
+	settings, err := h.settingsService.GetUserSettings(userID.(uint))
+	if err != nil {
+		settings = &models.UserSettings{PreferredTimezone: "UTC"}
+	}
+
+	// Get streak data
+	streak, streakRecoverable, err := h.streakService.GetStreakSummary(userID.(uint), settings.PreferredTimezone)
+	if err != nil {
+		// Log error but continue with default values
+		streak = &models.UserStreak{}
+	}
+
+	// Get blessings balance
+	balance, _ := h.blessingsService.GetBalance(userID.(uint))
+
+	// Get reading stats
+	favCount, _ := h.favoriteRepo.CountByUserID(userID.(uint))
+	histCount, _ := h.historyRepo.CountByUserID(userID.(uint))
+	commentCount, _ := h.commentRepo.CountByUserID(userID.(uint))
+
+	// Calculate avatar initials from username
+	initials := ""
+	if len(user.Username) > 0 {
+		initials = string(user.Username[0])
+		if len(user.Username) > 1 {
+			// Find the second word for two initials
+			for i := 1; i < len(user.Username); i++ {
+				if user.Username[i-1] == ' ' && user.Username[i] != ' ' {
+					initials += string(user.Username[i])
+					break
+				}
+			}
+		}
+		initials = strings.ToUpper(initials)
+	}
+
+	// Generate avatar color from user ID (deterministic)
+	colors := []string{"#C9A84C", "#E8963A", "#B8860B", "#CD7F32", "#9B8FC4"}
+	avatarColor := colors[user.ID%uint(len(colors))]
+
+	// Build streak response
+	streakData := gin.H{
+		"current_streak":        streak.CurrentStreak,
+		"longest_streak":        streak.LongestStreak,
+		"last_active_date":      streak.LastActiveDate,
+		"grace_days_remaining":  streak.GraceDaysRemaining,
+		"grace_days_reset_at":   streak.GraceDaysResetAt,
+		"streak_recoverable":    streakRecoverable,
+		"blessings_balance":     balance,
+		"next_milestone":        nil, // Phase 2
+		"newly_achieved_milestone": nil, // Phase 2
+	}
+
+	// Build milestones response (Phase 2 stub)
+	milestonesData := gin.H{
+		"achieved": []interface{}{},
+		"pending":  []interface{}{},
+	}
+
+	// Build reading stats
+	readingStats := gin.H{
+		"verses_read":       histCount,
+		"days_active":       histCount, // For Phase 1, using history count as days active
+		"favorites_count":   favCount,
+		"reflections_count": commentCount,
+	}
+
+	// respond with aggregated profile data
+	c.JSON(http.StatusOK, gin.H{
+		"username":       user.Username,
+		"member_since":   user.CreatedAt,
+		"avatar_initials": initials,
+		"avatar_color":   avatarColor,
+		"is_premium":     false, // Phase 8
+		"streak":         streakData,
+		"milestones":     milestonesData,
+		"reading_stats":  readingStats,
 	})
 }
 

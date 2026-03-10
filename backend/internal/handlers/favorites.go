@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -13,15 +14,17 @@ import (
 
 // init FavoriteHandler struct 
 type FavoriteHandler struct {
-	favoriteService *services.FavoriteService
-	bibleAPIService services.BibleAPIService
+	favoriteService  *services.FavoriteService
+	bibleAPIService  services.BibleAPIService
+	blessingsService *services.BlessingsService
 }
 
 // Constructor
-func NewFavoriteHandler(favoriteService *services.FavoriteService, bibleAPIService services.BibleAPIService) *FavoriteHandler {
+func NewFavoriteHandler(favoriteService *services.FavoriteService, bibleAPIService services.BibleAPIService, blessingsService *services.BlessingsService) *FavoriteHandler {
 	return &FavoriteHandler{
-		favoriteService: favoriteService,
-		bibleAPIService: bibleAPIService,
+		favoriteService:  favoriteService,
+		bibleAPIService:  bibleAPIService,
+		blessingsService: blessingsService,
 	}
 }
 
@@ -109,8 +112,23 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 		return
 	}
 
+	// Before adding the Blessings credit here, confirm that AddFavorite already
+	// prevents duplicate favorites (same user + same verse) at the handler or DB level.
+	// If not, adding the credit first will earn Blessings on a no-op insert.
+	// Since we check for "already in favorites" error above, we only credit on success
+	var blessingsCredited int
+	if credited, err := h.blessingsService.Credit(userIDStr.(uint), 3, "verse_favorited", 1.0); err == nil && credited > 0 {
+		blessingsCredited = credited
+	} else if err != nil {
+		log.Printf("Failed to credit blessings for favorite: %v", err)
+	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Favorite added successfully"})
+	response := gin.H{"message": "Favorite added successfully"}
+	if blessingsCredited > 0 {
+		response["blessings_credited"] = blessingsCredited
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // RemoveFavorite handler removes a verse from user's favorites

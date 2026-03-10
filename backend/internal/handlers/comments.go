@@ -2,18 +2,21 @@ package handlers
 
 import (
     "dailybible/internal/services"
+    "log"
     "net/http"
     "strconv"
     "github.com/gin-gonic/gin"
 )
 
 type CommentHandler struct {
-    commentService *services.CommentService
+    commentService   *services.CommentService
+    blessingsService *services.BlessingsService
 }
 
-func NewCommentHandler(commentService *services.CommentService) *CommentHandler {
+func NewCommentHandler(commentService *services.CommentService, blessingsService *services.BlessingsService) *CommentHandler {
     return &CommentHandler{
-        commentService: commentService,
+        commentService:   commentService,
+        blessingsService: blessingsService,
     }
 }
 
@@ -49,7 +52,21 @@ func (h *CommentHandler) AddOrUpdateComment(c *gin.Context) {
         return
     }
     
-    c.JSON(http.StatusOK, gin.H{"comment": comment})
+    // Reflections earn Blessings on every write — no daily cap.
+    // Writing 3 reflections in one day earns 30 Blessings. This is intentional.
+    var blessingsCredited int
+    if credited, err := h.blessingsService.Credit(userID.(uint), 10, "reflection_written", 1.0); err == nil && credited > 0 {
+        blessingsCredited = credited
+    } else if err != nil {
+        log.Printf("Failed to credit blessings for reflection: %v", err)
+    }
+    
+    response := gin.H{"comment": comment}
+    if blessingsCredited > 0 {
+        response["blessings_credited"] = blessingsCredited
+    }
+    
+    c.JSON(http.StatusOK, response)
 }
 
 // Get comment for verse

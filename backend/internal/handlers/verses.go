@@ -1,9 +1,11 @@
 package handlers
 
 import (
+    "log"
     "net/http"
     "strconv"
     
+    "dailybible/internal/models"
     "dailybible/internal/services"
     "github.com/gin-gonic/gin"
 )
@@ -13,6 +15,9 @@ type VerseHandler struct {
 	dailyVerseService *services.DailyVerseService
 	bibleAPIService   services.BibleAPIService
 	historyService   *services.HistoryService
+	streakService    *services.StreakService
+	blessingsService *services.BlessingsService
+	settingsService  *services.SettingsService
 }
 
 // NewVerseHandler creates a new VerseHandler
@@ -20,11 +25,17 @@ func NewVerseHandler(
 	dailyVerseService *services.DailyVerseService,
 	bibleAPIService services.BibleAPIService,
 	historyService *services.HistoryService,
+	streakService *services.StreakService,
+	blessingsService *services.BlessingsService,
+	settingsService *services.SettingsService,
 ) *VerseHandler {
 	return &VerseHandler{
 		dailyVerseService: dailyVerseService,
 		bibleAPIService:   bibleAPIService,
 		historyService:    historyService,
+		streakService:    streakService,
+		blessingsService: blessingsService,
+		settingsService:  settingsService,
 	}
 }
 
@@ -32,6 +43,47 @@ func NewVerseHandler(
 func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	// Get language preference from query parameter or default to English
 	language := c.DefaultQuery("lang", "en")
+	
+	// IMPORTANT: RecordDailyEngagement fires regardless of whether the Bible API succeeds.
+	// The user's intent to engage is known the moment they hit this endpoint.
+	// If API.Bible is down and we serve a fallback/cached verse, the streak still counts.
+	// Never gate streak recording on the result of an external API call.
+	var blessingsCredited int
+	if userID, authenticated := c.Get("userID"); authenticated {
+		// Get user settings for timezone
+		settings, err := h.settingsService.GetUserSettings(userID.(uint))
+		if err != nil {
+			settings = &models.UserSettings{PreferredTimezone: "UTC"}
+		}
+		
+		wasNew, err := h.streakService.RecordDailyEngagement(userID.(uint), settings.PreferredTimezone)
+		if err != nil {
+			log.Printf("RecordDailyEngagement failed for user %d: %v", userID, err)
+			// Non-fatal: log and continue. The verse is served regardless.
+		}
+		if wasNew {
+			// Blessings credit is gated on wasNew to prevent double-credit on page refresh.
+			if credited, err := h.blessingsService.Credit(userID.(uint), 5, "daily_view", 1.0); err != nil {
+				log.Printf("Blessings credit failed: %v", err)
+				// Do NOT add blessing_credited: true to the response if the write failed.
+			} else {
+				// Tell the frontend exactly how much was credited so the toast shows the right number.
+				blessingsCredited = credited
+			}
+
+			// Milestone check runs asynchronously to keep verse response fast.
+			// The result surfaces on the next GET /api/streak call.
+			// Wrap in recover() — an unrecovered panic in a goroutine crashes the Go process.
+			go func() {
+				defer func() {
+					if r := recover(); r != nil {
+						log.Printf("CheckMilestones panic for user %d: %v", userID, r)
+					}
+				}()
+				// Phase 2+ only: rewardsService.CheckMilestones(...)
+			}()
+		}
+	}
 	
 	// For now, we'll get the daily verse in English and then fetch it in the requested language
 	// In a future update, we could store daily verses for each language
@@ -65,7 +117,7 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	// The verse changes at most once per day so this is safe.
 	c.Header("Cache-Control", "public, max-age=3600, stale-while-revalidate=60")
 
-	c.JSON(http.StatusOK, gin.H{
+	response := gin.H{
         "verse": gin.H{
             "id":        verse.ID,
             "reference": verse.Reference,
@@ -76,7 +128,14 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
             "version":   verse.Version,
             "language":  language,
         },
-    })
+    }
+	
+	// Add blessings_credited to response if any were credited
+	if blessingsCredited > 0 {
+		response["blessings_credited"] = blessingsCredited
+	}
+	
+	c.JSON(http.StatusOK, response)
 }
 
 // GetVerseByReference fetches a verse by its reference
