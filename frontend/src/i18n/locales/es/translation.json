@@ -292,5 +292,59 @@
     "noResults": "No se encontraron resultados",
     "contact": "Contacto",
     "comment": "Agregar una reflexión"
+  },
+  "streak": {
+    "tooltip": "Racha de {{count}} días",
+    "label": "Racha",
+    "days": "días",
+    "graceDays": "Días de Gracia",
+    "recoverable": "La racha se puede recuperar",
+    "useGraceDay": "Usar Día de Gracia",
+    "reset": "Tu racha se ha reiniciado",
+    "resetMessage": "Tu racha ha comenzado de nuevo. Cada día es un nuevo comienzo.",
+    "firstEngagement": "¡Bienvenido a tu viaje de fe!",
+    "firstEngagementMessage": "Has comenzado tu racha de lectura diaria. Sigue regresando cada día para crecer en tu fidelidad."
+  },
+  "blessings": {
+    "label": "Bendiciones",
+    "balance": "Balance de bendiciones",
+    "popover": {
+      "title": "Bendiciones",
+      "description": "Gana Bendiciones al interactuar con versículos diarios, agregar reflexiones y mantener tu racha. Úsalas en la Tienda de Recompensas (próximamente) para desbloquear temas y funciones.",
+      "balance": "Balance actual: {{count}}"
+    },
+    "earned": {
+      "daily_view": "Versículo diario visto",
+      "reflection": "Reflexión agregada",
+      "favorite": "Versículo agregado a favoritos",
+      "milestone": "Hito alcanzado",
+      "generic": "Bendiciones ganadas"
+    }
+  },
+  "graceDay": {
+    "errors": {
+      "NO_GRACE_DAYS": "No te quedan días de gracia",
+      "STREAK_NOT_BROKEN": "Tu racha no está rota",
+      "GRACE_PERIOD_EXPIRED": "El período de gracia ha expirado",
+      "ALREADY_USED_TODAY": "Ya has usado un día de gracia hoy"
+    },
+    "success": "Día de Gracia usado — tu racha está preservada.",
+    "banner": {
+      "message": "Perdiste ayer. ¿Usar un Día de Gracia para preservar tu racha de {{current_streak}} días?",
+      "useGraceDay": "Usar Día de Gracia",
+      "notNow": "Ahora no",
+      "processing": "Procesando...",
+      "remaining": "{{count}} restantes"
+    }
+  },
+  "onboarding": {
+    "title": "Tu viaje comienza",
+    "line1": "Cada día que abres la Palabra, tu racha crece.",
+    "line2": "¿Perdiste un día? Los Días de Gracia pueden preservar tu racha.",
+    "line3": "Tu fidelidad vale la pena honrar.",
+    "feature1": "Gana Bendiciones leyendo versículos diarios y agregando reflexiones",
+    "feature2": "Alcanza hitos a medida que crece tu racha",
+    "feature3": "Rastrea tu viaje espiritual en tu perfil",
+    "begin": "Comenzar"
   }
 }

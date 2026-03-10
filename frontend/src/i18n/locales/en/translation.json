@@ -327,6 +327,24 @@
       "STREAK_NOT_BROKEN": "Your streak is not broken",
       "GRACE_PERIOD_EXPIRED": "The grace period has expired",
       "ALREADY_USED_TODAY": "You have already used a grace day today"
+    },
+    "success": "Grace Day used — your streak is preserved.",
+    "banner": {
+      "message": "You missed yesterday. Use a Grace Day to preserve your {{current_streak}}-day streak?",
+      "useGraceDay": "Use Grace Day",
+      "notNow": "Not now",
+      "processing": "Processing...",
+      "remaining": "{{count}} remaining"
     }
+  },
+  "onboarding": {
+    "title": "Your journey begins",
+    "line1": "Each day you open the Word, your streak grows.",
+    "line2": "Miss a day? Grace Days can preserve your streak.",
+    "line3": "Your faithfulness is worth honoring.",
+    "feature1": "Earn Blessings by reading daily verses and adding reflections",
+    "feature2": "Achieve milestones as your streak grows",
+    "feature3": "Track your spiritual journey in your profile",
+    "begin": "Begin"
   }
 }
