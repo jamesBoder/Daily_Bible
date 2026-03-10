@@ -71,7 +71,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     lastFetchRef.current = now;
 
     try {
-      const response = await api.get('/streak');
+      const response = await api.get('/api/streak');
       setStreakData(response.data);
     } catch (err: any) {
       console.error('Failed to fetch streak data:', err);
@@ -88,30 +88,15 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     try {
-      await api.post('/streak/grace-day');
+      await api.post('/api/streak/grace-day');
       await refreshStreak();
       return { success: true };
     } catch (err: any) {
-      const errorKey = err.response?.data?.error_key;
-      let errorMessage = 'Failed to use grace day';
-      
-      // Map error keys to user-friendly messages
-      switch (errorKey) {
-        case 'NO_GRACE_DAYS':
-          errorMessage = 'You have no grace days remaining';
-          break;
-        case 'STREAK_NOT_BROKEN':
-          errorMessage = 'Your streak is not broken';
-          break;
-        case 'GRACE_PERIOD_EXPIRED':
-          errorMessage = 'The grace period has expired';
-          break;
-        case 'ALREADY_USED_TODAY':
-          errorMessage = 'You have already used a grace day today';
-          break;
-      }
-      
-      return { success: false, error: errorMessage };
+      const message =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        'Failed to use grace day';
+      return { success: false, error: message };
     }
   }, [isAuthenticated, refreshStreak]);
 
@@ -120,7 +105,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     if (!isAuthenticated) return;
 
     try {
-      await api.post(`/milestones/${key}/dismiss`);
+      await api.post(`/api/milestones/${key}/dismiss`);
       await refreshStreak();
     } catch (err) {
       console.error('Failed to dismiss milestone:', err);
