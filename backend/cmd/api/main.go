@@ -113,6 +113,11 @@ func main() {
 
     commentService := services.NewCommentService(commentRepo)
     settingsService := services.NewSettingsService(db)
+    
+    // Initialize Phase 1 services
+    subscriptionChecker := services.NewStubSubscriptionChecker()
+    streakService := services.NewStreakService(db, subscriptionChecker)
+    blessingsService := services.NewBlessingsService(db)
 
     // create validator instance
     validate := validator.New()
@@ -143,13 +148,16 @@ func main() {
         dailyVerseService,
         bibleAPIService,
         historyService,
-
+        streakService,
+        blessingsService,
+        settingsService,
     )
 
     // init favoriteHandler variable
     favoriteHandler := handlers.NewFavoriteHandler(
         favoriteService,
         bibleAPIService,
+        blessingsService,
     )
 
     // init historyHandler variable
@@ -161,6 +169,7 @@ func main() {
     // init commentService variable
     commentHandler := handlers.NewCommentHandler(
         commentService,
+        blessingsService,
     )
 
     // init profileHandler variable
@@ -173,6 +182,9 @@ func main() {
         emailService,
         emailValidationService,
         validate,
+        streakService,
+        blessingsService,
+        settingsService,
     )
 
     // init oauthHandler variable
@@ -183,6 +195,18 @@ func main() {
     // init settingsHandler variable
     settingsHandler := handlers.NewSettingsHandler(
         settingsService,
+    )
+    
+    // init streakHandler variable
+    streakHandler := handlers.NewStreakHandler(
+        streakService,
+        blessingsService,
+        settingsService,
+    )
+    
+    // init blessingsHandler variable
+    blessingsHandler := handlers.NewBlessingsHandler(
+        blessingsService,
     )
     
     // 7. Setup router and start server
@@ -222,6 +246,14 @@ func main() {
         "https://wordsofpraise-backend.fly.dev",       // Backend (for health checks)
     }
     
+    // Add production URLs if they're set in environment
+    if prodFrontend := os.Getenv("PRODUCTION_FRONTEND_URL"); prodFrontend != "" {
+        allowedOrigins = append(allowedOrigins, prodFrontend)
+    }
+    if prodBackend := os.Getenv("PRODUCTION_BACKEND_URL"); prodBackend != "" {
+        allowedOrigins = append(allowedOrigins, prodBackend)
+    }
+    
     log.Printf("CORS allowed origins: %v", allowedOrigins)
     
     // In production, you might want to use AllowOriginFunc for more flexible origin checking
@@ -235,7 +267,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

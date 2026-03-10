@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -84,6 +84,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			profile := protected.Group("/profile")
 			{
 				profile.GET("", profileHandler.GetProfile)
+				profile.GET("/aggregate", profileHandler.GetProfileAggregate)
 				profile.PUT("", profileHandler.UpdateProfile)
 				profile.GET("/stats", profileHandler.GetStats)
 				profile.POST("/password/set", profileHandler.SetPassword)
@@ -99,7 +100,21 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 				settings.GET("/language", settingsHandler.GetLanguage)
 				settings.PUT("/language", settingsHandler.UpdateLanguage)
 			}
-		}	
+			
+			// streak routes
+			streak := protected.Group("/streak")
+			{
+				streak.GET("", streakHandler.GetStreakSummary)
+				streak.POST("/grace-day", streakHandler.UseGraceDay)
+			}
+			
+			// blessings routes
+			blessings := protected.Group("/blessings")
+			{
+				blessings.GET("", blessingsHandler.GetBalance)
+				blessings.GET("/transactions", blessingsHandler.GetTransactions)
+			}
+		}
 			
 	}
 }
