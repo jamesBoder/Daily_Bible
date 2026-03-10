@@ -68,6 +68,22 @@
 }
 
 @layer utilities {
+  /* Phase 1 Color Tokens */
+  :root {
+    --blessing-gold: #fbbf24;
+    --candle-amber: #f59e0b;
+    --grace-lavender: #9b8fc4;
+    --grace-lavender-bg: rgba(155, 143, 196, 0.12);
+    --milestone-glow: #fde047;
+    --parchment: #faf8f3;
+  }
+
+  /* Dark mode overrides */
+  [data-theme="dark"], .dark {
+    --parchment: #2C2519;
+    --grace-lavender-bg: rgba(155, 143, 196, 0.18);
+  }
+
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -81,6 +97,42 @@
 
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
+  }
+
+  /* Candle flicker animation */
+  @keyframes flicker {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    25% {
+      opacity: 0.9;
+      transform: scale(0.98) translateY(-0.5px);
+    }
+    50% {
+      opacity: 0.95;
+      transform: scale(1.02) translateY(-1px);
+    }
+    75% {
+      opacity: 0.85;
+      transform: scale(0.97) translateY(-0.5px);
+    }
+  }
+
+  /* Slide in animation for toasts */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out;
   }
 
   @keyframes float {

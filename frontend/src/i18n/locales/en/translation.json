@@ -88,7 +88,7 @@
     },
     "ascending": "Asc",
     "descending": "Desc",
-    "filterPlaceholder": "Filter by keyword (verse text, reference, book, translation…)",
+    "filterPlaceholder": "Filter by keyword (verse text, reference, book, translation\u2026)",
     "viewDailyVerse": "View Daily Verse",
     "shareVerse": "Share this verse",
     "added": "Added",
@@ -156,9 +156,9 @@
       "preferredLanguage": "Preferred Language",
       "languages": {
         "en": "English",
-        "es": "Spanish (Español)",
-        "fr": "French (Français)",
-        "ht": "Haitian Creole (Kreyòl Ayisyen)"
+        "es": "Spanish (Espa\u00f1ol)",
+        "fr": "French (Fran\u00e7ais)",
+        "ht": "Haitian Creole (Krey\u00f2l Ayisyen)"
       }
     },
     "account": {
@@ -215,9 +215,9 @@
     "getInTouch": "Get in Touch",
     "contactDesc": "We'd love to hear from you! Whether you've found a bug, have a suggestion, or just want to share your thoughts, please reach out.",
     "emailUs": "Email us at:",
-    "responseTime": "⏱️ We typically respond within 24-48 hours",
+    "responseTime": "\u23f1\ufe0f We typically respond within 24-48 hours",
     "followInstagram": "Follow us on Instagram:",
-    "instagramUpdate": "📱 Stay updated with daily inspiration and app updates",
+    "instagramUpdate": "\ud83d\udcf1 Stay updated with daily inspiration and app updates",
     "inLovingMemory": "In Loving Memory",
     "devotedChild": "A devoted child of God"
   },
@@ -292,5 +292,41 @@
     "noResults": "No results found",
     "contact": "Contact",
     "comment": "Add a reflection"
+  },
+  "streak": {
+    "tooltip": "Day {{count}} streak",
+    "label": "Streak",
+    "days": "days",
+    "graceDays": "Grace Days",
+    "recoverable": "Streak can be recovered",
+    "useGraceDay": "Use Grace Day",
+    "reset": "Your streak has been reset",
+    "resetMessage": "Don't worry! Start fresh today and build a new streak.",
+    "firstEngagement": "Welcome to your faith journey!",
+    "firstEngagementMessage": "You've started your daily reading streak. Keep coming back each day to grow your faithfulness."
+  },
+  "blessings": {
+    "label": "Blessings",
+    "balance": "Blessings balance",
+    "popover": {
+      "title": "Blessings",
+      "description": "Earn Blessings by engaging with daily verses, adding reflections, and maintaining your streak. Use them in the Rewards Shop (coming soon) to unlock themes and features!",
+      "balance": "Current balance: {{count}}"
+    },
+    "earned": {
+      "daily_view": "Daily verse viewed",
+      "reflection": "Reflection added",
+      "favorite": "Verse favorited",
+      "milestone": "Milestone achieved",
+      "generic": "Blessings earned"
+    }
+  },
+  "graceDay": {
+    "errors": {
+      "NO_GRACE_DAYS": "You have no grace days remaining",
+      "STREAK_NOT_BROKEN": "Your streak is not broken",
+      "GRACE_PERIOD_EXPIRED": "The grace period has expired",
+      "ALREADY_USED_TODAY": "You have already used a grace day today"
+    }
   }
 }
