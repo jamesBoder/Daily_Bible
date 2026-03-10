@@ -52,10 +52,9 @@ func (h *CommentHandler) AddOrUpdateComment(c *gin.Context) {
         return
     }
     
-    // Reflections earn Blessings on every write — no daily cap.
-    // Writing 3 reflections in one day earns 30 Blessings. This is intentional.
+    // Cap: max 2 reflections rewarded per UTC day (20 blessings max from reflections/day).
     var blessingsCredited int
-    if credited, err := h.blessingsService.Credit(userID.(uint), 10, "reflection_written", 1.0); err == nil && credited > 0 {
+    if credited, err := h.blessingsService.CreditWithDailyCap(userID.(uint), 10, "reflection_written", 1.0, 2); err == nil && credited > 0 {
         blessingsCredited = credited
     } else if err != nil {
         log.Printf("Failed to credit blessings for reflection: %v", err)
@@ -81,10 +80,11 @@ func (h *CommentHandler) GetCommentForVerse(c *gin.Context) {
     
     comment, err := h.commentService.GetCommentForVerse(userID.(uint), verseReference)
     if err != nil {
-        c.JSON(http.StatusNotFound, gin.H{"error": "Comment not found"})
+        // No comment yet is normal — return 200 with null so the frontend doesn't log 404 errors.
+        c.JSON(http.StatusOK, gin.H{"comment": nil})
         return
     }
-    
+
     c.JSON(http.StatusOK, gin.H{"comment": comment})
 }
 

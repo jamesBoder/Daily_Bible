@@ -59,6 +59,24 @@ func (s *BlessingsService) Credit(userID uint, baseAmount int, reason string, mu
     return actual, nil
 }
 
+// CreditWithDailyCap credits blessings only if the user has earned this reason fewer than
+// maxPerDay times today (UTC day boundary). Re-login does not bypass this — the check
+// reads the DB, not the session.
+func (s *BlessingsService) CreditWithDailyCap(userID uint, baseAmount int, reason string, multiplier float64, maxPerDay int) (int, error) {
+    startOfDay := time.Now().UTC().Truncate(24 * time.Hour)
+
+    var count int64
+    s.db.Model(&models.BlessingsTransaction{}).
+        Where("user_id = ? AND reason = ? AND created_at >= ? AND amount > 0", userID, reason, startOfDay).
+        Count(&count)
+
+    if int(count) >= maxPerDay {
+        return 0, nil // daily cap reached
+    }
+
+    return s.Credit(userID, baseAmount, reason, multiplier)
+}
+
 // Debit is used for Rewards Shop purchases (Phase 6+). Not called in Phase 1.
 func (s *BlessingsService) Debit(userID uint, amount int, reason string) error {
     return s.db.Transaction(func(tx *gorm.DB) error {
