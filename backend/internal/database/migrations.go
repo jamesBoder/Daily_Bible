@@ -6,7 +6,7 @@ import (
 )
 
 func RunMigrations(db *gorm.DB) error {
-    return db.AutoMigrate(
+    if err := db.AutoMigrate(
         &models.User{},
         &models.Verse{},
         &models.Favorite{},
@@ -14,7 +14,23 @@ func RunMigrations(db *gorm.DB) error {
         &models.Comment{},
         &models.PasswordHistory{},
         &models.UserSettings{},
-    )
+        // Phase 1
+        &models.UserStreak{},
+        &models.UserBlessings{},
+        &models.BlessingsTransaction{},
+        &models.UserMilestone{},
+        &models.UserUnlock{},
+        &models.UserActivityLog{},
+    ); err != nil {
+        return err
+    }
+
+    // Partial unique index — must be created explicitly
+    return db.Exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_daily_engagement
+        ON user_activity_logs (user_id, date_local)
+        WHERE action_type = 'daily_engagement'
+    `).Error
 }
 
 // BackfillDailyDates fills in daily_date for pre-migration verse rows that have

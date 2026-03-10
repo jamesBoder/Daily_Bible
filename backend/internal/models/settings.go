@@ -25,4 +25,7 @@ type UserSettings struct {
     
     // Display preferences
     DarkMode bool `gorm:"default:false" json:"dark_mode"`
+    
+    // Timezone preference (IANA timezone name, e.g., "America/New_York")
+    PreferredTimezone string `gorm:"size:50;default:'UTC'" json:"preferred_timezone"`
 }
