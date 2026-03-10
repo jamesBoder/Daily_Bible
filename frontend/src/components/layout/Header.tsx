@@ -4,6 +4,8 @@ import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../common/Button";
 import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
+import StreakCandle from "../StreakCandle";
+import BlessingsChip from "../BlessingsChip";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
@@ -95,6 +97,13 @@ export const Header: React.FC = () => {
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Streak and Blessings display for authenticated users */}
+            {!isGuest && (
+              <>
+                <StreakCandle />
+                <BlessingsChip />
+              </>
+            )}
             <span className="text-gray-700 dark:text-gray-300">
               {isGuest ? t('auth.browsingAsGuest') : t('auth.welcome', { username: user?.username })}
             </span>
@@ -208,6 +217,13 @@ export const Header: React.FC = () => {
                 {t('nav.settings')}
               </NavLink>
               <div className="pt-4 border-t border-gray-200">
+                {/* Streak and Blessings display for authenticated users */}
+                {!isGuest && (
+                  <div className="flex items-center space-x-3 mb-3">
+                    <StreakCandle />
+                    <BlessingsChip />
+                  </div>
+                )}
                 <p className="text-gray-700 dark:text-gray-300 mb-2">
                   {isGuest ? t('auth.browsingAsGuest') : t('auth.welcome', { username: user?.username })}
                 </p>

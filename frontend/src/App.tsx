@@ -11,8 +11,10 @@ import { Layout } from "./components/layout/Layout";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import { StreakProvider } from "./contexts/StreakContext";
 import { Toaster } from "react-hot-toast";
 import { VerseCardSkeleton } from "./components/common/Skeleton";
+import BlessingsToast from "./components/BlessingsToast";
 import "./App.css";
 
 
@@ -79,7 +81,8 @@ function App() {
     <Router>
       <ThemeProvider>
         <AuthProvider>
-          <LanguageProvider>
+          <StreakProvider>
+            <LanguageProvider>
             <Toaster
             position="top-right"
             toastOptions={{
@@ -104,6 +107,7 @@ function App() {
               },
             }}
           />
+            <BlessingsToast />
             <Routes>
               {/* Public-only routes — redirect authenticated users to home */}
               <Route path="/login" element={<PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Login /></Suspense></PublicOnlyRoute>} />
@@ -192,6 +196,7 @@ function App() {
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
           </LanguageProvider>
+          </StreakProvider>
         </AuthProvider>
       </ThemeProvider>
     </Router>
