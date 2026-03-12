@@ -14,7 +14,7 @@ const StreakResetAcknowledgment: React.FC = () => {
     // Check if we've stored a previous streak value
     const storedStreakKey = 'lastSeenStreak';
     const resetShownKey = 'streakResetShown';
-    
+
     const lastSeenStreak = localStorage.getItem(storedStreakKey);
     const resetAlreadyShown = sessionStorage.getItem(resetShownKey) === 'true';
 
@@ -30,11 +30,11 @@ const StreakResetAcknowledgment: React.FC = () => {
         setIsVisible(true);
         setHasShown(true);
         sessionStorage.setItem(resetShownKey, 'true');
-        
-        // Auto-hide after 4 seconds
+
+        // Auto-hide after 5 seconds
         const timer = setTimeout(() => {
           setIsVisible(false);
-        }, 4000);
+        }, 5000);
 
         return () => clearTimeout(timer);
       }
@@ -48,15 +48,15 @@ const StreakResetAcknowledgment: React.FC = () => {
 
   return (
     <div className="max-w-3xl mx-auto px-4 mb-6">
-      <div 
-        className="text-center py-3 px-4 rounded-lg animate-fade-in"
+      <div
+        className="text-center py-4 px-5 rounded-2xl animate-fade-in"
         style={{
-          color: 'rgba(232, 150, 58, 0.9)',
-          backgroundColor: 'rgba(232, 150, 58, 0.05)',
+          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(234, 88, 12, 0.1))',
+          border: '1px solid rgba(251, 146, 60, 0.35)',
         }}
       >
-        <p className="text-sm font-medium">
-          {t('streak.resetMessage', 'Your streak has restarted. Every day is a new beginning.')}
+        <p className="text-sm font-bold animate-flash-text" style={{ color: '#f97316' }}>
+          {t('streak.resetMessage', 'Your streak has restarted — don\'t worry, start fresh!')}
         </p>
       </div>
     </div>

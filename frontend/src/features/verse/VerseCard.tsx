@@ -165,7 +165,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
 
       {/* Reference */}
       <div className="text-center mb-6">
-        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] hover:brightness-125 hover:drop-shadow-[0_0_10px_rgba(79,70,229,0.4)] dark:drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] dark:hover:drop-shadow-[0_0_10px_rgba(129,140,248,0.4)] cursor-default">
           {verse.reference}
         </p>
         {verse.version && (

@@ -62,9 +62,9 @@ export const Header: React.FC = () => {
               <NavLink
                 to="/favorites"
                 className={({ isActive }) =>
-                  `font-medium transition-colors ${isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
+                    ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
                   }`
                 }
               >

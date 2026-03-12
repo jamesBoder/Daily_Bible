@@ -6,12 +6,12 @@
   body {
     @apply text-gray-900;
     font-size: 16px;
-    /* Subtle gradient background for better contrast with white verse card */
+    /* Deeper gradient background for stronger contrast with white verse card */
     background: linear-gradient(
       to bottom,
-      #f8fafc 0%,
-      #e2e8f0 50%,
-      #cbd5e1 100%
+      #d1dce8 0%,
+      #b8c8d8 50%,
+      #9fb4c8 100%
     );
     min-height: 100vh;
     background-attachment: fixed;
@@ -167,6 +167,37 @@
     animation: slideUp 0.4s ease-out;
   }
 
+  /* Slide from top animation for modal popup */
+  @keyframes slideFromTop {
+    from {
+      transform: translateY(-60px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-from-top {
+    animation: slideFromTop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Flashing text animation for streak reset message */
+  @keyframes flashText {
+    0%, 100% { opacity: 1; }
+    45%       { opacity: 1; }
+    50%       { opacity: 0.25; }
+    55%       { opacity: 1; }
+    75%       { opacity: 1; }
+    80%       { opacity: 0.25; }
+    85%       { opacity: 1; }
+  }
+
+  .animate-flash-text {
+    animation: flashText 2s ease-in-out 3;
+  }
+
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50%       { transform: translateY(-10px); }
@@ -195,27 +226,38 @@
 
 @layer components {
   .btn-primary {
-    @apply bg-primary-600 text-white px-4 py-2 rounded-lg 
+    @apply bg-primary-600 text-white px-4 py-2 rounded-xl
            hover:bg-primary-700 transition-colors
            dark:bg-primary-500 dark:hover:bg-primary-600;
   }
 
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg 
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-xl
            hover:bg-gray-300 transition-colors
            dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
   }
 
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg 
+    @apply w-full px-4 py-2 border border-gray-300 rounded-xl
            focus:ring-2 focus:ring-primary-500 focus:border-transparent
            dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100
            dark:focus:ring-primary-400;
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-lg p-6
-           dark:bg-gray-800 dark:shadow-xl;
+    @apply bg-white rounded-2xl p-6
+           dark:bg-gray-800;
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.12),
+      0 10px 30px -5px rgba(0, 0, 0, 0.18),
+      0 20px 60px -10px rgba(0, 0, 0, 0.12);
+  }
+
+  .dark .card {
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.4),
+      0 10px 30px -5px rgba(0, 0, 0, 0.5),
+      0 20px 60px -10px rgba(0, 0, 0, 0.4);
   }
 
   /* Selected card glow — matches the title/header glow aesthetic */
