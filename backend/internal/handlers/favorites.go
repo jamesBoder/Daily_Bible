@@ -112,12 +112,11 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 		return
 	}
 
-	// Before adding the Blessings credit here, confirm that AddFavorite already
-	// prevents duplicate favorites (same user + same verse) at the handler or DB level.
-	// If not, adding the credit first will earn Blessings on a no-op insert.
-	// Since we check for "already in favorites" error above, we only credit on success
+	// Credit blessings for favoriting — capped at 3 unique favorites per day.
+	// This prevents users from mass-favoriting dozens of verses in one session to
+	// farm Blessings. The cap is per-reason per-day (UTC boundary), checked in DB.
 	var blessingsCredited int
-	if credited, err := h.blessingsService.Credit(userIDStr.(uint), 3, "verse_favorited", 1.0); err == nil && credited > 0 {
+	if credited, err := h.blessingsService.CreditWithDailyCap(userIDStr.(uint), 3, "verse_favorited", 1.0, 3); err == nil && credited > 0 {
 		blessingsCredited = credited
 	} else if err != nil {
 		log.Printf("Failed to credit blessings for favorite: %v", err)
@@ -152,6 +151,15 @@ func (h *FavoriteHandler) RemoveFavorite(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove favorite"})
 		return
 	}
+
+	// Debit blessings when a favorite is removed — this prevents users from
+	// gaming the system by repeatedly adding and removing verses to earn Blessings.
+	// Non-blocking: if the user has insufficient balance we skip silently.
+	go func() {
+		if err := h.blessingsService.Debit(userIDStr.(uint), 3, "verse_unfavorited"); err != nil {
+			log.Printf("Could not debit blessings for unfavorite (balance may be too low): %v", err)
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Favorite removed successfully"})
 }
