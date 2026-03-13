@@ -10,11 +10,13 @@ import (
 
 	"github.com/gin-gonic/gin"
 
+	"dailybible/internal/config"
 	"dailybible/internal/models"
 	"dailybible/internal/password"
 	"dailybible/internal/repository"
 	"dailybible/internal/services"
 	"github.com/go-playground/validator/v10"
+	"gorm.io/gorm"
 )
 
 // ProfileHandler struct
@@ -31,6 +33,7 @@ type ProfileHandler struct {
 	streakService       *services.StreakService
 	blessingsService    *services.BlessingsService
 	settingsService     *services.SettingsService
+	db                  *gorm.DB
 }
 
 // constructor init handler with dependencies
@@ -47,6 +50,7 @@ func NewProfileHandler(
 	streakService *services.StreakService,
 	blessingsService *services.BlessingsService,
 	settingsService *services.SettingsService,
+	db *gorm.DB,
 ) *ProfileHandler {
 	return &ProfileHandler{
 		userRepo:            userRepo,
@@ -60,6 +64,7 @@ func NewProfileHandler(
 		streakService:       streakService,
 		blessingsService:    blessingsService,
 		settingsService:     settingsService,
+		db:                  db,
 	}
 }
 
@@ -134,12 +139,89 @@ func (h *ProfileHandler) GetProfileAggregate(c *gin.Context) {
 	histCount, _ := h.historyRepo.CountByUserID(userID.(uint))
 	commentCount, _ := h.commentRepo.CountByUserID(userID.(uint))
 
+	// Count unique active days from the activity log (ground truth, more accurate than history count).
+	var activeDaysCount int64
+	h.db.Model(&models.UserActivityLog{}).
+		Where("user_id = ? AND action_type = 'daily_engagement'", userID.(uint)).
+		Count(&activeDaysCount)
+
+	// Load all achieved milestones for this user.
+	var achievedMilestones []models.UserMilestone
+	h.db.Where("user_id = ?", userID.(uint)).Find(&achievedMilestones)
+
+	achievedMap := make(map[string]*models.UserMilestone, len(achievedMilestones))
+	for i := range achievedMilestones {
+		achievedMap[achievedMilestones[i].MilestoneKey] = &achievedMilestones[i]
+	}
+
+	// Build the milestones list (all 9 defs merged with achieved data).
+	type milestoneItem struct {
+		Key              string  `json:"key"`
+		DaysRequired     int     `json:"days_required"`
+		Name             string  `json:"name"`
+		BlessingsAwarded int     `json:"blessings_awarded"`
+		Earned           bool    `json:"earned"`
+		AchievedAt       *string `json:"achieved_at,omitempty"`
+		BadgeVariant     string  `json:"badge_variant"`
+	}
+	milestoneList := make([]milestoneItem, 0, len(config.MilestoneDefinitions))
+	achievedBoolMap := make(map[string]bool, len(achievedMilestones))
+	for _, def := range config.MilestoneDefinitions {
+		item := milestoneItem{
+			Key:              def.Key,
+			DaysRequired:     def.DaysRequired,
+			Name:             def.Name,
+			BlessingsAwarded: def.BlessingsAwarded,
+			BadgeVariant:     "standard",
+		}
+		if um, ok := achievedMap[def.Key]; ok {
+			item.Earned = true
+			item.BadgeVariant = um.BadgeVariant
+			ts := um.AchievedAt.Format(time.RFC3339)
+			item.AchievedAt = &ts
+			achievedBoolMap[def.Key] = true
+		}
+		milestoneList = append(milestoneList, item)
+	}
+
+	// Compute next_milestone.
+	var nextMilestoneDTO interface{}
+	if def := config.NextMilestone(streak.CurrentStreak, achievedBoolMap); def != nil {
+		nextMilestoneDTO = gin.H{
+			"key":               def.Key,
+			"name":              def.Name,
+			"days_required":     def.DaysRequired,
+			"blessings_awarded": def.BlessingsAwarded,
+		}
+	}
+
+	// Find undismissed milestone (for celebration modal surfacing).
+	var newlyAchievedDTO interface{}
+	var undismissed models.UserMilestone
+	if err := h.db.
+		Where("user_id = ? AND celebration_dismissed_at IS NULL", userID.(uint)).
+		Order("achieved_at DESC").
+		First(&undismissed).Error; err == nil {
+		for _, def := range config.MilestoneDefinitions {
+			if def.Key == undismissed.MilestoneKey {
+				ts := undismissed.AchievedAt.Format(time.RFC3339)
+				newlyAchievedDTO = gin.H{
+					"key":               def.Key,
+					"name":              def.Name,
+					"days_required":     def.DaysRequired,
+					"blessings_awarded": def.BlessingsAwarded,
+					"achieved_at":       ts,
+				}
+				break
+			}
+		}
+	}
+
 	// Calculate avatar initials from username
 	initials := ""
 	if len(user.Username) > 0 {
 		initials = string(user.Username[0])
 		if len(user.Username) > 1 {
-			// Find the second word for two initials
 			for i := 1; i < len(user.Username); i++ {
 				if user.Username[i-1] == ' ' && user.Username[i] != ' ' {
 					initials += string(user.Username[i])
@@ -150,47 +232,42 @@ func (h *ProfileHandler) GetProfileAggregate(c *gin.Context) {
 		initials = strings.ToUpper(initials)
 	}
 
-	// Generate avatar color from user ID (deterministic)
+	// Generate avatar color from user ID (deterministic warm palette).
 	colors := []string{"#C9A84C", "#E8963A", "#B8860B", "#CD7F32", "#9B8FC4"}
 	avatarColor := colors[user.ID%uint(len(colors))]
 
-	// Build streak response
+	// Build streak section (matches GET /api/streak shape).
 	streakData := gin.H{
-		"current_streak":        streak.CurrentStreak,
-		"longest_streak":        streak.LongestStreak,
-		"last_active_date":      streak.LastActiveDate,
-		"grace_days_remaining":  streak.GraceDaysRemaining,
-		"grace_days_reset_at":   streak.GraceDaysResetAt,
-		"streak_recoverable":    streakRecoverable,
-		"blessings_balance":     balance,
-		"next_milestone":        nil, // Phase 2
-		"newly_achieved_milestone": nil, // Phase 2
+		"current_streak":           streak.CurrentStreak,
+		"longest_streak":           streak.LongestStreak,
+		"last_active_date":         streak.LastActiveDate,
+		"grace_days_remaining":     streak.GraceDaysRemaining,
+		"grace_days_reset_at":      streak.GraceDaysResetAt,
+		"streak_recoverable":       streakRecoverable,
+		"blessings_balance":        balance,
+		"next_milestone":           nextMilestoneDTO,
+		"newly_achieved_milestone": newlyAchievedDTO,
 	}
 
-	// Build milestones response (Phase 2 stub)
-	milestonesData := gin.H{
-		"achieved": []interface{}{},
-		"pending":  []interface{}{},
-	}
-
-	// Build reading stats
+	// Build reading stats.
 	readingStats := gin.H{
 		"verses_read":       histCount,
-		"days_active":       histCount, // For Phase 1, using history count as days active
+		"days_active":       activeDaysCount,
 		"favorites_count":   favCount,
 		"reflections_count": commentCount,
 	}
 
-	// respond with aggregated profile data
+	// respond with aggregated profile data (single round trip — no waterfall)
 	c.JSON(http.StatusOK, gin.H{
-		"username":       user.Username,
-		"member_since":   user.CreatedAt,
+		"username":        user.Username,
+		"email":           user.Email,
+		"member_since":    user.CreatedAt,
 		"avatar_initials": initials,
-		"avatar_color":   avatarColor,
-		"is_premium":     false, // Phase 8
-		"streak":         streakData,
-		"milestones":     milestonesData,
-		"reading_stats":  readingStats,
+		"avatar_color":    avatarColor,
+		"is_premium":      false, // Phase 8
+		"streak":          streakData,
+		"milestones":      milestoneList,
+		"reading_stats":   readingStats,
 	})
 }
 

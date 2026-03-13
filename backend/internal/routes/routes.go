@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -106,8 +106,21 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler , tokenSe
 			{
 				streak.GET("", streakHandler.GetStreakSummary)
 				streak.POST("/grace-day", streakHandler.UseGraceDay)
+				streak.GET("/calendar", streakHandler.GetCalendar)
 			}
-			
+
+			// milestones routes
+			milestones := protected.Group("/milestones")
+			{
+				milestones.GET("", milestonesHandler.GetMilestones)
+				milestones.POST("/:key/dismiss", milestonesHandler.DismissCelebration)
+			}
+
+			// unlocks routes — stub for Phase 6
+			protected.GET("/unlocks", func(c *gin.Context) {
+				c.JSON(200, gin.H{"unlocks": []interface{}{}})
+			})
+
 			// blessings routes
 			blessings := protected.Group("/blessings")
 			{

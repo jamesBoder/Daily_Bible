@@ -14,10 +14,11 @@ import (
 type VerseHandler struct {
 	dailyVerseService *services.DailyVerseService
 	bibleAPIService   services.BibleAPIService
-	historyService   *services.HistoryService
-	streakService    *services.StreakService
-	blessingsService *services.BlessingsService
-	settingsService  *services.SettingsService
+	historyService    *services.HistoryService
+	streakService     *services.StreakService
+	blessingsService  *services.BlessingsService
+	settingsService   *services.SettingsService
+	rewardsService    *services.RewardsService
 }
 
 // NewVerseHandler creates a new VerseHandler
@@ -28,14 +29,16 @@ func NewVerseHandler(
 	streakService *services.StreakService,
 	blessingsService *services.BlessingsService,
 	settingsService *services.SettingsService,
+	rewardsService *services.RewardsService,
 ) *VerseHandler {
 	return &VerseHandler{
 		dailyVerseService: dailyVerseService,
 		bibleAPIService:   bibleAPIService,
 		historyService:    historyService,
-		streakService:    streakService,
-		blessingsService: blessingsService,
-		settingsService:  settingsService,
+		streakService:     streakService,
+		blessingsService:  blessingsService,
+		settingsService:   settingsService,
+		rewardsService:    rewardsService,
 	}
 }
 
@@ -71,17 +74,25 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 				blessingsCredited = credited
 			}
 
-			// Milestone check runs asynchronously to keep verse response fast.
-			// The result surfaces on the next GET /api/streak call.
-			// Wrap in recover() — an unrecovered panic in a goroutine crashes the Go process.
-			go func() {
-				defer func() {
-					if r := recover(); r != nil {
-						log.Printf("CheckMilestones panic for user %d: %v", userID, r)
+			// Milestone check runs fully asynchronously — GetStreakSummary is
+			// called inside the goroutine so it never blocks the verse response.
+			if h.rewardsService != nil {
+				uid := userID.(uint)
+				tz := settings.PreferredTimezone
+				go func() {
+					defer func() {
+						if r := recover(); r != nil {
+							log.Printf("CheckMilestones panic for user %d: %v", uid, r)
+						}
+					}()
+					streakSummary, _, _ := h.streakService.GetStreakSummary(uid, tz)
+					currentStreak := 0
+					if streakSummary != nil {
+						currentStreak = streakSummary.CurrentStreak
 					}
+					h.rewardsService.CheckMilestones(uid, currentStreak)
 				}()
-				// Phase 2+ only: rewardsService.CheckMilestones(...)
-			}()
+			}
 		}
 	}
 	

@@ -119,6 +119,9 @@ func main() {
     streakService := services.NewStreakService(db, subscriptionChecker)
     blessingsService := services.NewBlessingsService(db)
 
+    // Initialize Phase 2 services
+    rewardsService := services.NewRewardsService(db, blessingsService)
+
     // create validator instance
     validate := validator.New()
     _ = validate // currently not used, but can be integrated into services or handlers later
@@ -151,6 +154,7 @@ func main() {
         streakService,
         blessingsService,
         settingsService,
+        rewardsService,
     )
 
     // init favoriteHandler variable
@@ -185,6 +189,7 @@ func main() {
         streakService,
         blessingsService,
         settingsService,
+        db,
     )
 
     // init oauthHandler variable
@@ -202,7 +207,11 @@ func main() {
         streakService,
         blessingsService,
         settingsService,
+        db,
     )
+
+    // init milestonesHandler variable
+    milestonesHandler := handlers.NewMilestonesHandler(db)
     
     // init blessingsHandler variable
     blessingsHandler := handlers.NewBlessingsHandler(
@@ -267,7 +276,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
