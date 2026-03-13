@@ -41,7 +41,7 @@ export const useStreak = () => {
 };
 
 export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { user, isAuthenticated } = useAuth();
+  const { isAuthenticated, isGuest } = useAuth();
   const [streakData, setStreakData] = useState<StreakData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -56,7 +56,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return;
     }
 
-    if (!isAuthenticated) {
+    if (!isAuthenticated || isGuest) {
       setStreakData(null);
       return;
     }
@@ -114,12 +114,12 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Initial load and auth change
   useEffect(() => {
-    if (isAuthenticated) {
+    if (isAuthenticated && !isGuest) {
       refreshStreak();
     } else {
       setStreakData(null);
     }
-  }, [isAuthenticated, refreshStreak]);
+  }, [isAuthenticated, isGuest, refreshStreak]);
 
   // Refresh on visibility change (when user returns to tab)
   useEffect(() => {

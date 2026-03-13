@@ -3,6 +3,7 @@ import { Outlet, useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
 import { OfflineBanner } from "../common/OfflineBanner";
+import MilestoneCelebrationModal from "../../features/streak/MilestoneCelebrationModal";
 
 
 export const Layout: React.FC = () => {
@@ -15,6 +16,7 @@ export const Layout: React.FC = () => {
         <Outlet />
       </main>
       <Footer />
+      <MilestoneCelebrationModal />
     </div>
   );
 };

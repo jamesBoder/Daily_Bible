@@ -207,11 +207,74 @@
     animation: float 3s ease-in-out infinite;
   }
 
+  /* ── Phase 2: Calendar cell animations ─────────────────────────────── */
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1);   }
+  }
+
+  /* ── Phase 2: Milestone ember particle drift ────────────────────────── */
+
+  @keyframes particleDrift {
+    0%   { opacity: 0.9; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0;   transform: translate(var(--particle-x), var(--particle-y)) scale(0.4); }
+  }
+
+  /* ── Phase 2: AvatarRing full-year rotating ring ────────────────────── */
+
+  @keyframes ringRotate {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+  }
+
+  .avatar-ring--full-year circle:last-child {
+    transform-origin: 50% 50%;
+    animation: ringRotate 12s linear infinite;
+  }
+
+  /* ── Phase 2: Skeleton shimmer ──────────────────────────────────────── */
+
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.06) 25%,
+      rgba(0, 0, 0, 0.12) 50%,
+      rgba(0, 0, 0, 0.06) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  .dark .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 25%,
+      rgba(255, 255, 255, 0.09) 50%,
+      rgba(255, 255, 255, 0.04) 75%
+    );
+    background-size: 200% 100%;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in {
       animation: none;
       opacity: 1;
       transform: none;
+    }
+
+    .avatar-ring--full-year circle:last-child {
+      animation: none;
     }
 
     *,
@@ -309,6 +372,53 @@
 
   .nav-arrow-glow:active {
     transform: scale(0.95);
+  }
+
+  /* ── Phase 2: Milestone badges ─────────────────────────────────────── */
+
+  .milestone-badge {
+    @apply w-16 h-16 rounded-full flex items-center justify-center text-2xl flex-shrink-0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .milestone-badge--earned {
+    background: radial-gradient(circle at 35% 35%, #fde68a, #f59e0b);
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+  }
+
+  .milestone-badge--earned:hover {
+    transform: scale(1.08);
+    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);
+  }
+
+  .milestone-badge--locked {
+    background: rgba(0, 0, 0, 0.07);
+    filter: grayscale(1);
+    opacity: 0.55;
+  }
+
+  .dark .milestone-badge--locked {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .milestone-badge--premium-earned {
+    background: radial-gradient(circle at 35% 35%, #e9d5ff, #a855f7);
+    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.35);
+  }
+
+  /* ── Phase 2: Milestone wall mobile scroll ──────────────────────────── */
+
+  .milestone-wall--mobile {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
+
+  .milestone-wall--mobile::-webkit-scrollbar {
+    display: none;
   }
 
   /* Logo/Brand Text Styling */

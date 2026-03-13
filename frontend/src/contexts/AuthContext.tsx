@@ -72,6 +72,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   const loginAsGuest = () => {
+    // Clear any stale real-user token so guest requests don't accidentally carry a valid JWT
+    localStorage.removeItem("auth_token");
+    localStorage.removeItem("user_data");
+    localStorage.removeItem("auth_token_expiry");
     sessionStorage.setItem(GUEST_SESSION_KEY, "true");
     setUser(GUEST_USER);
   };
