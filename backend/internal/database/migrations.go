@@ -21,6 +21,9 @@ func RunMigrations(db *gorm.DB) error {
         &models.UserMilestone{},
         &models.UserUnlock{},
         &models.UserActivityLog{},
+        // Phase 3
+        &models.JournalEntry{},
+        &models.JournalPrompt{},
     ); err != nil {
         return err
     }

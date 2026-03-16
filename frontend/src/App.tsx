@@ -76,6 +76,18 @@ const About = lazy(() =>
   }))
 );
 
+const JournalList = lazy(() =>
+  import("./features/journal/JournalList").then((module) => ({
+    default: module.JournalList,
+  }))
+);
+
+const JournalEditor = lazy(() =>
+  import("./features/journal/JournalEditor").then((module) => ({
+    default: module.JournalEditor,
+  }))
+);
+
 function App() {
   return (
     <Router>
@@ -189,7 +201,37 @@ function App() {
                     </Suspense>
                   }
                 />
-                
+                {/* Journal routes (Phase 3) */}
+                <Route
+                  path="journal"
+                  element={
+                    <GuestBlockedRoute>
+                      <Suspense fallback={<VerseCardSkeleton />}>
+                        <JournalList />
+                      </Suspense>
+                    </GuestBlockedRoute>
+                  }
+                />
+                <Route
+                  path="journal/new"
+                  element={
+                    <GuestBlockedRoute>
+                      <Suspense fallback={<VerseCardSkeleton />}>
+                        <JournalEditor />
+                      </Suspense>
+                    </GuestBlockedRoute>
+                  }
+                />
+                <Route
+                  path="journal/:id"
+                  element={
+                    <GuestBlockedRoute>
+                      <Suspense fallback={<VerseCardSkeleton />}>
+                        <JournalEditor />
+                      </Suspense>
+                    </GuestBlockedRoute>
+                  }
+                />
               </Route>
 
             {/* Catch all - redirect to home */}

@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler, journalHandler *handlers.JournalHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -87,6 +87,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 				profile.GET("/aggregate", profileHandler.GetProfileAggregate)
 				profile.PUT("", profileHandler.UpdateProfile)
 				profile.GET("/stats", profileHandler.GetStats)
+				profile.GET("/check-availability", profileHandler.CheckAvailability)
 				profile.POST("/password/set", profileHandler.SetPassword)
 				profile.PUT("/password", profileHandler.UpdatePassword)
 				profile.POST("/resend-verification", profileHandler.ResendVerificationFromProfile)
@@ -126,6 +127,17 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 			{
 				blessings.GET("", blessingsHandler.GetBalance)
 				blessings.GET("/transactions", blessingsHandler.GetTransactions)
+			}
+
+			// journal routes (Phase 3)
+			journal := protected.Group("/journal")
+			{
+				journal.GET("", journalHandler.GetEntries)
+				journal.POST("", journalHandler.CreateEntry)
+				journal.GET("/prompt", journalHandler.GetWeeklyPrompt) // must be before /:id
+				journal.GET("/:id", journalHandler.GetEntry)
+				journal.PUT("/:id", journalHandler.UpdateEntry)
+				journal.DELETE("/:id", journalHandler.DeleteEntry)
 			}
 		}
 			
