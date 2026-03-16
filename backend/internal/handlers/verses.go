@@ -51,6 +51,20 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	// The user's intent to engage is known the moment they hit this endpoint.
 	// If API.Bible is down and we serve a fallback/cached verse, the streak still counts.
 	// Never gate streak recording on the result of an external API call.
+
+	// Kick off the verse fetch concurrently while auth/streak work runs below.
+	// On a cache miss this hits the external Bible API (~200-500ms); overlapping it
+	// with DB operations cuts the critical path roughly in half.
+	type verseResult struct {
+		verse *models.Verse
+		err   error
+	}
+	verseCh := make(chan verseResult, 1)
+	go func() {
+		v, err := h.dailyVerseService.GetDailyVerse()
+		verseCh <- verseResult{v, err}
+	}()
+
 	var blessingsCredited int
 	if userID, authenticated := c.Get("userID"); authenticated {
 		// Get user settings for timezone
@@ -58,7 +72,7 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 		if err != nil {
 			settings = &models.UserSettings{PreferredTimezone: "UTC"}
 		}
-		
+
 		wasNew, err := h.streakService.RecordDailyEngagement(userID.(uint), settings.PreferredTimezone)
 		if err != nil {
 			log.Printf("RecordDailyEngagement failed for user %d: %v", userID, err)
@@ -95,14 +109,15 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 			}
 		}
 	}
-	
-	// For now, we'll get the daily verse in English and then fetch it in the requested language
-	// In a future update, we could store daily verses for each language
-	verse, err := h.dailyVerseService.GetDailyVerse()
-	if err != nil {
+
+	// Collect the verse result — by the time we get here, auth/streak DB work has
+	// likely consumed most of the Bible API round-trip, so this receive is often instant.
+	vr := <-verseCh
+	if vr.err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get daily verse"})
 		return
 	}
+	verse := vr.verse
 	
 	// If a different language is requested, fetch the verse in that language
 	if language != "en" {
@@ -114,14 +129,16 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 		// If translation fails, we'll return the English version
 	}
 
-	// Record verse view in history if user is authenticated
+	// Record verse view in history if user is authenticated.
+	// Fire-and-forget: history is non-critical and should never delay the response.
 	if userID, exists := c.Get("userID"); exists {
-		err := h.historyService.AddToHistory(userID.(uint), verse.ID)
-		if err != nil {
-			// Log error but don't fail the request
-			// History tracking is a non-critical feature
-			c.Error(err)
-		}
+		uid := userID.(uint)
+		vid := verse.ID
+		go func() {
+			if err := h.historyService.AddToHistory(uid, vid); err != nil {
+				log.Printf("AddToHistory failed for user %d: %v", uid, err)
+			}
+		}()
 	}
 
 	// Cache for 1 hour on the client; CDN/proxy may cache publicly for the same period.

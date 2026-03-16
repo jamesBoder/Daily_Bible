@@ -76,12 +76,35 @@
     --grace-lavender-bg: rgba(155, 143, 196, 0.12);
     --milestone-glow: #fde047;
     --parchment: #faf8f3;
+
+    /* Phase 3 — Journal tokens (light mode) */
+    --journal-surface:        #fffcf4;
+    --journal-surface-alt:    #fdf4e2;
+    --journal-line:           rgba(190, 150, 80, 0.18);
+    --journal-margin:         rgba(190, 150, 80, 0.25);
+    --journal-text:           #2D1F0A;
+    --journal-text-muted:     #7A6040;
+    --journal-border:         rgba(190, 150, 80, 0.30);
+    --journal-accent-light:   rgba(245, 158, 11, 0.10);
+    --journal-accent-border:  rgba(245, 158, 11, 0.35);
+    --journal-caret:          var(--candle-amber);
   }
 
   /* Dark mode overrides */
   [data-theme="dark"], .dark {
     --parchment: #2C2519;
     --grace-lavender-bg: rgba(155, 143, 196, 0.18);
+
+    /* Phase 3 — Journal tokens (dark mode: warm candlelight, noticeably brighter) */
+    --journal-surface:        #3E2E18;
+    --journal-surface-alt:    #352616;
+    --journal-line:           rgba(245, 200, 100, 0.18);
+    --journal-margin:         rgba(245, 158, 11, 0.28);
+    --journal-text:           #FFF3DC;
+    --journal-text-muted:     #C9A870;
+    --journal-border:         rgba(245, 158, 11, 0.32);
+    --journal-accent-light:   rgba(245, 158, 11, 0.14);
+    --journal-accent-border:  rgba(245, 158, 11, 0.45);
   }
 
   @keyframes fade-in {
@@ -266,6 +289,45 @@
     background-size: 200% 100%;
   }
 
+  /* Phase 3 — Journal animations */
+  @keyframes entrySlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pageOpen {
+    from { opacity: 0; transform: translateX(16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes savedFade {
+    0%   { opacity: 0; transform: translateY(-4px); }
+    15%  { opacity: 1; transform: translateY(0); }
+    75%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes quillWrite {
+    0%, 100% { transform: rotate(-8deg) translateY(0px); }
+    50%       { transform: rotate(4deg) translateY(-3px); }
+  }
+
+  @keyframes lockedPulse {
+    0%, 100% { opacity: 0.18; }
+    50%       { opacity: 0.28; }
+  }
+
+  @keyframes blessingsFlash {
+    0%   { box-shadow: 0 0 0 0 rgba(251,191,36,0.0); transform: scale(1); }
+    25%  { box-shadow: 0 0 0 6px rgba(251,191,36,0.45); transform: scale(1.12); }
+    60%  { box-shadow: 0 0 0 10px rgba(251,191,36,0.0); transform: scale(1.05); }
+    100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.0); transform: scale(1); }
+  }
+
+  .animate-blessings-flash {
+    animation: blessingsFlash 0.7s ease-out forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in {
       animation: none;
@@ -387,14 +449,19 @@
   }
 
   .milestone-badge--earned:hover {
-    transform: scale(1.08);
-    box-shadow: 0 4px 16px rgba(245, 158, 11, 0.5);
+    transform: scale(1.12) rotate(-2deg);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.55);
   }
 
   .milestone-badge--locked {
     background: rgba(0, 0, 0, 0.07);
     filter: grayscale(1);
     opacity: 0.55;
+  }
+
+  .milestone-badge--locked:hover {
+    transform: scale(1.06);
+    opacity: 0.75;
   }
 
   .dark .milestone-badge--locked {

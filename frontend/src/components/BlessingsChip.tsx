@@ -11,15 +11,28 @@ const BlessingsChip: React.FC = () => {
   const [showPopover, setShowPopover] = useState(false);
   const [hasShownExplanation, setHasShownExplanation] = useState(false);
   const [popoverPos, setPopoverPos] = useState({ top: 0, right: 0 });
+  const [isFlashing, setIsFlashing] = useState(false);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const popoverRef = useRef<HTMLDivElement>(null);
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const isHoverSourceRef = useRef(false);
+  const prevBalanceRef = useRef<number | null>(null);
 
   useEffect(() => {
     if (localStorage.getItem('blessings_explained')) setHasShownExplanation(true);
   }, []);
+
+  // Flash animation when balance increases
+  useEffect(() => {
+    const balance = streakData?.blessings_balance ?? null;
+    if (balance !== null && prevBalanceRef.current !== null && balance > prevBalanceRef.current) {
+      setIsFlashing(true);
+      const timer = setTimeout(() => setIsFlashing(false), 700);
+      return () => clearTimeout(timer);
+    }
+    prevBalanceRef.current = balance;
+  }, [streakData?.blessings_balance]);
 
   // Right-aligns with the button but clamps to stay within viewport
   const calcPos = useCallback(() => {
@@ -106,11 +119,14 @@ const BlessingsChip: React.FC = () => {
         onClick={handleClick}
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
-        className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg
-                   bg-gradient-to-r from-yellow-50 to-amber-50
-                   dark:from-yellow-900/20 dark:to-amber-900/20
-                   border border-yellow-300 dark:border-yellow-700
-                   hover:shadow-md transition-all duration-200 cursor-pointer"
+        className={[
+          'flex items-center space-x-1.5 px-2.5 py-1 rounded-lg',
+          'bg-gradient-to-r from-yellow-50 to-amber-50',
+          'dark:from-yellow-900/20 dark:to-amber-900/20',
+          'border border-yellow-300 dark:border-yellow-700',
+          'hover:shadow-md transition-all duration-200 cursor-pointer',
+          isFlashing ? 'animate-blessings-flash' : '',
+        ].join(' ')}
         aria-label={t('blessings.balance', 'Blessings balance')}
       >
         <svg className="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 24 24">

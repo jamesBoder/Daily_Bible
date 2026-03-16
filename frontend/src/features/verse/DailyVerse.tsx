@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo } from "react";
+import { useSearchParams } from "react-router-dom";
 import { useVerse } from "../../hooks/useVerse";
 import { useHistory } from "../../hooks/useHistory";
 import { useAuth } from "../../hooks/useAuth";
@@ -83,6 +84,7 @@ export const DailyVerse: React.FC = () => {
   const { isGuest } = useAuth();
   const { verse, isLoading, error, refetch } = useVerse(i18n.language);
   const { history, isLoading: historyLoading } = useHistory(!isGuest);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [historyIndex, setHistoryIndex] = useState(0);
 
@@ -102,6 +104,20 @@ export const DailyVerse: React.FC = () => {
   const firstEntryDate = history.length > 0 ? history[0].verse?.daily_date?.slice(0, 10) : undefined;
   const offset = firstEntryDate === todayStr ? 1 : 0;
   const effectiveHistory = history.slice(offset);
+
+  // If the calendar linked to a specific date, find it in history and jump there once loaded.
+  const dateParam = searchParams.get('date');
+  useEffect(() => {
+    if (!dateParam || historyLoading || effectiveHistory.length === 0) return;
+    const idx = effectiveHistory.findIndex(
+      e => e.verse?.daily_date?.slice(0, 10) === dateParam
+    );
+    if (idx !== -1) {
+      setHistoryIndex(idx + 1);
+    }
+    // Remove the param so browser back/forward works naturally
+    setSearchParams({}, { replace: true });
+  }, [dateParam, historyLoading, effectiveHistory, setSearchParams]);
 
   // Derive display state
   const currentEntry = historyIndex > 0 ? effectiveHistory[historyIndex - 1] : null;

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api/api';
 
@@ -15,30 +16,65 @@ interface CalendarMonth {
 }
 
 interface StreakCalendarProps {
-  /** If true, show month navigation (Phase 8 premium). Currently unused — always false. */
   isPremium?: boolean;
 }
 
 const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+const MONTH_NAMES = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
+];
 
-const StreakCalendar: React.FC<StreakCalendarProps> = ({ isPremium = false }) => {
+/** Build a fully-empty CalendarMonth for months the API didn't return. */
+function buildEmptyMonth(year: number, month: number): CalendarMonth {
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const days: CalendarDay[] = Array.from({ length: daysInMonth }, (_, i) => ({
+    date: `${year}-${String(month).padStart(2, '0')}-${String(i + 1).padStart(2, '0')}`,
+    state: 'missed',
+  }));
+  return {
+    year,
+    month,
+    label: `${MONTH_NAMES[month - 1]} ${year}`,
+    days,
+  };
+}
+
+/** Produce a list of the last `count` calendar months (newest last). */
+function buildMonthSpine(count: number): { year: number; month: number }[] {
+  const spine: { year: number; month: number }[] = [];
+  const now = new Date();
+  for (let i = count - 1; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    spine.push({ year: d.getFullYear(), month: d.getMonth() + 1 });
+  }
+  return spine;
+}
+
+const FETCH_MONTHS = 12;
+
+const StreakCalendar: React.FC<StreakCalendarProps> = () => {
   const { t } = useTranslation();
-  const [months, setMonths] = useState<CalendarMonth[]>([]);
+  const navigate = useNavigate();
+  const [apiMonths, setApiMonths] = useState<CalendarMonth[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
+  // Index into the spine (0 = oldest, spine.length-1 = current month)
+  const spine = buildMonthSpine(FETCH_MONTHS);
+  const [viewIdx, setViewIdx] = useState(spine.length - 1);
+
   useEffect(() => {
-    const months = isPremium ? 12 : 1;
-    api.get(`/api/streak/calendar?months=${months}`)
+    api.get(`/api/streak/calendar?months=${FETCH_MONTHS}`)
       .then(res => {
-        setMonths(res.data.months ?? []);
+        setApiMonths(res.data.months ?? []);
         setLoading(false);
       })
       .catch(() => {
         setError(true);
         setLoading(false);
       });
-  }, [isPremium]);
+  }, []);
 
   if (loading) {
     return (
@@ -58,38 +94,56 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({ isPremium = false }) =>
     );
   }
 
-  if (months.length === 0) {
-    return (
-      <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
-        {t('profile.calendar_empty', 'No activity recorded yet.')}
-      </p>
-    );
-  }
+  // Merge API data onto the spine
+  const months: CalendarMonth[] = spine.map(({ year, month }) => {
+    const found = apiMonths.find(m => m.year === year && m.month === month);
+    return found ?? buildEmptyMonth(year, month);
+  });
 
-  // For free tier, show one month.
-  const currentMonth = months[months.length - 1];
-
-  // Build a padded grid starting from the first weekday of the month's first day.
+  const currentMonth = months[viewIdx];
   const firstDate = new Date(currentMonth.days[0].date + 'T00:00:00');
-  const paddingCells = firstDate.getDay(); // 0=Sun, 6=Sat
+  const paddingCells = firstDate.getDay();
+  const totalCells = paddingCells + currentMonth.days.length;
+  const trailingCells = totalCells % 7 === 0 ? 0 : 7 - (totalCells % 7);
+
+  const canGoBack = viewIdx > 0;
+  const canGoForward = viewIdx < spine.length - 1;
 
   return (
     <div className="space-y-3">
-      {/* Month + year header */}
-      <div className="flex items-center justify-between gap-2 flex-wrap">
-        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300 flex-shrink-0">
+      {/* Month navigation */}
+      <div className="flex items-center justify-between">
+        <button
+          onClick={() => setViewIdx(i => i - 1)}
+          disabled={!canGoBack}
+          aria-label="Previous month"
+          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          ‹
+        </button>
+        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           {currentMonth.label}
         </h3>
-        <div className="flex gap-3 text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: 'var(--candle-amber)' }} />
-            {t('profile.cal_engaged', 'Active')}
-          </span>
-          <span className="flex items-center gap-1">
-            <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: 'var(--grace-lavender)' }} />
-            {t('profile.cal_grace', 'Grace')}
-          </span>
-        </div>
+        <button
+          onClick={() => setViewIdx(i => i + 1)}
+          disabled={!canGoForward}
+          aria-label="Next month"
+          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+        >
+          ›
+        </button>
+      </div>
+
+      {/* Legend */}
+      <div className="flex items-center justify-end gap-3 text-xs text-gray-400 dark:text-gray-500">
+        <span className="flex items-center gap-1">
+          <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: 'var(--candle-amber)' }} />
+          {t('profile.cal_engaged', 'Active')}
+        </span>
+        <span className="flex items-center gap-1">
+          <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: 'var(--grace-lavender)' }} />
+          {t('profile.cal_grace', 'Grace')}
+        </span>
       </div>
 
       {/* Day-of-week header */}
@@ -104,10 +158,18 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({ isPremium = false }) =>
       {/* Calendar cells */}
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: paddingCells }).map((_, i) => (
-          <div key={`pad-${i}`} />
+          <div key={`pad-start-${i}`} />
         ))}
         {currentMonth.days.map((day, idx) => (
-          <CalendarCell key={day.date} day={day} index={paddingCells + idx} />
+          <CalendarCell
+            key={day.date}
+            day={day}
+            index={paddingCells + idx}
+            onNavigate={() => navigate(`/daily?date=${day.date}`)}
+          />
+        ))}
+        {Array.from({ length: trailingCells }).map((_, i) => (
+          <div key={`pad-end-${i}`} />
         ))}
       </div>
     </div>
@@ -117,10 +179,12 @@ const StreakCalendar: React.FC<StreakCalendarProps> = ({ isPremium = false }) =>
 interface CalendarCellProps {
   day: CalendarDay;
   index: number;
+  onNavigate: () => void;
 }
 
-const CalendarCell: React.FC<CalendarCellProps> = ({ day, index }) => {
+const CalendarCell: React.FC<CalendarCellProps> = ({ day, index, onNavigate }) => {
   const dayNum = new Date(day.date + 'T00:00:00').getDate();
+  const isClickable = day.state === 'today_pending' || day.state === 'engaged';
 
   const prefersReduced =
     typeof window !== 'undefined' &&
@@ -165,6 +229,20 @@ const CalendarCell: React.FC<CalendarCellProps> = ({ day, index }) => {
         ...(!prefersReduced && { opacity: 0, animation: 'fadeIn 0.3s ease forwards', animationDelay: delay }),
       };
       break;
+  }
+
+  if (isClickable) {
+    return (
+      <button
+        onClick={onNavigate}
+        className={className + ' cursor-pointer hover:brightness-110 hover:scale-105 transition-transform'}
+        style={style}
+        title={day.date}
+        aria-label={`${day.date}: ${day.state.replace('_', ' ')}`}
+      >
+        {dayNum}
+      </button>
+    );
   }
 
   return (

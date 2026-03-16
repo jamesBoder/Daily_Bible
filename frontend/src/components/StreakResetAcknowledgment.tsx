@@ -23,10 +23,10 @@ const StreakResetAcknowledgment: React.FC = () => {
       return;
     }
 
-    // If we have a stored streak and current is lower (and not 0), show reset message
+    // Only show reset message when streak has been reset to 0
     if (lastSeenStreak !== null) {
       const lastStreak = parseInt(lastSeenStreak, 10);
-      if (lastStreak > streakData.current_streak && streakData.current_streak > 0) {
+      if (lastStreak > 0 && streakData.current_streak === 0) {
         setIsVisible(true);
         setHasShown(true);
         sessionStorage.setItem(resetShownKey, 'true');
@@ -51,11 +51,12 @@ const StreakResetAcknowledgment: React.FC = () => {
       <div
         className="text-center py-4 px-5 rounded-2xl animate-fade-in"
         style={{
-          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.15), rgba(234, 88, 12, 0.1))',
-          border: '1px solid rgba(251, 146, 60, 0.35)',
+          background: 'linear-gradient(135deg, rgba(251, 146, 60, 0.35), rgba(234, 88, 12, 0.28))',
+          border: '1px solid rgba(251, 146, 60, 0.7)',
+          boxShadow: '0 2px 12px rgba(251, 146, 60, 0.25)',
         }}
       >
-        <p className="text-sm font-bold animate-flash-text" style={{ color: '#f97316' }}>
+        <p className="text-sm font-bold animate-flash-text" style={{ color: '#ea580c' }}>
           {t('streak.resetMessage', 'Your streak has restarted — don\'t worry, start fresh!')}
         </p>
       </div>
