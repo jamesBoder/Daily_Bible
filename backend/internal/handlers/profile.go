@@ -68,7 +68,34 @@ func NewProfileHandler(
 	}
 }
 
-// GetProfile handler 
+// CheckAvailability checks if a username or email is already taken.
+// Query params: ?username=foo  or  ?email=foo@bar.com
+// Returns {"available": true/false} — the authenticated user's own values are always available.
+func (h *ProfileHandler) CheckAvailability(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	if username := c.Query("username"); username != "" {
+		existing, _ := h.userRepo.GetByUsername(username)
+		available := existing == nil || existing.ID == userID.(uint)
+		c.JSON(http.StatusOK, gin.H{"available": available})
+		return
+	}
+
+	if email := c.Query("email"); email != "" {
+		existing, _ := h.userRepo.GetByEmail(email)
+		available := existing == nil || existing.ID == userID.(uint)
+		c.JSON(http.StatusOK, gin.H{"available": available})
+		return
+	}
+
+	c.JSON(http.StatusBadRequest, gin.H{"error": "Provide 'username' or 'email' query param"})
+}
+
+// GetProfile handler
 func (h *ProfileHandler) GetProfile(c *gin.Context) {
 	// extract userID from context (set by auth middleware)
 	userID, exists := c.Get("userID") 

@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useLocation } from "react-router-dom";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { AccountManagement } from "./AccountManagement";
@@ -23,11 +24,23 @@ export const Settings: React.FC = () => {
   const { isGuest } = useAuth();
   const { t } = useTranslation();
   const { currentLanguage, changeLanguage, supportedLanguages } = useLanguage();
-  
+  const location = useLocation();
+
+  // Read defaultTab from navigation state (e.g. from Profile "Account Settings" button)
+  const locationDefaultTab = (location.state as { defaultTab?: TabType } | null)?.defaultTab;
+
   // Pitfall 6/12: lazy initializer — guests skip "profile" tab (no API call)
-  const [activeTab, setActiveTab] = useState<TabType>(() =>
-    isGuest ? "preferences" : "profile"
-  );
+  const [activeTab, setActiveTab] = useState<TabType>(() => {
+    if (locationDefaultTab) return locationDefaultTab;
+    return isGuest ? "preferences" : "profile";
+  });
+
+  // If Profile is rendered as a tab inside this page and calls navigate('/settings', {state}),
+  // the component doesn't remount — watch location.state to catch the tab switch.
+  useEffect(() => {
+    const incoming = (location.state as { defaultTab?: TabType } | null)?.defaultTab;
+    if (incoming) setActiveTab(incoming);
+  }, [location.state]);
   const [settings, setSettings] = useState<SettingsState>({
     emailNotifications: true,
     dailyVerseReminder: true,

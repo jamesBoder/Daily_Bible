@@ -1,9 +1,10 @@
-import React, { useEffect, useState, useCallback } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { useStreak } from '../../contexts/StreakContext';
 import api from '../../services/api/api';
+import { profileService } from '../../services/api/profile';
 import AvatarRing from '../../components/AvatarRing';
 import JourneyStats from './JourneyStats';
 import NextMilestoneBar from './NextMilestoneBar';
@@ -51,6 +52,31 @@ const Shimmer: React.FC<{ className?: string }> = ({ className = '' }) => (
   <div className={`skeleton-shimmer rounded-xl ${className}`} />
 );
 
+// Small icon shown inside edit inputs to indicate availability check status
+const FieldStatusIcon: React.FC<{ status: 'idle' | 'checking' | 'available' | 'taken' }> = ({ status }) => {
+  if (status === 'idle') return null;
+  return (
+    <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
+      {status === 'checking' && (
+        <svg className="w-3.5 h-3.5 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
+        </svg>
+      )}
+      {status === 'available' && (
+        <svg className="w-3.5 h-3.5 text-green-500" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+        </svg>
+      )}
+      {status === 'taken' && (
+        <svg className="w-3.5 h-3.5 text-red-500" fill="none" stroke="currentColor" strokeWidth={2.5} viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      )}
+    </span>
+  );
+};
+
 const ProfileSkeleton: React.FC = () => (
   <div className="space-y-6">
     <div className="flex items-center gap-4">
@@ -86,7 +112,7 @@ const ProfileSkeleton: React.FC = () => (
 // ── Section wrapper ───────────────────────────────────────────────────────────
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 overflow-hidden">
+  <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 overflow-hidden transition-shadow duration-200 hover:shadow-md">
     <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-2 sm:pb-3">
       <h2 className="text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
         {title}
@@ -111,6 +137,20 @@ export const Profile: React.FC = () => {
   const [sectionError, setSectionError] = useState(false);
   const [graceLoading, setGraceLoading] = useState(false);
 
+  // Inline edit state
+  const [editMode, setEditMode] = useState(false);
+  const [editUsername, setEditUsername] = useState('');
+  const [editEmail, setEditEmail] = useState('');
+  const [editSaving, setEditSaving] = useState(false);
+  const [editError, setEditError] = useState<string | null>(null);
+
+  // Availability check state
+  type AvailStatus = 'idle' | 'checking' | 'available' | 'taken';
+  const [usernameStatus, setUsernameStatus] = useState<AvailStatus>('idle');
+  const [emailStatus, setEmailStatus] = useState<AvailStatus>('idle');
+  const usernameTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+  const emailTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+
   const fetchProfile = useCallback(async () => {
     try {
       const res = await api.get('/api/profile/aggregate');
@@ -125,6 +165,86 @@ export const Profile: React.FC = () => {
   useEffect(() => {
     fetchProfile();
   }, [fetchProfile]);
+
+  const handleEditOpen = () => {
+    if (!data) return;
+    setEditUsername(data.username);
+    setEditEmail(data.email);
+    setEditError(null);
+    setUsernameStatus('idle');
+    setEmailStatus('idle');
+    setEditMode(true);
+  };
+
+  const handleEditCancel = () => {
+    clearTimeout(usernameTimerRef.current);
+    clearTimeout(emailTimerRef.current);
+    setEditMode(false);
+    setEditError(null);
+    setUsernameStatus('idle');
+    setEmailStatus('idle');
+  };
+
+  const handleUsernameChange = (value: string) => {
+    setEditUsername(value);
+    clearTimeout(usernameTimerRef.current);
+    if (!data || value === data.username) {
+      setUsernameStatus('idle');
+      return;
+    }
+    if (value.length < 3) {
+      setUsernameStatus('idle');
+      return;
+    }
+    setUsernameStatus('checking');
+    usernameTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await api.get(`/api/profile/check-availability?username=${encodeURIComponent(value)}`);
+        setUsernameStatus(res.data.available ? 'available' : 'taken');
+      } catch {
+        setUsernameStatus('idle');
+      }
+    }, 500);
+  };
+
+  const handleEmailChange = (value: string) => {
+    setEditEmail(value);
+    clearTimeout(emailTimerRef.current);
+    if (!data || value === data.email) {
+      setEmailStatus('idle');
+      return;
+    }
+    if (!value.includes('@')) {
+      setEmailStatus('idle');
+      return;
+    }
+    setEmailStatus('checking');
+    emailTimerRef.current = setTimeout(async () => {
+      try {
+        const res = await api.get(`/api/profile/check-availability?email=${encodeURIComponent(value)}`);
+        setEmailStatus(res.data.available ? 'available' : 'taken');
+      } catch {
+        setEmailStatus('idle');
+      }
+    }, 600);
+  };
+
+  const handleEditSave = async () => {
+    if (!data) return;
+    if (usernameStatus === 'taken' || emailStatus === 'taken') return;
+    setEditSaving(true);
+    setEditError(null);
+    try {
+      await profileService.updateProfile({ username: editUsername, email: editEmail });
+      setData(prev => prev ? { ...prev, username: editUsername, email: editEmail } : prev);
+      setEditMode(false);
+    } catch (err: any) {
+      const msg = err.response?.data?.error || t('profile.edit_error', 'Failed to update profile');
+      setEditError(msg);
+    } finally {
+      setEditSaving(false);
+    }
+  };
 
   const handleGraceDay = async () => {
     setGraceLoading(true);
@@ -165,28 +285,117 @@ export const Profile: React.FC = () => {
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
 
       {/* Profile Header Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 px-4 sm:px-5 py-4 sm:py-5 flex items-center gap-4">
-        <AvatarRing
-          username={data.username}
-          userId={user?.id ?? 0}
-          highestMilestoneKey={highestMilestone}
-          size={68}
-        />
-        <div className="flex-1 min-w-0">
-          <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
-            {data.username}
-          </h1>
-          {data.is_premium && (
-            <span
-              className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-white mt-1"
-              style={{ background: 'var(--blessing-gold)' }}
+      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 px-4 sm:px-5 py-4 sm:py-5 transition-shadow duration-200 hover:shadow-md">
+        <div className="flex items-center gap-4">
+          <AvatarRing
+            username={editMode ? editUsername || data.username : data.username}
+            userId={user?.id ?? 0}
+            highestMilestoneKey={highestMilestone}
+            size={68}
+          />
+          <div className="flex-1 min-w-0">
+            {!editMode ? (
+              <>
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
+                  {data.username}
+                </h1>
+                {data.is_premium && (
+                  <span
+                    className="inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-white mt-1"
+                    style={{ background: 'var(--blessing-gold)' }}
+                  >
+                    {t('profile.devoted_member', 'Devoted Member')}
+                  </span>
+                )}
+                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                  {t('profile.member_since', 'Member since')} {memberSince}
+                </p>
+              </>
+            ) : (
+              <div className="space-y-2 w-full">
+                {/* Username field */}
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={editUsername}
+                    onChange={e => handleUsernameChange(e.target.value)}
+                    placeholder={t('profile.username_placeholder', 'Username')}
+                    className={[
+                      'w-full text-sm px-3 py-1.5 pr-8 rounded-lg border bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                      usernameStatus === 'taken'
+                        ? 'border-red-400 focus:ring-red-300'
+                        : usernameStatus === 'available'
+                        ? 'border-green-400 focus:ring-green-300'
+                        : 'border-gray-300 dark:border-gray-600 focus:ring-primary-400',
+                    ].join(' ')}
+                  />
+                  <FieldStatusIcon status={usernameStatus} />
+                </div>
+                {usernameStatus === 'taken' && (
+                  <p className="text-xs text-red-500 dark:text-red-400 -mt-1">
+                    {t('profile.username_taken', 'Username already taken')}
+                  </p>
+                )}
+
+                {/* Email field */}
+                <div className="relative">
+                  <input
+                    type="email"
+                    value={editEmail}
+                    onChange={e => handleEmailChange(e.target.value)}
+                    placeholder={t('profile.email_placeholder', 'Email')}
+                    className={[
+                      'w-full text-sm px-3 py-1.5 pr-8 rounded-lg border bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                      emailStatus === 'taken'
+                        ? 'border-red-400 focus:ring-red-300'
+                        : emailStatus === 'available'
+                        ? 'border-green-400 focus:ring-green-300'
+                        : 'border-gray-300 dark:border-gray-600 focus:ring-primary-400',
+                    ].join(' ')}
+                  />
+                  <FieldStatusIcon status={emailStatus} />
+                </div>
+                {emailStatus === 'taken' && (
+                  <p className="text-xs text-red-500 dark:text-red-400 -mt-1">
+                    {t('profile.email_taken', 'Email already in use')}
+                  </p>
+                )}
+
+                {editError && (
+                  <p className="text-xs text-red-500 dark:text-red-400">{editError}</p>
+                )}
+              </div>
+            )}
+          </div>
+
+          {/* Edit / Save / Cancel buttons */}
+          {!editMode ? (
+            <button
+              onClick={handleEditOpen}
+              className="flex-shrink-0 p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              aria-label={t('profile.edit_profile', 'Edit profile')}
             >
-              {t('profile.devoted_member', 'Devoted Member')}
-            </span>
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6-6 3.536 3.536-6 6H9v-3.536z" />
+              </svg>
+            </button>
+          ) : (
+            <div className="flex flex-col gap-1 flex-shrink-0">
+              <button
+                onClick={handleEditSave}
+                disabled={editSaving || usernameStatus === 'taken' || emailStatus === 'taken' || usernameStatus === 'checking' || emailStatus === 'checking'}
+                className="text-xs px-3 py-1.5 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors min-h-[32px]"
+              >
+                {editSaving ? t('common.saving', 'Saving…') : t('common.save', 'Save')}
+              </button>
+              <button
+                onClick={handleEditCancel}
+                className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-h-[32px]"
+              >
+                {t('common.cancel', 'Cancel')}
+              </button>
+            </div>
           )}
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-            {t('profile.member_since', 'Member since')} {memberSince}
-          </p>
         </div>
       </div>
 
@@ -211,6 +420,27 @@ export const Profile: React.FC = () => {
               <p className="text-sm text-center text-gray-500 dark:text-gray-400 py-2">
                 {t('profile.begin_desc', "Open today's verse to begin your streak. Your faithfulness will be honored here.")}
               </p>
+            )}
+            {data.streak.current_streak > 0 && (
+              <div
+                className="rounded-xl px-4 py-3 text-center"
+                style={{
+                  background: 'linear-gradient(135deg, rgba(var(--candle-amber-rgb, 217,119,6), 0.12), rgba(251,191,36,0.08))',
+                  border: '1px solid rgba(217,119,6,0.25)',
+                }}
+              >
+                <p className="text-sm font-semibold" style={{ color: 'var(--candle-amber, #d97706)' }}>
+                  {data.streak.next_milestone
+                    ? t('profile.streak_keep_going', '🕯 {{days}}-day streak — keep going! {{remaining}} more days to {{name}}.', {
+                        days: data.streak.current_streak,
+                        remaining: Math.max(data.streak.next_milestone.days_required - data.streak.current_streak, 0),
+                        name: data.streak.next_milestone.name,
+                      })
+                    : t('profile.streak_amazing', '🕯 {{days}}-day streak — amazing dedication!', {
+                        days: data.streak.current_streak,
+                      })}
+                </p>
+              </div>
             )}
             {data.streak.streak_recoverable && (
               <button
@@ -254,8 +484,8 @@ export const Profile: React.FC = () => {
           ].map(({ value, label, icon, color }) => (
             <div
               key={label}
-              className="rounded-xl bg-gray-50 dark:bg-gray-700/50 p-4 flex flex-col gap-1"
-              style={{ borderLeft: `3px solid ${color}` }}
+              className="rounded-xl bg-gray-50 dark:bg-gray-700/50 p-4 flex flex-col items-center text-center gap-1 transition-transform duration-150 hover:scale-[1.03] hover:shadow-sm cursor-default"
+              style={{ borderTop: `3px solid ${color}` }}
             >
               <span className="text-lg">{icon}</span>
               <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums leading-none">
@@ -272,7 +502,7 @@ export const Profile: React.FC = () => {
         <div className="flex items-center justify-between gap-3 min-w-0">
           <span className="text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">{data.email}</span>
           <button
-            onClick={() => navigate('/settings')}
+            onClick={() => navigate('/settings', { state: { defaultTab: 'account' } })}
             className="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline flex-shrink-0 min-h-[44px] flex items-center"
           >
             {t('profile.account_settings', 'Account Settings')}
