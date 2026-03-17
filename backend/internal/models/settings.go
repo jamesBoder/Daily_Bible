@@ -17,7 +17,8 @@ type UserSettings struct {
     User   User `gorm:"foreignKey:UserID" json:"-"`
     
     // Language and localization
-    PreferredLanguage string `gorm:"size:10;default:'en'" json:"preferred_language"`
+    PreferredLanguage     string `gorm:"size:10;default:'en'"  json:"preferred_language"`
+    PreferredBibleVersion string `gorm:"size:50;default:'kjv'" json:"preferred_bible_version"`
     
     // Notification preferences
     EmailNotifications   bool `gorm:"default:true" json:"email_notifications"`

@@ -29,10 +29,26 @@ func RunMigrations(db *gorm.DB) error {
     }
 
     // Partial unique index — must be created explicitly
-    return db.Exec(`
+    if err := db.Exec(`
         CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_daily_engagement
         ON user_activity_logs (user_id, date_local)
         WHERE action_type = 'daily_engagement'
+    `).Error; err != nil {
+        return err
+    }
+
+    // Phase 4 backfill: for any user_settings row where preferred_bible_version
+    // is empty, infer a sensible free-tier default from preferred_language.
+    // Idempotent — rows that already have a value are untouched.
+    return db.Exec(`
+        UPDATE user_settings
+        SET preferred_bible_version = CASE preferred_language
+            WHEN 'es' THEN 'rvr1960'
+            WHEN 'fr' THEN 'jnd'
+            WHEN 'ht' THEN 'hatbsa'
+            ELSE 'kjv'
+        END
+        WHERE preferred_bible_version = '' OR preferred_bible_version IS NULL
     `).Error
 }
 

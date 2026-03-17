@@ -1,24 +1,26 @@
 package handlers
 
 import (
-    "log"
-    "net/http"
-    "strconv"
-    
-    "dailybible/internal/models"
-    "dailybible/internal/services"
-    "github.com/gin-gonic/gin"
+	"log"
+	"net/http"
+	"strconv"
+
+	"dailybible/internal/config"
+	"dailybible/internal/models"
+	"dailybible/internal/services"
+	"github.com/gin-gonic/gin"
 )
 
 // init VerseHandler Struct
 type VerseHandler struct {
-	dailyVerseService *services.DailyVerseService
-	bibleAPIService   services.BibleAPIService
-	historyService    *services.HistoryService
-	streakService     *services.StreakService
-	blessingsService  *services.BlessingsService
-	settingsService   *services.SettingsService
-	rewardsService    *services.RewardsService
+	dailyVerseService   *services.DailyVerseService
+	bibleAPIService     services.BibleAPIService
+	historyService      *services.HistoryService
+	streakService       *services.StreakService
+	blessingsService    *services.BlessingsService
+	settingsService     *services.SettingsService
+	rewardsService      *services.RewardsService
+	subscriptionChecker services.SubscriptionChecker
 }
 
 // NewVerseHandler creates a new VerseHandler
@@ -30,16 +32,66 @@ func NewVerseHandler(
 	blessingsService *services.BlessingsService,
 	settingsService *services.SettingsService,
 	rewardsService *services.RewardsService,
+	subscriptionChecker services.SubscriptionChecker,
 ) *VerseHandler {
 	return &VerseHandler{
-		dailyVerseService: dailyVerseService,
-		bibleAPIService:   bibleAPIService,
-		historyService:    historyService,
-		streakService:     streakService,
-		blessingsService:  blessingsService,
-		settingsService:   settingsService,
-		rewardsService:    rewardsService,
+		dailyVerseService:   dailyVerseService,
+		bibleAPIService:     bibleAPIService,
+		historyService:      historyService,
+		streakService:       streakService,
+		blessingsService:    blessingsService,
+		settingsService:     settingsService,
+		rewardsService:      rewardsService,
+		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// resolveVersion selects the API.Bible version to use for a request.
+//
+// Priority order:
+//  1. ?version= query param (explicit per-request override)
+//  2. User's preferred_bible_version from settings (if authenticated)
+//  3. Default free version for the requested language
+//
+// Premium gate: if the resolved version requires premium and the user is not
+// premium (or not authenticated), silently falls back to the free default.
+// Unknown version keys are treated as missing and trigger the same fallback.
+func (h *VerseHandler) resolveVersion(c *gin.Context, langCode string) config.BibleVersion {
+	versionKey := c.DefaultQuery("version", "")
+
+	// Read from user settings if not overridden by query param
+	if versionKey == "" {
+		if userID, ok := c.Get("userID"); ok {
+			settings, err := h.settingsService.GetUserSettings(userID.(uint))
+			if err == nil && settings.PreferredBibleVersion != "" {
+				versionKey = settings.PreferredBibleVersion
+			}
+		}
+	}
+
+	// Fall back to the language default
+	if versionKey == "" {
+		versionKey = config.GetDefaultFreeVersion(langCode)
+	}
+
+	// Look up the version; fall back on unknown key
+	version, known := config.BibleVersions[versionKey]
+	if !known {
+		log.Printf("unknown bible version key %q; using free default for lang %q", versionKey, langCode)
+		versionKey = config.GetDefaultFreeVersion(langCode)
+		version = config.BibleVersions[versionKey]
+	}
+
+	// Premium gate
+	if version.RequiresPremium {
+		userID, authenticated := c.Get("userID")
+		if !authenticated || !h.subscriptionChecker.IsPremium(userID.(uint)) {
+			versionKey = config.GetDefaultFreeVersion(langCode)
+			version = config.BibleVersions[versionKey]
+		}
+	}
+
+	return version
 }
 
 // GetDailyVerse returns the verse of the day
@@ -118,15 +170,21 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 		return
 	}
 	verse := vr.verse
-	
-	// If a different language is requested, fetch the verse in that language
-	if language != "en" {
-		translatedVerse, err := h.bibleAPIService.GetVerseWithLanguage(verse.Reference, language)
-		if err == nil {
-			// Update the text with the translated version
+
+	// Resolve which Bible translation to serve (Phase 4).
+	// resolveVersion respects ?version= > user settings > language default > premium gate.
+	resolvedVersion := h.resolveVersion(c, language)
+
+	// If the resolved version differs from the cached KJV text, fetch the translation.
+	// The daily verse service always caches KJV (ID: "de4e12af7f28f599-02"); any other
+	// version requires an additional API call (served from in-memory cache on repeat hits).
+	const kjvVersionID = "de4e12af7f28f599-02"
+	if resolvedVersion.ID != kjvVersionID && resolvedVersion.ID != "" {
+		if translatedVerse, err := h.bibleAPIService.GetVerseWithVersionID(verse.Reference, resolvedVersion.ID); err == nil {
 			verse.Text = translatedVerse.Text
+		} else {
+			log.Printf("GetVerseWithVersionID(%q, %q) failed: %v; serving KJV fallback", verse.Reference, resolvedVersion.ID, err)
 		}
-		// If translation fails, we'll return the English version
 	}
 
 	// Record verse view in history if user is authenticated.
@@ -146,17 +204,17 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	c.Header("Cache-Control", "public, max-age=3600, stale-while-revalidate=60")
 
 	response := gin.H{
-        "verse": gin.H{
-            "id":        verse.ID,
-            "reference": verse.Reference,
-            "text":      verse.Text,
-            "book":      verse.Book,
-            "chapter":   verse.Chapter,
-            "verse":     verse.VerseNumber,
-            "version":   verse.Version,
-            "language":  language,
-        },
-    }
+		"verse": gin.H{
+			"id":           verse.ID,
+			"reference":    verse.Reference,
+			"text":         verse.Text,
+			"book":         verse.Book,
+			"chapter":      verse.Chapter,
+			"verse":        verse.VerseNumber,
+			"version":      resolvedVersion.Abbreviation,
+			"language":     language,
+		},
+	}
 	
 	// Add blessings_credited to response if any were credited
 	if blessingsCredited > 0 {
@@ -169,20 +227,25 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 // GetVerseByReference fetches a verse by its reference
 func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 	reference := c.Param("reference")
-	// Get language preference from query parameter or default to English
 	language := c.DefaultQuery("lang", "en")
-	
-	verse, err := h.bibleAPIService.GetVerseWithLanguage(reference, language)
+
+	resolvedVersion := h.resolveVersion(c, language)
+
+	var verse *services.BibleAPIVerse
+	var err error
+	if resolvedVersion.ID != "" {
+		verse, err = h.bibleAPIService.GetVerseWithVersionID(reference, resolvedVersion.ID)
+	} else {
+		// Version ID empty means the license hasn't been applied yet; fall back to free default.
+		freeKey := config.GetDefaultFreeVersion(language)
+		freeVersion := config.BibleVersions[freeKey]
+		verse, err = h.bibleAPIService.GetVerseWithVersionID(reference, freeVersion.ID)
+		resolvedVersion = freeVersion
+	}
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch verse"})
 		return
 	}
-
-	// Note: History tracking is not implemented for this endpoint
-	// because verses from the Bible API don't have database IDs yet.
-	// History tracking only works for the daily verse endpoint which
-	// stores verses in the database with proper uint IDs.
-	// TODO: Consider storing all viewed verses in DB to enable history tracking
 
 	c.JSON(http.StatusOK, gin.H{
 		"verse": gin.H{
@@ -191,6 +254,7 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 			"text":      verse.Text,
 			"bookId":    verse.BookID,
 			"chapterId": verse.ChapterID,
+			"version":   resolvedVersion.Abbreviation,
 			"language":  language,
 		},
 	})

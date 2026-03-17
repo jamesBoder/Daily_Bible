@@ -158,6 +158,7 @@ func main() {
         blessingsService,
         settingsService,
         rewardsService,
+        subscriptionChecker,
     )
 
     // init favoriteHandler variable
@@ -226,10 +227,16 @@ func main() {
         journalService,
         subscriptionChecker,
     )
+
+    // init translationsHandler variable (Phase 4)
+    translationsHandler := handlers.NewTranslationsHandler(
+        settingsService,
+        subscriptionChecker,
+    )
     
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
-    log.Println("Backend is ready. TODO: Add HTTP server and routes")
+    log.Println("Backend is ready. Setting up routes...")
 
     
     // init gin router
@@ -285,7 +292,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler, journalHandler *handlers.JournalHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler, journalHandler *handlers.JournalHandler, translationsHandler *handlers.TranslationsHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -38,6 +38,13 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 			auth.GET("/google/callback", oauthHandler.GoogleCallback)
 			auth.POST("/google/link", middleware.AuthMiddleware(tokenService), oauthHandler.LinkGoogle)
 			auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService), oauthHandler.UnlinkGoogle)
+		}
+
+		// translations route (Phase 4) — public with optional auth
+		translationsGroup := api.Group("/translations")
+		translationsGroup.Use(middleware.OptionalAuthMiddleware(tokenService))
+		{
+			translationsGroup.GET("", translationsHandler.GetTranslations)
 		}
 
 		// verses routes - use optional auth to track history for authenticated users

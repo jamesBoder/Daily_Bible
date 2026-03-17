@@ -1,9 +1,11 @@
 package handlers
 
 import (
-    "net/http"
-    "github.com/gin-gonic/gin"
-    "dailybible/internal/services"
+	"net/http"
+
+	"dailybible/internal/config"
+	"dailybible/internal/services"
+	"github.com/gin-gonic/gin"
 )
 
 type SettingsHandler struct {
@@ -33,7 +35,19 @@ func (h *SettingsHandler) GetSettings(c *gin.Context) {
             return
         }
     }
-    
+
+    // Phase 4 backfill: if preferred_bible_version is empty, infer from language and persist.
+    // Best-effort — a write failure does not fail the GET response.
+    if settings.PreferredBibleVersion == "" {
+        defaultVersion := config.GetDefaultFreeVersion(settings.PreferredLanguage)
+        settings.PreferredBibleVersion = defaultVersion
+        if updated, err := h.settingsService.UpdateUserSettings(userID.(uint), map[string]interface{}{
+            "preferred_bible_version": defaultVersion,
+        }); err == nil {
+            settings = updated
+        }
+    }
+
     c.JSON(http.StatusOK, settings)
 }
 
@@ -46,10 +60,11 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
     }
     
     var updateRequest struct {
-        PreferredLanguage  *string `json:"preferred_language"`
-        EmailNotifications *bool   `json:"email_notifications"`
-        DailyVerseReminder *bool   `json:"daily_verse_reminder"`
-        DarkMode          *bool   `json:"dark_mode"`
+        PreferredLanguage     *string `json:"preferred_language"`
+        PreferredBibleVersion *string `json:"preferred_bible_version"`
+        EmailNotifications   *bool   `json:"email_notifications"`
+        DailyVerseReminder   *bool   `json:"daily_verse_reminder"`
+        DarkMode             *bool   `json:"dark_mode"`
     }
     
     if err := c.ShouldBindJSON(&updateRequest); err != nil {
@@ -76,6 +91,15 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
         updates["preferred_language"] = *updateRequest.PreferredLanguage
     }
     
+    if updateRequest.PreferredBibleVersion != nil {
+        key := *updateRequest.PreferredBibleVersion
+        if _, known := config.BibleVersions[key]; !known {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "unknown_translation"})
+            return
+        }
+        updates["preferred_bible_version"] = key
+    }
+
     if updateRequest.EmailNotifications != nil {
         updates["email_notifications"] = *updateRequest.EmailNotifications
     }
