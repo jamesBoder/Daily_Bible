@@ -1,8 +1,7 @@
 import React, { lazy, Suspense } from "react";
 import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
+  createBrowserRouter,
+  RouterProvider,
   Navigate,
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
@@ -88,160 +87,124 @@ const JournalEditor = lazy(() =>
   }))
 );
 
+const router = createBrowserRouter([
+  // Public-only routes — redirect authenticated users to home
+  {
+    path: "/login",
+    element: <PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Login /></Suspense></PublicOnlyRoute>,
+  },
+  {
+    path: "/signup",
+    element: <PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Signup /></Suspense></PublicOnlyRoute>,
+  },
+  // Email verification & password reset — public routes
+  {
+    path: "/verify-email-pending",
+    element: <Suspense fallback={<VerseCardSkeleton />}><VerifyEmailPending /></Suspense>,
+  },
+  {
+    path: "/verify-email",
+    element: <Suspense fallback={<VerseCardSkeleton />}><VerifyEmail /></Suspense>,
+  },
+  {
+    path: "/forgot-password",
+    element: <Suspense fallback={<VerseCardSkeleton />}><ForgotPassword /></Suspense>,
+  },
+  {
+    path: "/reset-password",
+    element: <Suspense fallback={<VerseCardSkeleton />}><ResetPassword /></Suspense>,
+  },
+  {
+    path: "/about",
+    element: <Suspense fallback={<VerseCardSkeleton />}><About /></Suspense>,
+  },
+  {
+    path: "/auth/google/callback",
+    element: <Suspense fallback={<VerseCardSkeleton />}><GoogleCallback /></Suspense>,
+  },
+  // Protected routes with layout
+  {
+    path: "/",
+    element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    children: [
+      {
+        index: true,
+        element: <Suspense fallback={<VerseCardSkeleton />}><DailyVerse /></Suspense>,
+      },
+      {
+        path: "daily",
+        element: <Suspense fallback={<VerseCardSkeleton />}><DailyVerse /></Suspense>,
+      },
+      {
+        path: "favorites",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><FavoritesList /></Suspense></GuestBlockedRoute>,
+      },
+      {
+        path: "profile",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><Profile /></Suspense></GuestBlockedRoute>,
+      },
+      {
+        path: "settings",
+        element: <Suspense fallback={<VerseCardSkeleton />}><Settings /></Suspense>,
+      },
+      // Journal routes (Phase 3)
+      {
+        path: "journal",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><JournalList /></Suspense></GuestBlockedRoute>,
+      },
+      {
+        path: "journal/new",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><JournalEditor /></Suspense></GuestBlockedRoute>,
+      },
+      {
+        path: "journal/:id",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><JournalEditor /></Suspense></GuestBlockedRoute>,
+      },
+    ],
+  },
+  // Catch all - redirect to home
+  {
+    path: "*",
+    element: <Navigate to="/" replace />,
+  },
+]);
+
 function App() {
   return (
-    <Router>
-      <ThemeProvider>
-        <AuthProvider>
-          <StreakProvider>
-            <LanguageProvider>
+    <ThemeProvider>
+      <AuthProvider>
+        <StreakProvider>
+          <LanguageProvider>
             <Toaster
-            position="top-right"
-            toastOptions={{
-              duration: 3000,
-              style: {
-                background: '#363636',
-                color: '#fff',
-              },
-              success: {
+              position="top-right"
+              toastOptions={{
                 duration: 3000,
-                iconTheme: {
-                  primary: '#10b981',
-                  secondary: '#fff',
+                style: {
+                  background: '#363636',
+                  color: '#fff',
                 },
-              },
-              error: {
-                duration: 4000,
-                iconTheme: {
-                  primary: '#ef4444',
-                  secondary: '#fff',
+                success: {
+                  duration: 3000,
+                  iconTheme: {
+                    primary: '#10b981',
+                    secondary: '#fff',
+                  },
                 },
-              },
-            }}
-          />
+                error: {
+                  duration: 4000,
+                  iconTheme: {
+                    primary: '#ef4444',
+                    secondary: '#fff',
+                  },
+                },
+              }}
+            />
             <BlessingsToast />
-            <Routes>
-              {/* Public-only routes — redirect authenticated users to home */}
-              <Route path="/login" element={<PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Login /></Suspense></PublicOnlyRoute>} />
-              <Route path="/signup" element={<PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Signup /></Suspense></PublicOnlyRoute>} />
-
-              {/* Email verification & password reset — public routes */}
-              <Route path="/verify-email-pending" element={<Suspense fallback={<VerseCardSkeleton />}><VerifyEmailPending /></Suspense>} />
-              <Route path="/verify-email" element={<Suspense fallback={<VerseCardSkeleton />}><VerifyEmail /></Suspense>} />
-              <Route path="/forgot-password" element={<Suspense fallback={<VerseCardSkeleton />}><ForgotPassword /></Suspense>} />
-              <Route path="/reset-password" element={<Suspense fallback={<VerseCardSkeleton />}><ResetPassword /></Suspense>} />
-              <Route
-                path="/about"
-                element={
-                  <Suspense fallback={<VerseCardSkeleton />}>
-                    <About />
-                  </Suspense>
-                }
-              />
-              {/* Lazy-loaded public route */}
-              <Route
-                path="/auth/google/callback"
-                element={
-                  <Suspense fallback={<VerseCardSkeleton />}>
-                    <GoogleCallback />
-                  </Suspense>
-                }
-              />
-
-              {/* Protected routes with layout */}
-              <Route
-                path="/"
-                element={
-                  <ProtectedRoute>
-                    <Layout  />
-                  </ProtectedRoute>
-                }
-              >
-                <Route
-                  index
-                  element={
-                    <Suspense fallback={<VerseCardSkeleton />}>
-                      <DailyVerse />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="daily"
-                  element={
-                    <Suspense fallback={<VerseCardSkeleton />}>
-                      <DailyVerse />
-                    </Suspense>
-                  }
-                />
-                <Route
-                  path="favorites"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <FavoritesList />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="profile"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <Profile />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="settings"
-                  element={
-                    <Suspense fallback={<VerseCardSkeleton />}>
-                      <Settings />
-                    </Suspense>
-                  }
-                />
-                {/* Journal routes (Phase 3) */}
-                <Route
-                  path="journal"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <JournalList />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="journal/new"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <JournalEditor />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-                <Route
-                  path="journal/:id"
-                  element={
-                    <GuestBlockedRoute>
-                      <Suspense fallback={<VerseCardSkeleton />}>
-                        <JournalEditor />
-                      </Suspense>
-                    </GuestBlockedRoute>
-                  }
-                />
-              </Route>
-
-            {/* Catch all - redirect to home */}
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
+            <RouterProvider router={router} />
           </LanguageProvider>
-          </StreakProvider>
-        </AuthProvider>
-      </ThemeProvider>
-    </Router>
+        </StreakProvider>
+      </AuthProvider>
+    </ThemeProvider>
   );
 }
 
