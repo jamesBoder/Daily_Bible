@@ -36,6 +36,7 @@ go.work.sum
 # Backend
 backend/.env
 backend/tmp/
+backend/api
 
 # Frontend
 frontend/node_modules/
