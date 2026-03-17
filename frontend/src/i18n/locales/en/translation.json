@@ -31,6 +31,7 @@
     "backToJournal": "Back to Journal",
     "deleteEntry": "Delete Entry",
     "confirmDelete": "Delete this entry? This cannot be undone.",
+    "unsavedChanges": "You have unsaved changes. Leave without saving?",
     "saving": "Saving…",
     "saved": "Saved",
     "thisWeeksPrompt": "This Week's Prompt",
@@ -56,7 +57,12 @@
     "share": "Share",
     "copied": "Verse copied to clipboard!",
     "comment": "Add a note",
-    "commentPlaceholder": "Add your personal reflection..."
+    "commentPlaceholder": "Add your personal reflection...",
+    "compareTranslations": "Compare Translations",
+    "switchTranslation": "Switch Translation",
+    "sessionOnly": "Session only — won't change your settings",
+    "premiumTranslation": "Available with a Words of Praise membership",
+    "translationUnavailable": "Translation unavailable"
   },
   "auth": {
     "browsingAsGuest": "Browsing as Guest",
@@ -217,6 +223,13 @@
         "fr": "French (Fran\u00e7ais)",
         "ht": "Haitian Creole (Krey\u00f2l Ayisyen)"
       }
+    },
+    "translation": {
+      "title": "Bible Translation",
+      "label": "Preferred Bible Version",
+      "saved": "Translation saved",
+      "saveFailed": "Could not save translation",
+      "premiumNote": "\uD83D\uDD12 Locked translations are available with a Words of Praise membership."
     },
     "account": {
       "changePassword": "Change Password",

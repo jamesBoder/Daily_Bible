@@ -11,6 +11,7 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import { useTranslation } from "react-i18next";
 import { settingsService } from "../../services/api/settings";
 import { showToast } from "../../utils/toast";
+import { TranslationPicker } from "./TranslationPicker";
 
 interface SettingsState {
   emailNotifications: boolean;
@@ -270,6 +271,9 @@ export const Settings: React.FC = () => {
               </select>
             </div>
           </Card>
+
+          {/* Bible Translation Settings — authenticated users only */}
+          {!isGuest && <TranslationPicker />}
 
           {/* Save Button */}
           <div className="flex justify-end">

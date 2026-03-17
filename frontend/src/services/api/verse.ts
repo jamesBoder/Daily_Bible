@@ -5,9 +5,11 @@ import { showToast } from '../../utils/toast';
 
 export const verseService = {
   // Get daily verse
-  getDailyVerse: async (language?: string): Promise<Verse> => {
+  getDailyVerse: async (language?: string, version?: string): Promise<Verse> => {
     try {
-      const params = language ? { lang: language } : {};
+      const params: Record<string, string> = {};
+      if (language) params.lang = language;
+      if (version) params.version = version;
       const response = await apiClient.get<DailyVerseResponse>(
         API_ENDPOINTS.DAILY_VERSE,
         { params }

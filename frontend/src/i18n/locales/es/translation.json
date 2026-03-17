@@ -31,6 +31,7 @@
     "backToJournal": "Volver al Diario",
     "deleteEntry": "Eliminar Entrada",
     "confirmDelete": "¿Eliminar esta entrada? Esto no se puede deshacer.",
+    "unsavedChanges": "Tienes cambios sin guardar. ¿Salir sin guardar?",
     "saving": "Guardando…",
     "saved": "Guardado",
     "thisWeeksPrompt": "Reflexión de Esta Semana",
@@ -56,7 +57,12 @@
     "share": "Compartir",
     "copied": "¡Versículo copiado al portapapeles!",
     "comment": "Agregar una nota",
-    "commentPlaceholder": "Agrega tu reflexión personal..."
+    "commentPlaceholder": "Agrega tu reflexión personal...",
+    "compareTranslations": "Comparar Traducciones",
+    "switchTranslation": "Cambiar Traducción",
+    "sessionOnly": "Solo esta sesión — no cambia tu configuración",
+    "premiumTranslation": "Disponible con una membresía de Words of Praise",
+    "translationUnavailable": "Traducción no disponible"
   },
   "auth": {
     "browsingAsGuest": "Navegando como Invitado",
@@ -217,6 +223,13 @@
         "fr": "Francés (Français)",
         "ht": "Criollo Haitiano (Kreyòl Ayisyen)"
       }
+    },
+    "translation": {
+      "title": "Traducción Bíblica",
+      "label": "Versión Bíblica Preferida",
+      "saved": "Traducción guardada",
+      "saveFailed": "No se pudo guardar la traducción",
+      "premiumNote": "\uD83D\uDD12 Las traducciones bloqueadas están disponibles con una membresía de Words of Praise."
     },
     "account": {
       "changePassword": "Cambiar Contraseña",

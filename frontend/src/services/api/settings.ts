@@ -5,6 +5,7 @@ export interface UserSettings {
   id: number;
   user_id: number;
   preferred_language: string;
+  preferred_bible_version: string;
   email_notifications: boolean;
   daily_verse_reminder: boolean;
   dark_mode: boolean;
@@ -14,6 +15,7 @@ export interface UserSettings {
 
 export interface UpdateSettingsRequest {
   preferred_language?: string;
+  preferred_bible_version?: string;
   email_notifications?: boolean;
   daily_verse_reminder?: boolean;
   dark_mode?: boolean;

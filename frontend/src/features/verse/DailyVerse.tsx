@@ -5,12 +5,14 @@ import { useHistory } from "../../hooks/useHistory";
 import { useAuth } from "../../hooks/useAuth";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { VerseCard } from "./VerseCard";
+import { SideBySideView } from "./SideBySideView";
 import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
 import GraceDayBanner from "../../components/GraceDayBanner";
 import StreakResetAcknowledgment from "../../components/StreakResetAcknowledgment";
 import FirstEngagementOnboarding from "../../components/FirstEngagementOnboarding";
+import api from "../../services/api/api";
 
 
 // NavArrow button component
@@ -82,15 +84,37 @@ const TodayButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
 export const DailyVerse: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isGuest } = useAuth();
-  const { verse, isLoading, error, refetch } = useVerse(i18n.language);
+
+  // Per-session version override (key like "kjv", "web"). Empty = use server preference.
+  const [sessionVersion, setSessionVersion] = useState<string | undefined>(undefined);
+  // Premium status — fetched once for authenticated users to gate Compare button
+  const [isPremium, setIsPremium] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
+
+  const { verse, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
   const { history, isLoading: historyLoading } = useHistory(!isGuest);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [historyIndex, setHistoryIndex] = useState(0);
 
-  // Reset index when language changes so we don't show a stale past-verse
+  // Fetch premium status once for authenticated users
+  useEffect(() => {
+    if (isGuest) return;
+    let cancelled = false;
+    api
+      .get<{ user_is_premium: boolean }>(`/api/translations?lang=${encodeURIComponent(i18n.language)}`)
+      .then((res) => {
+        if (!cancelled) setIsPremium(res.data.user_is_premium);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [isGuest, i18n.language]);
+
+  // Reset index + session version when language changes
   useEffect(() => {
     setHistoryIndex(0);
+    setSessionVersion(undefined);
+    setShowComparison(false);
   }, [i18n.language]);
 
   // Skip history[0] if it matches today (local tz) to avoid duplicating today's verse.
@@ -124,6 +148,11 @@ export const DailyVerse: React.FC = () => {
   const displayVerse = historyIndex === 0 ? verse : (currentEntry?.verse ?? null);
   const showForward = historyIndex > 0;
   const showBack = !isGuest && !historyLoading && historyIndex < effectiveHistory.length;
+
+  const handleVersionSelect = useCallback((key: string) => {
+    setSessionVersion(key);
+    setShowComparison(false);
+  }, []);
 
   // Stable callback refs so useKeyboardShortcuts' effect doesn't thrash
   const goBack = useCallback(() => {
@@ -296,7 +325,30 @@ export const DailyVerse: React.FC = () => {
           {historyIndex > 0 && displayVerse === null ? (
             <VerseCardSkeleton />
           ) : (
-            <VerseCard verse={displayVerse ?? verse} />
+            <VerseCard
+              verse={displayVerse ?? verse}
+              lang={i18n.language}
+              onVersionSelect={historyIndex === 0 && !isGuest ? handleVersionSelect : undefined}
+            />
+          )}
+          {/* Compare Translations — premium users, today's verse only */}
+          {isPremium && historyIndex === 0 && verse && (
+            <div className="mt-3 flex justify-center">
+              {showComparison ? (
+                <SideBySideView
+                  reference={verse.reference}
+                  lang={i18n.language}
+                  onClose={() => setShowComparison(false)}
+                />
+              ) : (
+                <button
+                  onClick={() => setShowComparison(true)}
+                  className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors"
+                >
+                  {t("verse.compareTranslations", "Compare Translations")}
+                </button>
+              )}
+            </div>
           )}
         </div>
 
@@ -311,7 +363,30 @@ export const DailyVerse: React.FC = () => {
         {historyIndex > 0 && displayVerse === null ? (
           <VerseCardSkeleton />
         ) : (
-          <VerseCard verse={displayVerse ?? verse} />
+          <VerseCard
+            verse={displayVerse ?? verse}
+            lang={i18n.language}
+            onVersionSelect={historyIndex === 0 && !isGuest ? handleVersionSelect : undefined}
+          />
+        )}
+        {/* Compare Translations — premium users, today's verse only */}
+        {isPremium && historyIndex === 0 && verse && (
+          <div className="mt-3 flex justify-center">
+            {showComparison ? (
+              <SideBySideView
+                reference={verse.reference}
+                lang={i18n.language}
+                onClose={() => setShowComparison(false)}
+              />
+            ) : (
+              <button
+                onClick={() => setShowComparison(true)}
+                className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors"
+              >
+                {t("verse.compareTranslations", "Compare Translations")}
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

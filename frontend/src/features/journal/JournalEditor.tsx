@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams, useBlocker } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import api from "../../services/api/api";
 import "./JournalEditor.css";
@@ -186,6 +186,29 @@ export const JournalEditor: React.FC = () => {
     };
   }, []);
 
+  // Block React Router navigation (Link clicks, navigate()) when there are unsaved changes
+  const blocker = useBlocker(isDirty);
+  useEffect(() => {
+    if (blocker.state !== "blocked") return;
+    const proceed = window.confirm(
+      t("journal.unsavedChanges", "You have unsaved changes. Leave without saving?")
+    );
+    if (proceed) {
+      blocker.proceed();
+    } else {
+      blocker.reset();
+    }
+  }, [blocker, t]);
+
+  // Block browser-level navigation (refresh, close tab) when there are unsaved changes
+  useEffect(() => {
+    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+      if (isDirty) e.preventDefault();
+    };
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [isDirty]);
+
   // ── Verse linker ───────────────────────────────────────────────────────────
 
   const commitVerse = () => {
@@ -214,6 +237,7 @@ export const JournalEditor: React.FC = () => {
 
     try {
       await api.delete(`/api/journal/${entryId}`);
+      setIsDirty(false); // prevent blocker from intercepting the post-delete redirect
       navigate("/journal");
     } catch {
       // Non-blocking — leave the user on the page with no feedback disruption

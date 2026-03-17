@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Verse } from "../../types/verse";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
@@ -8,6 +8,8 @@ import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { useAuth } from "../../hooks/useAuth";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
+import { TranslationBadge } from "./TranslationBadge";
+import { TranslationSwitcherPopover } from "./TranslationSwitcherPopover";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
 const buildShareText = (verse: Verse): string => {
@@ -18,12 +20,16 @@ const buildShareText = (verse: Verse): string => {
 
 interface VerseCardProps {
   verse: Verse;
+  lang?: string;
+  onVersionSelect?: (key: string, abbreviation: string) => void;
 }
 
-export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
+export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVersionSelect }) => {
   const { isGuest } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const { isFavorited, getFavoriteId, addFavorite, removeFavorite } =
     useFavorites();
   const [isCopied, setIsCopied]           = useState(false);
@@ -168,10 +174,23 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
         <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] hover:brightness-125 hover:drop-shadow-[0_0_10px_rgba(79,70,229,0.4)] dark:drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] dark:hover:drop-shadow-[0_0_10px_rgba(129,140,248,0.4)] cursor-default">
           {verse.reference}
         </p>
-        {verse.version && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {verse.version}
-          </p>
+        {/* Translation badge — authenticated users only */}
+        {!isGuest && verse.version && onVersionSelect && (
+          <div ref={badgeRef} className="relative inline-block mt-1.5">
+            <TranslationBadge
+              version={verse.version}
+              onClick={() => setPopoverOpen((o) => !o)}
+            />
+            {popoverOpen && (
+              <TranslationSwitcherPopover
+                lang={lang || i18n.language}
+                currentVersion={verse.version}
+                onVersionSelect={onVersionSelect}
+                onClose={() => setPopoverOpen(false)}
+                anchorRef={badgeRef}
+              />
+            )}
+          </div>
         )}
       </div>
 
