@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate, useParams, useBlocker } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import api from "../../services/api/api";
+import { showToast } from "../../utils/toast";
 import "./JournalEditor.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -222,6 +223,33 @@ export const JournalEditor: React.FC = () => {
     }
   };
 
+  // ── Share ──────────────────────────────────────────────────────────────────
+
+  const handleShare = useCallback(async () => {
+    const text = contentPlain.trim();
+    if (!text) return;
+    const shareText = linkedVerse
+      ? `${text}\n\n📖 ${linkedVerse}\n\nvia Words of Praise`
+      : `${text}\n\nvia Words of Praise`;
+    if (typeof navigator !== 'undefined' && navigator.share) {
+      try {
+        await navigator.share({ title: t('journal.shareTitle', 'Journal Entry'), text: shareText });
+      } catch (err: any) {
+        if (err?.name !== 'AbortError') {
+          await navigator.clipboard.writeText(shareText).catch(() => {});
+          showToast.success(t('journal.copied', 'Copied to clipboard'));
+        }
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(shareText);
+        showToast.success(t('journal.copied', 'Copied to clipboard'));
+      } catch {
+        showToast.error(t('journal.copyFailed', 'Could not copy to clipboard'));
+      }
+    }
+  }, [contentPlain, linkedVerse, t]);
+
   // ── Delete ─────────────────────────────────────────────────────────────────
 
   const handleDelete = async () => {
@@ -291,15 +319,26 @@ export const JournalEditor: React.FC = () => {
         >
           ← {t("journal.backToJournal", "Back to Journal")}
         </button>
-        {isEditMode && (
-          <button
-            className="journal-editor-delete-btn"
-            onClick={handleDelete}
-            aria-label={t("journal.deleteEntry", "Delete this entry")}
-          >
-            {t("journal.deleteEntry", "Delete Entry")}
-          </button>
-        )}
+        <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+          {contentPlain.trim() && (
+            <button
+              className="journal-editor-back-btn"
+              onClick={handleShare}
+              aria-label={t("journal.share", "Share entry")}
+            >
+              {t("journal.share", "Share")}
+            </button>
+          )}
+          {isEditMode && (
+            <button
+              className="journal-editor-delete-btn"
+              onClick={handleDelete}
+              aria-label={t("journal.deleteEntry", "Delete this entry")}
+            >
+              {t("journal.deleteEntry", "Delete Entry")}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Editor surface */}
