@@ -1,4 +1,5 @@
 import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 
 export interface MilestoneItem {
@@ -217,12 +218,14 @@ const MilestoneWall: React.FC<MilestoneWallProps> = ({ milestones, currentStreak
         </div>
       )}
 
-      {/* Tap / click bottom sheet (mobile + desktop click) */}
-      {sheetMilestone && (
+      {/* Tap / click bottom sheet (mobile + desktop click) — rendered via portal so it
+          escapes any ancestor overflow:hidden / stacking-context that would clip it.
+          Backdrop uses onPointerDown (not onClick) to prevent touch click-through. */}
+      {sheetMilestone && createPortal(
         <>
           <div
             className="fixed inset-0 z-40 bg-black/30"
-            onClick={() => setSheet(null)}
+            onPointerDown={() => setSheet(null)}
           />
           <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-3xl p-6 animate-slide-up">
             <div className="flex flex-col items-center gap-3">
@@ -257,7 +260,8 @@ const MilestoneWall: React.FC<MilestoneWallProps> = ({ milestones, currentStreak
               </button>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
     </>
   );

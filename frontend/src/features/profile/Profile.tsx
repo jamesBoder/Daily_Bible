@@ -112,7 +112,7 @@ const ProfileSkeleton: React.FC = () => (
 // ── Section wrapper ───────────────────────────────────────────────────────────
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 overflow-hidden transition-shadow duration-200 hover:shadow-md">
+  <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 transition-shadow duration-200 hover:shadow-md">
     <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-2 sm:pb-3">
       <h2 className="text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
         {title}
@@ -296,7 +296,7 @@ export const Profile: React.FC = () => {
           <div className="flex-1 min-w-0">
             {!editMode ? (
               <>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 truncate">
+                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-all">
                   {data.username}
                 </h1>
                 {data.is_premium && (
