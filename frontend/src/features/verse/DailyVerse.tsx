@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useVerse } from "../../hooks/useVerse";
 import { useHistory } from "../../hooks/useHistory";
@@ -204,6 +204,22 @@ export const DailyVerse: React.FC = () => {
   );
   useKeyboardShortcuts(shortcuts);
 
+  // Swipe left/right to cycle through history
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+  const handleTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  }, []);
+  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
+    const dy = Math.abs(touchStartY.current - e.changedTouches[0].clientY);
+    // Ignore if swipe distance is too short or vertical scroll dominates
+    if (Math.abs(dx) < 50 || dy > Math.abs(dx) * 0.75) return;
+    if (dx > 0) goBack();    // swipe left → older verse
+    else goForward();         // swipe right → newer verse
+  }, [goBack, goForward]);
+
   if (isLoading) {
     return <VerseCardSkeleton />;
   }
@@ -285,7 +301,11 @@ export const DailyVerse: React.FC = () => {
   })();
 
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8">
+    <div
+      className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8"
+      onTouchStart={handleTouchStart}
+      onTouchEnd={handleTouchEnd}
+    >
       {/* Streak-related banners and notifications */}
       {!isGuest && (
         <>
