@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import api from "../../services/api/api";
 
@@ -38,6 +38,25 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
   const [isPremium, setIsPremium] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const popoverRef = useRef<HTMLDivElement>(null);
+  const [popoverPos, setPopoverPos] = useState<React.CSSProperties>({ visibility: 'hidden' });
+
+  // Use fixed positioning calculated from anchor rect so the popover is never clipped on mobile
+  useLayoutEffect(() => {
+    if (!anchorRef.current) return;
+    const rect = anchorRef.current.getBoundingClientRect();
+    const vw = window.innerWidth;
+    const maxW = 260;
+    let left: number;
+    if (vw < 640) {
+      // On mobile, always center in the viewport regardless of anchor position
+      left = vw / 2;
+    } else {
+      // On larger screens, center on anchor, clamped to viewport edges
+      left = rect.left + rect.width / 2;
+      left = Math.max(maxW / 2 + 8, Math.min(left, vw - maxW / 2 - 8));
+    }
+    setPopoverPos({ position: 'fixed', top: rect.bottom + 6, left, transform: 'translateX(-50%)', visibility: 'visible' });
+  }, [anchorRef]);
 
   // Fetch translations on mount
   useEffect(() => {
@@ -85,14 +104,14 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
       role="dialog"
       aria-label={t("verse.switchTranslation", "Switch Translation")}
       className="
-        absolute z-50 mt-1.5
+        z-50
         bg-white dark:bg-gray-800
         border border-gray-200 dark:border-gray-700
         rounded-xl shadow-lg
         py-1.5 min-w-[200px] max-w-[260px]
         animate-fade-in
       "
-      style={{ top: "100%", left: "50%", transform: "translateX(-50%)" }}
+      style={popoverPos}
     >
       {/* Header */}
       <div className="px-3 pb-1.5 border-b border-gray-100 dark:border-gray-700 mb-1">

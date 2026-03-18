@@ -90,6 +90,10 @@ export const DailyVerse: React.FC = () => {
   // Premium status — fetched once for authenticated users to gate Compare button
   const [isPremium, setIsPremium] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
+  // History verse override: when a premium user switches translation while browsing history,
+  // we fetch that verse reference in the new version and display it here.
+  const [historyOverrideVerse, setHistoryOverrideVerse] = useState<import("../../types/verse").Verse | null>(null);
+  const [historyVersionLoading, setHistoryVersionLoading] = useState(false);
 
   const { verse, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
   const { history, isLoading: historyLoading } = useHistory(!isGuest);
@@ -153,6 +157,34 @@ export const DailyVerse: React.FC = () => {
     setSessionVersion(key);
     setShowComparison(false);
   }, []);
+
+  // Fetch the history verse in a different translation when a premium user picks one
+  const handleHistoryVersionSelect = useCallback(async (key: string, abbreviation: string) => {
+    if (!currentEntry?.verse) return;
+    setHistoryVersionLoading(true);
+    try {
+      const encoded = encodeURIComponent(currentEntry.verse.reference);
+      const res = await api.get<{ verse: { text: string } }>(
+        `/api/verses/${encoded}`,
+        { params: { version: key, lang: i18n.language } }
+      );
+      setHistoryOverrideVerse({
+        ...currentEntry.verse,
+        text: res.data.verse.text,
+        version: abbreviation,
+      });
+    } catch {
+      // Silently fall back to the stored verse if the fetch fails
+    } finally {
+      setHistoryVersionLoading(false);
+    }
+  }, [currentEntry, i18n.language]);
+
+  // Clear override whenever user moves to a different history entry or returns to today
+  useEffect(() => {
+    setHistoryOverrideVerse(null);
+    setShowComparison(false);
+  }, [historyIndex]);
 
   // Stable callback refs so useKeyboardShortcuts' effect doesn't thrash
   const goBack = useCallback(() => {
@@ -324,26 +356,32 @@ export const DailyVerse: React.FC = () => {
         <div className="flex-1 min-w-0">
           {historyIndex > 0 && displayVerse === null ? (
             <VerseCardSkeleton />
+          ) : historyVersionLoading ? (
+            <VerseCardSkeleton />
           ) : (
             <VerseCard
-              verse={displayVerse ?? verse}
+              verse={historyIndex > 0 ? (historyOverrideVerse ?? displayVerse ?? verse) : (displayVerse ?? verse)}
               lang={i18n.language}
-              onVersionSelect={historyIndex === 0 && !isGuest ? handleVersionSelect : undefined}
+              onVersionSelect={
+                historyIndex === 0 && !isGuest
+                  ? handleVersionSelect
+                  : (historyIndex > 0 && isPremium ? handleHistoryVersionSelect : undefined)
+              }
             />
           )}
-          {/* Compare Translations — premium users, today's verse only */}
-          {isPremium && historyIndex === 0 && verse && (
+          {/* Compare Translations — premium users, today's and history verses */}
+          {isPremium && (displayVerse ?? verse) && (
             <div className="mt-3 flex justify-center">
               {showComparison ? (
                 <SideBySideView
-                  reference={verse.reference}
+                  reference={(historyOverrideVerse ?? displayVerse ?? verse)!.reference}
                   lang={i18n.language}
                   onClose={() => setShowComparison(false)}
                 />
               ) : (
                 <button
                   onClick={() => setShowComparison(true)}
-                  className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors"
+                  className="text-sm font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors px-2 py-1"
                 >
                   {t("verse.compareTranslations", "Compare Translations")}
                 </button>
@@ -362,26 +400,32 @@ export const DailyVerse: React.FC = () => {
       <div className="md:hidden">
         {historyIndex > 0 && displayVerse === null ? (
           <VerseCardSkeleton />
+        ) : historyVersionLoading ? (
+          <VerseCardSkeleton />
         ) : (
           <VerseCard
-            verse={displayVerse ?? verse}
+            verse={historyIndex > 0 ? (historyOverrideVerse ?? displayVerse ?? verse) : (displayVerse ?? verse)}
             lang={i18n.language}
-            onVersionSelect={historyIndex === 0 && !isGuest ? handleVersionSelect : undefined}
+            onVersionSelect={
+              historyIndex === 0 && !isGuest
+                ? handleVersionSelect
+                : (historyIndex > 0 && isPremium ? handleHistoryVersionSelect : undefined)
+            }
           />
         )}
-        {/* Compare Translations — premium users, today's verse only */}
-        {isPremium && historyIndex === 0 && verse && (
+        {/* Compare Translations — premium users, today's and history verses */}
+        {isPremium && (displayVerse ?? verse) && (
           <div className="mt-3 flex justify-center">
             {showComparison ? (
               <SideBySideView
-                reference={verse.reference}
+                reference={(historyOverrideVerse ?? displayVerse ?? verse)!.reference}
                 lang={i18n.language}
                 onClose={() => setShowComparison(false)}
               />
             ) : (
               <button
                 onClick={() => setShowComparison(true)}
-                className="text-xs font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors"
+                className="text-sm font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors px-2 py-1"
               >
                 {t("verse.compareTranslations", "Compare Translations")}
               </button>
