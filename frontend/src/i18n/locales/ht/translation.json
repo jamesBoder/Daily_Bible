@@ -12,7 +12,8 @@
     "settings": "Paramèt",
     "login": "Konekte",
     "signup": "Enskri",
-    "logout": "Dekonekte"
+    "logout": "Dekonekte",
+    "search": "Chèche"
   },
   "dailyVerse": {
     "title": "Vèsè Jodi a",
@@ -302,6 +303,12 @@
     "tooLongError": "Kòmantè dwe gen mwens pase 1000 karaktè",
     "saveFailed": "Pa rive anrejistre kòmantè",
     "deleteFailed": "Pa rive efase kòmantè"
+  },
+  "search": {
+    "title": "Chèche nan Ekriti",
+    "placeholder": "Chèche… egz. \"Jan 3\" oswa \"gras\"",
+    "verseFound": "vèsè jwenn",
+    "versesFound": "vèsè jwenn"
   },
   "common": {
     "loading": "Ap chaje...",

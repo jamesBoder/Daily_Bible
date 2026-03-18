@@ -12,7 +12,8 @@
     "settings": "Paramètres",
     "login": "Connexion",
     "signup": "S'inscrire",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "search": "Rechercher"
   },
   "dailyVerse": {
     "title": "Verset du Jour",
@@ -302,6 +303,12 @@
     "tooLongError": "Le commentaire doit contenir moins de 1000 caractères",
     "saveFailed": "Échec de l'enregistrement du commentaire",
     "deleteFailed": "Échec de la suppression du commentaire"
+  },
+  "search": {
+    "title": "Rechercher les Écritures",
+    "placeholder": "Rechercher… ex. \"Jean 3\" ou \"grâce\"",
+    "verseFound": "verset trouvé",
+    "versesFound": "versets trouvés"
   },
   "common": {
     "loading": "Chargement...",

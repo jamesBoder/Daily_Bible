@@ -87,6 +87,12 @@ const JournalEditor = lazy(() =>
   }))
 );
 
+const SearchResultsPage = lazy(() =>
+  import("./features/search/SearchResultsPage").then((module) => ({
+    default: module.SearchResultsPage,
+  }))
+);
+
 const router = createBrowserRouter([
   // Public-only routes — redirect authenticated users to home
   {
@@ -146,6 +152,11 @@ const router = createBrowserRouter([
       {
         path: "settings",
         element: <Suspense fallback={<VerseCardSkeleton />}><Settings /></Suspense>,
+      },
+      // Search route (Phase 5) — authenticated users only
+      {
+        path: "search",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><SearchResultsPage /></Suspense></GuestBlockedRoute>,
       },
       // Journal routes (Phase 3)
       {

@@ -13,7 +13,8 @@
     "settings": "Settings",
     "login": "Login",
     "signup": "Sign Up",
-    "logout": "Logout"
+    "logout": "Logout",
+    "search": "Search"
   },
   "journal": {
     "title": "My Journal",
@@ -345,6 +346,12 @@
     "tooLongError": "Comment must be less than 1000 characters",
     "saveFailed": "Failed to save comment",
     "deleteFailed": "Failed to delete comment"
+  },
+  "search": {
+    "title": "Search Scripture",
+    "placeholder": "Search scriptures… e.g. \"John 3\" or \"grace\"",
+    "verseFound": "verse found",
+    "versesFound": "verses found"
   },
   "common": {
     "loading": "Loading...",

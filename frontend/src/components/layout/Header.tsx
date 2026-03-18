@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 import StreakCandle from "../StreakCandle";
 import BlessingsChip from "../BlessingsChip";
+import { VerseSearchBar } from "../search/VerseSearchBar";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
@@ -46,17 +47,23 @@ export const Header: React.FC = () => {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink
-              to="/daily"
-              className={({ isActive }) =>
-                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
-                }`
-              }
-            >
-              {t('nav.home')}
-            </NavLink>
+            {/* Search hidden for guests */}
+            {!isGuest && (
+              <NavLink
+                to="/search"
+                className={({ isActive }) =>
+                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 flex items-center gap-1.5 ${isActive
+                    ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
+                  }`
+                }
+              >
+                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                </svg>
+                {t('nav.search')}
+              </NavLink>
+            )}
             {/* Favorites hidden for guests */}
             {!isGuest && (
               <NavLink
@@ -71,17 +78,6 @@ export const Header: React.FC = () => {
                 {t('nav.favorites')}
               </NavLink>
             )}
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
-                }`
-              }
-            >
-              {t('nav.about')}
-            </NavLink>
             {/* Journal — hidden for guests */}
             {!isGuest && (
               <NavLink
@@ -97,6 +93,17 @@ export const Header: React.FC = () => {
               </NavLink>
             )}
             <NavLink
+              to="/about"
+              className={({ isActive }) =>
+                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
+                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
+                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
+                }`
+              }
+            >
+              {t('nav.about')}
+            </NavLink>
+            <NavLink
               to="/settings"
               className={({ isActive }) =>
                 `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
@@ -111,6 +118,8 @@ export const Header: React.FC = () => {
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
+            {/* Hide the collapsible search bar for guests or when already on the search page */}
+            {!isGuest && location.pathname !== '/search' && <VerseSearchBar />}
             {/* Streak and Blessings display for authenticated users */}
             {!isGuest && (
               <>
@@ -179,18 +188,24 @@ export const Header: React.FC = () => {
         >
           <div className="py-4 border-t border-gray-200">
             <div className="flex flex-col space-y-4">
-              <NavLink
-                to="/daily"
-                className={({ isActive }) =>
-                  `font-medium transition-colors ${isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                  }`
-                }
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.home')}
-              </NavLink>
+              {/* Search hidden for guests */}
+              {!isGuest && (
+                <NavLink
+                  to="/search"
+                  className={({ isActive }) =>
+                    `font-medium transition-colors flex items-center gap-1.5 ${isActive
+                      ? "text-primary-600 dark:text-primary-400"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                    }`
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
+                  </svg>
+                  {t('nav.search')}
+                </NavLink>
+              )}
               {/* Favorites hidden for guests */}
               {!isGuest && (
                 <NavLink
@@ -206,18 +221,6 @@ export const Header: React.FC = () => {
                   {t('nav.favorites')}
                 </NavLink>
               )}
-              <NavLink
-                to="/about"
-                className={({ isActive }) =>
-                  `font-medium transition-colors ${isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                  }`
-                }
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.about')}
-              </NavLink>
               {/* Journal — hidden for guests */}
               {!isGuest && (
                 <NavLink
@@ -233,6 +236,18 @@ export const Header: React.FC = () => {
                   {t('nav.journal', 'Journal')}
                 </NavLink>
               )}
+              <NavLink
+                to="/about"
+                className={({ isActive }) =>
+                  `font-medium transition-colors ${isActive
+                    ? "text-primary-600 dark:text-primary-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
+                  }`
+                }
+                onClick={() => setIsMenuOpen(false)}
+              >
+                {t('nav.about')}
+              </NavLink>
               <NavLink
                 to="/settings"
                 className={({ isActive }) =>

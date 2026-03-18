@@ -13,7 +13,8 @@
     "settings": "Configuración",
     "login": "Iniciar Sesión",
     "signup": "Registrarse",
-    "logout": "Cerrar Sesión"
+    "logout": "Cerrar Sesión",
+    "search": "Buscar"
   },
   "journal": {
     "title": "Mi Diario",
@@ -345,6 +346,12 @@
     "tooLongError": "El comentario debe tener menos de 1000 caracteres",
     "saveFailed": "Error al guardar el comentario",
     "deleteFailed": "Error al eliminar el comentario"
+  },
+  "search": {
+    "title": "Buscar Escrituras",
+    "placeholder": "Buscar escrituras… ej. \"Juan 3\" o \"gracia\"",
+    "verseFound": "versículo encontrado",
+    "versesFound": "versículos encontrados"
   },
   "common": {
     "loading": "Cargando...",
