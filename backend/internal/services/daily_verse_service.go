@@ -30,6 +30,88 @@ func NewDailyVerseService(
     }
 }
 
+// GetDailyVerseForDate returns the verse assigned to a specific calendar date.
+// Unlike GetDailyVerse, this never records engagement or streak credit.
+//
+// Lookup order:
+//  1. DB hit by date  — fast path, verse was already assigned on that day.
+//  2. DB hit by ref   — verse exists but may have a different DailyDate:
+//     a. No DailyDate yet → claim the date with a targeted column update.
+//     b. Different DailyDate → return a copy with the requested date set
+//        (the unique index prevents reassigning the column).
+//  3. Bible API fetch — verse never stored; create it and handle race conditions.
+func (s *DailyVerseService) GetDailyVerseForDate(date string) (*models.Verse, error) {
+	// 1. Fast path: verse already in DB for this date.
+	if cached, err := s.verseRepo.GetByDate(date); err == nil && cached != nil {
+		return cached, nil
+	}
+
+	// Reconstruct which verse was (or would have been) shown on this date.
+	reference := s.selectVerseForDate(date)
+
+	// 2. Verse exists in DB by reference.
+	if existing, err := s.verseRepo.GetByReference(reference); err == nil && existing != nil {
+		if existing.DailyDate == nil {
+			// 2a. No date assigned yet — claim it with a targeted update so we
+			//     don't overwrite any other field (avoids full-Save side effects).
+			if updateErr := s.verseRepo.UpdateDailyDate(existing.ID, date); updateErr != nil {
+				// A concurrent request won the race. Re-fetch by date to get
+				// whichever record was committed, or fall through to a copy.
+				if winner, fetchErr := s.verseRepo.GetByDate(date); fetchErr == nil && winner != nil {
+					return winner, nil
+				}
+				// Still nothing — return an in-memory copy; the date won't be
+				// persisted but the verse text is correct for display.
+				copy := *existing
+				dateCopy := date
+				copy.DailyDate = &dateCopy
+				return &copy, nil
+			}
+			existing.DailyDate = &date
+			return existing, nil
+		}
+		// 2b. Verse already has a different DailyDate. The unique index on
+		//     daily_date means we cannot reassign it without a schema change.
+		//     Return a copy with the requested date for display purposes only.
+		copy := *existing
+		dateCopy := date
+		copy.DailyDate = &dateCopy
+		return &copy, nil
+	}
+
+	// 3. Verse not in DB at all — fetch from the Bible API and persist.
+	apiVerse, err := s.bibleAPI.GetVerse(reference)
+	if err != nil {
+		return nil, fmt.Errorf("GetDailyVerseForDate(%q): bible API fetch failed: %w", date, err)
+	}
+
+	dateCopy := date
+	verse := &models.Verse{
+		Reference:   apiVerse.Reference,
+		Text:        apiVerse.Text,
+		Book:        extractBook(apiVerse.Reference),
+		Chapter:     extractChapter(apiVerse.Reference),
+		VerseNumber: extractVerse(apiVerse.Reference),
+		Version:     "KJV",
+		Translation: "KJV",
+		DailyDate:   &dateCopy,
+	}
+
+	if createErr := s.verseRepo.Create(verse); createErr != nil {
+		// Concurrent request created the verse or claimed the date first.
+		// Try both lookup paths to return whichever record won.
+		if winner, fetchErr := s.verseRepo.GetByDate(date); fetchErr == nil && winner != nil {
+			return winner, nil
+		}
+		if winner, fetchErr := s.verseRepo.GetByReference(reference); fetchErr == nil && winner != nil {
+			return winner, nil
+		}
+		return nil, fmt.Errorf("GetDailyVerseForDate(%q): failed to save verse: %w", date, createErr)
+	}
+
+	return verse, nil
+}
+
 // GetDailyVerse returns the verse of the day
 // Uses UTC-10 timezone (Hawaii) to ensure the verse updates early in the morning for users
 // worldwide. When it's midnight in Hawaii (UTC-10), it's 10 AM UTC, which is:

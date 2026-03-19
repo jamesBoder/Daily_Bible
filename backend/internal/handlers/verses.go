@@ -4,6 +4,8 @@ import (
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
+	"time"
 
 	"dailybible/internal/config"
 	"dailybible/internal/models"
@@ -94,11 +96,74 @@ func (h *VerseHandler) resolveVersion(c *gin.Context, langCode string) config.Bi
 	return version
 }
 
-// GetDailyVerse returns the verse of the day
+// GetDailyVerse returns the verse of the day.
+// If a ?date=YYYY-MM-DD query param is provided and it's a past date, the verse
+// for that date is returned without recording any engagement or streak credit.
 func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
-	// Get language preference from query parameter or default to English
 	language := c.DefaultQuery("lang", "en")
-	
+
+	// Past-date lookup: serve without recording engagement/streak/history.
+	if dateStr := c.Query("date"); dateStr != "" {
+		if _, err := time.Parse("2006-01-02", dateStr); err != nil {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "invalid date format, use YYYY-MM-DD"})
+			return
+		}
+
+		// Compute the effective "today" using the same UTC-10 offset the daily verse
+		// service uses so that date comparisons are consistent.
+		effectiveTodayStr := time.Now().UTC().Add(-10 * time.Hour).Format("2006-01-02")
+
+		// Reject today or future dates — those must go through the normal path
+		// so that engagement and streak recording are not bypassed.
+		if dateStr >= effectiveTodayStr {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "date must be before today"})
+			return
+		}
+
+		// Reject dates older than 365 days to prevent abuse (many Bible API calls).
+		effectiveToday, _ := time.Parse("2006-01-02", effectiveTodayStr)
+		requested, _ := time.Parse("2006-01-02", dateStr)
+		if requested.Before(effectiveToday.AddDate(0, 0, -365)) {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "cannot request dates more than 365 days in the past"})
+			return
+		}
+
+		verse, err := h.dailyVerseService.GetDailyVerseForDate(dateStr)
+		if err != nil {
+			log.Printf("GetDailyVerseForDate(%q) failed: %v", dateStr, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get verse for date"})
+			return
+		}
+
+		resolvedVersion := h.resolveVersion(c, language)
+		const kjvVersionID = "de4e12af7f28f599-02"
+		if resolvedVersion.ID != kjvVersionID && resolvedVersion.ID != "" {
+			if translatedVerse, err := h.bibleAPIService.GetVerseWithVersionID(verse.Reference, resolvedVersion.ID); err == nil {
+				verse.Text = translatedVerse.Text
+			} else {
+				log.Printf("GetVerseWithVersionID(%q, %q) failed for date %q: %v; serving KJV fallback",
+					verse.Reference, resolvedVersion.ID, dateStr, err)
+			}
+		}
+
+		// Past dates are immutable — cache aggressively.
+		c.Header("Cache-Control", "public, max-age=86400, immutable")
+		c.JSON(http.StatusOK, gin.H{
+			"verse": gin.H{
+				"id":         verse.ID,
+				"reference":  verse.Reference,
+				"text":       verse.Text,
+				"book":       verse.Book,
+				"chapter":    verse.Chapter,
+				"verse":      verse.VerseNumber,
+				"version":    resolvedVersion.Abbreviation,
+				"language":   language,
+				"daily_date": dateStr,
+			},
+		})
+		return
+	}
+
 	// IMPORTANT: RecordDailyEngagement fires regardless of whether the Bible API succeeds.
 	// The user's intent to engage is known the moment they hit this endpoint.
 	// If API.Bible is down and we serve a fallback/cached verse, the streak still counts.
@@ -226,7 +291,11 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 
 // GetVerseByReference fetches a verse by its reference
 func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
-	reference := c.Param("reference")
+	reference := strings.TrimSpace(c.Param("reference"))
+	if reference == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "reference is required"})
+		return
+	}
 	language := c.DefaultQuery("lang", "en")
 
 	resolvedVersion := h.resolveVersion(c, language)
@@ -262,14 +331,24 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 
 // SearchVerses searches for verses based on a query parameter
 func (h *VerseHandler) SearchVerses(c *gin.Context) {
-	query := c.Query("q")
+	query := strings.TrimSpace(c.Query("q"))
 	limitStr := c.DefaultQuery("limit", "10")
-	// Get language preference from query parameter or default to English
 	language := c.DefaultQuery("lang", "en")
-	
+
+	// Return an empty result set immediately rather than hitting the Bible API
+	// with an empty query string.
+	if query == "" {
+		c.JSON(http.StatusOK, gin.H{"results": []gin.H{}})
+		return
+	}
+
 	limit, err := strconv.Atoi(limitStr)
 	if err != nil || limit <= 0 {
 		limit = 10
+	}
+	// Clamp to a reasonable max to prevent abuse.
+	if limit > 50 {
+		limit = 50
 	}
 
 	verses, err := h.bibleAPIService.SearchVersesWithLanguage(query, limit, language)
@@ -278,7 +357,8 @@ func (h *VerseHandler) SearchVerses(c *gin.Context) {
 		return
 	}
 
-	var results []gin.H
+	// Use a pre-allocated slice so the JSON encodes as [] not null when empty.
+	results := make([]gin.H, 0, len(verses))
 	for _, verse := range verses {
 		results = append(results, gin.H{
 			"id":        verse.ID,
