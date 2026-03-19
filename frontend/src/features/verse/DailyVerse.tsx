@@ -13,6 +13,8 @@ import GraceDayBanner from "../../components/GraceDayBanner";
 import StreakResetAcknowledgment from "../../components/StreakResetAcknowledgment";
 import FirstEngagementOnboarding from "../../components/FirstEngagementOnboarding";
 import api from "../../services/api/api";
+import { Verse } from "../../types/verse";
+import { HistoryEntry } from "../../types/history";
 
 
 // NavArrow button component
@@ -81,6 +83,9 @@ const TodayButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   </button>
 );
 
+// Max number of days users can navigate back
+const MAX_DAYS_BACK = 30;
+
 export const DailyVerse: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isGuest } = useAuth();
@@ -90,16 +95,51 @@ export const DailyVerse: React.FC = () => {
   // Premium status — fetched once for authenticated users to gate Compare button
   const [isPremium, setIsPremium] = useState(false);
   const [showComparison, setShowComparison] = useState(false);
-  // History verse override: when a premium user switches translation while browsing history,
-  // we fetch that verse reference in the new version and display it here.
-  const [historyOverrideVerse, setHistoryOverrideVerse] = useState<import("../../types/verse").Verse | null>(null);
+  // When a premium user switches translation while browsing a past day, we fetch
+  // the verse reference in the new version and display it here.
+  const [historyOverrideVerse, setHistoryOverrideVerse] = useState<Verse | null>(null);
   const [historyVersionLoading, setHistoryVersionLoading] = useState(false);
+  // Verses fetched by date for days the user did not originally view
+  const [fetchedVerses, setFetchedVerses] = useState<Record<string, Verse>>({});
+  const [isFetchingDate, setIsFetchingDate] = useState(false);
+  const [fetchDateError, setFetchDateError] = useState(false);
 
   const { verse, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
-  const { history, isLoading: historyLoading } = useHistory(!isGuest);
+  const { history } = useHistory(!isGuest);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [historyIndex, setHistoryIndex] = useState(0);
+
+  // Build today's date string in local timezone (YYYY-MM-DD)
+  const now = new Date();
+  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+
+  // Virtual list of past dates (yesterday, day-before, …) in local timezone.
+  // Every user can navigate back up to MAX_DAYS_BACK days regardless of whether
+  // they viewed the verse on those days.
+  const pastDates = useMemo<string[]>(() => {
+    const dates: string[] = [];
+    for (let i = 1; i <= MAX_DAYS_BACK; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      dates.push(
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+      );
+    }
+    return dates;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todayStr]);
+
+  // Map date string → history entry for quick look-up (skips today's entry)
+  const historyByDate = useMemo<Record<string, HistoryEntry>>(() => {
+    const map: Record<string, HistoryEntry> = {};
+    for (const entry of history) {
+      const date = entry.verse?.daily_date?.slice(0, 10);
+      if (date && date !== todayStr) {
+        map[date] = entry;
+      }
+    }
+    return map;
+  }, [history, todayStr]);
 
   // Fetch premium status once for authenticated users
   useEffect(() => {
@@ -119,57 +159,77 @@ export const DailyVerse: React.FC = () => {
     setHistoryIndex(0);
     setSessionVersion(undefined);
     setShowComparison(false);
+    setFetchedVerses({});
   }, [i18n.language]);
 
-  // Skip history[0] if it matches today (local tz) to avoid duplicating today's verse.
-  // Use verse.daily_date (plain YYYY-MM-DD, timezone-safe) as the canonical date source.
-  // Build YYYY-MM-DD for today in local timezone without relying on toLocaleDateString
-  // locale behavior (which can vary across browsers and environments).
-  const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  // daily_date comes back as a full ISO timestamp from PostgreSQL (e.g. "2026-03-07T00:00:00Z")
-  // so we slice to the date portion before comparing.
-  const firstEntryDate = history.length > 0 ? history[0].verse?.daily_date?.slice(0, 10) : undefined;
-  const offset = firstEntryDate === todayStr ? 1 : 0;
-  const effectiveHistory = history.slice(offset);
+  // Derive the target date and its verse when browsing past days
+  const targetDate = historyIndex > 0 ? (pastDates[historyIndex - 1] ?? null) : null;
+  const historyEntryForDate = targetDate ? (historyByDate[targetDate] ?? null) : null;
+  const fetchedVerse = targetDate ? (fetchedVerses[targetDate] ?? null) : null;
+  // The "active" past verse: from history if the user viewed it, otherwise from the API fetch
+  const activeVerse = historyEntryForDate?.verse ?? fetchedVerse;
 
-  // If the calendar linked to a specific date, find it in history and jump there once loaded.
-  const dateParam = searchParams.get('date');
+  // Clear fetch error when navigating to a different day
   useEffect(() => {
-    if (!dateParam || historyLoading || effectiveHistory.length === 0) return;
-    const idx = effectiveHistory.findIndex(
-      e => e.verse?.daily_date?.slice(0, 10) === dateParam
-    );
+    setFetchDateError(false);
+  }, [historyIndex]);
+
+  // Fetch verse for the target date when it's not in the user's view history
+  useEffect(() => {
+    if (!targetDate || historyEntryForDate || fetchedVerses[targetDate]) return;
+    let cancelled = false;
+    setIsFetchingDate(true);
+    setFetchDateError(false);
+    api
+      .get<{ verse: Verse }>("/api/verses/daily", {
+        params: { date: targetDate, lang: i18n.language },
+      })
+      .then((res) => {
+        if (!cancelled) {
+          setFetchedVerses((prev) => ({ ...prev, [targetDate]: res.data.verse }));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setFetchDateError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsFetchingDate(false);
+      });
+    return () => { cancelled = true; };
+  }, [targetDate, historyEntryForDate, fetchedVerses, i18n.language]);
+
+  // If the calendar linked to a specific date, jump there once pastDates is ready
+  const dateParam = searchParams.get("date");
+  useEffect(() => {
+    if (!dateParam) return;
+    const idx = pastDates.findIndex((d) => d === dateParam);
     if (idx !== -1) {
       setHistoryIndex(idx + 1);
     }
-    // Remove the param so browser back/forward works naturally
     setSearchParams({}, { replace: true });
-  }, [dateParam, historyLoading, effectiveHistory, setSearchParams]);
+  }, [dateParam, pastDates, setSearchParams]);
 
-  // Derive display state
-  const currentEntry = historyIndex > 0 ? effectiveHistory[historyIndex - 1] : null;
-  const displayVerse = historyIndex === 0 ? verse : (currentEntry?.verse ?? null);
+  const displayVerse = historyIndex === 0 ? verse : (activeVerse ?? null);
   const showForward = historyIndex > 0;
-  const showBack = !isGuest && !historyLoading && historyIndex < effectiveHistory.length;
+  const showBack = !isGuest && historyIndex < MAX_DAYS_BACK;
 
   const handleVersionSelect = useCallback((key: string) => {
     setSessionVersion(key);
     setShowComparison(false);
   }, []);
 
-  // Fetch the history verse in a different translation when a premium user picks one
+  // Fetch a past day's verse in a different translation (premium users only)
   const handleHistoryVersionSelect = useCallback(async (key: string, abbreviation: string) => {
-    if (!currentEntry?.verse) return;
+    if (!activeVerse) return;
     setHistoryVersionLoading(true);
     try {
-      const encoded = encodeURIComponent(currentEntry.verse.reference);
+      const encoded = encodeURIComponent(activeVerse.reference);
       const res = await api.get<{ verse: { text: string } }>(
         `/api/verses/${encoded}`,
         { params: { version: key, lang: i18n.language } }
       );
       setHistoryOverrideVerse({
-        ...currentEntry.verse,
+        ...activeVerse,
         text: res.data.verse.text,
         version: abbreviation,
       });
@@ -178,9 +238,9 @@ export const DailyVerse: React.FC = () => {
     } finally {
       setHistoryVersionLoading(false);
     }
-  }, [currentEntry, i18n.language]);
+  }, [activeVerse, i18n.language]);
 
-  // Clear override whenever user moves to a different history entry or returns to today
+  // Clear override whenever user moves to a different day
   useEffect(() => {
     setHistoryOverrideVerse(null);
     setShowComparison(false);
@@ -188,8 +248,8 @@ export const DailyVerse: React.FC = () => {
 
   // Stable callback refs so useKeyboardShortcuts' effect doesn't thrash
   const goBack = useCallback(() => {
-    if (historyIndex < effectiveHistory.length) setHistoryIndex((i) => i + 1);
-  }, [historyIndex, effectiveHistory.length]);
+    if (historyIndex < MAX_DAYS_BACK) setHistoryIndex((i) => i + 1);
+  }, [historyIndex]);
 
   const goForward = useCallback(() => {
     if (historyIndex > 0) setHistoryIndex((i) => i - 1);
@@ -214,10 +274,9 @@ export const DailyVerse: React.FC = () => {
   const handleTouchEnd = useCallback((e: React.TouchEvent) => {
     const dx = touchStartX.current - e.changedTouches[0].clientX;
     const dy = Math.abs(touchStartY.current - e.changedTouches[0].clientY);
-    // Ignore if swipe distance is too short or vertical scroll dominates
     if (Math.abs(dx) < 50 || dy > Math.abs(dx) * 0.75) return;
-    if (dx > 0) goBack();    // swipe left → older verse
-    else goForward();         // swipe right → newer verse
+    if (dx > 0) goBack();
+    else goForward();
   }, [goBack, goForward]);
 
   if (isLoading) {
@@ -247,41 +306,12 @@ export const DailyVerse: React.FC = () => {
     );
   }
 
-  // Clamp historyIndex in case effectiveHistory shrank (e.g. after a history clear).
-  const safeIndex = Math.min(historyIndex, effectiveHistory.length);
-
-  // Build the display date from verse.daily_date with layered guards:
-  //   1. Slice to YYYY-MM-DD and validate the format before constructing Date
-  //      (PostgreSQL returns "2026-03-07T00:00:00Z"; appending T12:00:00 to the
-  //       raw value produces an invalid string → "Invalid Date")
-  //   2. Check isNaN after construction — corrupt or missing data triggers fallback
-  const rawDailyDate = currentEntry?.verse.daily_date;
-  const datePart = rawDailyDate?.slice(0, 10);
-  const isValidDateStr = typeof datePart === "string" && /^\d{4}-\d{2}-\d{2}$/.test(datePart);
-  const parsedHistoryDate = isValidDateStr ? new Date(datePart + "T12:00:00") : null;
-  const isValidHistoryDate = parsedHistoryDate !== null && !isNaN(parsedHistoryDate.getTime());
-
-  // For pre-migration rows where daily_date is NULL, derive the date from viewed_at
-  // using the same UTC-10 offset the backend uses to assign verse dates. Using UTC
-  // getters on the offset-adjusted timestamp avoids any local-timezone conversion.
-  let viewedAtFallback: Date | null = null;
-  if (safeIndex > 0 && !isValidHistoryDate && currentEntry?.viewed_at) {
-    const effectiveMs = new Date(currentEntry.viewed_at).getTime() - 10 * 60 * 60 * 1000;
-    const d = new Date(effectiveMs);
-    const ymd =
-      `${d.getUTCFullYear()}-` +
-      `${String(d.getUTCMonth() + 1).padStart(2, "0")}-` +
-      `${String(d.getUTCDate()).padStart(2, "0")}`;
-    const candidate = new Date(ymd + "T12:00:00");
-    if (!isNaN(candidate.getTime())) viewedAtFallback = candidate;
-  }
-
+  // Date display: use targetDate directly for past days (it's already YYYY-MM-DD)
   const displayDate: Date =
-    safeIndex > 0 && isValidHistoryDate ? parsedHistoryDate! :
-    viewedAtFallback !== null ? viewedAtFallback :
-    new Date();
+    historyIndex > 0 && targetDate
+      ? new Date(targetDate + "T12:00:00")
+      : new Date();
 
-  // Guard toLocaleDateString: a bad locale tag can throw in some environments.
   const formattedDate = (() => {
     try {
       return displayDate.toLocaleDateString(i18n.language, {
@@ -300,6 +330,17 @@ export const DailyVerse: React.FC = () => {
     }
   })();
 
+  // Whether the verse area is loading (skeleton)
+  const verseAreaLoading =
+    ((historyIndex > 0 && activeVerse === null) || isFetchingDate || historyVersionLoading) &&
+    !fetchDateError;
+
+  // The verse to render (with override for premium translation switching)
+  const renderedVerse =
+    historyIndex > 0
+      ? (historyOverrideVerse ?? displayVerse ?? verse)
+      : (displayVerse ?? verse);
+
   return (
     <div
       className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8"
@@ -314,7 +355,7 @@ export const DailyVerse: React.FC = () => {
           <FirstEngagementOnboarding />
         </>
       )}
-      
+
       {/* Mobile control row — sits between nav header and h1, hidden on desktop */}
       {!isGuest && (
         <div className="flex items-center justify-between px-4 py-1 md:hidden mb-2">
@@ -344,7 +385,6 @@ export const DailyVerse: React.FC = () => {
         <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
           {t("dailyVerse.title")}
         </h1>
-        {/* Date line: key changes on every new date, triggering the fade-in animation */}
         <p key={formattedDate} className="text-gray-600 dark:text-gray-400 animate-fade-in">
           {formattedDate}
         </p>
@@ -374,13 +414,15 @@ export const DailyVerse: React.FC = () => {
 
         {/* Card — expands to fill remaining space */}
         <div className="flex-1 min-w-0">
-          {historyIndex > 0 && displayVerse === null ? (
+          {verseAreaLoading ? (
             <VerseCardSkeleton />
-          ) : historyVersionLoading ? (
-            <VerseCardSkeleton />
+          ) : fetchDateError ? (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+              <p className="text-red-700 dark:text-red-400 text-sm">{t("dailyVerse.error")}</p>
+            </div>
           ) : (
             <VerseCard
-              verse={historyIndex > 0 ? (historyOverrideVerse ?? displayVerse ?? verse) : (displayVerse ?? verse)}
+              verse={renderedVerse}
               lang={i18n.language}
               onVersionSelect={
                 historyIndex === 0 && !isGuest
@@ -394,7 +436,7 @@ export const DailyVerse: React.FC = () => {
             <div className="mt-3 flex justify-center">
               {showComparison ? (
                 <SideBySideView
-                  reference={(historyOverrideVerse ?? displayVerse ?? verse)!.reference}
+                  reference={renderedVerse.reference}
                   lang={i18n.language}
                   onClose={() => setShowComparison(false)}
                 />
@@ -418,13 +460,15 @@ export const DailyVerse: React.FC = () => {
 
       {/* Mobile: single-column card */}
       <div className="md:hidden">
-        {historyIndex > 0 && displayVerse === null ? (
+        {verseAreaLoading ? (
           <VerseCardSkeleton />
-        ) : historyVersionLoading ? (
-          <VerseCardSkeleton />
+        ) : fetchDateError ? (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+            <p className="text-red-700 dark:text-red-400 text-sm">{t("dailyVerse.error")}</p>
+          </div>
         ) : (
           <VerseCard
-            verse={historyIndex > 0 ? (historyOverrideVerse ?? displayVerse ?? verse) : (displayVerse ?? verse)}
+            verse={renderedVerse}
             lang={i18n.language}
             onVersionSelect={
               historyIndex === 0 && !isGuest
@@ -438,7 +482,7 @@ export const DailyVerse: React.FC = () => {
           <div className="mt-3 flex justify-center">
             {showComparison ? (
               <SideBySideView
-                reference={(historyOverrideVerse ?? displayVerse ?? verse)!.reference}
+                reference={renderedVerse.reference}
                 lang={i18n.language}
                 onClose={() => setShowComparison(false)}
               />
