@@ -14,7 +14,8 @@
     "login": "Iniciar Sesión",
     "signup": "Registrarse",
     "logout": "Cerrar Sesión",
-    "search": "Buscar"
+    "search": "Buscar",
+    "shop": "Tienda"
   },
   "journal": {
     "title": "Mi Diario",
@@ -206,7 +207,15 @@
     "appearance": {
       "title": "Apariencia",
       "darkMode": "Modo Oscuro",
-      "darkModeDescription": "Usar tema oscuro en toda la aplicación"
+      "darkModeDescription": "Usar tema oscuro en toda la aplicación",
+      "blessingsAvailable": "{{count}} Bendiciones disponibles",
+      "loadingThemes": "Cargando temas…",
+      "tapToConfirm": "Toca para confirmar",
+      "signInToUnlock": "Inicia sesión para desbloquear",
+      "signIn": "Iniciar sesión",
+      "guestNote": "Inicia sesión para desbloquear temas premium con Bendiciones.",
+      "purchaseErrorInsufficient": "No tienes suficientes Bendiciones para desbloquear este tema.",
+      "purchaseErrorGeneric": "No se pudo completar la compra. Por favor, inténtalo de nuevo."
     },
     "notifications": {
       "title": "Notificaciones",
@@ -437,5 +446,9 @@
     "half_year": { "name": "Medio Año" },
     "nine_months": { "name": "Nueve Meses" },
     "full_year": { "name": "Un Año Completo" }
+  },
+  "shop": {
+    "title": "Dones de Fidelidad",
+    "subtitle": "Gasta tus Bendiciones para desbloquear nuevas apariencias en tu jornada devocional."
   }
 }

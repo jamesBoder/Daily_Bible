@@ -14,7 +14,8 @@
     "login": "Login",
     "signup": "Sign Up",
     "logout": "Logout",
-    "search": "Search"
+    "search": "Search",
+    "shop": "Shop"
   },
   "journal": {
     "title": "My Journal",
@@ -206,7 +207,15 @@
     "appearance": {
       "title": "Appearance",
       "darkMode": "Dark Mode",
-      "darkModeDescription": "Use dark theme throughout the app"
+      "darkModeDescription": "Use dark theme throughout the app",
+      "blessingsAvailable": "{{count}} Blessings available",
+      "loadingThemes": "Loading themes…",
+      "tapToConfirm": "Tap to confirm",
+      "signInToUnlock": "Sign in to unlock",
+      "signIn": "Sign in",
+      "guestNote": "Sign in to unlock premium themes with Blessings.",
+      "purchaseErrorInsufficient": "Not enough Blessings to unlock this theme.",
+      "purchaseErrorGeneric": "Could not complete the purchase. Please try again."
     },
     "notifications": {
       "title": "Notifications",
@@ -437,5 +446,9 @@
     "half_year": { "name": "Half Year" },
     "nine_months": { "name": "Nine Months" },
     "full_year": { "name": "Full Year" }
+  },
+  "shop": {
+    "title": "Gifts of Faithfulness",
+    "subtitle": "Spend your Blessings to unlock new appearances for your devotional journey."
   }
 }

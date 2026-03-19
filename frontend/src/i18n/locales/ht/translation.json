@@ -13,7 +13,8 @@
     "login": "Konekte",
     "signup": "Enskri",
     "logout": "Dekonekte",
-    "search": "Chèche"
+    "search": "Chèche",
+    "shop": "Boutik"
   },
   "dailyVerse": {
     "title": "Vèsè Jodi a",
@@ -170,7 +171,15 @@
     "appearance": {
       "title": "Aparans",
       "darkMode": "Mòd Nwa",
-      "darkModeDescription": "Itilize tèm nwa nan tout aplikasyon an"
+      "darkModeDescription": "Itilize tèm nwa nan tout aplikasyon an",
+      "blessingsAvailable": "{{count}} Benediksyon disponib",
+      "loadingThemes": "Chajman tèm yo…",
+      "tapToConfirm": "Tape pou konfime",
+      "signInToUnlock": "Konekte pou debloke",
+      "signIn": "Konekte",
+      "guestNote": "Konekte pou debloke tèm premium avèk Benediksyon.",
+      "purchaseErrorInsufficient": "Pa gen ase Benediksyon pou debloke tèm sa a.",
+      "purchaseErrorGeneric": "Pa te ka fini acha a. Tanpri eseye ankò."
     },
     "notifications": {
       "title": "Notifikasyon",
@@ -340,5 +349,9 @@
     "half_year": { "name": "Demi Ane" },
     "nine_months": { "name": "Nèf Mwa" },
     "full_year": { "name": "Yon Ane Konplè" }
+  },
+  "shop": {
+    "title": "Kado Fidelite",
+    "subtitle": "Depanse Benediksyon ou yo pou debloke nouvo aparans pou vwayaj devosyon ou."
   }
 }

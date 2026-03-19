@@ -13,7 +13,8 @@
     "login": "Connexion",
     "signup": "S'inscrire",
     "logout": "Déconnexion",
-    "search": "Rechercher"
+    "search": "Rechercher",
+    "shop": "Boutique"
   },
   "dailyVerse": {
     "title": "Verset du Jour",
@@ -170,7 +171,15 @@
     "appearance": {
       "title": "Apparence",
       "darkMode": "Mode Sombre",
-      "darkModeDescription": "Utiliser le thème sombre dans toute l'application"
+      "darkModeDescription": "Utiliser le thème sombre dans toute l'application",
+      "blessingsAvailable": "{{count}} Bénédictions disponibles",
+      "loadingThemes": "Chargement des thèmes…",
+      "tapToConfirm": "Appuyer pour confirmer",
+      "signInToUnlock": "Connectez-vous pour débloquer",
+      "signIn": "Se connecter",
+      "guestNote": "Connectez-vous pour débloquer des thèmes premium avec des Bénédictions.",
+      "purchaseErrorInsufficient": "Pas assez de Bénédictions pour débloquer ce thème.",
+      "purchaseErrorGeneric": "Impossible de finaliser l'achat. Veuillez réessayer."
     },
     "notifications": {
       "title": "Notifications",
@@ -340,5 +349,9 @@
     "half_year": { "name": "Demi-Année" },
     "nine_months": { "name": "Neuf Mois" },
     "full_year": { "name": "Une Année Complète" }
+  },
+  "shop": {
+    "title": "Dons de Fidélité",
+    "subtitle": "Dépensez vos Bénédictions pour débloquer de nouvelles apparences pour votre parcours dévotionnel."
   }
 }
