@@ -18,8 +18,8 @@ ARG REACT_APP_GOOGLE_CLIENT_ID
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 ENV REACT_APP_GOOGLE_CLIENT_ID=$REACT_APP_GOOGLE_CLIENT_ID
 
-# Build the app
-RUN npm run build
+# Build the app (source maps and ESLint disabled to speed up Docker build)
+RUN GENERATE_SOURCEMAP=false DISABLE_ESLINT_PLUGIN=true npm run build
 
 # Runtime stage
 FROM nginx:alpine
