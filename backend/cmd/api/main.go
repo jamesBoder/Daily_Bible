@@ -125,6 +125,9 @@ func main() {
     // Initialize Phase 3 services
     journalService := services.NewJournalService(db, blessingsService)
 
+    // Initialize Phase 6 services
+    unlockService := services.NewUnlockService(db, blessingsService)
+
     // create validator instance
     validate := validator.New()
     _ = validate // currently not used, but can be integrated into services or handlers later
@@ -233,6 +236,12 @@ func main() {
         settingsService,
         subscriptionChecker,
     )
+
+    // init unlocksHandler variable (Phase 6)
+    unlocksHandler := handlers.NewUnlocksHandler(
+        unlockService,
+        blessingsService,
+    )
     
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
@@ -292,7 +301,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

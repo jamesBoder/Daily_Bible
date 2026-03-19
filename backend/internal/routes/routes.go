@@ -16,7 +16,7 @@ import (
 // Keep main.go clean
 // Make routes easy to find
 
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler, journalHandler *handlers.JournalHandler, translationsHandler *handlers.TranslationsHandler) {
+func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler, journalHandler *handlers.JournalHandler, translationsHandler *handlers.TranslationsHandler, unlocksHandler *handlers.UnlocksHandler) {
 	// Example route group for user-related endpoints
 	api := router.Group("/api")
 	{
@@ -124,10 +124,9 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 				milestones.POST("/:key/dismiss", milestonesHandler.DismissCelebration)
 			}
 
-			// unlocks routes — stub for Phase 6
-			protected.GET("/unlocks", func(c *gin.Context) {
-				c.JSON(200, gin.H{"unlocks": []interface{}{}})
-			})
+			// unlocks routes (Phase 6)
+			protected.GET("/unlocks", unlocksHandler.GetUnlocks)
+			protected.POST("/blessings/spend", unlocksHandler.SpendBlessings)
 
 			// blessings routes
 			blessings := protected.Group("/blessings")

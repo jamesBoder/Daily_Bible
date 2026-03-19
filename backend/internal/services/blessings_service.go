@@ -80,21 +80,32 @@ func (s *BlessingsService) CreditWithDailyCap(userID uint, baseAmount int, reaso
 // Debit is used for Rewards Shop purchases (Phase 6+). Not called in Phase 1.
 func (s *BlessingsService) Debit(userID uint, amount int, reason string) error {
     return s.db.Transaction(func(tx *gorm.DB) error {
-        var blessings models.UserBlessings
-        if err := tx.Set("gorm:query_option", "FOR UPDATE").
-            First(&blessings, "user_id = ?", userID).Error; err != nil {
-            return err
-        }
-        if blessings.Balance < amount {
-            return ErrInsufficientBlessings
-        }
-        blessings.Balance -= amount
-        if err := tx.Save(&blessings).Error; err != nil {
-            return err
-        }
-        go s.db.Create(&models.BlessingsTransaction{UserID: userID, Amount: -amount, Reason: reason})
-        return nil
+        return s.debitCore(tx, userID, amount, reason)
     })
+}
+
+// DebitTx performs a Blessings debit within a caller-supplied transaction.
+// Use this when the debit must be atomic with other DB operations in the same tx
+// (e.g. recording a theme unlock alongside the balance change).
+func (s *BlessingsService) DebitTx(tx *gorm.DB, userID uint, amount int, reason string) error {
+    return s.debitCore(tx, userID, amount, reason)
+}
+
+func (s *BlessingsService) debitCore(tx *gorm.DB, userID uint, amount int, reason string) error {
+    var blessings models.UserBlessings
+    if err := tx.Set("gorm:query_option", "FOR UPDATE").
+        First(&blessings, "user_id = ?", userID).Error; err != nil {
+        return err
+    }
+    if blessings.Balance < amount {
+        return ErrInsufficientBlessings
+    }
+    blessings.Balance -= amount
+    if err := tx.Save(&blessings).Error; err != nil {
+        return err
+    }
+    // Transaction log written inside the tx so it rolls back cleanly on failure.
+    return tx.Create(&models.BlessingsTransaction{UserID: userID, Amount: -amount, Reason: reason}).Error
 }
 
 // GetBalance returns the current blessings balance for a user

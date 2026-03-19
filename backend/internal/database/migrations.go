@@ -37,6 +37,14 @@ func RunMigrations(db *gorm.DB) error {
         return err
     }
 
+    // Phase 6: unique constraint on (user_id, unlock_key) to prevent duplicate purchases
+    if err := db.Exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_user_unlock_key
+        ON user_unlocks (user_id, unlock_key)
+    `).Error; err != nil {
+        return err
+    }
+
     // Phase 4 backfill: for any user_settings row where preferred_bible_version
     // is empty, infer a sensible free-tier default from preferred_language.
     // Idempotent — rows that already have a value are untouched.
