@@ -88,12 +88,91 @@
     --journal-accent-light:   rgba(245, 158, 11, 0.10);
     --journal-accent-border:  rgba(245, 158, 11, 0.35);
     --journal-caret:          var(--candle-amber);
+
+    /* Phase 6 — base theme surface tokens (Parchment) */
+    --foreground: #1a1208;
+    --theme-surface: #f0ece0;
+    --theme-border: rgba(245, 158, 11, 0.20);
+    --theme-accent: #b45309;
   }
 
-  /* Dark mode overrides */
-  [data-theme="dark"], .dark {
+  /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
+
+  /* Sanctuary — forest green chapel */
+  [data-theme="sanctuary"] {
+    --parchment: #1a2620;
+    --foreground: #e8e0d0;
+    --candle-amber: #c8a84b;
+    --blessing-gold: #d4af37;
+    --grace-lavender: #8fa68a;
+    --milestone-glow: #a8c97f;
+    --theme-surface: #1f2e28;
+    --theme-border: rgba(200, 168, 75, 0.20);
+    --theme-accent: #4a7c59;
+  }
+
+  /* Desert Sand — warm solitude */
+  [data-theme="desert-sand"] {
+    --parchment: #f5ede0;
+    --foreground: #3d2b1a;
+    --candle-amber: #c97c2b;
+    --blessing-gold: #d4882a;
+    --grace-lavender: #9b8a7a;
+    --milestone-glow: #e8c070;
+    --theme-surface: #ede0d0;
+    --theme-border: rgba(201, 124, 43, 0.22);
+    --theme-accent: #8b4513;
+  }
+
+  /* Celestial — indigo night sky */
+  [data-theme="celestial"] {
+    --parchment: #0e1330;
+    --foreground: #e8eaf8;
+    --candle-amber: #8899dd;
+    --blessing-gold: #c0c8f0;
+    --grace-lavender: #7788cc;
+    --milestone-glow: #aabbee;
+    --theme-surface: #121840;
+    --theme-border: rgba(136, 153, 221, 0.20);
+    --theme-accent: #4455aa;
+  }
+
+  /* Scarlet Grace — illuminated manuscript */
+  [data-theme="scarlet-grace"] {
+    --parchment: #1a0505;
+    --foreground: #f5e8d8;
+    --candle-amber: #c8862a;
+    --blessing-gold: #d4af37;
+    --grace-lavender: #c08080;
+    --milestone-glow: #e8c060;
+    --theme-surface: #220808;
+    --theme-border: rgba(200, 134, 42, 0.22);
+    --theme-accent: #8b0000;
+  }
+
+  /* Theme transition — smooth crossfade for all CSS variable consumers */
+  :root {
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      transition: none;
+    }
+  }
+
+  /* Midnight (dark mode) overrides — [data-theme="dark"] kept for any legacy consumers */
+  [data-theme="midnight"], [data-theme="dark"], .dark {
     --parchment: #2C2519;
+    --foreground: #e8d5b0;
     --grace-lavender-bg: rgba(155, 143, 196, 0.18);
+
+    /* Phase 6 — Midnight theme surface tokens */
+    --theme-surface: #3a3020;
+    --theme-border: rgba(251, 191, 36, 0.20);
+    --theme-accent: #fbbf24;
 
     /* Phase 3 — Journal tokens (dark mode: warm candlelight, noticeably brighter) */
     --journal-surface:        #3E2E18;

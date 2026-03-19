@@ -1,0 +1,45 @@
+.page {
+  max-width: 40rem;
+  margin: 0 auto;
+  padding: 2rem 1rem 4rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--blessing-gold);
+  margin: 0;
+  letter-spacing: 0.01em;
+}
+
+.subtitle {
+  font-size: 0.9375rem;
+  opacity: 0.75;
+  margin: 0;
+  line-height: 1.5;
+}
+
+.chipRow {
+  margin-top: 0.25rem;
+}
+
+.section {
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 1rem;
+  padding: 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.dark .section {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}

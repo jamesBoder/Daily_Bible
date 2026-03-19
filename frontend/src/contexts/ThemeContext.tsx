@@ -1,68 +1,131 @@
-// Theme Context to manage gloabal theme state and toggle between light and dark modes
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 
-// imports
-import React from "react";
-import { useState, useEffect, ReactNode } from "react";
+export type ThemeId =
+  | 'parchment'
+  | 'midnight'
+  | 'sanctuary'
+  | 'desert-sand'
+  | 'celestial'
+  | 'scarlet-grace';
 
-// init interface for ThemeContextType
+export interface ThemeDefinition {
+  id: ThemeId;
+  name: string;
+  description: string;
+  isDark: boolean;
+  unlockCost: number; // 0 = free
+  previewColors: {
+    background: string;
+    foreground: string;
+    accent: string;
+  };
+}
+
+export const THEMES: ThemeDefinition[] = [
+  {
+    id: 'parchment',
+    name: 'Parchment',
+    description: 'Warm cream and amber. The classic morning devotion.',
+    isDark: false,
+    unlockCost: 0,
+    previewColors: { background: '#faf8f3', foreground: '#1a1208', accent: '#f59e0b' },
+  },
+  {
+    id: 'midnight',
+    name: 'Midnight',
+    description: 'Deep navy and gold. For evening reflection.',
+    isDark: true,
+    unlockCost: 0,
+    previewColors: { background: '#0f0e0c', foreground: '#e8d5b0', accent: '#fbbf24' },
+  },
+  {
+    id: 'sanctuary',
+    name: 'Sanctuary',
+    description: 'Forest green and ivory. Evening chapel quiet.',
+    isDark: true,
+    unlockCost: 500,
+    previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b' },
+  },
+  {
+    id: 'desert-sand',
+    name: 'Desert Sand',
+    description: 'Sienna and linen. Morning solitude in the wilderness.',
+    isDark: false,
+    unlockCost: 500,
+    previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b' },
+  },
+  {
+    id: 'celestial',
+    name: 'Celestial',
+    description: 'Indigo and silver. The clear night sky.',
+    isDark: true,
+    unlockCost: 750,
+    previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd' },
+  },
+  {
+    id: 'scarlet-grace',
+    name: 'Scarlet Grace',
+    description: 'Crimson and gold leaf. An illuminated manuscript.',
+    isDark: true,
+    unlockCost: 750,
+    previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a' },
+  },
+];
+
 export interface ThemeContextType {
+  activeTheme: ThemeId;
+  setTheme: (id: ThemeId) => void;
   isDarkMode: boolean;
+  // Legacy compat — kept so existing toggleTheme() callers continue to work
   toggleTheme: () => void;
 }
 
-// export ThemeContext
-export const ThemeContext = React.createContext<ThemeContextType | undefined>(
-  undefined,
-);
+const ThemeContext = createContext<ThemeContextType | null>(null);
 
-// init interface for ThemeProviderProps
-interface ThemeProviderProps {
-  children: ReactNode;
-}
+const STORAGE_KEY = 'activeTheme';
 
-// export ThemeProvider component
-export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-  const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [activeTheme, setActiveTheme] = useState<ThemeId>(() => {
+    // Migrate existing localStorage 'isDarkMode' value on first load
+    const stored = localStorage.getItem(STORAGE_KEY) as ThemeId | null;
+    if (stored) return stored;
+    const wasDark = localStorage.getItem('isDarkMode') === 'true';
+    return wasDark ? 'midnight' : 'parchment';
+  });
 
-  // Load theme preference from localStorage on mount
   useEffect(() => {
-    const storedTheme = localStorage.getItem("isDarkMode");
-    if (storedTheme) {
-      setIsDarkMode(JSON.parse(storedTheme));
-    }
+    const root = document.documentElement;
+    root.removeAttribute('data-theme');
+    root.classList.remove('dark');
+
+    root.setAttribute('data-theme', activeTheme);
+
+    const def = THEMES.find(t => t.id === activeTheme);
+    if (def?.isDark) root.classList.add('dark');
+
+    localStorage.setItem(STORAGE_KEY, activeTheme);
+  }, [activeTheme]);
+
+  const setTheme = useCallback((id: ThemeId) => {
+    setActiveTheme(id);
   }, []);
 
-  // Apply dark mode class to document element
-  useEffect(() => {
-    if (isDarkMode) {
-      document.documentElement.classList.add("dark");
-    } else {
-      document.documentElement.classList.remove("dark");
-    }
-  }, [isDarkMode]);
+  // Legacy: maps the old toggle to parchment <-> midnight
+  const toggleTheme = useCallback(() => {
+    setActiveTheme(prev => (prev === 'midnight' ? 'parchment' : 'midnight'));
+  }, []);
 
-  // Toggle theme and save preference to localStorage
-  const toggleTheme = () => {
-    setIsDarkMode((prevMode) => {
-      const newMode = !prevMode;
-      localStorage.setItem("isDarkMode", JSON.stringify(newMode));
-      return newMode;
-    });
-  };
+  const isDarkMode = THEMES.find(t => t.id === activeTheme)?.isDark ?? false;
 
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ activeTheme, setTheme, isDarkMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );
 };
 
-// useTheme hook
-// Custom hook to use the ThemeContext
 export const useTheme = (): ThemeContextType => {
-  const context = React.useContext(ThemeContext);
-  if (context === undefined) {
-    throw new Error("useTheme must be used within a ThemeProvider");
-  }
-  return context;
+  const ctx = useContext(ThemeContext);
+  if (!ctx) throw new Error('useTheme must be used inside ThemeProvider');
+  return ctx;
 };

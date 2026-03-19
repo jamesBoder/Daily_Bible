@@ -93,6 +93,12 @@ const SearchResultsPage = lazy(() =>
   }))
 );
 
+const RewardsShop = lazy(() =>
+  import("./features/shop/RewardsShop").then((module) => ({
+    default: module.RewardsShop,
+  }))
+);
+
 const router = createBrowserRouter([
   // Public-only routes — redirect authenticated users to home
   {
@@ -157,6 +163,11 @@ const router = createBrowserRouter([
       {
         path: "search",
         element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><SearchResultsPage /></Suspense></GuestBlockedRoute>,
+      },
+      // Rewards Shop (Phase 6) — authenticated users only
+      {
+        path: "shop",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><RewardsShop /></Suspense></GuestBlockedRoute>,
       },
       // Journal routes (Phase 3)
       {

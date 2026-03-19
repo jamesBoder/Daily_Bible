@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useLocation } from "react-router-dom";
+import { useLocation, NavLink } from "react-router-dom";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { AccountManagement } from "./AccountManagement";
@@ -12,6 +12,7 @@ import { useTranslation } from "react-i18next";
 import { settingsService } from "../../services/api/settings";
 import { showToast } from "../../utils/toast";
 import { TranslationPicker } from "./TranslationPicker";
+import { ThemePicker } from "../settings/ThemePicker";
 
 interface SettingsState {
   emailNotifications: boolean;
@@ -50,7 +51,7 @@ export const Settings: React.FC = () => {
 
   const [isSaving, setIsSaving] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const { isDarkMode, toggleTheme } = useTheme();
+  useTheme(); // ThemeContext — consumed by ThemePicker
 
   // Load user settings when component mounts
   useEffect(() => {
@@ -160,6 +161,18 @@ export const Settings: React.FC = () => {
           >
             {t('settings.tabs.account')}
           </button>
+          <NavLink
+            to="/about"
+            className={({ isActive }) =>
+              `py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
+                isActive
+                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
+                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 hover:border-gray-300"
+              }`
+            }
+          >
+            {t('nav.about')}
+          </NavLink>
         </nav>
       </div>
 
@@ -179,24 +192,7 @@ export const Settings: React.FC = () => {
           {/* Appearance Settings */}
           <Card>
             <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.appearance.title')}</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">{t('settings.appearance.darkMode')}</h3>
-                  <p className="text-sm text-gray-600">
-                    {t('settings.appearance.darkModeDescription')}
-                  </p>
-                </div>
-                <button
-                  onClick={() => toggleTheme()}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isDarkMode ? "bg-blue-600" : "bg-gray-300"}`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isDarkMode ? "translate-x-6" : "translate-x-1"}`}
-                  />
-                </button>
-              </div>
-            </div>
+            <ThemePicker />
           </Card>
 
           {/* Notification Settings */}

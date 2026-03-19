@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 import StreakCandle from "../StreakCandle";
 import BlessingsChip from "../BlessingsChip";
-import { VerseSearchBar } from "../search/VerseSearchBar";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
@@ -45,7 +44,7 @@ export const Header: React.FC = () => {
             </span>
           </Link>
 
-          {/* Desktop Navigation */}
+          {/* Desktop Navigation — order: Search, Favorites, Journal, Shop, Settings */}
           <div className="hidden md:flex items-center space-x-8">
             {/* Search hidden for guests */}
             {!isGuest && (
@@ -92,17 +91,20 @@ export const Header: React.FC = () => {
                 {t('nav.journal', 'Journal')}
               </NavLink>
             )}
-            <NavLink
-              to="/about"
-              className={({ isActive }) =>
-                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
-                }`
-              }
-            >
-              {t('nav.about')}
-            </NavLink>
+            {/* Shop — hidden for guests, now after Journal */}
+            {!isGuest && (
+              <NavLink
+                to="/shop"
+                className={({ isActive }) =>
+                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
+                    ? "text-amber-600 dark:text-amber-400 border-amber-500 dark:border-amber-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 border-transparent"
+                  }`
+                }
+              >
+                {t('nav.shop', 'Shop')}
+              </NavLink>
+            )}
             <NavLink
               to="/settings"
               className={({ isActive }) =>
@@ -118,8 +120,6 @@ export const Header: React.FC = () => {
 
           {/* User Menu */}
           <div className="hidden md:flex items-center space-x-4">
-            {/* Hide the collapsible search bar for guests or when already on the search page */}
-            {!isGuest && location.pathname !== '/search' && <VerseSearchBar />}
             {/* Streak and Blessings display for authenticated users */}
             {!isGuest && (
               <>
@@ -180,7 +180,7 @@ export const Header: React.FC = () => {
           </button>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile menu — order: Search, Favorites, Journal, Shop, Settings */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
             isMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
@@ -236,18 +236,21 @@ export const Header: React.FC = () => {
                   {t('nav.journal', 'Journal')}
                 </NavLink>
               )}
-              <NavLink
-                to="/about"
-                className={({ isActive }) =>
-                  `font-medium transition-colors ${isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                  }`
-                }
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.about')}
-              </NavLink>
+              {/* Shop — hidden for guests, now after Journal */}
+              {!isGuest && (
+                <NavLink
+                  to="/shop"
+                  className={({ isActive }) =>
+                    `font-medium transition-colors ${isActive
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
+                    }`
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t('nav.shop', 'Shop')}
+                </NavLink>
+              )}
               <NavLink
                 to="/settings"
                 className={({ isActive }) =>
