@@ -12,7 +12,7 @@ export const RewardsShop: React.FC = () => {
         <h1 className={styles.title}>{t('shop.title')}</h1>
         <p className={styles.subtitle}>{t('shop.subtitle')}</p>
         <div className={styles.chipRow}>
-          <BlessingsChip />
+          <BlessingsChip showZero />
         </div>
       </div>
       <section className={styles.section}>

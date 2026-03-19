@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from "react";
+import React, { lazy, Suspense, useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
@@ -14,6 +14,7 @@ import { StreakProvider } from "./contexts/StreakContext";
 import { Toaster } from "react-hot-toast";
 import { VerseCardSkeleton } from "./components/common/Skeleton";
 import BlessingsToast from "./components/BlessingsToast";
+import { SoundService } from "./services/SoundService";
 import "./App.css";
 
 
@@ -192,6 +193,10 @@ const router = createBrowserRouter([
 ]);
 
 function App() {
+  useEffect(() => {
+    SoundService.loadPreference();
+  }, []);
+
   return (
     <ThemeProvider>
       <AuthProvider>

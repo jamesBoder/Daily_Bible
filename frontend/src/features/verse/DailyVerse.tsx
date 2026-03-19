@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { SoundService } from "../../services/SoundService";
 import { useSearchParams } from "react-router-dom";
 import { useVerse } from "../../hooks/useVerse";
 import { useHistory } from "../../hooks/useHistory";
@@ -153,6 +154,15 @@ export const DailyVerse: React.FC = () => {
       .catch(() => {});
     return () => { cancelled = true; };
   }, [isGuest, i18n.language]);
+
+  // Fire streak-confirm sound once per session when today's verse loads
+  const streakSoundFiredRef = useRef(false);
+  useEffect(() => {
+    if (verse && historyIndex === 0 && !streakSoundFiredRef.current) {
+      SoundService.play('streak-confirm');
+      streakSoundFiredRef.current = true;
+    }
+  }, [verse, historyIndex]);
 
   // Reset index + session version when language changes
   useEffect(() => {

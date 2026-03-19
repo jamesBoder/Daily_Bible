@@ -3,6 +3,7 @@ import { useNavigate, useParams, useBlocker } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import api from "../../services/api/api";
 import { showToast } from "../../utils/toast";
+import { SoundService } from "../../services/SoundService";
 import "./JournalEditor.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -145,6 +146,7 @@ export const JournalEditor: React.FC = () => {
         });
       }
       setIsDirty(false);
+      SoundService.play('journal-save');
       setSaveState("saved");
       // Reset to idle after the savedFade animation completes
       setTimeout(() => setSaveState("idle"), 2600);

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStreak } from '../../contexts/StreakContext';
+import { SoundService } from '../../services/SoundService';
 
 interface Particle {
   id: number;
@@ -33,6 +34,8 @@ const MilestoneCelebrationModal: React.FC = () => {
     typeof window !== 'undefined' &&
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  const celebrationEnabled = localStorage.getItem('celebrationAnimEnabled') !== 'false';
+
   // On open: save previous focus, advance animation steps.
   useEffect(() => {
     if (!shouldShow) {
@@ -43,7 +46,8 @@ const MilestoneCelebrationModal: React.FC = () => {
     previousFocusRef.current = document.activeElement as HTMLElement;
 
     if (prefersReducedMotion) {
-      setStep(5); // skip straight to fully revealed
+      setStep(5);
+      SoundService.play('milestone');
       return;
     }
 
@@ -53,7 +57,7 @@ const MilestoneCelebrationModal: React.FC = () => {
     // step 2: amber reveal (500ms)
     timers.push(setTimeout(() => setStep(2), 500));
     // step 3: badge full color + glow (1800ms)
-    timers.push(setTimeout(() => setStep(3), 1800));
+    timers.push(setTimeout(() => { setStep(3); SoundService.play('milestone'); }, 1800));
     // step 4: milestone name fades in (2300ms)
     timers.push(setTimeout(() => setStep(4), 2300));
     // step 5: blessings amount + Continue button (2800ms)
@@ -162,7 +166,7 @@ const MilestoneCelebrationModal: React.FC = () => {
           {/* Badge area */}
           <div className="relative flex items-center justify-center mb-6">
             {/* Ember particles — transform/opacity only, no top/left */}
-            {!prefersReducedMotion && step >= 3 && particles.map(p => (
+            {!prefersReducedMotion && celebrationEnabled && step >= 3 && particles.map(p => (
               <span
                 key={p.id}
                 className="absolute rounded-full pointer-events-none"

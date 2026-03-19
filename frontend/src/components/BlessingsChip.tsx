@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStreak } from '../contexts/StreakContext';
 import { useTranslation } from 'react-i18next';
+import { SoundService } from '../services/SoundService';
 
 const POPOVER_WIDTH = 240;
 const POPOVER_ID = 'blessings';
 
-const BlessingsChip: React.FC = () => {
+interface BlessingsChipProps {
+  showZero?: boolean;
+}
+
+const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
   const { streakData } = useStreak();
   const { t } = useTranslation();
   const [showPopover, setShowPopover] = useState(false);
@@ -28,6 +33,7 @@ const BlessingsChip: React.FC = () => {
     const balance = streakData?.blessings_balance ?? null;
     if (balance !== null && prevBalanceRef.current !== null && balance > prevBalanceRef.current) {
       setIsFlashing(true);
+      SoundService.play('blessings-earned');
       const timer = setTimeout(() => setIsFlashing(false), 700);
       return () => clearTimeout(timer);
     }
@@ -110,7 +116,8 @@ const BlessingsChip: React.FC = () => {
     }
   };
 
-  if (!streakData || streakData.blessings_balance === 0) return null;
+  if (!streakData) return null;
+  if (streakData.blessings_balance === 0 && !showZero) return null;
 
   return (
     <>
