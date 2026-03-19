@@ -64,7 +64,7 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
         PreferredBibleVersion *string `json:"preferred_bible_version"`
         EmailNotifications   *bool   `json:"email_notifications"`
         DailyVerseReminder   *bool   `json:"daily_verse_reminder"`
-        DarkMode             *bool   `json:"dark_mode"`
+        ActiveTheme          *string `json:"active_theme"`
     }
     
     if err := c.ShouldBindJSON(&updateRequest); err != nil {
@@ -108,10 +108,22 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
         updates["daily_verse_reminder"] = *updateRequest.DailyVerseReminder
     }
     
-    if updateRequest.DarkMode != nil {
-        updates["dark_mode"] = *updateRequest.DarkMode
+    if updateRequest.ActiveTheme != nil {
+        validThemes := map[string]bool{
+            "parchment": true, "midnight": true, "sanctuary": true,
+            "desert-sand": true, "celestial": true, "scarlet-grace": true,
+        }
+        if !validThemes[*updateRequest.ActiveTheme] {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "invalid_theme"})
+            return
+        }
+        darkThemes := map[string]bool{
+            "midnight": true, "sanctuary": true, "celestial": true, "scarlet-grace": true,
+        }
+        updates["active_theme"] = *updateRequest.ActiveTheme
+        updates["dark_mode"] = darkThemes[*updateRequest.ActiveTheme]
     }
-    
+
     if len(updates) == 0 {
         c.JSON(http.StatusBadRequest, gin.H{"error": "No fields to update"})
         return

@@ -9,6 +9,7 @@ export interface UserSettings {
   email_notifications: boolean;
   daily_verse_reminder: boolean;
   dark_mode: boolean;
+  active_theme: string;
   created_at: string;
   updated_at: string;
 }
@@ -18,7 +19,7 @@ export interface UpdateSettingsRequest {
   preferred_bible_version?: string;
   email_notifications?: boolean;
   daily_verse_reminder?: boolean;
-  dark_mode?: boolean;
+  active_theme?: string;
 }
 
 class SettingsService {

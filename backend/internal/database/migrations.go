@@ -45,6 +45,17 @@ func RunMigrations(db *gorm.DB) error {
         return err
     }
 
+    // Phase 7 backfill: users who had dark_mode = true should get 'midnight' as
+    // their active_theme so they don't revert to Parchment on next login.
+    // Idempotent — rows already set to a non-parchment theme are untouched.
+    if err := db.Exec(`
+        UPDATE user_settings
+        SET active_theme = 'midnight'
+        WHERE dark_mode = true AND (active_theme = '' OR active_theme = 'parchment')
+    `).Error; err != nil {
+        return err
+    }
+
     // Phase 4 backfill: for any user_settings row where preferred_bible_version
     // is empty, infer a sensible free-tier default from preferred_language.
     // Idempotent — rows that already have a value are untouched.

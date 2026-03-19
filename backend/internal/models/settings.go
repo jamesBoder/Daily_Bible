@@ -25,7 +25,8 @@ type UserSettings struct {
     DailyVerseReminder   bool `gorm:"default:true" json:"daily_verse_reminder"`
     
     // Display preferences
-    DarkMode bool `gorm:"default:false" json:"dark_mode"`
+    DarkMode    bool   `gorm:"default:false" json:"dark_mode"`
+    ActiveTheme string `gorm:"default:'parchment';size:50" json:"active_theme"`
     
     // Timezone preference (IANA timezone name, e.g., "America/New_York")
     PreferredTimezone string `gorm:"size:50;default:'UTC'" json:"preferred_timezone"`
