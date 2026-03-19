@@ -215,7 +215,23 @@
       "signIn": "Sign in",
       "guestNote": "Sign in to unlock premium themes with Blessings.",
       "purchaseErrorInsufficient": "Not enough Blessings to unlock this theme.",
-      "purchaseErrorGeneric": "Could not complete the purchase. Please try again."
+      "purchaseErrorGeneric": "Could not complete the purchase. Please try again.",
+      "celebrationAnim": "Celebration Animations",
+      "celebrationAnimDesc": "Show particle effects when you reach a milestone.",
+      "soundEffects": "Sound Effects",
+      "soundEffectsDesc": "Play soft tones when saving journal entries or continuing your streak."
+    },
+    "sections": {
+      "myJourney": "My Journey",
+      "devotion": "Devotion & Notifications",
+      "appearance": "Appearance"
+    },
+    "graceDays": {
+      "remaining": "Grace Days remaining:",
+      "of2": "of 2",
+      "exhausted": "Your grace days have been used this period.",
+      "use": "Use a Grace Day",
+      "confirm": "Confirm — use a Grace Day?"
     },
     "notifications": {
       "title": "Notifications",
@@ -396,7 +412,7 @@
     "balance": "Blessings balance",
     "popover": {
       "title": "Blessings",
-      "description": "Earn Blessings by engaging with daily verses, adding reflections, and maintaining your streak. Use them in the Rewards Shop (coming soon) to unlock themes and features!",
+      "description": "Earn Blessings by engaging with daily verses, adding reflections, and maintaining your streak. Visit the Rewards Shop to unlock themes and other gifts of faithfulness.",
       "balance": "Current balance: {{count}}"
     },
     "earned": {

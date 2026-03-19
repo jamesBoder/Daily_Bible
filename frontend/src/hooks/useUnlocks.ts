@@ -52,7 +52,7 @@ export function useUnlocks() {
       }
       return false;
     }
-  }, []);
+  }, [t]);
 
   return { unlocks, balance, isLoading, isGuest, purchaseTheme, purchaseError };
 }

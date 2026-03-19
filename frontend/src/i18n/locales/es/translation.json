@@ -215,7 +215,23 @@
       "signIn": "Iniciar sesión",
       "guestNote": "Inicia sesión para desbloquear temas premium con Bendiciones.",
       "purchaseErrorInsufficient": "No tienes suficientes Bendiciones para desbloquear este tema.",
-      "purchaseErrorGeneric": "No se pudo completar la compra. Por favor, inténtalo de nuevo."
+      "purchaseErrorGeneric": "No se pudo completar la compra. Por favor, inténtalo de nuevo.",
+      "celebrationAnim": "Animaciones de celebración",
+      "celebrationAnimDesc": "Mostrar efectos de partículas cuando alcances un hito.",
+      "soundEffects": "Efectos de sonido",
+      "soundEffectsDesc": "Reproducir tonos suaves al guardar entradas del diario o continuar tu racha."
+    },
+    "sections": {
+      "myJourney": "Mi Camino",
+      "devotion": "Devoción y Notificaciones",
+      "appearance": "Apariencia"
+    },
+    "graceDays": {
+      "remaining": "Días de gracia restantes:",
+      "of2": "de 2",
+      "exhausted": "Tus días de gracia han sido utilizados este período.",
+      "use": "Usar un Día de Gracia",
+      "confirm": "Confirmar — ¿usar un Día de Gracia?"
     },
     "notifications": {
       "title": "Notificaciones",
@@ -396,7 +412,7 @@
     "balance": "Balance de bendiciones",
     "popover": {
       "title": "Bendiciones",
-      "description": "Gana Bendiciones al interactuar con versículos diarios, agregar reflexiones y mantener tu racha. Úsalas en la Tienda de Recompensas (próximamente) para desbloquear temas y funciones.",
+      "description": "Gana Bendiciones al interactuar con versículos diarios, agregar reflexiones y mantener tu racha. Visita la Tienda de Recompensas para desbloquear temas y otros dones de fidelidad.",
       "balance": "Balance actual: {{count}}"
     },
     "earned": {

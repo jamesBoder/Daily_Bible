@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Lock, Check, Sparkle } from '@phosphor-icons/react';
 import { THEMES, type ThemeId, useTheme } from '../../contexts/ThemeContext';
 import { useUnlocks } from '../../hooks/useUnlocks';
+import { SoundService } from '../../services/SoundService';
 import styles from './ThemePicker.module.css';
 
 export const ThemePicker: React.FC = () => {
@@ -15,26 +16,33 @@ export const ThemePicker: React.FC = () => {
     unlocks.find(u => u.theme_id === id);
 
   const handleThemeClick = async (id: ThemeId) => {
-    if (isGuest) return; // guests can't purchase; free themes still selectable below
+    const themeDef = THEMES.find(t => t.id === id);
+    const isFree = themeDef?.unlockCost === 0;
+
+    // Guests can select free themes; block paid themes only
+    if (isGuest) {
+      if (isFree) setTheme(id);
+      return;
+    }
+
+    if (isLoading) return; // unlocks not yet resolved — treat all themes as locked
     const status = getUnlockStatus(id);
-    if (!status || status.is_owned) {
+    if (isFree || status?.is_owned) {
       setTheme(id);
       setConfirming(null);
       return;
     }
+    if (!status) return; // unknown theme — do nothing
     if (confirming === id) {
       const success = await purchaseTheme(id);
       if (success) {
+        SoundService.play('journal-save');
         setTheme(id);
       }
       setConfirming(null);
     } else {
       setConfirming(id);
     }
-  };
-
-  const handleFreeThemeClick = (id: ThemeId) => {
-    setTheme(id);
   };
 
   return (
@@ -69,7 +77,7 @@ export const ThemePicker: React.FC = () => {
                   !isOwned && !isGuest ? styles.locked : '',
                   isGuest && !isFreeTheme ? styles.guestLocked : '',
                 ].join(' ')}
-                onClick={() => isFreeTheme || isOwned ? handleFreeThemeClick(theme.id) : handleThemeClick(theme.id)}
+                onClick={() => handleThemeClick(theme.id)}
                 disabled={isGuest && !isFreeTheme}
                 aria-label={`${theme.name}${isGuest && !isFreeTheme ? ` — ${t('settings.appearance.signInToUnlock')}` : !isOwned ? ` — ${theme.unlockCost} Blessings to unlock` : ''}`}
                 title={theme.description}

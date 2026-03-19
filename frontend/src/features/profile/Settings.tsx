@@ -1,287 +1,93 @@
-import React, { useState, useEffect } from "react";
-import { useLocation, NavLink } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { NavLink } from "react-router-dom";
 import { Card } from "../../components/common/Card";
-import { Button } from "../../components/common/Button";
+import { Profile } from "./Profile";
 import { AccountManagement } from "./AccountManagement";
 import { GuestAccountManagement } from "./GuestAccountManagement";
-import { Profile } from "./Profile";
-import { useTheme } from "../../contexts/ThemeContext";
-import { useAuth } from "../../hooks/useAuth";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useTranslation } from "react-i18next";
-import { settingsService } from "../../services/api/settings";
-import { showToast } from "../../utils/toast";
 import { TranslationPicker } from "./TranslationPicker";
-import { ThemePicker } from "../settings/ThemePicker";
-
-interface SettingsState {
-  emailNotifications: boolean;
-  dailyVerseReminder: boolean;
-  language: string;
-}
-
-type TabType = "profile" | "preferences" | "account";
+import { GraceDaySettings } from "../settings/GraceDaySettings";
+import { NotificationSettings } from "../settings/NotificationSettings";
+import { LanguageSettings } from "../settings/LanguageSettings";
+import { AppearanceSettings } from "../settings/AppearanceSettings";
+import { useAuth } from "../../hooks/useAuth";
+import { useTheme } from "../../contexts/ThemeContext";
+import { settingsService } from "../../services/api/settings";
+import { useTranslation } from "react-i18next";
+import type { ThemeId } from "../../contexts/ThemeContext";
 
 export const Settings: React.FC = () => {
   const { isGuest } = useAuth();
   const { t } = useTranslation();
-  const { currentLanguage, changeLanguage, supportedLanguages } = useLanguage();
-  const location = useLocation();
+  const { initTheme } = useTheme();
+  const [notifEmail, setNotifEmail] = useState<boolean | undefined>(undefined);
+  const [notifReminder, setNotifReminder] = useState<boolean | undefined>(undefined);
 
-  // Read defaultTab from navigation state (e.g. from Profile "Account Settings" button)
-  const locationDefaultTab = (location.state as { defaultTab?: TabType } | null)?.defaultTab;
-
-  // Pitfall 6/12: lazy initializer — guests skip "profile" tab (no API call)
-  const [activeTab, setActiveTab] = useState<TabType>(() => {
-    if (locationDefaultTab) return locationDefaultTab;
-    return isGuest ? "preferences" : "profile";
-  });
-
-  // If Profile is rendered as a tab inside this page and calls navigate('/settings', {state}),
-  // the component doesn't remount — watch location.state to catch the tab switch.
+  // Single settings load: syncs theme silently + passes notification values down
   useEffect(() => {
-    const incoming = (location.state as { defaultTab?: TabType } | null)?.defaultTab;
-    if (incoming) setActiveTab(incoming);
-  }, [location.state]);
-  const [settings, setSettings] = useState<SettingsState>({
-    emailNotifications: true,
-    dailyVerseReminder: true,
-    language: currentLanguage,
-  });
-
-  const [isSaving, setIsSaving] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  useTheme(); // ThemeContext — consumed by ThemePicker
-
-  // Load user settings when component mounts
-  useEffect(() => {
-    const loadSettings = async () => {
-      if (!isGuest) {
-        try {
-          const userSettings = await settingsService.getSettings();
-          setSettings({
-            emailNotifications: userSettings.email_notifications,
-            dailyVerseReminder: userSettings.daily_verse_reminder,
-            language: userSettings.preferred_language,
-          });
-        } catch (error) {
-          console.error("Failed to load settings:", error);
-        }
-      }
-    };
-    
-    loadSettings();
-  }, [isGuest]);
-
-  // Keep the language select in sync with the LanguageContext.
-  // currentLanguage is set asynchronously (from API or localStorage) after mount,
-  // so the initial useState value can be stale. This effect corrects it.
-  useEffect(() => {
-    setSettings(prev => ({
-      ...prev,
-      language: currentLanguage,
-    }));
-  }, [currentLanguage]);
-
-  const handleToggle = (key: keyof SettingsState) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = e.target.value;
-    setSettings((prev) => ({
-      ...prev,
-      language: newLanguage,
-    }));
-    
-    // Change the language immediately
-    await changeLanguage(newLanguage);
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      if (!isGuest) {
-        // Language is already saved immediately on change via changeLanguage()
-        await settingsService.updateSettings({
-          email_notifications: settings.emailNotifications,
-          daily_verse_reminder: settings.dailyVerseReminder,
-        });
-      }
-      setSuccessMessage(t('settings.saved'));
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (error) {
-      console.error("Failed to save settings:", error);
-      showToast.error(t('settings.saveFailed'));
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    if (isGuest) return;
+    settingsService.getSettings().then(s => {
+      if (s.active_theme) initTheme(s.active_theme as ThemeId);
+      setNotifEmail(s.email_notifications);
+      setNotifReminder(s.daily_verse_reminder);
+    }).catch(() => {});
+  }, [isGuest, initTheme]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">{t('settings.title')}</h1>
+      <h1 className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+        {t('settings.title')}
+      </h1>
 
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
-        <nav className="-mb-px flex space-x-8">
-          {/* Profile tab hidden for guests — they have no real profile */}
-          {!isGuest && (
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === "profile"
-                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
-              }`}
-            >
-              {t('settings.tabs.profile')}
-            </button>
-          )}
-          <button
-            onClick={() => setActiveTab("preferences")}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "preferences"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
-            }`}
-          >
-            {t('settings.tabs.preferences')}
-          </button>
-          <button
-            onClick={() => setActiveTab("account")}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "account"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
-            }`}
-          >
-            {t('settings.tabs.account')}
-          </button>
+      {/* My Journey — authenticated users only */}
+      {!isGuest && (
+        <Card>
+          <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            {t('settings.sections.myJourney', 'My Journey')}
+          </h2>
+          <Profile />
+          <GraceDaySettings />
+        </Card>
+      )}
+
+      {/* Devotion & Notifications */}
+      <Card>
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          {t('settings.sections.devotion', 'Devotion & Notifications')}
+        </h2>
+        <NotificationSettings initialEmail={notifEmail} initialReminder={notifReminder} />
+        <div className="mt-2">
+          <LanguageSettings />
+        </div>
+        {!isGuest && (
+          <div className="mt-2">
+            <TranslationPicker />
+          </div>
+        )}
+      </Card>
+
+      {/* Appearance */}
+      <Card>
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          {t('settings.sections.appearance', 'Appearance')}
+        </h2>
+        <AppearanceSettings />
+      </Card>
+
+      {/* Account */}
+      <Card>
+        <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+          {t('settings.tabs.account')}
+        </h2>
+        {isGuest ? <GuestAccountManagement /> : <AccountManagement />}
+        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
           <NavLink
             to="/about"
-            className={({ isActive }) =>
-              `py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                isActive
-                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 hover:border-gray-300"
-              }`
-            }
+            className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
           >
             {t('nav.about')}
           </NavLink>
-        </nav>
-      </div>
-
-      {successMessage && (
-        <div className="bg-green-100 dark:bg-green-900/20 border border-green-400 text-green-700 px-4 py-3 rounded">
-          {successMessage}
         </div>
-      )}
-
-      {/* Tab Content */}
-      {activeTab === "profile" ? (
-        <Profile />
-      ) : activeTab === "preferences" ? (
-        <>
-          {/* Preferences Content */}
-
-          {/* Appearance Settings */}
-          <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.appearance.title')}</h2>
-            <ThemePicker />
-          </Card>
-
-          {/* Notification Settings */}
-          <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.notifications.title')}</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">{t('settings.notifications.emailNotifications')}</h3>
-                  <p className="text-sm text-gray-600">
-                    {t('settings.notifications.emailDescription')}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleToggle("emailNotifications")}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    settings.emailNotifications ? "bg-blue-600" : "bg-gray-300"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.emailNotifications
-                        ? "translate-x-6"
-                        : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">{t('settings.notifications.dailyReminder')}</h3>
-                  <p className="text-sm text-gray-600">
-                    {t('settings.notifications.reminderDescription')}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleToggle("dailyVerseReminder")}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    settings.dailyVerseReminder ? "bg-blue-600" : "bg-gray-300"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.dailyVerseReminder
-                        ? "translate-x-6"
-                        : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          </Card>
-
-          {/* Language Settings */}
-          <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.language.title')}</h2>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                {t('settings.language.preferredLanguage')}
-              </label>
-              <select
-                value={settings.language}
-                onChange={handleLanguageChange}
-                className="block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              >
-                {supportedLanguages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {t(`settings.language.languages.${lang.code}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </Card>
-
-          {/* Bible Translation Settings — authenticated users only */}
-          {!isGuest && <TranslationPicker />}
-
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? t('settings.saving') : t('settings.save')}
-            </Button>
-          </div>
-        </>
-      ) : (
-        /* Account Management Content — GuestAccountManagement for guests */
-        isGuest ? <GuestAccountManagement /> : <AccountManagement />
-      )}
+      </Card>
     </div>
   );
 };

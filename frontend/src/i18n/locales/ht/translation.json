@@ -179,7 +179,23 @@
       "signIn": "Konekte",
       "guestNote": "Konekte pou debloke tèm premium avèk Benediksyon.",
       "purchaseErrorInsufficient": "Pa gen ase Benediksyon pou debloke tèm sa a.",
-      "purchaseErrorGeneric": "Pa te ka fini acha a. Tanpri eseye ankò."
+      "purchaseErrorGeneric": "Pa te ka fini acha a. Tanpri eseye ankò.",
+      "celebrationAnim": "Animasyon Selebrasyon",
+      "celebrationAnimDesc": "Montre efè patikil lè ou rive nan yon etap.",
+      "soundEffects": "Efè Sono",
+      "soundEffectsDesc": "Jwe son dous lè w sove antre jounal oswa kontinye racha ou."
+    },
+    "sections": {
+      "myJourney": "Vwayaj Mwen",
+      "devotion": "Devotion ak Notifikasyon",
+      "appearance": "Aparans"
+    },
+    "graceDays": {
+      "remaining": "Jou gras ki rete:",
+      "of2": "nan 2",
+      "exhausted": "Jou gras ou yo te itilize pou peryòd sa a.",
+      "use": "Itilize yon Jou Gras",
+      "confirm": "Konfime — itilize yon Jou Gras?"
     },
     "notifications": {
       "title": "Notifikasyon",

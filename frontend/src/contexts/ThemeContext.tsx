@@ -1,4 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
+import apiClient from '../services/api/client';
 
 export type ThemeId =
   | 'parchment'
@@ -75,6 +76,8 @@ export const THEMES: ThemeDefinition[] = [
 export interface ThemeContextType {
   activeTheme: ThemeId;
   setTheme: (id: ThemeId) => void;
+  /** Sets theme from API on load — no backend sync fired (value came FROM the API) */
+  initTheme: (id: ThemeId) => void;
   isDarkMode: boolean;
   // Legacy compat — kept so existing toggleTheme() callers continue to work
   toggleTheme: () => void;
@@ -93,6 +96,8 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return wasDark ? 'midnight' : 'parchment';
   });
 
+  const syncTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   useEffect(() => {
     const root = document.documentElement;
     root.removeAttribute('data-theme');
@@ -108,17 +113,27 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   const setTheme = useCallback((id: ThemeId) => {
     setActiveTheme(id);
+    // Debounced backend sync — silently swallow failures; localStorage is the fallback
+    if (syncTimerRef.current) clearTimeout(syncTimerRef.current);
+    syncTimerRef.current = setTimeout(() => {
+      apiClient.put('/api/settings', { active_theme: id }).catch(() => {});
+    }, 800);
   }, []);
 
-  // Legacy: maps the old toggle to parchment <-> midnight
-  const toggleTheme = useCallback(() => {
-    setActiveTheme(prev => (prev === 'midnight' ? 'parchment' : 'midnight'));
+  // Silent init — used when loading from API; no backend sync needed (value came from there)
+  const initTheme = useCallback((id: ThemeId) => {
+    setActiveTheme(id);
   }, []);
+
+  // Legacy: maps the old toggle to parchment <-> midnight (syncs to backend via setTheme)
+  const toggleTheme = useCallback(() => {
+    setTheme(activeTheme === 'midnight' ? 'parchment' : 'midnight');
+  }, [setTheme, activeTheme]);
 
   const isDarkMode = THEMES.find(t => t.id === activeTheme)?.isDark ?? false;
 
   return (
-    <ThemeContext.Provider value={{ activeTheme, setTheme, isDarkMode, toggleTheme }}>
+    <ThemeContext.Provider value={{ activeTheme, setTheme, initTheme, isDarkMode, toggleTheme }}>
       {children}
     </ThemeContext.Provider>
   );

@@ -179,7 +179,23 @@
       "signIn": "Se connecter",
       "guestNote": "Connectez-vous pour débloquer des thèmes premium avec des Bénédictions.",
       "purchaseErrorInsufficient": "Pas assez de Bénédictions pour débloquer ce thème.",
-      "purchaseErrorGeneric": "Impossible de finaliser l'achat. Veuillez réessayer."
+      "purchaseErrorGeneric": "Impossible de finaliser l'achat. Veuillez réessayer.",
+      "celebrationAnim": "Animations de célébration",
+      "celebrationAnimDesc": "Afficher des effets de particules lorsque vous atteignez un jalon.",
+      "soundEffects": "Effets sonores",
+      "soundEffectsDesc": "Jouer des tons doux lors de l'enregistrement d'entrées de journal ou de la continuation de votre série."
+    },
+    "sections": {
+      "myJourney": "Mon Chemin",
+      "devotion": "Dévotion et Notifications",
+      "appearance": "Apparence"
+    },
+    "graceDays": {
+      "remaining": "Jours de grâce restants :",
+      "of2": "sur 2",
+      "exhausted": "Vos jours de grâce ont été utilisés ce période.",
+      "use": "Utiliser un Jour de Grâce",
+      "confirm": "Confirmer — utiliser un Jour de Grâce ?"
     },
     "notifications": {
       "title": "Notifications",
