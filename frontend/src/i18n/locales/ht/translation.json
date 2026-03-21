@@ -14,7 +14,8 @@
     "signup": "Enskri",
     "logout": "Dekonekte",
     "search": "Chèche",
-    "shop": "Boutik"
+    "shop": "Boutik",
+    "leaderboard": "Kominote"
   },
   "dailyVerse": {
     "title": "Vèsè Jodi a",
@@ -191,8 +192,11 @@
       "appearance": "Aparans"
     },
     "graceDays": {
+      "title": "Jou Gras",
+      "description": "Manke yon jou? Itilize yon Jou Gras pou pwoteje seri ou.",
       "remaining": "Jou gras ki rete:",
       "of2": "nan 2",
+      "available": "disponib",
       "exhausted": "Jou gras ou yo te itilize pou peryòd sa a.",
       "use": "Itilize yon Jou Gras",
       "confirm": "Konfime — itilize yon Jou Gras?"
@@ -228,7 +232,8 @@
     "save": "Anrejistre Paramèt",
     "saving": "Ap anrejistre...",
     "saved": "Paramèt anrejistre avèk siksè!",
-    "saveFailed": "Echèk pou anrejistre paramèt yo"
+    "saveFailed": "Echèk pou anrejistre paramèt yo",
+    "community": "Kominote"
   },
   "about": {
     "title": "Konsènan Pawòl Lwanj",
@@ -451,5 +456,39 @@
       "title": "Ap redirije nan peman\u2026",
       "subtitle": "Ou pral al nan Stripe pou konplete peman ou."
     }
+  },
+  "leaderboard": {
+    "title": "Kominote",
+    "tabs_label": "Onglè tablo klasман",
+    "tab_friends": "Zanmi",
+    "tab_community": "Kominote",
+    "pending_requests": "Demann zanmitay",
+    "no_friends": "Pa gen zanmi ankò — ajoute youn anba!",
+    "add_friend_label": "+ Ajoute yon zanmi pa non itilizatè",
+    "username_placeholder": "Non itilizatè",
+    "send_request": "Voye demann",
+    "add": "Ajoute",
+    "request_sent": "Demann zanmitay voye!",
+    "request_failed": "Pa kapab voye demann",
+    "accept": "Aksepte",
+    "reject": "Refize",
+    "remove_friend": "Retire zanmi",
+    "days": "{{count}} jou",
+    "days_short": "j",
+    "you": "ou",
+    "community_empty": "Pèsonn pa rantre nan tablo kominote a ankò.",
+    "walking_with": "Ap mache ak {{count}} lòt moun",
+    "appear_on_board": "Parèt sou tablo a",
+    "appear_description": "Kite lòt moun wè vwayaj fidelite ou",
+    "locked_visibility": "Vin Premium pou parèt sou tablo kominote a epi enspiré lòt moun ak fidelite ou."
+  },
+  "streak": {
+    "share_button": "Pataje seri mwen",
+    "share_generating": "Ap jenere\u2026",
+    "share_subtitle": "jou nan Pawòl la",
+    "share_locked": "Vin Premium pou pataje vwayaj seri ou a ak lòt moun."
+  },
+  "premium": {
+    "go_premium": "Vin Premium"
   }
 }

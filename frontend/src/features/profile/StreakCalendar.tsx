@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import api from '../../services/api/api';
+import { useLanguage } from '../../contexts/LanguageContext';
 
 interface CalendarDay {
   date: string;
@@ -19,12 +20,6 @@ interface StreakCalendarProps {
   isPremium?: boolean;
 }
 
-const DAY_LABELS = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
-const MONTH_NAMES = [
-  'January', 'February', 'March', 'April', 'May', 'June',
-  'July', 'August', 'September', 'October', 'November', 'December',
-];
-
 /** Build a fully-empty CalendarMonth for months the API didn't return. */
 function buildEmptyMonth(year: number, month: number): CalendarMonth {
   const daysInMonth = new Date(year, month, 0).getDate();
@@ -32,12 +27,23 @@ function buildEmptyMonth(year: number, month: number): CalendarMonth {
     date: `${year}-${String(month).padStart(2, '0')}-${String(i + 1).padStart(2, '0')}`,
     state: 'missed',
   }));
-  return {
-    year,
-    month,
-    label: `${MONTH_NAMES[month - 1]} ${year}`,
-    days,
-  };
+  return { year, month, label: '', days };
+}
+
+/** Localized month + year label, e.g. "March 2025" or "mars 2025". */
+function localMonthLabel(year: number, month: number, locale: string): string {
+  return new Intl.DateTimeFormat(locale, { month: 'long', year: 'numeric' }).format(
+    new Date(year, month - 1, 1)
+  );
+}
+
+/** Localized 2-letter day headers for a Sunday-anchored week. */
+function localDayLabels(locale: string): string[] {
+  const fmt = new Intl.DateTimeFormat(locale, { weekday: 'short' });
+  // Jan 5 2025 is a Sunday; iterate Sun–Sat
+  return Array.from({ length: 7 }, (_, i) =>
+    fmt.format(new Date(2025, 0, 5 + i)).slice(0, 2)
+  );
 }
 
 /** Produce a list of the last `count` calendar months (newest last). */
@@ -55,6 +61,7 @@ const FETCH_MONTHS = 12;
 
 const StreakCalendar: React.FC<StreakCalendarProps> = () => {
   const { t } = useTranslation();
+  const { currentLanguage } = useLanguage();
   const navigate = useNavigate();
   const [apiMonths, setApiMonths] = useState<CalendarMonth[]>([]);
   const [loading, setLoading] = useState(true);
@@ -122,7 +129,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
           ‹
         </button>
         <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
-          {currentMonth.label}
+          {localMonthLabel(currentMonth.year, currentMonth.month, currentLanguage)}
         </h3>
         <button
           onClick={() => setViewIdx(i => i + 1)}
@@ -148,8 +155,8 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
 
       {/* Day-of-week header */}
       <div className="grid grid-cols-7 gap-1">
-        {DAY_LABELS.map(d => (
-          <div key={d} className="text-center text-[11px] font-semibold text-gray-400 dark:text-gray-500 py-1">
+        {localDayLabels(currentLanguage).map((d, i) => (
+          <div key={i} className="text-center text-[11px] font-semibold text-gray-400 dark:text-gray-500 py-1">
             {d}
           </div>
         ))}

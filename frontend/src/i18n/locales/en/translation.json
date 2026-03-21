@@ -15,7 +15,8 @@
     "signup": "Sign Up",
     "logout": "Logout",
     "search": "Search",
-    "shop": "Shop"
+    "shop": "Shop",
+    "leaderboard": "Community"
   },
   "journal": {
     "title": "My Journal",
@@ -227,8 +228,11 @@
       "appearance": "Appearance"
     },
     "graceDays": {
+      "title": "Grace Days",
+      "description": "Missed a day? Use a Grace Day to protect your streak.",
       "remaining": "Grace Days remaining:",
       "of2": "of 2",
+      "available": "available",
       "exhausted": "Your grace days have been used this period.",
       "use": "Use a Grace Day",
       "confirm": "Confirm — use a Grace Day?"
@@ -271,7 +275,8 @@
     "save": "Save Settings",
     "saving": "Saving...",
     "saved": "Settings saved successfully!",
-    "saveFailed": "Failed to save settings"
+    "saveFailed": "Failed to save settings",
+    "community": "Community"
   },
   "about": {
     "title": "About Words of Praise",
@@ -580,5 +585,39 @@
       "title": "Redirecting to checkout\u2026",
       "subtitle": "You'll be taken to Stripe to complete your payment."
     }
+  },
+  "leaderboard": {
+    "title": "Community",
+    "tabs_label": "Leaderboard tabs",
+    "tab_friends": "Friends",
+    "tab_community": "Community",
+    "pending_requests": "Friend Requests",
+    "no_friends": "No friends yet — add one below!",
+    "add_friend_label": "+ Add a friend by username",
+    "username_placeholder": "Username",
+    "send_request": "Send Request",
+    "add": "Add",
+    "request_sent": "Friend request sent!",
+    "request_failed": "Failed to send request",
+    "accept": "Accept",
+    "reject": "Decline",
+    "remove_friend": "Remove friend",
+    "days": "{{count}} days",
+    "days_short": "d",
+    "you": "you",
+    "community_empty": "No one has joined the community board yet.",
+    "walking_with": "Walking with {{count}} others",
+    "appear_on_board": "Appear on the leaderboard",
+    "appear_description": "Let others see your faithfulness journey",
+    "locked_visibility": "Upgrade to Premium to appear on the community leaderboard and inspire others with your faithfulness."
+  },
+  "streak": {
+    "share_button": "Share my streak",
+    "share_generating": "Generating\u2026",
+    "share_subtitle": "days in the Word",
+    "share_locked": "Upgrade to Premium to share your streak journey with others."
+  },
+  "premium": {
+    "go_premium": "Go Premium"
   }
 }

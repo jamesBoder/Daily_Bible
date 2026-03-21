@@ -32,6 +32,7 @@
       #0f172a 50%,
       #1e293b 100%
     );
+    color: var(--foreground);
   }
 
   #root {

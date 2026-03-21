@@ -15,7 +15,8 @@
     "signup": "Registrarse",
     "logout": "Cerrar Sesión",
     "search": "Buscar",
-    "shop": "Tienda"
+    "shop": "Tienda",
+    "leaderboard": "Comunidad"
   },
   "journal": {
     "title": "Mi Diario",
@@ -227,8 +228,11 @@
       "appearance": "Apariencia"
     },
     "graceDays": {
+      "title": "Días de Gracia",
+      "description": "¿Perdiste un día? Usa un Día de Gracia para proteger tu racha.",
       "remaining": "Días de gracia restantes:",
       "of2": "de 2",
+      "available": "disponibles",
       "exhausted": "Tus días de gracia han sido utilizados este período.",
       "use": "Usar un Día de Gracia",
       "confirm": "Confirmar — ¿usar un Día de Gracia?"
@@ -271,7 +275,8 @@
     "save": "Guardar Configuración",
     "saving": "Guardando...",
     "saved": "¡Configuración guardada exitosamente!",
-    "saveFailed": "Error al guardar la configuración"
+    "saveFailed": "Error al guardar la configuración",
+    "community": "Comunidad"
   },
   "about": {
     "title": "Acerca de Palabras de Alabanza",
@@ -548,5 +553,39 @@
       "title": "Redirigiendo al pago\u2026",
       "subtitle": "Ser\u00e1s llevado a Stripe para completar tu pago."
     }
+  },
+  "leaderboard": {
+    "title": "Comunidad",
+    "tabs_label": "Pestañas del marcador",
+    "tab_friends": "Amigos",
+    "tab_community": "Comunidad",
+    "pending_requests": "Solicitudes de amistad",
+    "no_friends": "Aún no tienes amigos — ¡agrega uno abajo!",
+    "add_friend_label": "+ Agregar un amigo por nombre de usuario",
+    "username_placeholder": "Nombre de usuario",
+    "send_request": "Enviar solicitud",
+    "add": "Agregar",
+    "request_sent": "¡Solicitud de amistad enviada!",
+    "request_failed": "Error al enviar la solicitud",
+    "accept": "Aceptar",
+    "reject": "Rechazar",
+    "remove_friend": "Eliminar amigo",
+    "days": "{{count}} días",
+    "days_short": "d",
+    "you": "tú",
+    "community_empty": "Nadie se ha unido al marcador comunitario todavía.",
+    "walking_with": "Caminando con {{count}} otros",
+    "appear_on_board": "Aparecer en el marcador",
+    "appear_description": "Deja que otros vean tu jornada de fidelidad",
+    "locked_visibility": "Actualiza a Premium para aparecer en el marcador comunitario e inspirar a otros con tu fidelidad."
+  },
+  "streak": {
+    "share_button": "Compartir mi racha",
+    "share_generating": "Generando\u2026",
+    "share_subtitle": "días en la Palabra",
+    "share_locked": "Actualiza a Premium para compartir tu jornada de racha con otros."
+  },
+  "premium": {
+    "go_premium": "Hazte Premium"
   }
 }

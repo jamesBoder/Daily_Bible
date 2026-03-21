@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { Crown, ArrowClockwise, X, Warning } from '@phosphor-icons/react';
 import { useStreak } from '../../contexts/StreakContext';
 import { usePricingModal } from '../../hooks/usePricingModal';
+import { showToast } from '../../utils/toast';
 
 const formatDate = (iso: string | null): string => {
   if (!iso) return '';
@@ -31,8 +32,10 @@ export const SubscriptionSection: React.FC = () => {
     setPortalLoading(true);
     try {
       await openPortal();
-    } catch {
+    } catch (err: any) {
       setPortalLoading(false);
+      const msg = err?.response?.data?.error ?? t('subscription.portal_error', 'Could not open subscription portal. Please try again.');
+      showToast.error(msg);
     }
   };
 

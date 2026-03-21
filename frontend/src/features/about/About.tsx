@@ -2,32 +2,12 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 
-
-// About Page Component
-export const About: React.FC = () => {
-  const navigate = useNavigate();
+/** Shareable inner content — used by both the /about route and the Settings "About" tab */
+export const AboutContent: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Back Button */}
-      <div className="max-w-7xl mx-auto px-4 py-6 flex items-center">
-        <button
-          onClick={() => navigate(-1)}
-          className="group flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all font-medium"
-        >
-          <svg
-            className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-          >
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-          </svg>
-          {t('about.back')}
-        </button>
-      </div>
-
+    <>
       {/* Hero Section */}
       <section className="text-center py-20 px-4 relative">
         <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 opacity-50"></div>
@@ -196,6 +176,35 @@ export const About: React.FC = () => {
           </div>
         </div>
       </section>
+    </>
+  );
+};
+
+// About Page — standalone route with back button
+export const About: React.FC = () => {
+  const navigate = useNavigate();
+  const { t } = useTranslation();
+
+  return (
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+      {/* Back Button */}
+      <div className="max-w-7xl mx-auto px-4 py-6 flex items-center">
+        <button
+          onClick={() => navigate(-1)}
+          className="group flex items-center text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-all font-medium"
+        >
+          <svg
+            className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+          </svg>
+          {t('about.back')}
+        </button>
+      </div>
+      <AboutContent />
     </div>
   );
 };

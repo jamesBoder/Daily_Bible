@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { useStreak } from '../../contexts/StreakContext';
@@ -10,6 +9,7 @@ import JourneyStats from './JourneyStats';
 import NextMilestoneBar from './NextMilestoneBar';
 import MilestoneWall, { MilestoneItem } from './MilestoneWall';
 import StreakCalendar from './StreakCalendar';
+import { StreakShareCard } from '../streak/StreakShareCard';
 
 // ── Types ──────────────────────────────────────────────────────────────────────
 
@@ -130,7 +130,6 @@ export const Profile: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { useGraceDay: applyGraceDay } = useStreak();
-  const navigate = useNavigate();
 
   const [data, setData] = useState<ProfileData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -456,6 +455,12 @@ export const Profile: React.FC = () => {
                   : t('profile.use_grace_day', 'Use a Grace Day')}
               </button>
             )}
+            {/* Phase 9: Streak Share Card — premium only */}
+            <StreakShareCard
+              currentStreak={data.streak.current_streak}
+              milestoneName={data.milestones.filter(m => m.earned).slice(-1)[0]?.name}
+              isPremium={data.is_premium}
+            />
           </div>
         )}
       </Section>
@@ -494,19 +499,6 @@ export const Profile: React.FC = () => {
               <span className="text-xs text-gray-500 dark:text-gray-400">{label}</span>
             </div>
           ))}
-        </div>
-      </Section>
-
-      {/* Account */}
-      <Section title={t('profile.account', 'Account')}>
-        <div className="flex items-center justify-between gap-3 min-w-0">
-          <span className="text-sm text-gray-600 dark:text-gray-400 truncate min-w-0">{data.email}</span>
-          <button
-            onClick={() => navigate('/settings', { state: { defaultTab: 'account' } })}
-            className="text-sm font-medium text-primary-600 dark:text-primary-400 hover:underline flex-shrink-0 min-h-[44px] flex items-center"
-          >
-            {t('profile.account_settings', 'Account Settings')}
-          </button>
         </div>
       </Section>
 

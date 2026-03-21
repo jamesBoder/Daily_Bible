@@ -14,7 +14,8 @@
     "signup": "S'inscrire",
     "logout": "Déconnexion",
     "search": "Rechercher",
-    "shop": "Boutique"
+    "shop": "Boutique",
+    "leaderboard": "Communauté"
   },
   "dailyVerse": {
     "title": "Verset du Jour",
@@ -191,8 +192,11 @@
       "appearance": "Apparence"
     },
     "graceDays": {
+      "title": "Jours de Grâce",
+      "description": "Manqué un jour ? Utilisez un Jour de Grâce pour protéger votre série.",
       "remaining": "Jours de grâce restants :",
       "of2": "sur 2",
+      "available": "disponibles",
       "exhausted": "Vos jours de grâce ont été utilisés ce période.",
       "use": "Utiliser un Jour de Grâce",
       "confirm": "Confirmer — utiliser un Jour de Grâce ?"
@@ -228,7 +232,8 @@
     "save": "Enregistrer les Paramètres",
     "saving": "Enregistrement...",
     "saved": "Paramètres enregistrés avec succès !",
-    "saveFailed": "Échec de l'enregistrement des paramètres"
+    "saveFailed": "Échec de l'enregistrement des paramètres",
+    "community": "Communauté"
   },
   "about": {
     "title": "À Propos de Paroles de Louange",
@@ -451,5 +456,39 @@
       "title": "Redirection vers le paiement\u2026",
       "subtitle": "Vous serez redirig\u00e9 vers Stripe pour finaliser votre paiement."
     }
+  },
+  "leaderboard": {
+    "title": "Communauté",
+    "tabs_label": "Onglets du classement",
+    "tab_friends": "Amis",
+    "tab_community": "Communauté",
+    "pending_requests": "Demandes d'amis",
+    "no_friends": "Pas encore d'amis — ajoutez-en un ci-dessous !",
+    "add_friend_label": "+ Ajouter un ami par nom d'utilisateur",
+    "username_placeholder": "Nom d'utilisateur",
+    "send_request": "Envoyer la demande",
+    "add": "Ajouter",
+    "request_sent": "Demande d'amitié envoyée !",
+    "request_failed": "Échec de l'envoi de la demande",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "remove_friend": "Supprimer l'ami",
+    "days": "{{count}} jours",
+    "days_short": "j",
+    "you": "vous",
+    "community_empty": "Personne n'a encore rejoint le classement communautaire.",
+    "walking_with": "Marchant avec {{count}} autres",
+    "appear_on_board": "Apparaître dans le classement",
+    "appear_description": "Laissez les autres voir votre parcours de fidélité",
+    "locked_visibility": "Passez à Premium pour apparaître dans le classement communautaire et inspirer les autres avec votre fidélité."
+  },
+  "streak": {
+    "share_button": "Partager ma série",
+    "share_generating": "Génération\u2026",
+    "share_subtitle": "jours dans la Parole",
+    "share_locked": "Passez à Premium pour partager votre parcours de série avec les autres."
+  },
+  "premium": {
+    "go_premium": "Passer Premium"
   }
 }
