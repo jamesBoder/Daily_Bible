@@ -53,7 +53,7 @@ export const ThemePicker: React.FC = () => {
       ) : (
         <p className={styles.balance}>
           <Sparkle weight="duotone" size={14} />
-          <span>{t('settings.appearance.blessingsAvailable', { count: balance.toLocaleString() })}</span>
+          <span>{t('settings.appearance.blessingsAvailable', { count: balance })}</span>
         </p>
       )}
       {purchaseError && <p className={styles.error}>{purchaseError}</p>}

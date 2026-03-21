@@ -103,6 +103,13 @@ const RewardsShop = lazy(() =>
   }))
 );
 
+// Phase 9: Leaderboard
+const LeaderboardView = lazy(() =>
+  import("./features/leaderboard/LeaderboardView").then((module) => ({
+    default: module.LeaderboardView,
+  }))
+);
+
 const router = createBrowserRouter([
   // Public-only routes — redirect authenticated users to home
   {
@@ -172,6 +179,11 @@ const router = createBrowserRouter([
       {
         path: "shop",
         element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><RewardsShop /></Suspense></GuestBlockedRoute>,
+      },
+      // Phase 9: Leaderboard — authenticated users only (guests redirected to /login)
+      {
+        path: "leaderboard",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><LeaderboardView /></Suspense></GuestBlockedRoute>,
       },
       // Journal routes (Phase 3)
       {

@@ -26,6 +26,8 @@ func RunMigrations(db *gorm.DB) error {
         &models.JournalPrompt{},
         // Phase 8
         &models.UserSubscription{},
+        // Phase 9
+        &models.UserFriend{},
     ); err != nil {
         return err
     }

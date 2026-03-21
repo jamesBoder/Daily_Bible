@@ -32,6 +32,9 @@ func SetupRoutes(
 	unlocksHandler *handlers.UnlocksHandler,
 	subscriptionHandler *handlers.SubscriptionHandler,
 	subscriptionChecker services.SubscriptionChecker,
+	// Phase 9
+	friendHandler      *handlers.FriendHandler,
+	leaderboardHandler *handlers.LeaderboardHandler,
 ) {
 	api := router.Group("/api")
 	{
@@ -168,6 +171,31 @@ func SetupRoutes(
 				sub.POST("/checkout", subscriptionHandler.CreateCheckout)
 				sub.POST("/portal", subscriptionHandler.CreatePortalSession)
 			}
+
+			// Phase 9: friends routes
+			friends := protected.Group("/friends")
+			{
+				friends.GET("", friendHandler.GetFriends)
+				friends.GET("/requests", friendHandler.GetPendingRequests)
+				friends.POST("/request", friendHandler.SendRequest)
+				friends.PUT("/request/:id", friendHandler.AcceptRequest)
+				friends.DELETE("/request/:id", friendHandler.RejectRequest)
+				friends.DELETE("/:id", friendHandler.RemoveFriend)
+			}
+
+			// Phase 9: leaderboard (auth-required routes)
+			leaderboard := protected.Group("/leaderboard")
+			{
+				leaderboard.GET("/friends", leaderboardHandler.GetFriendsBoard)
+				leaderboard.PUT("/visibility", leaderboardHandler.SetVisibility)
+			}
+		}
+
+		// Phase 9: community board on optional-auth router (guests can view)
+		optionalAuth := api.Group("/leaderboard")
+		optionalAuth.Use(middleware.OptionalAuthMiddleware(tokenService, subscriptionChecker))
+		{
+			optionalAuth.GET("/community", leaderboardHandler.GetCommunityBoard)
 		}
 	}
 }

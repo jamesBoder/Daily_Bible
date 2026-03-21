@@ -106,6 +106,14 @@ func (s *SettingsService) GetUserLanguage(userID uint) (string, error) {
     return user.PreferredLanguage, nil
 }
 
+// SetLeaderboardVisible sets the community leaderboard visibility for a user (Phase 9).
+func (s *SettingsService) SetLeaderboardVisible(userID uint, visible bool) error {
+    _, err := s.UpdateUserSettings(userID, map[string]interface{}{
+        "leaderboard_visible": visible,
+    })
+    return err
+}
+
 // UpdateUserLanguage updates just the language preference
 func (s *SettingsService) UpdateUserLanguage(userID uint, language string) error {
     // Validate language code

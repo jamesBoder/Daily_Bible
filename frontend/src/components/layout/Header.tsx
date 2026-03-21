@@ -105,6 +105,20 @@ export const Header: React.FC = () => {
                 {t('nav.shop', 'Shop')}
               </NavLink>
             )}
+            {/* Leaderboard — hidden for guests */}
+            {!isGuest && (
+              <NavLink
+                to="/leaderboard"
+                className={({ isActive }) =>
+                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
+                    ? "text-amber-600 dark:text-amber-400 border-amber-500 dark:border-amber-400"
+                    : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 border-transparent"
+                  }`
+                }
+              >
+                {t('nav.leaderboard', 'Community')}
+              </NavLink>
+            )}
             <NavLink
               to="/settings"
               className={({ isActive }) =>
@@ -249,6 +263,21 @@ export const Header: React.FC = () => {
                   onClick={() => setIsMenuOpen(false)}
                 >
                   {t('nav.shop', 'Shop')}
+                </NavLink>
+              )}
+              {/* Leaderboard — hidden for guests */}
+              {!isGuest && (
+                <NavLink
+                  to="/leaderboard"
+                  className={({ isActive }) =>
+                    `font-medium transition-colors ${isActive
+                      ? "text-amber-600 dark:text-amber-400"
+                      : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
+                    }`
+                  }
+                  onClick={() => setIsMenuOpen(false)}
+                >
+                  {t('nav.leaderboard', 'Community')}
                 </NavLink>
               )}
               <NavLink

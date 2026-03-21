@@ -143,6 +143,10 @@ func main() {
     // Initialize Phase 8 services
     subscriptionService := services.NewSubscriptionService(db, rewardsService, streakService)
 
+    // Initialize Phase 9 services
+    friendService := services.NewFriendService(db)
+    leaderboardService := services.NewLeaderboardService(db)
+
     // create validator instance
     validate := validator.New()
     _ = validate // currently not used, but can be integrated into services or handlers later
@@ -273,6 +277,10 @@ func main() {
         userRepo,
     )
 
+    // Phase 9 handlers
+    friendHandler := handlers.NewFriendHandler(friendService)
+    leaderboardHandler := handlers.NewLeaderboardHandler(leaderboardService, subscriptionChecker, settingsService)
+
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
     log.Println("Backend is ready. Setting up routes...")
@@ -331,7 +339,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, friendHandler, leaderboardHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
