@@ -466,5 +466,119 @@
   "shop": {
     "title": "Gifts of Faithfulness",
     "subtitle": "Spend your Blessings to unlock new appearances for your devotional journey."
+  },
+  "subscription": {
+    "title": "Premium",
+    "free_description": "Unlock all premium features with a subscription.",
+    "choose_plan": "Choose plan",
+    "plan": {
+      "monthly": "Monthly",
+      "monthly_price": "$2.99 / mo",
+      "annual": "Annual",
+      "annual_price": "$29.99 / yr",
+      "annual_save": "Save 17%"
+    },
+    "upgrade_cta": "Upgrade to Premium",
+    "view_addons": "View Add-ons",
+    "active_title": "Premium Member",
+    "active_plan": "Plan:",
+    "renews": "Renews",
+    "manage": "Manage Subscription",
+    "trial_title": "Free Trial",
+    "trial_ends": "Trial ends {{date}}",
+    "canceled_title": "Subscription Canceled",
+    "access_until": "Access until {{date}}",
+    "reactivate": "Reactivate",
+    "past_due_title": "Payment Failed",
+    "past_due_description": "Please update your payment method to keep your premium access.",
+    "past_due_banner": "Your last payment failed. Please update your payment method to keep premium access.",
+    "update_payment": "Update Payment Method",
+    "refresh": "Refresh Status",
+    "loading": "Loading\u2026",
+    "modal_label": "Premium subscription",
+    "modal_title": "Go Premium",
+    "modal_subtitle": "Deepen your daily practice",
+    "modal_legal": "Cancel anytime. No hidden fees.",
+    "success_toast": "Welcome to Premium!",
+    "nav_badge_tooltip": "You are a Premium member",
+    "feature": {
+      "all_themes": "All premium themes",
+      "journal": "Unlimited journal entries",
+      "prompts": "Weekly reflection prompts",
+      "translations": "Modern Bible translations",
+      "streak_calendar": "Full streak calendar",
+      "blessings_multiplier": "1.5\u00d7 Blessings on every action",
+      "reflection_archive": "Full reflection archive"
+    }
+  },
+  "otp": {
+    "section_title": "Add-ons & One-Time Purchases",
+    "section_description": "Unlock individual features forever \u2014 no subscription required.",
+    "owned": "Owned",
+    "loading": "\u2026",
+    "success_toast": "Purchase complete!",
+    "journal_unlock": {
+      "title": "Journal Unlock",
+      "desc": "Unlimited journal entries and rich text editing, forever.",
+      "price": "$4.99"
+    },
+    "reflection_archive": {
+      "title": "Reflection Archive",
+      "desc": "Access all your past reflections without a subscription.",
+      "price": "$2.99"
+    },
+    "modern_translations": {
+      "title": "Modern Translations",
+      "desc": "NIV, ESV, NLT and more \u2014 unlocked permanently.",
+      "price": "$3.99"
+    },
+    "grace_day_pack": {
+      "title": "Grace Day Pack",
+      "desc": "3 extra grace days added to your account.",
+      "price": "$0.99"
+    },
+    "theme_sanctuary": {
+      "title": "Sanctuary Theme",
+      "desc": "A warm, sacred aesthetic for your devotional space.",
+      "price": "$1.99"
+    },
+    "theme_desert_sand": {
+      "title": "Desert Sand Theme",
+      "desc": "Earthy tones inspired by the ancient wilderness.",
+      "price": "$1.99"
+    },
+    "theme_celestial": {
+      "title": "Celestial Theme",
+      "desc": "A deep, starlit palette for night-time reading.",
+      "price": "$1.99"
+    },
+    "full_theme_library": {
+      "title": "Full Theme Library",
+      "desc": "Every premium theme, past and future.",
+      "price": "$5.99"
+    },
+    "support_developer": {
+      "title": "Support the Developer",
+      "desc": "Buy me a coffee \u2615 \u2014 deeply appreciated.",
+      "price": "$2.99",
+      "thankyou_label": "Thank you",
+      "thankyou_title": "Thank You!",
+      "thankyou_body": "Your support means the world."
+    }
+  },
+  "avatar": {
+    "ring": {
+      "tooltip": {
+        "premium": "Premium member",
+        "milestone": "{{milestone}} milestone",
+        "none": "No milestone yet"
+      }
+    }
+  },
+  "checkout": {
+    "overlay": {
+      "title": "Redirecting to checkout\u2026",
+      "subtitle": "You'll be taken to Stripe to complete your payment."
+    }
   }
 }

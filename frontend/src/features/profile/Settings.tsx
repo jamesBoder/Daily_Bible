@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card } from "../../components/common/Card";
 import { Profile } from "./Profile";
 import { AccountManagement } from "./AccountManagement";
@@ -11,8 +12,8 @@ import { LanguageSettings } from "../settings/LanguageSettings";
 import { AppearanceSettings } from "../settings/AppearanceSettings";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../contexts/ThemeContext";
+
 import { settingsService } from "../../services/api/settings";
-import { useTranslation } from "react-i18next";
 import type { ThemeId } from "../../contexts/ThemeContext";
 
 export const Settings: React.FC = () => {
@@ -79,7 +80,7 @@ export const Settings: React.FC = () => {
           {t('settings.tabs.account')}
         </h2>
         {isGuest ? <GuestAccountManagement /> : <AccountManagement />}
-        <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
+        <div className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600">
           <NavLink
             to="/about"
             className="text-sm text-gray-500 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"

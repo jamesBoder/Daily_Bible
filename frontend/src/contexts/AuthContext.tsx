@@ -97,6 +97,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   };
 
   const logout = async () => {
+    // Clear Stripe-related sessionStorage on every logout path
+    sessionStorage.removeItem('pendingStripeUrl');
+    sessionStorage.removeItem('pendingStripeType');
+    sessionStorage.removeItem('pendingStripeInitiatedAt');
+    sessionStorage.removeItem('paymentAlertSounded');
+    sessionStorage.removeItem('welcomeCeremonyPlayed');
+
     // Guest logout: skip API call, just clear session state
     if (user?.is_guest) {
       sessionStorage.removeItem(GUEST_SESSION_KEY);

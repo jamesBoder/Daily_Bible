@@ -131,7 +131,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   ]);
 
   return (
-    <div className="mt-6 border-t border-gray-200 dark:border-gray-700 pt-6">
+    <div className="mt-6 border-t border-gray-300 dark:border-gray-600 pt-6">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <h2 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100">

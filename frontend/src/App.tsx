@@ -15,6 +15,9 @@ import { Toaster } from "react-hot-toast";
 import { VerseCardSkeleton } from "./components/common/Skeleton";
 import BlessingsToast from "./components/BlessingsToast";
 import { SoundService } from "./services/SoundService";
+import { PricingModalProvider } from "./hooks/usePricingModal";
+import { PricingModal } from "./components/common/PricingModal";
+import { PaymentAlert } from "./components/common/PaymentAlert";
 import "./App.css";
 
 
@@ -202,32 +205,36 @@ function App() {
       <AuthProvider>
         <StreakProvider>
           <LanguageProvider>
-            <Toaster
-              position="top-right"
-              toastOptions={{
-                duration: 3000,
-                style: {
-                  background: '#363636',
-                  color: '#fff',
-                },
-                success: {
+            <PricingModalProvider>
+              <Toaster
+                position="top-right"
+                toastOptions={{
                   duration: 3000,
-                  iconTheme: {
-                    primary: '#10b981',
-                    secondary: '#fff',
+                  style: {
+                    background: '#363636',
+                    color: '#fff',
                   },
-                },
-                error: {
-                  duration: 4000,
-                  iconTheme: {
-                    primary: '#ef4444',
-                    secondary: '#fff',
+                  success: {
+                    duration: 3000,
+                    iconTheme: {
+                      primary: '#10b981',
+                      secondary: '#fff',
+                    },
                   },
-                },
-              }}
-            />
-            <BlessingsToast />
-            <RouterProvider router={router} />
+                  error: {
+                    duration: 4000,
+                    iconTheme: {
+                      primary: '#ef4444',
+                      secondary: '#fff',
+                    },
+                  },
+                }}
+              />
+              <BlessingsToast />
+              <PaymentAlert />
+              <PricingModal />
+              <RouterProvider router={router} />
+            </PricingModalProvider>
           </LanguageProvider>
         </StreakProvider>
       </AuthProvider>

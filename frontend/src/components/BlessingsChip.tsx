@@ -162,7 +162,7 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
             <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
               {t('blessings.popover.description', 'Earn Blessings by engaging with daily verses, adding reflections, and maintaining your streak. Use them in the Rewards Shop (coming soon) to unlock themes and features!')}
             </p>
-            <div className="pt-1.5 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-1.5 border-t border-gray-300 dark:border-gray-600">
               <p className="text-xs text-gray-500 dark:text-gray-500">
                 {t('blessings.popover.balance', 'Current balance: {{count}}', { count: streakData.blessings_balance })}
               </p>

@@ -80,7 +80,7 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
   return (
     <div
       className="
-        mt-4 rounded-2xl border border-gray-200 dark:border-gray-700
+        mt-4 rounded-2xl border border-gray-200 dark:border-gray-600
         bg-white dark:bg-gray-800 shadow-sm
         animate-fade-in overflow-hidden
       "
@@ -88,7 +88,7 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
       aria-label={t("verse.compareTranslations", "Compare Translations")}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-700">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-600">
         <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
           {t("verse.compareTranslations", "Compare Translations")}
         </p>
@@ -122,7 +122,7 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
               key={col.abbreviation}
               className={`
                 flex-shrink-0 w-56 sm:w-64 p-4
-                ${idx < columns.length - 1 ? "border-r border-gray-100 dark:border-gray-700" : ""}
+                ${idx < columns.length - 1 ? "border-r border-gray-100 dark:border-gray-600" : ""}
               `}
             >
               <p className="text-xs font-bold text-amber-600 dark:text-amber-400 mb-0.5">
@@ -146,7 +146,7 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
       )}
 
       {/* Reference footer */}
-      <div className="px-4 py-2.5 border-t border-gray-100 dark:border-gray-700 text-center">
+      <div className="px-4 py-2.5 border-t border-gray-100 dark:border-gray-600 text-center">
         <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">{reference}</p>
       </div>
     </div>

@@ -228,7 +228,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       </div>
 
       {/* Share panel — always visible on Daily Verse page */}
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+      <div className="border-t border-gray-300 dark:border-gray-600 pt-4">
         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 text-center">
           {t('verse.share')}
         </p>

@@ -369,5 +369,87 @@
   "shop": {
     "title": "Kado Fidelite",
     "subtitle": "Depanse Benediksyon ou yo pou debloke nouvo aparans pou vwayaj devosyon ou."
+  },
+  "subscription": {
+    "title": "Premium",
+    "free_description": "Debloke tout fonksyon premium yo ak yon abonman.",
+    "choose_plan": "Chwazi yon plan",
+    "plan": {
+      "monthly": "Chak mwa",
+      "monthly_price": "$2.99 / mwa",
+      "annual": "Anyèl",
+      "annual_price": "$29.99 / ane",
+      "annual_save": "Ekonomize 17%"
+    },
+    "upgrade_cta": "Monte nan Premium",
+    "view_addons": "Wè ajoute yo",
+    "active_title": "Manm Premium",
+    "active_plan": "Plan:",
+    "renews": "Renouvèlman",
+    "manage": "Jere abonman",
+    "trial_title": "Esè gratis",
+    "trial_ends": "Esè fini {{date}}",
+    "canceled_title": "Abonman anile",
+    "access_until": "Aksè jiska {{date}}",
+    "reactivate": "Reaktive",
+    "past_due_title": "Peman echwe",
+    "past_due_description": "Mete \u00e0 jou metòd peman ou pou kenbe aksè premium.",
+    "past_due_banner": "Dènye peman ou echwe. Mete \u00e0 jou metòd peman ou.",
+    "update_payment": "Mete \u00e0 jou peman",
+    "refresh": "Aktualize estati",
+    "loading": "Ap chaje\u2026",
+    "modal_label": "Abonman premium",
+    "modal_title": "Monte nan Premium",
+    "modal_subtitle": "Apwofondichay pratik chak jou ou",
+    "modal_legal": "Anile nenpòt ki lè. San frè kache.",
+    "success_toast": "Byenveni nan Premium!",
+    "nav_badge_tooltip": "Ou se manm Premium",
+    "feature": {
+      "all_themes": "Tout tèm premium yo",
+      "journal": "Antre jounal san limit",
+      "prompts": "Sijèsyon refleksyon chak semèn",
+      "translations": "Tradiksyon Bib modèn",
+      "streak_calendar": "Kalandriye seri konplè",
+      "blessings_multiplier": "Benediksyon \u00d71.5 pou chak aksyon",
+      "reflection_archive": "Achiv refleksyon konplè"
+    }
+  },
+  "otp": {
+    "section_title": "Ajoute ak achè inik",
+    "section_description": "Debloke fonksyon endividyèl pou toujou \u2014 san abonman.",
+    "owned": "Posede",
+    "loading": "\u2026",
+    "success_toast": "Achè konplè!",
+    "journal_unlock": { "title": "Debloke Jounal", "desc": "Antre san limit ak edisyon rich, pou toujou.", "price": "$4.99" },
+    "reflection_archive": { "title": "Achiv Refleksyon", "desc": "Aksede tout refleksyon ou anvan yo.", "price": "$2.99" },
+    "modern_translations": { "title": "Tradiksyon Modèn", "desc": "NIV, ESV, NLT ak plis \u2014 debloke pou toujou.", "price": "$3.99" },
+    "grace_day_pack": { "title": "Pak Jou Gras", "desc": "3 jou gras anplis.", "price": "$0.99" },
+    "theme_sanctuary": { "title": "Tèm Sanktiyè", "desc": "Yon estetik cho ak sakre.", "price": "$1.99" },
+    "theme_desert_sand": { "title": "Tèm Sab Dezè", "desc": "Ton tè enspire pa dezè ansyen.", "price": "$1.99" },
+    "theme_celestial": { "title": "Tèm Selès", "desc": "Yon palèt pwofon ak etwal.", "price": "$1.99" },
+    "full_theme_library": { "title": "Bibliyotèk Tèm Konplè", "desc": "Tout tèm premium, pase ak lavni.", "price": "$5.99" },
+    "support_developer": {
+      "title": "Sipòte Devloppè a",
+      "desc": "Achte yon kafe \u2615 pou mwen \u2014 mèsi anpil.",
+      "price": "$2.99",
+      "thankyou_label": "Mèsi",
+      "thankyou_title": "Mèsi!",
+      "thankyou_body": "Sipò ou vle di anpil."
+    }
+  },
+  "avatar": {
+    "ring": {
+      "tooltip": {
+        "premium": "Manm Premium",
+        "milestone": "Jalonman {{milestone}}",
+        "none": "Pa gen jalonman ankò"
+      }
+    }
+  },
+  "checkout": {
+    "overlay": {
+      "title": "Ap redirije nan peman\u2026",
+      "subtitle": "Ou pral al nan Stripe pou konplete peman ou."
+    }
   }
 }

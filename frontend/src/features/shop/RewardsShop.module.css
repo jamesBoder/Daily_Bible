@@ -1,45 +1,446 @@
+/* ── Page wrapper ─────────────────────────────────────────────────────── */
 .page {
-  max-width: 40rem;
+  max-width: 42rem;
   margin: 0 auto;
-  padding: 2rem 1rem 4rem;
+  padding: 2rem 1rem 5rem;
   display: flex;
   flex-direction: column;
-  gap: 2rem;
+  gap: 1.75rem;
+  /* Use theme foreground so dark themes don't inherit body's black text */
+  color: var(--foreground);
 }
 
+/* ── Page header ──────────────────────────────────────────────────────── */
 .header {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0.375rem;
 }
 
 .title {
-  font-size: 1.75rem;
+  font-size: 1.875rem;
   font-weight: 700;
   color: var(--blessing-gold);
   margin: 0;
   letter-spacing: 0.01em;
+  font-family: 'Playfair Display', Georgia, serif;
 }
 
 .subtitle {
   font-size: 0.9375rem;
-  opacity: 0.75;
+  opacity: 0.72;
+  margin: 0;
+  line-height: 1.55;
+}
+
+.chipRow {
+  margin-top: 0.375rem;
+}
+
+/* ── Premium hero card ────────────────────────────────────────────────── */
+.premiumCard {
+  position: relative;
+  overflow: hidden;
+  border-radius: 1.375rem;
+  border: 1.5px solid rgba(245, 158, 11, 0.38);
+  padding: 1.875rem 1.625rem 1.625rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  background: linear-gradient(
+    155deg,
+    rgba(254, 243, 199, 0.90) 0%,
+    rgba(253, 230, 138, 0.60) 40%,
+    rgba(252, 211, 77, 0.30) 70%,
+    rgba(255, 255, 255, 0.85) 100%
+  );
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.06),
+    0 12px 32px -8px rgba(245, 158, 11, 0.22),
+    0 0 0 1px rgba(245, 158, 11, 0.12);
+}
+
+:global(.dark) .premiumCard {
+  background: linear-gradient(
+    155deg,
+    rgba(120, 80, 10, 0.45) 0%,
+    rgba(92, 60, 8, 0.30) 40%,
+    rgba(60, 40, 5, 0.20) 70%,
+    rgba(30, 22, 10, 0.60) 100%
+  );
+  border-color: rgba(245, 158, 11, 0.30);
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.3),
+    0 12px 32px -8px rgba(245, 158, 11, 0.18);
+}
+
+/* Subtle radial shimmer in the top-left corner */
+.premiumCardGlow {
+  position: absolute;
+  top: -3rem;
+  left: -3rem;
+  width: 14rem;
+  height: 14rem;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(251, 191, 36, 0.28) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.premiumCardHeader {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.375rem;
+  text-align: center;
+}
+
+.premiumCrownWrap {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 4rem;
+  height: 4rem;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 35%, #fde68a, #f59e0b);
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.45), 0 0 0 4px rgba(245, 158, 11, 0.14);
+  margin-bottom: 0.125rem;
+}
+
+.premiumCrownIcon {
+  color: #fff;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.20));
+}
+
+.premiumCardTitle {
+  font-size: 1.5rem;
+  font-weight: 800;
+  margin: 0;
+  letter-spacing: 0.01em;
+  color: #92400e;
+  font-family: 'Playfair Display', Georgia, serif;
+}
+
+:global(.dark) .premiumCardTitle {
+  color: #fde68a;
+}
+
+.premiumCardSubtitle {
+  font-size: 0.9375rem;
+  margin: 0;
+  opacity: 0.72;
+  font-weight: 500;
+}
+
+/* ── Feature list ─────────────────────────────────────────────────────── */
+.premiumFeatures {
+  list-style: none;
+  margin: 0;
+  padding: 0.75rem 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  background: rgba(255, 255, 255, 0.50);
+  border-radius: 0.875rem;
+  border: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+:global(.dark) .premiumFeatures {
+  background: rgba(0, 0, 0, 0.22);
+  border-color: rgba(245, 158, 11, 0.14);
+}
+
+.premiumFeatureItem {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.premiumCheck {
+  width: 1.25rem;
+  height: 1.25rem;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(245, 158, 11, 0.35);
+}
+
+/* ── Plan toggle ──────────────────────────────────────────────────────── */
+.planToggle {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.625rem;
+}
+
+.planOption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.875rem 1rem;
+  border-radius: 1rem;
+  border: 2px solid rgba(180, 130, 30, 0.25);
+  background: rgba(255, 255, 255, 0.45);
+  cursor: pointer;
+  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+  position: relative;
+}
+
+:global(.dark) .planOption {
+  border-color: rgba(245, 158, 11, 0.18);
+  background: rgba(0, 0, 0, 0.18);
+}
+
+.planOption:hover {
+  background: rgba(255, 255, 255, 0.65);
+  border-color: rgba(245, 158, 11, 0.45);
+}
+
+:global(.dark) .planOption:hover {
+  background: rgba(0, 0, 0, 0.28);
+}
+
+.planOptionActive {
+  border-color: var(--candle-amber);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18), 0 4px 12px rgba(245, 158, 11, 0.18);
+}
+
+:global(.dark) .planOptionActive {
+  background: rgba(245, 158, 11, 0.14);
+  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.22);
+}
+
+.planNameRow {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.planName {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  color: #78350f;
+}
+
+:global(.dark) .planName {
+  color: #fde68a;
+}
+
+.planBestValue {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.planPrice {
+  font-size: 0.8125rem;
+  opacity: 0.65;
+  font-weight: 500;
+}
+
+/* ── Premium CTA button ───────────────────────────────────────────────── */
+.premiumCta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9375rem 1.5rem;
+  border-radius: 1rem;
+  border: none;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 60%, #b45309 100%);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 800;
+  cursor: pointer;
+  letter-spacing: 0.01em;
+  box-shadow:
+    0 4px 12px rgba(245, 158, 11, 0.45),
+    0 8px 24px rgba(180, 83, 9, 0.30),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+  transition: opacity 0.15s, transform 0.15s, box-shadow 0.2s;
+}
+
+.premiumCta:hover:not(:disabled) {
+  opacity: 0.93;
+  transform: translateY(-2px);
+  box-shadow:
+    0 6px 18px rgba(245, 158, 11, 0.55),
+    0 12px 30px rgba(180, 83, 9, 0.38),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.premiumCta:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.premiumCta:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.premiumLegal {
+  text-align: center;
+  font-size: 0.75rem;
+  opacity: 0.55;
+  margin: 0;
+}
+
+/* ── Active subscription card ─────────────────────────────────────────── */
+.activeCard {
+  display: flex;
+  align-items: center;
+  gap: 0.875rem;
+  padding: 1rem 1.125rem;
+  border-radius: 1rem;
+  border: 1.5px solid rgba(245, 158, 11, 0.30);
+  background: rgba(254, 243, 199, 0.65);
+}
+
+:global(.dark) .activeCard {
+  background: rgba(120, 80, 10, 0.25);
+  border-color: rgba(245, 158, 11, 0.22);
+}
+
+.activeCardCanceled {
+  border-color: rgba(239, 68, 68, 0.30);
+  background: rgba(254, 226, 226, 0.50);
+}
+
+:global(.dark) .activeCardCanceled {
+  background: rgba(120, 30, 30, 0.22);
+  border-color: rgba(239, 68, 68, 0.22);
+}
+
+.activeCardCrown {
+  color: var(--blessing-gold);
+  flex-shrink: 0;
+}
+
+.activeCardBody {
+  flex: 1;
+  min-width: 0;
+}
+
+.activeCardTitle {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.activeCardMeta {
+  font-size: 0.8125rem;
+  margin: 0;
+  opacity: 0.65;
+}
+
+.manageBtn {
+  padding: 0.4rem 0.875rem;
+  border-radius: 999px;
+  border: 1.5px solid rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.65);
+  font-size: 0.8125rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  flex-shrink: 0;
+  transition: background 0.15s;
+}
+
+:global(.dark) .manageBtn {
+  background: rgba(255, 255, 255, 0.10);
+  border-color: rgba(255, 255, 255, 0.16);
+}
+
+.manageBtn:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.85);
+}
+
+.manageBtnPrimary {
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #fff;
+  border: none;
+}
+
+.manageBtnPrimary:hover:not(:disabled) {
+  opacity: 0.90;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+}
+
+.manageBtn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Content sections (Themes, Add-ons) ───────────────────────────────── */
+.section {
+  background: rgba(255, 255, 255, 0.60);
+  border-radius: 1.125rem;
+  padding: 1.375rem 1.25rem;
+  border: 1px solid rgba(0, 0, 0, 0.07);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+:global(.dark) .section {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.08);
+}
+
+.sectionHeader {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.sectionIcon {
+  color: var(--candle-amber);
+  margin-bottom: 0.25rem;
+}
+
+.sectionTitle {
+  font-size: 1.0625rem;
+  font-weight: 700;
+  margin: 0;
+}
+
+.sectionDesc {
+  font-size: 0.8125rem;
+  opacity: 0.62;
   margin: 0;
   line-height: 1.5;
 }
 
-.chipRow {
-  margin-top: 0.25rem;
-}
+/* ── Responsive ───────────────────────────────────────────────────────── */
+@media (max-width: 480px) {
+  .premiumCard {
+    padding: 1.5rem 1.25rem 1.375rem;
+  }
 
-.section {
-  background: rgba(255, 255, 255, 0.6);
-  border-radius: 1rem;
-  padding: 1.25rem;
-  border: 1px solid rgba(0, 0, 0, 0.06);
-}
+  .premiumCrownWrap {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
 
-.dark .section {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
+  .premiumCardTitle {
+    font-size: 1.25rem;
+  }
+
+  .planToggle {
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .planOption {
+    padding: 0.75rem 0.75rem;
+  }
 }

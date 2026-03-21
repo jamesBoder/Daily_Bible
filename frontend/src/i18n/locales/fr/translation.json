@@ -369,5 +369,87 @@
   "shop": {
     "title": "Dons de Fidélité",
     "subtitle": "Dépensez vos Bénédictions pour débloquer de nouvelles apparences pour votre parcours dévotionnel."
+  },
+  "subscription": {
+    "title": "Premium",
+    "free_description": "D\u00e9bloquez toutes les fonctionnalit\u00e9s premium avec un abonnement.",
+    "choose_plan": "Choisir un plan",
+    "plan": {
+      "monthly": "Mensuel",
+      "monthly_price": "$2.99 / mois",
+      "annual": "Annuel",
+      "annual_price": "$29.99 / an",
+      "annual_save": "\u00c9conomisez 17%"
+    },
+    "upgrade_cta": "Passer \u00e0 Premium",
+    "view_addons": "Voir les modules",
+    "active_title": "Membre Premium",
+    "active_plan": "Plan\u00a0:",
+    "renews": "Renouvellement",
+    "manage": "G\u00e9rer l'abonnement",
+    "trial_title": "Essai gratuit",
+    "trial_ends": "Essai se termine le {{date}}",
+    "canceled_title": "Abonnement annul\u00e9",
+    "access_until": "Acc\u00e8s jusqu'au {{date}}",
+    "reactivate": "R\u00e9activer",
+    "past_due_title": "Paiement \u00e9chou\u00e9",
+    "past_due_description": "Veuillez mettre \u00e0 jour votre moyen de paiement pour conserver l'acc\u00e8s premium.",
+    "past_due_banner": "Votre dernier paiement a \u00e9chou\u00e9. Mettez \u00e0 jour votre moyen de paiement.",
+    "update_payment": "Mettre \u00e0 jour le paiement",
+    "refresh": "Actualiser le statut",
+    "loading": "Chargement\u2026",
+    "modal_label": "Abonnement premium",
+    "modal_title": "Passer Premium",
+    "modal_subtitle": "Approfondissez votre pratique quotidienne",
+    "modal_legal": "Annulez \u00e0 tout moment. Aucun frais cach\u00e9.",
+    "success_toast": "Bienvenue dans Premium\u00a0!",
+    "nav_badge_tooltip": "Vous \u00eates membre Premium",
+    "feature": {
+      "all_themes": "Tous les th\u00e8mes premium",
+      "journal": "Entr\u00e9es de journal illimit\u00e9es",
+      "prompts": "Invites de r\u00e9flexion hebdomadaires",
+      "translations": "Traductions bibliques modernes",
+      "streak_calendar": "Calendrier de s\u00e9rie complet",
+      "blessings_multiplier": "B\u00e9n\u00e9dictions \u00d71,5 \u00e0 chaque action",
+      "reflection_archive": "Archive compl\u00e8te des r\u00e9flexions"
+    }
+  },
+  "otp": {
+    "section_title": "Modules et achats uniques",
+    "section_description": "D\u00e9bloquez des fonctionnalit\u00e9s individuelles pour toujours \u2014 sans abonnement.",
+    "owned": "Acquis",
+    "loading": "\u2026",
+    "success_toast": "Achat effectu\u00e9\u00a0!",
+    "journal_unlock": { "title": "Journal d\u00e9verrouill\u00e9", "desc": "Entr\u00e9es illimit\u00e9es et \u00e9dition enrichie, pour toujours.", "price": "$4.99" },
+    "reflection_archive": { "title": "Archive de r\u00e9flexions", "desc": "Acc\u00e9dez \u00e0 toutes vos r\u00e9flexions pass\u00e9es.", "price": "$2.99" },
+    "modern_translations": { "title": "Traductions modernes", "desc": "NIV, ESV, NLT et plus \u2014 d\u00e9verrouill\u00e9s en permanence.", "price": "$3.99" },
+    "grace_day_pack": { "title": "Pack de jours de gr\u00e2ce", "desc": "3 jours de gr\u00e2ce suppl\u00e9mentaires.", "price": "$0.99" },
+    "theme_sanctuary": { "title": "Th\u00e8me Sanctuaire", "desc": "Une esth\u00e9tique chaleureuse et sacr\u00e9e.", "price": "$1.99" },
+    "theme_desert_sand": { "title": "Th\u00e8me Sable du d\u00e9sert", "desc": "Tons terreux inspir\u00e9s du d\u00e9sert ancien.", "price": "$1.99" },
+    "theme_celestial": { "title": "Th\u00e8me C\u00e9leste", "desc": "Une palette profonde et \u00e9toil\u00e9e.", "price": "$1.99" },
+    "full_theme_library": { "title": "Biblioth\u00e8que compl\u00e8te de th\u00e8mes", "desc": "Tous les th\u00e8mes premium, pass\u00e9s et futurs.", "price": "$5.99" },
+    "support_developer": {
+      "title": "Soutenir le d\u00e9veloppeur",
+      "desc": "Offrez-moi un caf\u00e9 \u2615 \u2014 tr\u00e8s appr\u00e9ci\u00e9.",
+      "price": "$2.99",
+      "thankyou_label": "Merci",
+      "thankyou_title": "Merci\u00a0!",
+      "thankyou_body": "Votre soutien compte beaucoup."
+    }
+  },
+  "avatar": {
+    "ring": {
+      "tooltip": {
+        "premium": "Membre Premium",
+        "milestone": "Jalon {{milestone}}",
+        "none": "Pas encore de jalon"
+      }
+    }
+  },
+  "checkout": {
+    "overlay": {
+      "title": "Redirection vers le paiement\u2026",
+      "subtitle": "Vous serez redirig\u00e9 vers Stripe pour finaliser votre paiement."
+    }
   }
 }

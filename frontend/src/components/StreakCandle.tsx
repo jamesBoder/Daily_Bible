@@ -142,7 +142,7 @@ const StreakCandle: React.FC = () => {
               {t('streak.popover.description', "You've been reading daily for {{count}} days in a row. Keep it up!", { count: streakData.current_streak })}
             </p>
             {streakData.grace_days_remaining > 0 && (
-              <div className="pt-1.5 border-t border-gray-200 dark:border-gray-700">
+              <div className="pt-1.5 border-t border-gray-300 dark:border-gray-600">
                 <p className="text-xs text-gray-500 dark:text-gray-500">
                   {t('streak.popover.graceDays', '{{count}} Grace Day(s) available', { count: streakData.grace_days_remaining })}
                 </p>

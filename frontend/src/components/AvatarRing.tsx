@@ -1,10 +1,13 @@
 import React, { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface AvatarRingProps {
   username: string;
   userId: number;
   /** The highest milestone key earned, or undefined for no milestone. */
   highestMilestoneKey?: string;
+  /** When true, force the premium gold ring regardless of milestone tier. */
+  isPremium?: boolean;
   /** Size in px for the overall SVG. Default 100. */
   size?: number;
 }
@@ -37,13 +40,25 @@ function getInitials(username: string): string {
   return username[0].toUpperCase();
 }
 
+const PREMIUM_RING = {
+  stroke: 'var(--blessing-gold)',
+  strokeWidth: 3.5,
+  filter: 'drop-shadow(0 0 6px rgba(251,191,36,0.65))',
+  rotating: false,
+};
+
 const AvatarRing: React.FC<AvatarRingProps> = ({
   username,
   userId,
   highestMilestoneKey,
+  isPremium = false,
   size = 100,
 }) => {
-  const tier = RING_TIERS[highestMilestoneKey ?? 'none'] ?? RING_TIERS.none;
+  const { t } = useTranslation();
+  // Premium ring overrides milestone tier when the user is a subscriber
+  const tier = isPremium
+    ? PREMIUM_RING
+    : (RING_TIERS[highestMilestoneKey ?? 'none'] ?? RING_TIERS.none);
   const avatarColor = AVATAR_COLORS[userId % AVATAR_COLORS.length];
   const initials = getInitials(username);
 
@@ -62,9 +77,13 @@ const AvatarRing: React.FC<AvatarRingProps> = ({
     return () => cancelAnimationFrame(raf1);
   }, [circumference]);
 
-  const milestoneName = highestMilestoneKey
-    ? highestMilestoneKey.replace(/_/g, ' ')
-    : 'No milestone yet';
+  const tooltipLabel = isPremium
+    ? t('avatar.ring.tooltip.premium', 'Premium member')
+    : highestMilestoneKey
+      ? t('avatar.ring.tooltip.milestone', '{{milestone}} milestone', {
+          milestone: highestMilestoneKey.replace(/_/g, ' '),
+        })
+      : t('avatar.ring.tooltip.none', 'No milestone yet');
 
   return (
     <svg
@@ -72,7 +91,7 @@ const AvatarRing: React.FC<AvatarRingProps> = ({
       height={size}
       viewBox={`0 0 ${size} ${size}`}
       role="img"
-      aria-label={`Milestone ring: ${milestoneName}`}
+      aria-label={tooltipLabel}
       className={tier.rotating ? 'avatar-ring--full-year' : undefined}
       style={{ filter: tier.filter, overflow: 'visible' }}
     >

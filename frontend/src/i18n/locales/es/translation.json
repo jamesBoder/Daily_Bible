@@ -466,5 +466,87 @@
   "shop": {
     "title": "Dones de Fidelidad",
     "subtitle": "Gasta tus Bendiciones para desbloquear nuevas apariencias en tu jornada devocional."
+  },
+  "subscription": {
+    "title": "Premium",
+    "free_description": "Desbloquea todas las funciones premium con una suscripci\u00f3n.",
+    "choose_plan": "Elige un plan",
+    "plan": {
+      "monthly": "Mensual",
+      "monthly_price": "$2.99 / mes",
+      "annual": "Anual",
+      "annual_price": "$29.99 / a\u00f1o",
+      "annual_save": "Ahorra 17%"
+    },
+    "upgrade_cta": "Mejorar a Premium",
+    "view_addons": "Ver complementos",
+    "active_title": "Miembro Premium",
+    "active_plan": "Plan:",
+    "renews": "Renueva",
+    "manage": "Administrar suscripci\u00f3n",
+    "trial_title": "Prueba gratuita",
+    "trial_ends": "La prueba termina el {{date}}",
+    "canceled_title": "Suscripci\u00f3n cancelada",
+    "access_until": "Acceso hasta {{date}}",
+    "reactivate": "Reactivar",
+    "past_due_title": "Pago fallido",
+    "past_due_description": "Actualiza tu m\u00e9todo de pago para conservar el acceso premium.",
+    "past_due_banner": "Tu \u00faltimo pago fall\u00f3. Actualiza tu m\u00e9todo de pago.",
+    "update_payment": "Actualizar m\u00e9todo de pago",
+    "refresh": "Actualizar estado",
+    "loading": "Cargando\u2026",
+    "modal_label": "Suscripci\u00f3n premium",
+    "modal_title": "Ir a Premium",
+    "modal_subtitle": "Profundiza tu pr\u00e1ctica diaria",
+    "modal_legal": "Cancela cuando quieras. Sin cargos ocultos.",
+    "success_toast": "\u00a1Bienvenido a Premium!",
+    "nav_badge_tooltip": "Eres miembro Premium",
+    "feature": {
+      "all_themes": "Todos los temas premium",
+      "journal": "Entradas de diario ilimitadas",
+      "prompts": "Sugerencias de reflexi\u00f3n semanales",
+      "translations": "Traducciones bíblicas modernas",
+      "streak_calendar": "Calendario completo de racha",
+      "blessings_multiplier": "1.5\u00d7 Bendiciones en cada acci\u00f3n",
+      "reflection_archive": "Archivo completo de reflexiones"
+    }
+  },
+  "otp": {
+    "section_title": "Complementos y compras \u00fanicas",
+    "section_description": "Desbloquea funciones individuales para siempre \u2014 sin suscripci\u00f3n.",
+    "owned": "Adquirido",
+    "loading": "\u2026",
+    "success_toast": "\u00a1Compra completada!",
+    "journal_unlock": { "title": "Desbloqueo de diario", "desc": "Entradas ilimitadas y edici\u00f3n enriquecida, para siempre.", "price": "$4.99" },
+    "reflection_archive": { "title": "Archivo de reflexiones", "desc": "Accede a todas tus reflexiones pasadas.", "price": "$2.99" },
+    "modern_translations": { "title": "Traducciones modernas", "desc": "NIV, ESV, NLT y m\u00e1s \u2014 desbloqueados permanentemente.", "price": "$3.99" },
+    "grace_day_pack": { "title": "Pack de d\u00edas de gracia", "desc": "3 d\u00edas de gracia adicionales.", "price": "$0.99" },
+    "theme_sanctuary": { "title": "Tema Santuario", "desc": "Una est\u00e9tica c\u00e1lida y sagrada.", "price": "$1.99" },
+    "theme_desert_sand": { "title": "Tema Arena del desierto", "desc": "Tonos terrosos inspirados en el desierto antiguo.", "price": "$1.99" },
+    "theme_celestial": { "title": "Tema Celestial", "desc": "Una paleta profunda y estrellada.", "price": "$1.99" },
+    "full_theme_library": { "title": "Biblioteca completa de temas", "desc": "Todos los temas premium, pasados y futuros.", "price": "$5.99" },
+    "support_developer": {
+      "title": "Apoya al desarrollador",
+      "desc": "Inv\u00edtame un caf\u00e9 \u2615 \u2014 muy agradecido.",
+      "price": "$2.99",
+      "thankyou_label": "Gracias",
+      "thankyou_title": "\u00a1Gracias!",
+      "thankyou_body": "Tu apoyo significa mucho."
+    }
+  },
+  "avatar": {
+    "ring": {
+      "tooltip": {
+        "premium": "Miembro Premium",
+        "milestone": "Hito {{milestone}}",
+        "none": "Sin hito a\u00fan"
+      }
+    }
+  },
+  "checkout": {
+    "overlay": {
+      "title": "Redirigiendo al pago\u2026",
+      "subtitle": "Ser\u00e1s llevado a Stripe para completar tu pago."
+    }
   }
 }

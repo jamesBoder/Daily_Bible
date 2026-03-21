@@ -54,7 +54,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
 
   return (
     <div
-      className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700 animate-fade-in"
+      className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600 animate-fade-in"
       onClick={(e) => e.stopPropagation()}
     >
       <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
@@ -522,7 +522,7 @@ export const FavoritesList: React.FC = () => {
 
                       {/* Remove button */}
                       <div
-                        className="flex justify-end items-center gap-2 mt-3 pt-3 border-t border-gray-200 dark:border-gray-700"
+                        className="flex justify-end items-center gap-2 mt-3 pt-3 border-t border-gray-300 dark:border-gray-600"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {confirmingRemoveId === favorite.id ? (

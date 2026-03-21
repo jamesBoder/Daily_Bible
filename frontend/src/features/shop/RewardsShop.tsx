@@ -1,13 +1,82 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
+import { Crown, Check, Palette, Sparkle } from '@phosphor-icons/react';
+import toast from 'react-hot-toast';
 import { ThemePicker } from '../settings/ThemePicker';
+import { OneTimePurchaseSection } from '../settings/OneTimePurchaseSection';
 import BlessingsChip from '../../components/BlessingsChip';
+import { useStreak } from '../../contexts/StreakContext';
 import styles from './RewardsShop.module.css';
+
+const PLAN_FEATURES = [
+  'subscription.feature.all_themes',
+  'subscription.feature.journal',
+  'subscription.feature.prompts',
+  'subscription.feature.translations',
+  'subscription.feature.streak_calendar',
+  'subscription.feature.blessings_multiplier',
+  'subscription.feature.reflection_archive',
+];
+
+const formatDate = (iso: string | null): string => {
+  if (!iso) return '';
+  return new Date(iso).toLocaleDateString(undefined, {
+    year: 'numeric', month: 'long', day: 'numeric',
+  });
+};
 
 export const RewardsShop: React.FC = () => {
   const { t } = useTranslation();
+  const location = useLocation();
+  const {
+    subscription, subscriptionLoading,
+    startCheckout, openPortal, refreshSubscription,
+  } = useStreak();
+  const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
+  const [portalLoading, setPortalLoading] = useState(false);
+
+  // Handle Stripe return (?subscribed=true or ?purchased=<key>)
+  React.useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const subscribed = params.get('subscribed');
+    const purchased = params.get('purchased');
+    if (!subscribed && !purchased) return;
+
+    window.history.replaceState({}, '', location.pathname);
+    sessionStorage.removeItem('pendingStripeUrl');
+    sessionStorage.removeItem('pendingStripeType');
+    sessionStorage.removeItem('pendingStripeInitiatedAt');
+
+    refreshSubscription().then(() => {
+      if (subscribed === 'true') {
+        toast.success(t('subscription.success_toast', 'Welcome to Premium!'));
+      } else if (purchased) {
+        toast.success(t('otp.success_toast', 'Purchase complete!'));
+      }
+    });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  const status = subscription?.status ?? 'none';
+  const isPremium = subscription?.is_premium ?? false;
+  const plan = subscription?.plan ?? '';
+  const periodEnd = subscription?.period_end ?? null;
+  const canceledAt = subscription?.canceled_at ?? null;
+  const ownedKeys = subscription?.owned_purchase_keys ?? [];
+
+  const handleCheckout = async () => {
+    try { await startCheckout(planChoice); } catch { /* redirect in progress */ }
+  };
+
+  const handlePortal = async () => {
+    setPortalLoading(true);
+    try { await openPortal(); } catch { setPortalLoading(false); }
+  };
+
   return (
     <div className={styles.page}>
+      {/* ── Header ──────────────────────────────────────────────────────── */}
       <div className={styles.header}>
         <h1 className={styles.title}>{t('shop.title')}</h1>
         <p className={styles.subtitle}>{t('shop.subtitle')}</p>
@@ -15,8 +84,146 @@ export const RewardsShop: React.FC = () => {
           <BlessingsChip showZero />
         </div>
       </div>
+
+      {/* ── Premium hero card (free / non-premium users) ─────────────────── */}
+      {!isPremium && status !== 'canceled' && status !== 'past_due' && (
+        <div className={styles.premiumCard}>
+          <div className={styles.premiumCardGlow} aria-hidden="true" />
+
+          <div className={styles.premiumCardHeader}>
+            <span className={styles.premiumCrownWrap}>
+              <Crown size={36} weight="fill" className={styles.premiumCrownIcon} />
+            </span>
+            <h2 className={styles.premiumCardTitle}>
+              {t('subscription.modal_title', 'Go Premium')}
+            </h2>
+            <p className={styles.premiumCardSubtitle}>
+              {t('subscription.modal_subtitle', 'Deepen your daily practice')}
+            </p>
+          </div>
+
+          <ul className={styles.premiumFeatures}>
+            {PLAN_FEATURES.map(key => (
+              <li key={key} className={styles.premiumFeatureItem}>
+                <span className={styles.premiumCheck}>
+                  <Check size={13} weight="bold" />
+                </span>
+                <span>{t(key, key)}</span>
+              </li>
+            ))}
+          </ul>
+
+          <div className={styles.planToggle} role="radiogroup" aria-label={t('subscription.choose_plan', 'Choose plan')}>
+            <label className={`${styles.planOption}${planChoice === 'monthly' ? ` ${styles.planOptionActive}` : ''}`}>
+              <input
+                type="radio"
+                name="shop-plan"
+                value="monthly"
+                checked={planChoice === 'monthly'}
+                onChange={() => setPlanChoice('monthly')}
+                className="sr-only"
+              />
+              <span className={styles.planName}>{t('subscription.plan.monthly', 'Monthly')}</span>
+              <span className={styles.planPrice}>{t('subscription.plan.monthly_price', '$2.99 / mo')}</span>
+            </label>
+            <label className={`${styles.planOption}${planChoice === 'annual' ? ` ${styles.planOptionActive}` : ''}`}>
+              <input
+                type="radio"
+                name="shop-plan"
+                value="annual"
+                checked={planChoice === 'annual'}
+                onChange={() => setPlanChoice('annual')}
+                className="sr-only"
+              />
+              <div className={styles.planNameRow}>
+                <span className={styles.planName}>{t('subscription.plan.annual', 'Annual')}</span>
+                <span className={styles.planBestValue}>{t('subscription.plan.annual_save', 'Save 17%')}</span>
+              </div>
+              <span className={styles.planPrice}>{t('subscription.plan.annual_price', '$29.99 / yr')}</span>
+            </label>
+          </div>
+
+          <button
+            className={styles.premiumCta}
+            onClick={handleCheckout}
+            disabled={subscriptionLoading}
+          >
+            <Crown size={18} weight="fill" />
+            {t('subscription.upgrade_cta', 'Upgrade to Premium')}
+          </button>
+
+          <p className={styles.premiumLegal}>
+            {t('subscription.modal_legal', 'Cancel anytime. No hidden fees.')}
+          </p>
+        </div>
+      )}
+
+      {/* ── Active premium status card ───────────────────────────────────── */}
+      {isPremium && !canceledAt && (
+        <div className={styles.activeCard}>
+          <Crown size={20} weight="fill" className={styles.activeCardCrown} />
+          <div className={styles.activeCardBody}>
+            <p className={styles.activeCardTitle}>
+              {t('subscription.active_title', 'Premium Member')}
+            </p>
+            <p className={styles.activeCardMeta}>
+              {t('subscription.active_plan', 'Plan:')} <strong>{t(`subscription.plan.${plan}`, plan)}</strong>
+              {periodEnd && (
+                <> · {t('subscription.renews', 'Renews')} {formatDate(periodEnd)}</>
+              )}
+            </p>
+          </div>
+          <button
+            className={styles.manageBtn}
+            onClick={handlePortal}
+            disabled={portalLoading}
+          >
+            {portalLoading ? t('subscription.loading', 'Loading…') : t('subscription.manage', 'Manage')}
+          </button>
+        </div>
+      )}
+
+      {/* ── Canceled — still has access ─────────────────────────────────── */}
+      {status === 'canceled' && (
+        <div className={`${styles.activeCard} ${styles.activeCardCanceled}`}>
+          <Crown size={20} weight="fill" className={styles.activeCardCrown} />
+          <div className={styles.activeCardBody}>
+            <p className={styles.activeCardTitle}>
+              {t('subscription.canceled_title', 'Subscription Canceled')}
+            </p>
+            {periodEnd && (
+              <p className={styles.activeCardMeta}>
+                {t('subscription.access_until', 'Access until {{date}}', { date: formatDate(periodEnd) })}
+              </p>
+            )}
+          </div>
+          <button
+            className={`${styles.manageBtn} ${styles.manageBtnPrimary}`}
+            onClick={handlePortal}
+            disabled={portalLoading}
+          >
+            {portalLoading ? t('subscription.loading', 'Loading…') : t('subscription.reactivate', 'Reactivate')}
+          </button>
+        </div>
+      )}
+
+      {/* ── Themes ──────────────────────────────────────────────────────── */}
       <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Palette size={18} weight="duotone" className={styles.sectionIcon} />
+          <h2 className={styles.sectionTitle}>{t('settings.appearance.title', 'Themes')}</h2>
+        </div>
         <ThemePicker />
+      </section>
+
+      {/* ── Add-ons ─────────────────────────────────────────────────────── */}
+      <section className={styles.section}>
+        <div className={styles.sectionHeader}>
+          <Sparkle size={18} weight="duotone" className={styles.sectionIcon} />
+          <h2 className={styles.sectionTitle}>{t('otp.section_title', 'Add-ons & One-Time Purchases')}</h2>
+          <p className={styles.sectionDesc}>{t('otp.section_description', 'Unlock individual features forever — no subscription required.')}</p>
+        </div>
+        <OneTimePurchaseSection ownedKeys={ownedKeys} hideHeader />
       </section>
     </div>
   );
