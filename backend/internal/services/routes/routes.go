@@ -37,11 +37,11 @@ func SetupRoutes(
 			auth.POST("/register", authHandler.Register)
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/logout", authHandler.Logout)
-			auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
+			auth.GET("/me", middleware.AuthMiddleware(tokenService, nil), authHandler.GetMe)
 			auth.GET("/google/login", oauthHandler.GoogleLogin)
 			auth.GET("/google/callback", oauthHandler.GoogleCallback)
-			auth.POST("/google/link", middleware.AuthMiddleware(tokenService), oauthHandler.LinkGoogle)
-			auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService), oauthHandler.UnlinkGoogle)
+			auth.POST("/google/link", middleware.AuthMiddleware(tokenService, nil), oauthHandler.LinkGoogle)
+			auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService, nil), oauthHandler.UnlinkGoogle)
 		}
 
 		// ── Verses (optional auth — tracks history for authenticated users) ────
@@ -55,7 +55,7 @@ func SetupRoutes(
 
 		// ── Protected routes ─────────────────────────────────────────────────
 		protected := api.Group("/")
-		protected.Use(middleware.AuthMiddleware(tokenService))
+		protected.Use(middleware.AuthMiddleware(tokenService, nil))
 		{
 			// Favorites
 			favorites := protected.Group("/favorites")

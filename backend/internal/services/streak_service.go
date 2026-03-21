@@ -136,6 +136,15 @@ func (s *StreakService) UseGraceDay(userID uint, ianaTimezone string) error {
         t := time.Now().Add(30 * 24 * time.Hour)
         streak.GraceDaysResetAt = &t
 
+        // Phase 8: drain queued grace days (from grace_day_pack purchases by free users).
+        // Each time a grace day is used, one queued day refills the balance up to the free cap (2).
+        if streak.GraceDaysQueued > 0 {
+            streak.GraceDaysQueued--
+            if streak.GraceDaysRemaining < 2 {
+                streak.GraceDaysRemaining++
+            }
+        }
+
         if err := tx.Save(&streak).Error; err != nil {
             return err
         }
@@ -147,6 +156,89 @@ func (s *StreakService) UseGraceDay(userID uint, ianaTimezone string) error {
         })
 
         return nil
+    })
+}
+
+// AddGraceDays adds `count` grace days to the user's balance.
+// For free users: caps immediately at 2, and stores the overflow in GraceDaysQueued.
+// For premium users: no cap — all days are added directly to GraceDaysRemaining.
+// Called by SubscriptionService.HandleOneTimePurchase for the grace_day_pack product.
+func (s *StreakService) AddGraceDays(userID uint, count int) error {
+    return s.db.Transaction(func(tx *gorm.DB) error {
+        var streak models.UserStreak
+        if err := tx.Set("gorm:query_option", "FOR UPDATE").
+            FirstOrCreate(&streak, models.UserStreak{UserID: userID}).Error; err != nil {
+            return err
+        }
+
+        if s.subscriptionChecker.IsPremium(userID) {
+            // Premium: no cap — add all days directly.
+            streak.GraceDaysRemaining += count
+        } else {
+            // Free: cap at 2 immediately, queue the overflow.
+            available := 2 - streak.GraceDaysRemaining
+            if available < 0 {
+                available = 0
+            }
+            toAdd := count
+            if toAdd > available {
+                streak.GraceDaysQueued += toAdd - available
+                toAdd = available
+            }
+            streak.GraceDaysRemaining += toAdd
+        }
+
+        return tx.Save(&streak).Error
+    })
+}
+
+// AddGraceDaysTx is the transaction-aware variant of AddGraceDays.
+// Accepts the caller's *gorm.DB transaction so the grace day write is atomic with
+// the surrounding webhook transaction (e.g., the UserUnlock record created for
+// grace_day_pack). IsPremium is still resolved independently — it is a read-only
+// check that does not need to participate in the transaction.
+func (s *StreakService) AddGraceDaysTx(tx *gorm.DB, userID uint, count int) error {
+	var streak models.UserStreak
+	if err := tx.Set("gorm:query_option", "FOR UPDATE").
+		FirstOrCreate(&streak, models.UserStreak{UserID: userID}).Error; err != nil {
+		return err
+	}
+
+	if s.subscriptionChecker.IsPremium(userID) {
+		streak.GraceDaysRemaining += count
+	} else {
+		available := 2 - streak.GraceDaysRemaining
+		if available < 0 {
+			available = 0
+		}
+		toAdd := count
+		if toAdd > available {
+			streak.GraceDaysQueued += toAdd - available
+			toAdd = available
+		}
+		streak.GraceDaysRemaining += toAdd
+	}
+
+	return tx.Save(&streak).Error
+}
+
+// FlushGraceDaysQueue moves all queued grace days directly into GraceDaysRemaining.
+// Called when a free user upgrades to premium — the cap restriction is lifted so
+// all previously queued days become immediately available.
+// Idempotent: no-op if the queue is already empty.
+func (s *StreakService) FlushGraceDaysQueue(userID uint) error {
+    return s.db.Transaction(func(tx *gorm.DB) error {
+        var streak models.UserStreak
+        if err := tx.Set("gorm:query_option", "FOR UPDATE").
+            First(&streak, "user_id = ?", userID).Error; err != nil {
+            return nil // no streak record — nothing to flush
+        }
+        if streak.GraceDaysQueued == 0 {
+            return nil // already empty
+        }
+        streak.GraceDaysRemaining += streak.GraceDaysQueued
+        streak.GraceDaysQueued = 0
+        return tx.Save(&streak).Error
     })
 }
 

@@ -112,11 +112,16 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 		return
 	}
 
+	// Phase 8: use real premium multiplier from Gin context.
+	blessingsMultiplier := 1.0
+	if c.GetBool("isPremium") {
+		blessingsMultiplier = 1.5
+	}
 	// Credit blessings for favoriting — capped at 3 unique favorites per day.
 	// This prevents users from mass-favoriting dozens of verses in one session to
 	// farm Blessings. The cap is per-reason per-day (UTC boundary), checked in DB.
 	var blessingsCredited int
-	if credited, err := h.blessingsService.CreditWithDailyCap(userIDStr.(uint), 3, "verse_favorited", 1.0, 3); err == nil && credited > 0 {
+	if credited, err := h.blessingsService.CreditWithDailyCap(userIDStr.(uint), 3, "verse_favorited", blessingsMultiplier, 3); err == nil && credited > 0 {
 		blessingsCredited = credited
 	} else if err != nil {
 		log.Printf("Failed to credit blessings for favorite: %v", err)

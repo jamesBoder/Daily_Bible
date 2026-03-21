@@ -5,19 +5,34 @@ import (
 	"dailybible/internal/handlers"
 	"dailybible/internal/middleware"
 	"dailybible/internal/services"
-	
 )
-
-
 
 // SetupRoutes - Initialize and organize API routes
 // Group related routes together
 // Apply middleware to groups
 // Keep main.go clean
 // Make routes easy to find
-
-func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenService *services.TokenService, verseHandler *handlers.VerseHandler, favoriteHandler *handlers.FavoriteHandler, historyHandler *handlers.HistoryHandler, commentService *services.CommentService, commentHandler *handlers.CommentHandler, profileHandler *handlers.ProfileHandler, oauthHandler *handlers.OAuthHandler, settingsHandler *handlers.SettingsHandler, streakHandler *handlers.StreakHandler, blessingsHandler *handlers.BlessingsHandler, milestonesHandler *handlers.MilestonesHandler, journalHandler *handlers.JournalHandler, translationsHandler *handlers.TranslationsHandler, unlocksHandler *handlers.UnlocksHandler) {
-	// Example route group for user-related endpoints
+func SetupRoutes(
+	router *gin.Engine,
+	authHandler *handlers.AuthHandler,
+	tokenService *services.TokenService,
+	verseHandler *handlers.VerseHandler,
+	favoriteHandler *handlers.FavoriteHandler,
+	historyHandler *handlers.HistoryHandler,
+	commentService *services.CommentService,
+	commentHandler *handlers.CommentHandler,
+	profileHandler *handlers.ProfileHandler,
+	oauthHandler *handlers.OAuthHandler,
+	settingsHandler *handlers.SettingsHandler,
+	streakHandler *handlers.StreakHandler,
+	blessingsHandler *handlers.BlessingsHandler,
+	milestonesHandler *handlers.MilestonesHandler,
+	journalHandler *handlers.JournalHandler,
+	translationsHandler *handlers.TranslationsHandler,
+	unlocksHandler *handlers.UnlocksHandler,
+	subscriptionHandler *handlers.SubscriptionHandler,
+	subscriptionChecker services.SubscriptionChecker,
+) {
 	api := router.Group("/api")
 	{
 		// auth routes
@@ -27,7 +42,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 			auth.POST("/login", authHandler.Login)
 			auth.POST("/logout", authHandler.Logout)
 			// /me endpoint requires authentication
-			auth.GET("/me", middleware.AuthMiddleware(tokenService), authHandler.GetMe)
+			auth.GET("/me", middleware.AuthMiddleware(tokenService, subscriptionChecker), authHandler.GetMe)
 			// Email verification & password reset (public)
 			auth.POST("/verify-email", authHandler.VerifyEmail)
 			auth.POST("/resend-verification", authHandler.ResendVerification)
@@ -36,32 +51,32 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 			// Google OAuth routes
 			auth.GET("/google/login", oauthHandler.GoogleLogin)
 			auth.GET("/google/callback", oauthHandler.GoogleCallback)
-			auth.POST("/google/link", middleware.AuthMiddleware(tokenService), oauthHandler.LinkGoogle)
-			auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService), oauthHandler.UnlinkGoogle)
+			auth.POST("/google/link", middleware.AuthMiddleware(tokenService, subscriptionChecker), oauthHandler.LinkGoogle)
+			auth.POST("/google/unlink", middleware.AuthMiddleware(tokenService, subscriptionChecker), oauthHandler.UnlinkGoogle)
 		}
+
+		// Phase 8: Stripe webhook — public (no auth), must be before any body-parsing middleware
+		api.POST("/webhooks/stripe", subscriptionHandler.HandleStripeWebhook)
 
 		// translations route (Phase 4) — public with optional auth
 		translationsGroup := api.Group("/translations")
-		translationsGroup.Use(middleware.OptionalAuthMiddleware(tokenService))
+		translationsGroup.Use(middleware.OptionalAuthMiddleware(tokenService, subscriptionChecker))
 		{
 			translationsGroup.GET("", translationsHandler.GetTranslations)
 		}
 
 		// verses routes - use optional auth to track history for authenticated users
 		verses := api.Group("/verses")
-		verses.Use(middleware.OptionalAuthMiddleware(tokenService))
+		verses.Use(middleware.OptionalAuthMiddleware(tokenService, subscriptionChecker))
 		{
-			 verses.GET("/daily", verseHandler.GetDailyVerse)
-			 verses.GET("/:reference", verseHandler.GetVerseByReference)
-			 verses.GET("/search", verseHandler.SearchVerses)
+			verses.GET("/daily", verseHandler.GetDailyVerse)
+			verses.GET("/:reference", verseHandler.GetVerseByReference)
+			verses.GET("/search", verseHandler.SearchVerses)
 		}
-
-		
-
 
 		// Protected routes (require auth)
 		protected := api.Group("/")
-		protected.Use(middleware.AuthMiddleware(tokenService))
+		protected.Use(middleware.AuthMiddleware(tokenService, subscriptionChecker))
 		{
 			// favorites routes
 			favorites := protected.Group("/favorites")
@@ -99,7 +114,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 				profile.PUT("/password", profileHandler.UpdatePassword)
 				profile.POST("/resend-verification", profileHandler.ResendVerificationFromProfile)
 			}
-			
+
 			// settings routes
 			settings := protected.Group("/settings")
 			{
@@ -108,7 +123,7 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 				settings.GET("/language", settingsHandler.GetLanguage)
 				settings.PUT("/language", settingsHandler.UpdateLanguage)
 			}
-			
+
 			// streak routes
 			streak := protected.Group("/streak")
 			{
@@ -145,7 +160,14 @@ func SetupRoutes(router *gin.Engine, authHandler *handlers.AuthHandler, tokenSer
 				journal.PUT("/:id", journalHandler.UpdateEntry)
 				journal.DELETE("/:id", journalHandler.DeleteEntry)
 			}
+
+			// Phase 8: subscription routes
+			sub := protected.Group("/subscription")
+			{
+				sub.GET("/status", subscriptionHandler.GetStatus)
+				sub.POST("/checkout", subscriptionHandler.CreateCheckout)
+				sub.POST("/portal", subscriptionHandler.CreatePortalSession)
+			}
 		}
-			
 	}
 }

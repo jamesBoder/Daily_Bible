@@ -40,6 +40,8 @@ services:
       BIBLE_API_BASE_URL: ${BIBLE_API_BASE_URL:-https://rest.api.bible/v1}
       BIBLE_VERSION_ID: ${BIBLE_VERSION_ID:-de4e12af7f28f599-02}
       DEV_PREMIUM_USER_IDS: ${DEV_PREMIUM_USER_IDS:-}
+      STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
+      STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
     depends_on:
       postgres:
         condition: service_healthy

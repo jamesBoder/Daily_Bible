@@ -17,13 +17,12 @@ import (
     "dailybible/internal/middleware"
     "dailybible/internal/routes"
     "dailybible/internal/handlers"
-    
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
     "github.com/gin-contrib/gzip"
     "github.com/go-playground/validator/v10"
-    
+    stripe "github.com/stripe/stripe-go/v80"
 )
 
 // healthHandler is a simple health check endpoint
@@ -77,6 +76,18 @@ func main() {
         log.Printf("Grandfathering: %d pre-existing users marked as email_verified", result.RowsAffected)
     }
     
+    // 3c. Phase 8: Validate and configure Stripe at startup.
+    // Server refuses to start if either key is missing — a missing webhook secret
+    // would silently accept unsigned webhooks (security hole), not just a crash.
+    stripeKey := os.Getenv("STRIPE_SECRET_KEY")
+    if stripeKey == "" {
+        log.Fatal("STRIPE_SECRET_KEY is required")
+    }
+    if os.Getenv("STRIPE_WEBHOOK_SECRET") == "" {
+        log.Fatal("STRIPE_WEBHOOK_SECRET is required")
+    }
+    stripe.Key = stripeKey
+
     // 4. Initialize repositories
     userRepo := repository.NewUserRepository(db)
     verseRepo := repository.NewVerseRepository(db)
@@ -115,7 +126,8 @@ func main() {
     settingsService := services.NewSettingsService(db)
     
     // Initialize Phase 1 services
-    subscriptionChecker := services.NewStubSubscriptionChecker()
+    // Phase 8: replace StubSubscriptionChecker with the real Stripe-backed implementation.
+    subscriptionChecker := services.NewStripeSubscriptionChecker(db)
     streakService := services.NewStreakService(db, subscriptionChecker)
     blessingsService := services.NewBlessingsService(db)
 
@@ -127,6 +139,9 @@ func main() {
 
     // Initialize Phase 6 services
     unlockService := services.NewUnlockService(db, blessingsService)
+
+    // Initialize Phase 8 services
+    subscriptionService := services.NewSubscriptionService(db, rewardsService, streakService)
 
     // create validator instance
     validate := validator.New()
@@ -177,10 +192,11 @@ func main() {
         bibleAPIService,
     )
 
-    // init commentService variable
+    // init commentHandler variable
     commentHandler := handlers.NewCommentHandler(
         commentService,
         blessingsService,
+        subscriptionChecker,
     )
 
     // init profileHandler variable
@@ -242,7 +258,21 @@ func main() {
         unlockService,
         blessingsService,
     )
-    
+
+    // Phase 8: wire subscriptionService into journalHandler for HasOneTimePurchase("journal_unlock").
+    journalHandler.SetSubscriptionService(subscriptionService)
+    // Phase 8: wire subscriptionService into translationsHandler for HasOneTimePurchase("modern_translations").
+    translationsHandler.SetSubscriptionService(subscriptionService)
+    // Phase 8: wire subscriptionService into commentHandler for HasOneTimePurchase("reflection_archive").
+    commentHandler.SetSubscriptionService(subscriptionService)
+
+    // init subscriptionHandler variable (Phase 8)
+    subscriptionHandler := handlers.NewSubscriptionHandler(
+        subscriptionService,
+        subscriptionChecker,
+        userRepo,
+    )
+
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
     log.Println("Backend is ready. Setting up routes...")
@@ -301,7 +331,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker)
 
     // debug print setup routes
     log.Println("Routes have been set up")

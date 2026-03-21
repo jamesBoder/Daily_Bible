@@ -14,6 +14,7 @@ import (
 type TranslationsHandler struct {
 	settingsService     *services.SettingsService
 	subscriptionChecker services.SubscriptionChecker
+	subscriptionService *services.SubscriptionService // for HasOneTimePurchase("modern_translations")
 }
 
 func NewTranslationsHandler(
@@ -24,6 +25,12 @@ func NewTranslationsHandler(
 		settingsService:     settingsService,
 		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// SetSubscriptionService wires in the SubscriptionService for HasOneTimePurchase checks.
+// Called from main.go after both services are initialized (breaks the initialization cycle).
+func (h *TranslationsHandler) SetSubscriptionService(s *services.SubscriptionService) {
+	h.subscriptionService = s
 }
 
 // translationDTO is the response shape for a single translation entry.
@@ -46,7 +53,9 @@ func (h *TranslationsHandler) GetTranslations(c *gin.Context) {
 	userID, authenticated := c.Get("userID")
 	isPremium := false
 	if authenticated {
-		isPremium = h.subscriptionChecker.IsPremium(userID.(uint))
+		uid := userID.(uint)
+		isPremium = h.subscriptionChecker.IsPremium(uid) ||
+			(h.subscriptionService != nil && h.subscriptionService.HasOneTimePurchase(uid, "modern_translations"))
 	}
 
 	currentVersion := config.GetDefaultFreeVersion(lang)

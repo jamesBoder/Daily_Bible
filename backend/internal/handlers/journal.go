@@ -16,6 +16,7 @@ const maxContentLength = 50_000
 type JournalHandler struct {
 	journalService      *services.JournalService
 	subscriptionChecker services.SubscriptionChecker
+	subscriptionService *services.SubscriptionService // for HasOneTimePurchase("journal_unlock")
 }
 
 // NewJournalHandler creates a new JournalHandler.
@@ -27,6 +28,12 @@ func NewJournalHandler(
 		journalService:      journalService,
 		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// SetSubscriptionService wires in the SubscriptionService for HasOneTimePurchase checks.
+// Called from main.go after both services are initialized (breaks the initialization cycle).
+func (h *JournalHandler) SetSubscriptionService(s *services.SubscriptionService) {
+	h.subscriptionService = s
 }
 
 // journalEntryResponse is the JSON shape returned for a single entry.
@@ -43,18 +50,31 @@ type journalEntryResponse struct {
 // GetEntries handles GET /api/journal
 // Returns up to 30 entries for free users and all entries for premium users.
 // Always includes total_stored so the frontend can render the locked-entry upgrade prompt.
+// hasJournalAccess returns true if the user has full journal access — either via
+// an active subscription OR a standalone journal_unlock one-time purchase.
+func (h *JournalHandler) hasJournalAccess(userID uint, isPremium bool) bool {
+	if isPremium {
+		return true
+	}
+	if h.subscriptionService != nil {
+		return h.subscriptionService.HasOneTimePurchase(userID, "journal_unlock")
+	}
+	return false
+}
+
 func (h *JournalHandler) GetEntries(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	isPremium := h.subscriptionChecker.IsPremium(userID)
+	isPremium := c.GetBool("isPremium")
 
-	entries, total, err := h.journalService.GetEntries(userID, isPremium)
+	hasAccess := h.hasJournalAccess(userID, isPremium)
+	entries, total, err := h.journalService.GetEntries(userID, hasAccess)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch journal entries"})
 		return
 	}
 
 	var viewLimit *int
-	if !isPremium {
+	if !hasAccess {
 		cap := 30
 		viewLimit = &cap
 	}
@@ -76,7 +96,7 @@ func (h *JournalHandler) GetEntries(c *gin.Context) {
 		"entries":       dtos,
 		"total_stored":  total,
 		"view_limit":    viewLimit,
-		"is_premium":    isPremium,
+		"is_premium":    hasAccess,
 	})
 }
 
@@ -125,7 +145,8 @@ type createEntryRequest struct {
 // Creates a new journal entry and credits 8 Blessings asynchronously.
 func (h *JournalHandler) CreateEntry(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	isPremium := h.subscriptionChecker.IsPremium(userID)
+	// Use cached isPremium from auth middleware (avoids extra DB query per request).
+	isPremium := c.GetBool("isPremium")
 
 	var req createEntryRequest
 	if err := c.ShouldBindJSON(&req); err != nil {
@@ -143,13 +164,21 @@ func (h *JournalHandler) CreateEntry(c *gin.Context) {
 		return
 	}
 
+	// Phase 8: real premium multiplier from Gin context.
+	blessingsMultiplier := 1.0
+	hasAccess := h.hasJournalAccess(userID, isPremium)
+	if isPremium {
+		blessingsMultiplier = 1.5
+	}
+
 	entry, err := h.journalService.CreateEntry(
 		userID,
-		isPremium,
+		hasAccess,
 		req.ContentPlain,
 		req.ContentRich,
 		req.LinkedVerse,
 		req.PromptID,
+		blessingsMultiplier,
 	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to create journal entry"})
@@ -179,7 +208,8 @@ type updateEntryRequest struct {
 // entry does not exist or belongs to another user.
 func (h *JournalHandler) UpdateEntry(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
-	isPremium := h.subscriptionChecker.IsPremium(userID)
+	isPremium := c.GetBool("isPremium")
+	hasAccess := h.hasJournalAccess(userID, isPremium)
 
 	idStr := c.Param("id")
 	id, err := strconv.ParseUint(idStr, 10, 64)
@@ -207,7 +237,7 @@ func (h *JournalHandler) UpdateEntry(c *gin.Context) {
 	entry, err := h.journalService.UpdateEntry(
 		uint(id),
 		userID,
-		isPremium,
+		hasAccess,
 		req.ContentPlain,
 		req.ContentRich,
 		req.LinkedVerse,
@@ -261,8 +291,8 @@ func (h *JournalHandler) DeleteEntry(c *gin.Context) {
 // Returns the active weekly prompt for premium users, or { "prompt": null } for
 // free users. Always returns 200 — a null prompt is not an error condition.
 func (h *JournalHandler) GetWeeklyPrompt(c *gin.Context) {
-	userID := c.MustGet("userID").(uint)
-	isPremium := h.subscriptionChecker.IsPremium(userID)
+	_ = c.MustGet("userID").(uint)
+	isPremium := c.GetBool("isPremium")
 
 	prompt, err := h.journalService.GetActivePrompt(isPremium)
 	if err != nil {

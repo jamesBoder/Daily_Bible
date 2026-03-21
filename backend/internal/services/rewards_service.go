@@ -23,6 +23,15 @@ func NewRewardsService(db *gorm.DB, blessingsService *BlessingsService) *Rewards
 	}
 }
 
+// UpgradeBadgesToPremium sets badge_variant = "premium" for all earned milestones.
+// Called once on subscription activation (via SyncFromWebhook goroutine). Idempotent.
+// Users keep their gold badges after canceling — the badges represent past achievement.
+func (s *RewardsService) UpgradeBadgesToPremium(userID uint) {
+	s.db.Model(&models.UserMilestone{}).
+		Where("user_id = ? AND badge_variant != 'premium'", userID).
+		Update("badge_variant", "premium")
+}
+
 // CheckMilestones is called in a goroutine from the verse handler after a new daily engagement.
 // It is safe to call concurrently — ON CONFLICT DO NOTHING prevents double-granting under race conditions.
 //
@@ -60,11 +69,23 @@ func (s *RewardsService) CheckMilestones(userID uint, currentStreak int) {
 		// ON CONFLICT DO NOTHING handles the race where two goroutines both call
 		// CheckMilestones for the same user at the same instant.
 		// Only the insert that succeeds (RowsAffected == 1) earns the Blessings credit.
+		badgeVariant := "standard"
+		// Phase 8: premium users get gold badges immediately when earned.
+		// RewardsService does not have subscriptionChecker injected (would cause
+		// initialization order issues). Instead we check the DB directly here.
+		// This is a lightweight read — one row by primary key.
+		var sub models.UserSubscription
+		if s.db.Where("user_id = ? AND status IN ('active','trialing')", userID).First(&sub).Error == nil {
+			badgeVariant = "premium"
+		} else if s.db.Where("user_id = ? AND status IN ('canceled','past_due') AND current_period_end > NOW()", userID).First(&sub).Error == nil {
+			badgeVariant = "premium"
+		}
+
 		result := s.db.Clauses(clause.OnConflict{DoNothing: true}).Create(&models.UserMilestone{
 			UserID:       userID,
 			MilestoneKey: def.Key,
 			AchievedAt:   now,
-			BadgeVariant: "standard", // Phase 8: "premium" for premium users
+			BadgeVariant: badgeVariant,
 		})
 
 		if result.RowsAffected > 0 {

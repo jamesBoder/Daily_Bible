@@ -196,8 +196,13 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 			// Non-fatal: log and continue. The verse is served regardless.
 		}
 		if wasNew {
+			// Phase 8: use real premium multiplier from Gin context (cached by auth middleware).
+			blessingsMultiplier := 1.0
+			if c.GetBool("isPremium") {
+				blessingsMultiplier = 1.5
+			}
 			// Blessings credit is gated on wasNew to prevent double-credit on page refresh.
-			if credited, err := h.blessingsService.Credit(userID.(uint), 5, "daily_view", 1.0); err != nil {
+			if credited, err := h.blessingsService.Credit(userID.(uint), 5, "daily_view", blessingsMultiplier); err != nil {
 				log.Printf("Blessings credit failed: %v", err)
 				// Do NOT add blessing_credited: true to the response if the write failed.
 			} else {

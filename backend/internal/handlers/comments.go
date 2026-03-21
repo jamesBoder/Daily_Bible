@@ -9,15 +9,40 @@ import (
 )
 
 type CommentHandler struct {
-    commentService   *services.CommentService
-    blessingsService *services.BlessingsService
+    commentService      *services.CommentService
+    blessingsService    *services.BlessingsService
+    subscriptionChecker services.SubscriptionChecker
+    subscriptionService *services.SubscriptionService // for HasOneTimePurchase("reflection_archive")
 }
 
-func NewCommentHandler(commentService *services.CommentService, blessingsService *services.BlessingsService) *CommentHandler {
+func NewCommentHandler(
+    commentService *services.CommentService,
+    blessingsService *services.BlessingsService,
+    subscriptionChecker services.SubscriptionChecker,
+) *CommentHandler {
     return &CommentHandler{
-        commentService:   commentService,
-        blessingsService: blessingsService,
+        commentService:      commentService,
+        blessingsService:    blessingsService,
+        subscriptionChecker: subscriptionChecker,
     }
+}
+
+// SetSubscriptionService wires in the SubscriptionService for HasOneTimePurchase checks.
+// Called from main.go after both services are initialized (breaks the initialization cycle).
+func (h *CommentHandler) SetSubscriptionService(s *services.SubscriptionService) {
+    h.subscriptionService = s
+}
+
+// hasReflectionAccess returns true if the user has full reflection history access —
+// either an active subscription OR a standalone reflection_archive one-time purchase.
+func (h *CommentHandler) hasReflectionAccess(userID uint) bool {
+    if h.subscriptionChecker != nil && h.subscriptionChecker.IsPremium(userID) {
+        return true
+    }
+    if h.subscriptionService != nil {
+        return h.subscriptionService.HasOneTimePurchase(userID, "reflection_archive")
+    }
+    return false
 }
 
 type AddCommentRequest struct {
@@ -52,9 +77,14 @@ func (h *CommentHandler) AddOrUpdateComment(c *gin.Context) {
         return
     }
     
+    // Phase 8: use real premium multiplier from Gin context.
+    blessingsMultiplier := 1.0
+    if c.GetBool("isPremium") {
+        blessingsMultiplier = 1.5
+    }
     // Cap: max 2 reflections rewarded per UTC day (20 blessings max from reflections/day).
     var blessingsCredited int
-    if credited, err := h.blessingsService.CreditWithDailyCap(userID.(uint), 10, "reflection_written", 1.0, 2); err == nil && credited > 0 {
+    if credited, err := h.blessingsService.CreditWithDailyCap(userID.(uint), 10, "reflection_written", blessingsMultiplier, 2); err == nil && credited > 0 {
         blessingsCredited = credited
     } else if err != nil {
         log.Printf("Failed to credit blessings for reflection: %v", err)
@@ -111,19 +141,31 @@ func (h *CommentHandler) DeleteComment(c *gin.Context) {
     c.JSON(http.StatusOK, gin.H{"message": "Comment deleted successfully"})
 }
 
-// Get all user comments
+// Get all user comments (reflection archive)
+// Free tier: last 7 days only. Full access: subscribers or reflection_archive purchasers.
 func (h *CommentHandler) GetUserComments(c *gin.Context) {
     userID, exists := c.Get("userID")
     if !exists {
         c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
         return
     }
-    
-    comments, err := h.commentService.GetUserComments(userID.(uint))
+
+    uid := userID.(uint)
+    hasAccess := h.hasReflectionAccess(uid)
+
+    comments, total, err := h.commentService.GetUserComments(uid, hasAccess)
     if err != nil {
         c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch comments"})
         return
     }
-    
-    c.JSON(http.StatusOK, gin.H{"comments": comments})
+
+    resp := gin.H{
+        "comments":     comments,
+        "total_stored": total,
+        "has_full_access": hasAccess,
+    }
+    if !hasAccess {
+        resp["view_limit_days"] = 7
+    }
+    c.JSON(http.StatusOK, resp)
 }

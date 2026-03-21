@@ -81,6 +81,7 @@ func (s *JournalService) CreateEntry(
 	contentRich string,
 	linkedVerse string,
 	promptID *uint,
+	blessingsMultiplier float64,
 ) (*models.JournalEntry, error) {
 	entry := models.JournalEntry{
 		UserID:       userID,
@@ -101,7 +102,7 @@ func (s *JournalService) CreateEntry(
 	bs := s.blessingsService
 	go func() {
 		defer func() { recover() }() //nolint:errcheck
-		bs.CreditWithDailyCap(userID, 8, "journal_entry_written", 1.0, 3)
+		bs.CreditWithDailyCap(userID, 8, "journal_entry_written", blessingsMultiplier, 3)
 	}()
 
 	return &entry, nil
