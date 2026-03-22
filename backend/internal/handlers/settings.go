@@ -65,6 +65,7 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
         EmailNotifications   *bool   `json:"email_notifications"`
         DailyVerseReminder   *bool   `json:"daily_verse_reminder"`
         ActiveTheme          *string `json:"active_theme"`
+        MilestonePostsOptIn  *bool   `json:"milestone_posts_opt_in"`
     }
     
     if err := c.ShouldBindJSON(&updateRequest); err != nil {
@@ -122,6 +123,10 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
         }
         updates["active_theme"] = *updateRequest.ActiveTheme
         updates["dark_mode"] = darkThemes[*updateRequest.ActiveTheme]
+    }
+
+    if updateRequest.MilestonePostsOptIn != nil {
+        updates["milestone_posts_opt_in"] = *updateRequest.MilestonePostsOptIn
     }
 
     if len(updates) == 0 {

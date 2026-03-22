@@ -14,7 +14,6 @@ export const Header: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const location = useLocation();
 
-  // Close mobile menu when route changes (back/forward navigation)
   useEffect(() => {
     setIsMenuOpen(false);
   }, [location.pathname]);
@@ -24,284 +23,207 @@ export const Header: React.FC = () => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+
   const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { currentLanguage: _lang } = useLanguage(); // Subscribe to language context so Header re-renders on language change
+  const { currentLanguage: _lang } = useLanguage();
 
   const handleLogout = async () => {
     await logout();
     navigate("/login");
   };
 
+  // Unified amber pill nav link — desktop (rounded-full)
+  const navLinkDesktop = ({ isActive }: { isActive: boolean }) =>
+    `text-sm font-medium transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
+      isActive
+        ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
+        : "text-gray-600 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400"
+    }`;
+
+  // Mobile nav link — rounded-lg, full-width feel
+  const navLinkMobile = ({ isActive }: { isActive: boolean }) =>
+    `flex items-center gap-2 font-medium transition-colors px-3 py-2 rounded-lg ${
+      isActive
+        ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
+        : "text-gray-600 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400"
+    }`;
+
+  const userInitial = user?.username ? user.username.charAt(0).toUpperCase() : null;
+
   return (
-    <header className={`bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm sticky top-0 z-40 transition-shadow duration-300 ${isScrolled ? "shadow-md" : "shadow-sm"}`}>
+    <header
+      className={`sticky top-0 z-40 backdrop-blur-md border-b border-amber-300/30 dark:border-amber-700/20 transition-all duration-300 ${
+        isScrolled ? "shadow-[0_2px_16px_rgba(245,158,11,0.10)]" : ""
+      }`}
+      style={{ background: "var(--header-bg)" }}
+    >
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between items-center h-16">
-          {/* Logo */}
-          <Link to="/" className="flex items-center group">
-            <span className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 group-hover:brightness-125 group-hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.4)] dark:group-hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.4)]">
+        <div className="flex justify-between items-center h-14">
+
+          {/* ── Logo ───────────────────────────────────────────────────────── */}
+          <Link to="/" className="flex items-center gap-2 group shrink-0">
+            <span className="text-lg leading-none" aria-hidden="true">🕯</span>
+            <span className="text-xl font-display font-bold text-amber-700 dark:text-amber-400 tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(245,158,11,0.55)]">
               Words of Praise
             </span>
           </Link>
 
-          {/* Desktop Navigation — order: Search, Favorites, Journal, Shop, Settings */}
-          <div className="hidden md:flex items-center space-x-8">
-            {/* Search hidden for guests */}
+          {/* ── Desktop Navigation ─────────────────────────────────────────── */}
+          <div className="hidden md:flex items-center gap-1">
             {!isGuest && (
-              <NavLink
-                to="/search"
-                className={({ isActive }) =>
-                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 flex items-center gap-1.5 ${isActive
-                    ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
-                  }`
-                }
-              >
-                <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+              <NavLink to="/search" className={navLinkDesktop}>
+                <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
                 </svg>
-                {t('nav.search')}
+                {t("nav.search")}
               </NavLink>
             )}
-            {/* Favorites hidden for guests */}
             {!isGuest && (
-              <NavLink
-                to="/favorites"
-                className={({ isActive }) =>
-                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                    ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
-                  }`
-                }
-              >
-                {t('nav.favorites')}
+              <NavLink to="/favorites" className={navLinkDesktop}>
+                {t("nav.favorites")}
               </NavLink>
             )}
-            {/* Journal — hidden for guests */}
             {!isGuest && (
-              <NavLink
-                to="/journal"
-                className={({ isActive }) =>
-                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                    ? "text-amber-600 dark:text-amber-400 border-amber-500 dark:border-amber-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 border-transparent"
-                  }`
-                }
-              >
-                {t('nav.journal', 'Journal')}
+              <NavLink to="/journal" className={navLinkDesktop}>
+                {t("nav.journal", "Journal")}
               </NavLink>
             )}
-            {/* Shop — hidden for guests, now after Journal */}
             {!isGuest && (
-              <NavLink
-                to="/shop"
-                className={({ isActive }) =>
-                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                    ? "text-amber-600 dark:text-amber-400 border-amber-500 dark:border-amber-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 border-transparent"
-                  }`
-                }
-              >
-                {t('nav.shop', 'Shop')}
+              <NavLink to="/shop" className={navLinkDesktop}>
+                {t("nav.shop", "Shop")}
               </NavLink>
             )}
-            {/* Leaderboard — hidden for guests */}
             {!isGuest && (
-              <NavLink
-                to="/leaderboard"
-                className={({ isActive }) =>
-                  `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                    ? "text-amber-600 dark:text-amber-400 border-amber-500 dark:border-amber-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400 border-transparent"
-                  }`
-                }
-              >
-                {t('nav.leaderboard', 'Community')}
+              <NavLink to="/community" className={navLinkDesktop}>
+                {t("nav.leaderboard", "Community")}
               </NavLink>
             )}
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                `font-medium transition-all duration-200 relative pb-0.5 border-b-2 ${isActive
-                  ? "text-primary-600 dark:text-primary-400 border-primary-500 dark:border-primary-400"
-                  : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 border-transparent"
-                }`
-              }
-            >
-              {t('nav.settings')}
+            {!isGuest && (
+              <NavLink to="/manna" className={navLinkDesktop}>
+                {t("nav.manna", "Manna")}
+              </NavLink>
+            )}
+            <NavLink to="/settings" className={navLinkDesktop}>
+              {t("nav.settings")}
             </NavLink>
           </div>
 
-          {/* User Menu */}
-          <div className="hidden md:flex items-center space-x-4">
-            {/* Streak and Blessings display for authenticated users */}
+          {/* ── Desktop User Section ───────────────────────────────────────── */}
+          <div className="hidden md:flex items-center gap-3">
+            {/* Vertical divider */}
+            <div className="w-px h-6 bg-amber-300/50 dark:bg-amber-700/40" />
+
+            {/* Streak + Blessings */}
             {!isGuest && (
               <>
                 <StreakCandle />
                 <BlessingsChip />
               </>
             )}
-            <span className="text-gray-700 dark:text-gray-300">
-              {isGuest ? t('auth.browsingAsGuest') : t('auth.welcome', { username: user?.username })}
-            </span>
-            {isGuest && (
-              <Button
-                onClick={() => navigate("/signup")}
-                variant="primary"
-                className="text-sm"
-              >
-                {t('nav.signup')}
+
+            {/* Avatar + welcome + logout */}
+            <div className="flex items-center gap-2">
+              {!isGuest && userInitial && (
+                <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-300/60 dark:border-amber-600/40 flex items-center justify-center text-xs font-bold text-amber-700 dark:text-amber-400 shrink-0">
+                  {userInitial}
+                </div>
+              )}
+              <span className="text-sm text-gray-500 dark:text-gray-400">
+                {isGuest
+                  ? t("auth.browsingAsGuest")
+                  : t("auth.welcome", { username: user?.username })}
+              </span>
+              {isGuest && (
+                <Button onClick={() => navigate("/signup")} variant="primary" className="text-sm">
+                  {t("nav.signup")}
+                </Button>
+              )}
+              <Button onClick={handleLogout} variant="secondary" className="text-sm">
+                {isGuest ? t("auth.exitGuest") : t("nav.logout")}
               </Button>
-            )}
-            <Button
-              onClick={handleLogout}
-              variant="secondary"
-              className="text-sm"
-            >
-              {isGuest ? t('auth.exitGuest') : t('nav.logout')}
-            </Button>
+            </div>
           </div>
 
-          {/* Mobile menu button */}
+          {/* ── Mobile Menu Button ─────────────────────────────────────────── */}
           <button
             onClick={() => setIsMenuOpen(!isMenuOpen)}
-            className="md:hidden p-2 rounded-md text-gray-700 hover:bg-gray-100"
+            className="md:hidden p-2 rounded-full text-amber-700 dark:text-amber-400 hover:bg-amber-100 dark:hover:bg-amber-900/30 transition-colors"
             aria-label="Toggle navigation menu"
             aria-expanded={isMenuOpen}
           >
-            <svg
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
+            <svg className="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               {isMenuOpen ? (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               ) : (
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M4 6h16M4 12h16M4 18h16"
-                />
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
               )}
             </svg>
           </button>
         </div>
 
-        {/* Mobile menu — order: Search, Favorites, Journal, Shop, Settings */}
+        {/* ── Mobile Menu ────────────────────────────────────────────────────── */}
         <div
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out ${
-            isMenuOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'
+            isMenuOpen ? "max-h-[520px] opacity-100" : "max-h-0 opacity-0"
           }`}
         >
-          <div className="py-4 border-t border-gray-200">
-            <div className="flex flex-col space-y-4">
-              {/* Search hidden for guests */}
+          <div className="py-3 border-t border-amber-300/30 dark:border-amber-700/20">
+            <div className="flex flex-col gap-1">
               {!isGuest && (
-                <NavLink
-                  to="/search"
-                  className={({ isActive }) =>
-                    `font-medium transition-colors flex items-center gap-1.5 ${isActive
-                      ? "text-primary-600 dark:text-primary-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    }`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  <svg className="w-4 h-4 flex-shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+                <NavLink to="/search" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                  <svg className="w-4 h-4 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
                   </svg>
-                  {t('nav.search')}
+                  {t("nav.search")}
                 </NavLink>
               )}
-              {/* Favorites hidden for guests */}
               {!isGuest && (
-                <NavLink
-                  to="/favorites"
-                  className={({ isActive }) =>
-                    `font-medium transition-colors ${isActive
-                      ? "text-primary-600 dark:text-primary-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                    }`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.favorites')}
+                <NavLink to="/favorites" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                  {t("nav.favorites")}
                 </NavLink>
               )}
-              {/* Journal — hidden for guests */}
               {!isGuest && (
-                <NavLink
-                  to="/journal"
-                  className={({ isActive }) =>
-                    `font-medium transition-colors ${isActive
-                      ? "text-amber-600 dark:text-amber-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
-                    }`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.journal', 'Journal')}
+                <NavLink to="/journal" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                  {t("nav.journal", "Journal")}
                 </NavLink>
               )}
-              {/* Shop — hidden for guests, now after Journal */}
               {!isGuest && (
-                <NavLink
-                  to="/shop"
-                  className={({ isActive }) =>
-                    `font-medium transition-colors ${isActive
-                      ? "text-amber-600 dark:text-amber-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
-                    }`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.shop', 'Shop')}
+                <NavLink to="/shop" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                  {t("nav.shop", "Shop")}
                 </NavLink>
               )}
-              {/* Leaderboard — hidden for guests */}
               {!isGuest && (
-                <NavLink
-                  to="/leaderboard"
-                  className={({ isActive }) =>
-                    `font-medium transition-colors ${isActive
-                      ? "text-amber-600 dark:text-amber-400"
-                      : "text-gray-700 dark:text-gray-300 hover:text-amber-600 dark:hover:text-amber-400"
-                    }`
-                  }
-                  onClick={() => setIsMenuOpen(false)}
-                >
-                  {t('nav.leaderboard', 'Community')}
+                <NavLink to="/community" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                  {t("nav.leaderboard", "Community")}
                 </NavLink>
               )}
-              <NavLink
-                to="/settings"
-                className={({ isActive }) =>
-                  `font-medium transition-colors ${isActive
-                    ? "text-primary-600 dark:text-primary-400"
-                    : "text-gray-700 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400"
-                  }`
-                }
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {t('nav.settings')}
+              {!isGuest && (
+                <NavLink to="/manna" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                  {t("nav.manna", "Manna")}
+                </NavLink>
+              )}
+              <NavLink to="/settings" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                {t("nav.settings")}
               </NavLink>
-              <div className="pt-4 border-t border-gray-200">
-                {/* Streak and Blessings display for authenticated users */}
+
+              {/* Mobile user section */}
+              <div className="pt-3 mt-1 border-t border-amber-300/30 dark:border-amber-700/20">
                 {!isGuest && (
-                  <div className="flex items-center space-x-3 mb-3">
+                  <div className="flex items-center gap-3 mb-3 px-1">
+                    {userInitial && (
+                      <div className="w-8 h-8 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-300/60 dark:border-amber-600/40 flex items-center justify-center text-sm font-bold text-amber-700 dark:text-amber-400 shrink-0">
+                        {userInitial}
+                      </div>
+                    )}
                     <StreakCandle />
                     <BlessingsChip />
                   </div>
                 )}
-                <p className="text-gray-700 dark:text-gray-300 mb-2">
-                  {isGuest ? t('auth.browsingAsGuest') : t('auth.welcome', { username: user?.username })}
+                <p className="text-sm text-gray-500 dark:text-gray-400 mb-3 px-1">
+                  {isGuest
+                    ? t("auth.browsingAsGuest")
+                    : t("auth.welcome", { username: user?.username })}
                 </p>
                 {isGuest && (
                   <Button
@@ -309,15 +231,11 @@ export const Header: React.FC = () => {
                     variant="primary"
                     className="w-full mb-2"
                   >
-                    {t('nav.signup')}
+                    {t("nav.signup")}
                   </Button>
                 )}
-                <Button
-                  onClick={handleLogout}
-                  variant="secondary"
-                  className="w-full"
-                >
-                  {isGuest ? t('auth.exitGuest') : t('nav.logout')}
+                <Button onClick={handleLogout} variant="secondary" className="w-full">
+                  {isGuest ? t("auth.exitGuest") : t("nav.logout")}
                 </Button>
               </div>
             </div>

@@ -211,7 +211,7 @@ export const RewardsShop: React.FC = () => {
       <section className={styles.section}>
         <div className={styles.sectionHeader}>
           <Palette size={18} weight="duotone" className={styles.sectionIcon} />
-          <h2 className={styles.sectionTitle}>{t('settings.appearance.title', 'Themes')}</h2>
+          <h2 className={styles.sectionTitle}>{t('shop.themes_title', 'Themes')}</h2>
         </div>
         <ThemePicker />
       </section>

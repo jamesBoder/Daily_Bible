@@ -31,6 +31,6 @@ type UserSettings struct {
     // Timezone preference (IANA timezone name, e.g., "America/New_York")
     PreferredTimezone string `gorm:"size:50;default:'UTC'" json:"preferred_timezone"`
 
-    // Phase 9: community leaderboard visibility opt-in (premium users only)
-    LeaderboardVisible bool `gorm:"default:false" json:"leaderboard_visible"`
+    // Phase 9: community board — auto-post streak milestone celebrations (premium users only)
+    MilestonePostsOptIn bool `gorm:"default:true" json:"milestone_posts_opt_in"`
 }

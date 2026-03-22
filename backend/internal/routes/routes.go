@@ -33,8 +33,9 @@ func SetupRoutes(
 	subscriptionHandler *handlers.SubscriptionHandler,
 	subscriptionChecker services.SubscriptionChecker,
 	// Phase 9
-	friendHandler      *handlers.FriendHandler,
-	leaderboardHandler *handlers.LeaderboardHandler,
+	communityHandler *handlers.CommunityHandler,
+	// Phase 10
+	mannaHandler *handlers.MannaHandler,
 ) {
 	api := router.Group("/api")
 	{
@@ -75,6 +76,14 @@ func SetupRoutes(
 			verses.GET("/daily", verseHandler.GetDailyVerse)
 			verses.GET("/:reference", verseHandler.GetVerseByReference)
 			verses.GET("/search", verseHandler.SearchVerses)
+		}
+
+		// Phase 9: community board — optional auth (guests see limited feed)
+		community := api.Group("/community")
+		community.Use(middleware.OptionalAuthMiddleware(tokenService, subscriptionChecker))
+		{
+			community.GET("", communityHandler.GetFeed)
+			community.GET("/walking-today", communityHandler.GetWalkingToday)
 		}
 
 		// Protected routes (require auth)
@@ -172,30 +181,27 @@ func SetupRoutes(
 				sub.POST("/portal", subscriptionHandler.CreatePortalSession)
 			}
 
-			// Phase 9: friends routes
-			friends := protected.Group("/friends")
+			// Phase 9: community board (auth-required routes)
+			protectedCommunity := protected.Group("/community")
 			{
-				friends.GET("", friendHandler.GetFriends)
-				friends.GET("/requests", friendHandler.GetPendingRequests)
-				friends.POST("/request", friendHandler.SendRequest)
-				friends.PUT("/request/:id", friendHandler.AcceptRequest)
-				friends.DELETE("/request/:id", friendHandler.RejectRequest)
-				friends.DELETE("/:id", friendHandler.RemoveFriend)
+				protectedCommunity.POST("", communityHandler.CreatePost)
+				protectedCommunity.DELETE("/:id", communityHandler.DeletePost)
+				protectedCommunity.POST("/:id/react", communityHandler.AddReaction)
+				protectedCommunity.DELETE("/:id/react", communityHandler.RemoveReaction)
+				protectedCommunity.POST("/admin", communityHandler.CreateAdminPost)
 			}
 
-			// Phase 9: leaderboard (auth-required routes)
-			leaderboard := protected.Group("/leaderboard")
+			// Phase 10: Manna puzzle (auth-required; premium gate inside handler)
+			manna := protected.Group("/manna")
 			{
-				leaderboard.GET("/friends", leaderboardHandler.GetFriendsBoard)
-				leaderboard.PUT("/visibility", leaderboardHandler.SetVisibility)
+				manna.GET("/today",   mannaHandler.GetToday)
+				manna.POST("/guess",  mannaHandler.SubmitGuess)
+				manna.POST("/hint",   mannaHandler.GetHint)
+				manna.GET("/history", mannaHandler.GetHistory)
 			}
-		}
-
-		// Phase 9: community board on optional-auth router (guests can view)
-		optionalAuth := api.Group("/leaderboard")
-		optionalAuth.Use(middleware.OptionalAuthMiddleware(tokenService, subscriptionChecker))
-		{
-			optionalAuth.GET("/community", leaderboardHandler.GetCommunityBoard)
 		}
 	}
+
+	// Phase 10: yesterday's word — public, no auth
+	api.GET("/manna/yesterday", mannaHandler.GetYesterday)
 }

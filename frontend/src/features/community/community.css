@@ -1,0 +1,250 @@
+/* ─── Community — Hero Header ───────────────────────────────────────────────── */
+
+.community-hero {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1.5rem 1.25rem 1.25rem;
+  margin: 0 -1rem 1.25rem;
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.12) 0%,
+    rgba(251, 191, 36, 0.06) 60%,
+    transparent 100%
+  );
+  border-bottom: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+.community-hero-icon {
+  font-size: 2rem;
+  line-height: 1;
+  opacity: 0.75;
+  color: var(--candle-amber);
+  flex-shrink: 0;
+}
+
+.community-hero-title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--foreground);
+  margin: 0 0 0.1rem;
+  line-height: 1.1;
+}
+
+.community-hero-tagline {
+  font-size: 0.83rem;
+  color: var(--grace-lavender);
+  margin: 0;
+  font-style: italic;
+  letter-spacing: 0.01em;
+}
+
+/* ─── Walking Today Banner ───────────────────────────────────────────────────── */
+
+.community-walking-banner {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.85rem 1.1rem;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.14) 0%,
+    rgba(251, 191, 36, 0.08) 100%
+  );
+  color: var(--foreground);
+  margin-bottom: 1.1rem;
+  border: 1px solid rgba(245, 158, 11, 0.30);
+}
+
+/* ─── Pill Tab Bar ───────────────────────────────────────────────────────────── */
+
+.community-tab-bar {
+  position: relative;
+  display: flex;
+  gap: 0.25rem;
+  background: var(--journal-surface, #fffcf4);
+  border-radius: 10px;
+  padding: 0.25rem;
+  margin-bottom: 1.1rem;
+  border: 1px solid rgba(245, 158, 11, 0.18);
+}
+
+.community-tab-pill {
+  position: absolute;
+  top: 0.25rem;
+  height: calc(100% - 0.5rem);
+  background: var(--candle-amber);
+  border-radius: 8px;
+  transition: left 0.22s ease, width 0.22s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+
+.community-tab-btn {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  padding: 0.48rem 0.75rem;
+  border: none;
+  background: transparent;
+  border-radius: 7px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--grace-lavender);
+  cursor: pointer;
+  transition: color 0.15s;
+  white-space: nowrap;
+}
+
+.community-tab-btn-active {
+  font-weight: 700;
+  color: #1a1208;
+}
+
+/* ─── Post Card ──────────────────────────────────────────────────────────────── */
+
+.community-post-card {
+  transition: box-shadow 0.18s ease, transform 0.18s ease;
+}
+
+.community-post-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.11);
+  transform: translateY(-1px);
+}
+
+.community-type-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 0.1rem 0.4rem;
+  border-radius: 20px;
+  border: 1px solid;
+  background: transparent;
+}
+
+/* ─── Community board animations ───────────────────────────────────────────── */
+
+/* 1. Post card entrance — fade up on mount */
+@keyframes fadeSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.community-card-enter {
+  animation: fadeSlideUp 0.22s ease-out backwards;
+}
+
+/* 2. Reaction button pop — fires only on select */
+@keyframes reactionPop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.4); }
+  70%  { transform: scale(0.9); }
+  100% { transform: scale(1); }
+}
+
+.reaction-pop {
+  animation: reactionPop 0.35s ease-out;
+}
+
+/* 3. Skeleton shimmer */
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.skeleton-block {
+  border-radius: 4px;
+  background: linear-gradient(
+    90deg,
+    var(--journal-surface, #e8e4dc) 25%,
+    var(--card-bg, #f5f0e8) 50%,
+    var(--journal-surface, #e8e4dc) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+/* 5. WalkingToday pill — slow breathing glow */
+@keyframes candleGlow {
+  0%, 100% { box-shadow: 0 0 4px 0px rgba(202, 138, 4, 0.35); }
+  50%       { box-shadow: 0 0 12px 3px rgba(202, 138, 4, 0.65); }
+}
+
+.candle-glow {
+  animation: candleGlow 3s ease-in-out infinite;
+}
+
+/* 7. Pin icon drop animation */
+@keyframes pinDrop {
+  from {
+    opacity: 0;
+    transform: rotate(-45deg) scale(0.4);
+  }
+  to {
+    opacity: 0.7;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+.pin-drop {
+  animation: pinDrop 0.3s ease-out forwards;
+}
+
+/* 9. New-posts banner slide down */
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 56px;
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOutBanner {
+  from { opacity: 1; }
+  to   { opacity: 0; }
+}
+
+.new-posts-banner {
+  overflow: hidden;
+  animation: slideDown 0.2s ease-out forwards;
+}
+
+.new-posts-banner-dismiss {
+  animation: fadeOutBanner 0.18s ease-out forwards;
+}
+
+/* Respect reduced motion — collapse all animations */
+@media (prefers-reduced-motion: reduce) {
+  .community-card-enter,
+  .reaction-pop,
+  .skeleton-block,
+  .candle-glow,
+  .pin-drop,
+  .new-posts-banner,
+  .new-posts-banner-dismiss,
+  .community-tab-pill,
+  .community-post-card {
+    animation: none;
+    transition: none;
+  }
+
+  .community-post-card:hover {
+    transform: none;
+  }
+}

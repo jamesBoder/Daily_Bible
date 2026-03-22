@@ -103,10 +103,17 @@ const RewardsShop = lazy(() =>
   }))
 );
 
-// Phase 9: Leaderboard
-const LeaderboardView = lazy(() =>
-  import("./features/leaderboard/LeaderboardView").then((module) => ({
-    default: module.LeaderboardView,
+// Phase 9: Community Board
+const CommunityView = lazy(() =>
+  import("./features/community/CommunityView").then((module) => ({
+    default: module.CommunityView,
+  }))
+);
+
+// Phase 10: Manna puzzle
+const MannaPuzzle = lazy(() =>
+  import("./features/manna/MannaPuzzle").then((module) => ({
+    default: module.MannaPuzzle,
   }))
 );
 
@@ -180,10 +187,15 @@ const router = createBrowserRouter([
         path: "shop",
         element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><RewardsShop /></Suspense></GuestBlockedRoute>,
       },
-      // Phase 9: Leaderboard — authenticated users only (guests redirected to /login)
+      // Phase 9: Community Board — authenticated users only (guests redirected to /login)
       {
-        path: "leaderboard",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><LeaderboardView /></Suspense></GuestBlockedRoute>,
+        path: "community",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><CommunityView /></Suspense></GuestBlockedRoute>,
+      },
+      // Phase 10: Manna puzzle — authenticated users only
+      {
+        path: "manna",
+        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><MannaPuzzle /></Suspense></GuestBlockedRoute>,
       },
       // Journal routes (Phase 3)
       {
@@ -210,6 +222,7 @@ const router = createBrowserRouter([
 function App() {
   useEffect(() => {
     SoundService.loadPreference();
+    SoundService.unlockOnGesture();
   }, []);
 
   return (

@@ -106,14 +106,6 @@ func (s *SettingsService) GetUserLanguage(userID uint) (string, error) {
     return user.PreferredLanguage, nil
 }
 
-// SetLeaderboardVisible sets the community leaderboard visibility for a user (Phase 9).
-func (s *SettingsService) SetLeaderboardVisible(userID uint, visible bool) error {
-    _, err := s.UpdateUserSettings(userID, map[string]interface{}{
-        "leaderboard_visible": visible,
-    })
-    return err
-}
-
 // UpdateUserLanguage updates just the language preference
 func (s *SettingsService) UpdateUserLanguage(userID uint, language string) error {
     // Validate language code
@@ -137,6 +129,16 @@ func (s *SettingsService) UpdateUserLanguage(userID uint, language string) error
     _, err := s.UpdateUserSettings(userID, map[string]interface{}{
         "preferred_language": language,
     })
-    
+
     return err
+}
+
+// GetUsernameByID returns the username for a given user ID.
+// Used by the verse handler for milestone auto-post bodies.
+func (s *SettingsService) GetUsernameByID(userID uint) (string, error) {
+    var user models.User
+    if err := s.db.Select("username").Where("id = ? AND deleted_at IS NULL", userID).First(&user).Error; err != nil {
+        return "", err
+    }
+    return user.Username, nil
 }
