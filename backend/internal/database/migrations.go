@@ -27,7 +27,12 @@ func RunMigrations(db *gorm.DB) error {
         // Phase 8
         &models.UserSubscription{},
         // Phase 9
-        &models.UserFriend{},
+        &models.CommunityPost{},
+        &models.CommunityReaction{},
+        // Phase 10
+        &models.MannaWord{},
+        &models.MannaGame{},
+        &models.MannaGuess{},
     ); err != nil {
         return err
     }

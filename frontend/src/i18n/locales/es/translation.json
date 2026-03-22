@@ -16,7 +16,33 @@
     "logout": "Cerrar Sesión",
     "search": "Buscar",
     "shop": "Tienda",
-    "leaderboard": "Comunidad"
+    "leaderboard": "Comunidad",
+    "manna": "Maná"
+  },
+  "manna": {
+    "title": "Maná",
+    "subtitle": "Un rompecabezas bíblico diario",
+    "keyboard": "Teclado",
+    "grid": "Cuadrícula del rompecabezas",
+    "delete": "Borrar",
+    "enter": "Entrar",
+    "yesterdaysWord": "La palabra de ayer",
+    "yesterdaySection": "La palabra de ayer",
+    "unlockCta": "Desbloquea con una membresía Words of Praise",
+    "solvedTitle": "¡Resolviste el Maná de hoy!",
+    "failedTitle": "La palabra de hoy era:",
+    "comeback": "Vuelve mañana para una nueva palabra.",
+    "share": "Compartir resultado",
+    "copied": "¡Resultado copiado!",
+    "copyFailed": "No se pudo copiar.",
+    "solved": "+{{n}} ¡Bendiciones!",
+    "notEnoughLetters": "No hay suficientes letras",
+    "errorLoading": "No se pudo cargar el rompecabezas de hoy.",
+    "errorLength": "Las respuestas deben tener exactamente 5 letras.",
+    "errorComplete": "Este juego ya está completo.",
+    "errorChars": "Las respuestas solo deben contener letras A–Z.",
+    "errorSubmit": "No se pudo enviar. Intenta de nuevo.",
+    "noHints": "Sin pistas"
   },
   "journal": {
     "title": "Mi Diario",
@@ -276,7 +302,12 @@
     "saving": "Guardando...",
     "saved": "¡Configuración guardada exitosamente!",
     "saveFailed": "Error al guardar la configuración",
-    "community": "Comunidad"
+    "community": {
+      "title": "Comunidad",
+      "milestone_posts": "Celebraciones de hitos",
+      "milestone_posts_description": "Comparte tus hitos de racha con la comunidad.",
+      "milestone_locked": "Actualiza para compartir hitos con la comunidad."
+    }
   },
   "about": {
     "title": "Acerca de Palabras de Alabanza",
@@ -410,7 +441,11 @@
     "reset": "Tu racha se ha reiniciado",
     "resetMessage": "Tu racha ha comenzado de nuevo. Cada día es un nuevo comienzo.",
     "firstEngagement": "¡Bienvenido a tu viaje de fe!",
-    "firstEngagementMessage": "Has comenzado tu racha de lectura diaria. Sigue regresando cada día para crecer en tu fidelidad."
+    "firstEngagementMessage": "Has comenzado tu racha de lectura diaria. Sigue regresando cada día para crecer en tu fidelidad.",
+    "share_button": "Compartir mi racha",
+    "share_generating": "Generando\u2026",
+    "share_subtitle": "días en la Palabra",
+    "share_locked": "Actualiza a Premium para compartir tu jornada de racha con otros."
   },
   "blessings": {
     "label": "Bendiciones",
@@ -470,7 +505,8 @@
   },
   "shop": {
     "title": "Dones de Fidelidad",
-    "subtitle": "Gasta tus Bendiciones para desbloquear nuevas apariencias en tu jornada devocional."
+    "subtitle": "Gasta tus Bendiciones para desbloquear nuevas apariencias en tu jornada devocional.",
+    "themes_title": "Temas"
   },
   "subscription": {
     "title": "Premium",
@@ -554,37 +590,26 @@
       "subtitle": "Ser\u00e1s llevado a Stripe para completar tu pago."
     }
   },
-  "leaderboard": {
-    "title": "Comunidad",
-    "tabs_label": "Pestañas del marcador",
-    "tab_friends": "Amigos",
-    "tab_community": "Comunidad",
-    "pending_requests": "Solicitudes de amistad",
-    "no_friends": "Aún no tienes amigos — ¡agrega uno abajo!",
-    "add_friend_label": "+ Agregar un amigo por nombre de usuario",
-    "username_placeholder": "Nombre de usuario",
-    "send_request": "Enviar solicitud",
-    "add": "Agregar",
-    "request_sent": "¡Solicitud de amistad enviada!",
-    "request_failed": "Error al enviar la solicitud",
-    "accept": "Aceptar",
-    "reject": "Rechazar",
-    "remove_friend": "Eliminar amigo",
-    "days": "{{count}} días",
-    "days_short": "d",
-    "you": "tú",
-    "community_empty": "Nadie se ha unido al marcador comunitario todavía.",
-    "walking_with": "Caminando con {{count}} otros",
-    "appear_on_board": "Aparecer en el marcador",
-    "appear_description": "Deja que otros vean tu jornada de fidelidad",
-    "locked_visibility": "Actualiza a Premium para aparecer en el marcador comunitario e inspirar a otros con tu fidelidad."
+  "community": {
+    "section": { "title": "Comunidad" },
+    "walking_today": "{{count}} personas leyeron la Palabra hoy",
+    "tab": { "board": "Tablero", "prayer": "Muro de oración", "challenges": "Retos" },
+    "post_type": { "announcement": "Anuncio", "milestone": "Hito", "prayer": "Petición de oración", "challenge": "Reto" },
+    "admin_author": "Words of Praise",
+    "anonymous_author": "Anónimo",
+    "reaction": { "amen": "Amén", "pray": "Orar", "heart": "❤", "join": "Unirme" },
+    "composer": { "placeholder": "Comparte una reflexión...", "post_btn": "Publicar", "char_limit": "{{count}} caracteres restantes", "locked": "Actualiza para compartir reflexiones con la comunidad." },
+    "prayer": { "placeholder": "Envía una petición de oración...", "anonymous_label": "Publicar anónimamente", "submit_btn": "Enviar", "expire_notice": "Las peticiones de oración expiran después de 7 días.", "open_to_all": "Las peticiones de oración están abiertas a todos los miembros." },
+    "challenge": { "joined_count": "{{count}} personas se unieron", "join_btn": "Unirse al reto", "joined_btn": "Unido ✓" },
+    "empty": { "board": "Aún no hay reflexiones — sé el primero en compartir.", "prayer": "No hay peticiones de oración en este momento.", "challenge": "No hay reto activo esta semana." },
+    "delete": { "confirm": "¿Eliminar esta publicación?", "btn": "Eliminar" },
+    "error": { "post_failed": "No se pudo publicar. Por favor, inténtalo de nuevo.", "react_failed": "No se pudo guardar tu reacción.", "rate_limit": "Demasiadas publicaciones — espera unos minutos." },
+    "admin": { "panel_title": "Admin — Nueva publicación", "body_placeholder": "Escribe un anuncio o reto...", "pin_label": "Fijar arriba", "expires_label": "Expira:", "publish_btn": "Publicar", "publishing": "Publicando...", "error": "Error al publicar." },
+    "expiry": { "expires_in_days": "Expira en {{count}} día", "expiring_soon": "Por vencer pronto" },
+    "time": { "just_now": "ahora mismo", "mins_ago": "hace {{count}}m", "hours_ago": "hace {{count}}h", "days_ago": "hace {{count}}d" },
+    "new_posts_banner": "Nuevas publicaciones — toca para actualizar"
   },
-  "streak": {
-    "share_button": "Compartir mi racha",
-    "share_generating": "Generando\u2026",
-    "share_subtitle": "días en la Palabra",
-    "share_locked": "Actualiza a Premium para compartir tu jornada de racha con otros."
-  },
+  "leaderboard": { "title": "Comunidad", "this_weeks_challenge": "El reto de esta semana" },
   "premium": {
     "go_premium": "Hazte Premium"
   }

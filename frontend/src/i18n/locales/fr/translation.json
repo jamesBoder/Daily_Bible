@@ -15,7 +15,33 @@
     "logout": "Déconnexion",
     "search": "Rechercher",
     "shop": "Boutique",
-    "leaderboard": "Communauté"
+    "leaderboard": "Communauté",
+    "manna": "Manne"
+  },
+  "manna": {
+    "title": "Manne",
+    "subtitle": "Un puzzle biblique quotidien",
+    "keyboard": "Clavier",
+    "grid": "Grille du puzzle",
+    "delete": "Effacer",
+    "enter": "Entrer",
+    "yesterdaysWord": "Le mot d'hier",
+    "yesterdaySection": "Le mot d'hier",
+    "unlockCta": "Débloquez avec un abonnement Words of Praise",
+    "solvedTitle": "Vous avez trouvé la Manne du jour !",
+    "failedTitle": "Le mot du jour était :",
+    "comeback": "Revenez demain pour un nouveau mot.",
+    "share": "Partager le résultat",
+    "copied": "Résultat copié !",
+    "copyFailed": "Impossible de copier.",
+    "solved": "+{{n}} Bénédictions !",
+    "notEnoughLetters": "Pas assez de lettres",
+    "errorLoading": "Impossible de charger le puzzle du jour.",
+    "errorLength": "Les réponses doivent comporter exactement 5 lettres.",
+    "errorComplete": "Cette partie est déjà terminée.",
+    "errorChars": "Les réponses ne doivent contenir que les lettres A–Z.",
+    "errorSubmit": "Échec de l'envoi. Réessayez.",
+    "noHints": "Plus d'indices"
   },
   "dailyVerse": {
     "title": "Verset du Jour",
@@ -233,7 +259,12 @@
     "saving": "Enregistrement...",
     "saved": "Paramètres enregistrés avec succès !",
     "saveFailed": "Échec de l'enregistrement des paramètres",
-    "community": "Communauté"
+    "community": {
+      "title": "Communauté",
+      "milestone_posts": "Célébrations d'étapes",
+      "milestone_posts_description": "Partagez vos étapes de série avec la communauté.",
+      "milestone_locked": "Abonnez-vous pour partager vos étapes avec la communauté."
+    }
   },
   "about": {
     "title": "À Propos de Paroles de Louange",
@@ -373,7 +404,8 @@
   },
   "shop": {
     "title": "Dons de Fidélité",
-    "subtitle": "Dépensez vos Bénédictions pour débloquer de nouvelles apparences pour votre parcours dévotionnel."
+    "subtitle": "Dépensez vos Bénédictions pour débloquer de nouvelles apparences pour votre parcours dévotionnel.",
+    "themes_title": "Thèmes"
   },
   "subscription": {
     "title": "Premium",
@@ -457,31 +489,26 @@
       "subtitle": "Vous serez redirig\u00e9 vers Stripe pour finaliser votre paiement."
     }
   },
-  "leaderboard": {
-    "title": "Communauté",
-    "tabs_label": "Onglets du classement",
-    "tab_friends": "Amis",
-    "tab_community": "Communauté",
-    "pending_requests": "Demandes d'amis",
-    "no_friends": "Pas encore d'amis — ajoutez-en un ci-dessous !",
-    "add_friend_label": "+ Ajouter un ami par nom d'utilisateur",
-    "username_placeholder": "Nom d'utilisateur",
-    "send_request": "Envoyer la demande",
-    "add": "Ajouter",
-    "request_sent": "Demande d'amitié envoyée !",
-    "request_failed": "Échec de l'envoi de la demande",
-    "accept": "Accepter",
-    "reject": "Refuser",
-    "remove_friend": "Supprimer l'ami",
-    "days": "{{count}} jours",
-    "days_short": "j",
-    "you": "vous",
-    "community_empty": "Personne n'a encore rejoint le classement communautaire.",
-    "walking_with": "Marchant avec {{count}} autres",
-    "appear_on_board": "Apparaître dans le classement",
-    "appear_description": "Laissez les autres voir votre parcours de fidélité",
-    "locked_visibility": "Passez à Premium pour apparaître dans le classement communautaire et inspirer les autres avec votre fidélité."
+  "community": {
+    "section": { "title": "Communauté" },
+    "walking_today": "{{count}} personnes ont lu la Parole aujourd'hui",
+    "tab": { "board": "Tableau", "prayer": "Mur de prière", "challenges": "Défis" },
+    "post_type": { "announcement": "Annonce", "milestone": "Étape", "prayer": "Demande de prière", "challenge": "Défi" },
+    "admin_author": "Words of Praise",
+    "anonymous_author": "Anonyme",
+    "reaction": { "amen": "Amen", "pray": "Prier", "heart": "❤", "join": "Rejoindre" },
+    "composer": { "placeholder": "Partagez une réflexion...", "post_btn": "Publier", "char_limit": "{{count}} caractères restants", "locked": "Abonnez-vous pour partager des réflexions avec la communauté." },
+    "prayer": { "placeholder": "Soumettre une demande de prière...", "anonymous_label": "Publier anonymement", "submit_btn": "Envoyer", "expire_notice": "Les demandes de prière expirent après 7 jours.", "open_to_all": "Les demandes de prière sont ouvertes à tous les membres." },
+    "challenge": { "joined_count": "{{count}} personnes ont rejoint", "join_btn": "Rejoindre le défi", "joined_btn": "Rejoint ✓" },
+    "empty": { "board": "Aucune réflexion encore — soyez le premier à partager.", "prayer": "Aucune demande de prière en ce moment.", "challenge": "Aucun défi actif cette semaine." },
+    "delete": { "confirm": "Supprimer ce post ?", "btn": "Supprimer" },
+    "error": { "post_failed": "Impossible de publier. Veuillez réessayer.", "react_failed": "Impossible de sauvegarder votre réaction.", "rate_limit": "Trop de publications — veuillez attendre quelques minutes." },
+    "admin": { "panel_title": "Admin — Nouveau post", "body_placeholder": "Rédigez une annonce ou un défi...", "pin_label": "Épingler en haut", "expires_label": "Expire le :", "publish_btn": "Publier", "publishing": "Publication...", "error": "Échec de la publication." },
+    "expiry": { "expires_in_days": "Expire dans {{count}} jour", "expiring_soon": "Expire bientôt" },
+    "time": { "just_now": "à l'instant", "mins_ago": "il y a {{count}}min", "hours_ago": "il y a {{count}}h", "days_ago": "il y a {{count}}j" },
+    "new_posts_banner": "Nouveaux posts — appuyez pour actualiser"
   },
+  "leaderboard": { "title": "Communauté", "this_weeks_challenge": "Le défi de cette semaine" },
   "streak": {
     "share_button": "Partager ma série",
     "share_generating": "Génération\u2026",

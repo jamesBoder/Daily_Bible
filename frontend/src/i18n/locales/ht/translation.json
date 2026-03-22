@@ -15,7 +15,33 @@
     "logout": "Dekonekte",
     "search": "Chèche",
     "shop": "Boutik",
-    "leaderboard": "Kominote"
+    "leaderboard": "Kominote",
+    "manna": "Manna"
+  },
+  "manna": {
+    "title": "Manna",
+    "subtitle": "Yon jwèt mo biblik chak jou",
+    "keyboard": "Klavye",
+    "grid": "Griy jwèt la",
+    "delete": "Efase",
+    "enter": "Antre",
+    "yesterdaysWord": "Mo ayè a",
+    "yesterdaySection": "Mo ayè a",
+    "unlockCta": "Debloke avèk yon abònman Words of Praise",
+    "solvedTitle": "Ou rezoud Manna jodi a!",
+    "failedTitle": "Mo jodi a te:",
+    "comeback": "Tounen demen pou yon nouvo mo.",
+    "share": "Pataje rezilta",
+    "copied": "Rezilta kopye!",
+    "copyFailed": "Pa ka kopye.",
+    "solved": "+{{n}} Benediksyon!",
+    "notEnoughLetters": "Pa ase lèt",
+    "errorLoading": "Pa ka chaje jwèt jodi a.",
+    "errorLength": "Repons yo dwe gen egzakteman 5 lèt.",
+    "errorComplete": "Jwèt sa a deja fini.",
+    "errorChars": "Repons yo dwe gen sèlman lèt A–Z.",
+    "errorSubmit": "Pa ka voye repons. Eseye ankò.",
+    "noHints": "Pa gen endis"
   },
   "dailyVerse": {
     "title": "Vèsè Jodi a",
@@ -233,7 +259,12 @@
     "saving": "Ap anrejistre...",
     "saved": "Paramèt anrejistre avèk siksè!",
     "saveFailed": "Echèk pou anrejistre paramèt yo",
-    "community": "Kominote"
+    "community": {
+      "title": "Kominote",
+      "milestone_posts": "Selebrasyon Etap",
+      "milestone_posts_description": "Pataje etap seri ou yo ak kominote a.",
+      "milestone_locked": "Vin manm pou pataje etap yo ak kominote a."
+    }
   },
   "about": {
     "title": "Konsènan Pawòl Lwanj",
@@ -373,7 +404,8 @@
   },
   "shop": {
     "title": "Kado Fidelite",
-    "subtitle": "Depanse Benediksyon ou yo pou debloke nouvo aparans pou vwayaj devosyon ou."
+    "subtitle": "Depanse Benediksyon ou yo pou debloke nouvo aparans pou vwayaj devosyon ou.",
+    "themes_title": "Tèm"
   },
   "subscription": {
     "title": "Premium",
@@ -457,31 +489,26 @@
       "subtitle": "Ou pral al nan Stripe pou konplete peman ou."
     }
   },
-  "leaderboard": {
-    "title": "Kominote",
-    "tabs_label": "Onglè tablo klasман",
-    "tab_friends": "Zanmi",
-    "tab_community": "Kominote",
-    "pending_requests": "Demann zanmitay",
-    "no_friends": "Pa gen zanmi ankò — ajoute youn anba!",
-    "add_friend_label": "+ Ajoute yon zanmi pa non itilizatè",
-    "username_placeholder": "Non itilizatè",
-    "send_request": "Voye demann",
-    "add": "Ajoute",
-    "request_sent": "Demann zanmitay voye!",
-    "request_failed": "Pa kapab voye demann",
-    "accept": "Aksepte",
-    "reject": "Refize",
-    "remove_friend": "Retire zanmi",
-    "days": "{{count}} jou",
-    "days_short": "j",
-    "you": "ou",
-    "community_empty": "Pèsonn pa rantre nan tablo kominote a ankò.",
-    "walking_with": "Ap mache ak {{count}} lòt moun",
-    "appear_on_board": "Parèt sou tablo a",
-    "appear_description": "Kite lòt moun wè vwayaj fidelite ou",
-    "locked_visibility": "Vin Premium pou parèt sou tablo kominote a epi enspiré lòt moun ak fidelite ou."
+  "community": {
+    "section": { "title": "Kominote" },
+    "walking_today": "{{count}} moun li Pawòl la jodi a",
+    "tab": { "board": "Tablo", "prayer": "Mi Priyè", "challenges": "Defi" },
+    "post_type": { "announcement": "Anons", "milestone": "Etap", "prayer": "Demann Priyè", "challenge": "Defi" },
+    "admin_author": "Words of Praise",
+    "anonymous_author": "Anonim",
+    "reaction": { "amen": "Amèn", "pray": "Priye", "heart": "❤", "join": "Rantre" },
+    "composer": { "placeholder": "Pataje yon refleksyon...", "post_btn": "Pibliye", "char_limit": "{{count}} karaktè rete", "locked": "Vin manm pou pataje refleksyon ak kominote a." },
+    "prayer": { "placeholder": "Voye yon demann priyè...", "anonymous_label": "Pibliye anonim", "submit_btn": "Voye", "expire_notice": "Demann priyè yo ekspire apre 7 jou.", "open_to_all": "Demann priyè yo ouvè pou tout manm." },
+    "challenge": { "joined_count": "{{count}} moun rantre", "join_btn": "Rantre nan defi a", "joined_btn": "Rantre ✓" },
+    "empty": { "board": "Pa gen refleksyon ankò — ou kapab premye pataje.", "prayer": "Pa gen demann priyè kounye a.", "challenge": "Pa gen defi aktif semèn sa a." },
+    "delete": { "confirm": "Efase pòs sa a?", "btn": "Efase" },
+    "error": { "post_failed": "Pa kapab pibliye. Tanpri eseye ankò.", "react_failed": "Pa kapab sove reyaksyon ou.", "rate_limit": "Twòp pòs — tanpri tann kèk minit." },
+    "admin": { "panel_title": "Admin — Nouvo Pòs", "body_placeholder": "Ekri yon anons oswa defi...", "pin_label": "Kole anwo", "expires_label": "Ekspire:", "publish_btn": "Pibliye", "publishing": "Ap pibliye...", "error": "Echèk piblikasyon." },
+    "expiry": { "expires_in_days": "Ekspire nan {{count}} jou", "expiring_soon": "Ekspire byento" },
+    "time": { "just_now": "kounye a", "mins_ago": "{{count}}min de sa", "hours_ago": "{{count}}h de sa", "days_ago": "{{count}}j de sa" },
+    "new_posts_banner": "Nouvo pòs — touche pou aktualize"
   },
+  "leaderboard": { "title": "Kominote", "this_weeks_challenge": "Defi semèn sa a" },
   "streak": {
     "share_button": "Pataje seri mwen",
     "share_generating": "Ap jenere\u2026",

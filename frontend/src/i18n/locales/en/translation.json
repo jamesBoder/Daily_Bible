@@ -16,7 +16,40 @@
     "logout": "Logout",
     "search": "Search",
     "shop": "Shop",
-    "leaderboard": "Community"
+    "leaderboard": "Community",
+    "manna": "Manna"
+  },
+  "manna": {
+    "title": "Manna",
+    "subtitle": "A daily Biblical word puzzle",
+    "keyboard": "Keyboard",
+    "grid": "Puzzle grid",
+    "delete": "Delete",
+    "enter": "Enter",
+    "yesterdaysWord": "Yesterday's word",
+    "yesterdaySection": "Yesterday's word",
+    "unlockCta": "Unlock with a Words of Praise membership",
+    "solvedTitle": "You solved today's Manna!",
+    "failedTitle": "Today's word was:",
+    "comeback": "Come back tomorrow for a new word.",
+    "share": "Share result",
+    "copied": "Result copied!",
+    "copyFailed": "Could not copy.",
+    "solved": "+{{n}} Blessings!",
+    "notEnoughLetters": "Not enough letters",
+    "errorLoading": "Failed to load today's puzzle.",
+    "errorLength": "Guesses must be exactly 5 letters.",
+    "errorComplete": "This game is already complete.",
+    "errorChars": "Guesses must contain only letters A–Z.",
+    "errorSubmit": "Failed to submit guess. Try again.",
+    "noHints": "No hints",
+    "clueIntro": "Find the missing word:",
+    "hintAriaLabel": "Use a hint ({{n}} left, costs 15 Blessings)",
+    "hintMax": "No hints remaining.",
+    "hintNoBlessings": "Not enough Blessings for a hint.",
+    "hintError": "Could not get hint. Try again.",
+    "hintRevealed": "Position {{n}}: {{letter}}",
+    "hintsRevealed": "Revealed:"
   },
   "journal": {
     "title": "My Journal",
@@ -276,7 +309,12 @@
     "saving": "Saving...",
     "saved": "Settings saved successfully!",
     "saveFailed": "Failed to save settings",
-    "community": "Community"
+    "community": {
+      "title": "Community",
+      "milestone_posts": "Milestone Celebrations",
+      "milestone_posts_description": "Share your streak milestones with the community.",
+      "milestone_locked": "Upgrade to share milestones with the community."
+    }
   },
   "about": {
     "title": "About Words of Praise",
@@ -410,7 +448,11 @@
     "reset": "Your streak has been reset",
     "resetMessage": "Don't worry! Start fresh today and build a new streak.",
     "firstEngagement": "Welcome to your faith journey!",
-    "firstEngagementMessage": "You've started your daily reading streak. Keep coming back each day to grow your faithfulness."
+    "firstEngagementMessage": "You've started your daily reading streak. Keep coming back each day to grow your faithfulness.",
+    "share_button": "Share my streak",
+    "share_generating": "Generating\u2026",
+    "share_subtitle": "days in the Word",
+    "share_locked": "Upgrade to Premium to share your streak journey with others."
   },
   "blessings": {
     "label": "Blessings",
@@ -470,7 +512,8 @@
   },
   "shop": {
     "title": "Gifts of Faithfulness",
-    "subtitle": "Spend your Blessings to unlock new appearances for your devotional journey."
+    "subtitle": "Spend your Blessings to unlock new appearances for your devotional journey.",
+    "themes_title": "Themes"
   },
   "subscription": {
     "title": "Premium",
@@ -586,36 +629,86 @@
       "subtitle": "You'll be taken to Stripe to complete your payment."
     }
   },
+  "community": {
+    "section": {
+      "title": "Community"
+    },
+    "walking_today": "{{count}} people read the Word today",
+    "tab": {
+      "board": "Board",
+      "prayer": "Prayer Wall",
+      "challenges": "Challenges"
+    },
+    "post_type": {
+      "announcement": "Announcement",
+      "milestone": "Milestone",
+      "prayer": "Prayer Request",
+      "challenge": "Challenge"
+    },
+    "admin_author": "Words of Praise",
+    "anonymous_author": "Anonymous",
+    "reaction": {
+      "amen": "Amen",
+      "pray": "Pray",
+      "heart": "❤",
+      "join": "Join"
+    },
+    "composer": {
+      "placeholder": "Share a reflection...",
+      "post_btn": "Post",
+      "char_limit": "{{count}} characters remaining",
+      "locked": "Upgrade to Devoted Member to share reflections with the community."
+    },
+    "prayer": {
+      "placeholder": "Submit a prayer request...",
+      "anonymous_label": "Post anonymously",
+      "submit_btn": "Submit",
+      "expire_notice": "Prayer requests expire after 7 days.",
+      "open_to_all": "Prayer requests are open to all members."
+    },
+    "challenge": {
+      "joined_count": "{{count}} people joined",
+      "join_btn": "Join Challenge",
+      "joined_btn": "Joined ✓"
+    },
+    "empty": {
+      "board": "No reflections yet — be the first to share.",
+      "prayer": "No prayer requests right now.",
+      "challenge": "No active challenge this week."
+    },
+    "delete": {
+      "confirm": "Delete this post?",
+      "btn": "Delete"
+    },
+    "error": {
+      "post_failed": "Could not post. Please try again.",
+      "react_failed": "Could not save your reaction.",
+      "rate_limit": "Too many posts — please wait a few minutes."
+    },
+    "admin": {
+      "panel_title": "Admin — New Post",
+      "body_placeholder": "Write an announcement or challenge...",
+      "pin_label": "Pin to top",
+      "expires_label": "Expires:",
+      "publish_btn": "Publish",
+      "publishing": "Publishing...",
+      "error": "Failed to publish post."
+    },
+    "expiry": {
+      "expires_in_days": "Expires in {{count}} day",
+      "expiring_soon": "Expiring soon"
+    },
+    "time": {
+      "just_now": "just now",
+      "mins_ago": "{{count}}m ago",
+      "hours_ago": "{{count}}h ago",
+      "days_ago": "{{count}}d ago"
+    },
+    "new_posts_banner": "New posts — tap to refresh"
+  },
   "leaderboard": {
     "title": "Community",
-    "tabs_label": "Leaderboard tabs",
-    "tab_friends": "Friends",
-    "tab_community": "Community",
-    "pending_requests": "Friend Requests",
-    "no_friends": "No friends yet — add one below!",
-    "add_friend_label": "+ Add a friend by username",
-    "username_placeholder": "Username",
-    "send_request": "Send Request",
-    "add": "Add",
-    "request_sent": "Friend request sent!",
-    "request_failed": "Failed to send request",
-    "accept": "Accept",
-    "reject": "Decline",
-    "remove_friend": "Remove friend",
-    "days": "{{count}} days",
-    "days_short": "d",
-    "you": "you",
-    "community_empty": "No one has joined the community board yet.",
-    "walking_with": "Walking with {{count}} others",
-    "appear_on_board": "Appear on the leaderboard",
-    "appear_description": "Let others see your faithfulness journey",
-    "locked_visibility": "Upgrade to Premium to appear on the community leaderboard and inspire others with your faithfulness."
-  },
-  "streak": {
-    "share_button": "Share my streak",
-    "share_generating": "Generating\u2026",
-    "share_subtitle": "days in the Word",
-    "share_locked": "Upgrade to Premium to share your streak journey with others."
+    "this_weeks_challenge": "This Week's Challenge"
   },
   "premium": {
     "go_premium": "Go Premium"

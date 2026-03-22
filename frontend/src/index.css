@@ -95,6 +95,9 @@
     --theme-surface: #f0ece0;
     --theme-border: rgba(245, 158, 11, 0.20);
     --theme-accent: #b45309;
+
+    /* Header background — parchment-tinted frosted glass */
+    --header-bg: rgba(250, 248, 243, 0.88);
   }
 
   /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
@@ -110,6 +113,14 @@
     --theme-surface: #1f2e28;
     --theme-border: rgba(200, 168, 75, 0.20);
     --theme-accent: #4a7c59;
+    --header-bg: rgba(26, 38, 32, 0.88);
+    /* Journal / Manna tiles must match the dark green background */
+    --journal-surface:     #1c2c24;
+    --journal-surface-alt: #1a2a22;
+    --journal-line:        rgba(200, 168, 75, 0.14);
+    --journal-border:      rgba(200, 168, 75, 0.22);
+    --journal-text:        #d8d0bc;
+    --journal-text-muted:  #8a9e88;
   }
 
   /* Desert Sand — warm solitude */
@@ -123,6 +134,14 @@
     --theme-surface: #ede0d0;
     --theme-border: rgba(201, 124, 43, 0.22);
     --theme-accent: #8b4513;
+    --header-bg: rgba(245, 237, 224, 0.88);
+    /* Journal / Manna tiles — slightly warmer than root default */
+    --journal-surface:     #f7efe3;
+    --journal-surface-alt: #f2e8d6;
+    --journal-line:        rgba(201, 124, 43, 0.16);
+    --journal-border:      rgba(201, 124, 43, 0.28);
+    --journal-text:        #2e1e0e;
+    --journal-text-muted:  #7a5a3a;
   }
 
   /* Celestial — indigo night sky */
@@ -136,6 +155,14 @@
     --theme-surface: #121840;
     --theme-border: rgba(136, 153, 221, 0.20);
     --theme-accent: #4455aa;
+    --header-bg: rgba(14, 19, 48, 0.88);
+    /* Journal / Manna tiles must match the dark indigo background */
+    --journal-surface:     #101538;
+    --journal-surface-alt: #0d1232;
+    --journal-line:        rgba(136, 153, 221, 0.14);
+    --journal-border:      rgba(136, 153, 221, 0.22);
+    --journal-text:        #d8daf4;
+    --journal-text-muted:  #6677aa;
   }
 
   /* Scarlet Grace — illuminated manuscript */
@@ -149,6 +176,14 @@
     --theme-surface: #220808;
     --theme-border: rgba(200, 134, 42, 0.22);
     --theme-accent: #8b0000;
+    --header-bg: rgba(26, 5, 5, 0.88);
+    /* Journal / Manna tiles must match the dark crimson background */
+    --journal-surface:     #1e0606;
+    --journal-surface-alt: #1b0505;
+    --journal-line:        rgba(200, 134, 42, 0.14);
+    --journal-border:      rgba(200, 134, 42, 0.22);
+    --journal-text:        #eedcc8;
+    --journal-text-muted:  #9a6a4a;
   }
 
   /* Theme transition — smooth crossfade for all CSS variable consumers */
@@ -174,6 +209,7 @@
     --theme-surface: #3a3020;
     --theme-border: rgba(251, 191, 36, 0.20);
     --theme-accent: #fbbf24;
+    --header-bg: rgba(44, 37, 25, 0.88);
 
     /* Phase 3 — Journal tokens (dark mode: warm candlelight, noticeably brighter) */
     --journal-surface:        #3E2E18;

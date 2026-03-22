@@ -5,6 +5,8 @@ import (
     "net/http"
     "os"
     "os/signal"
+    "strconv"
+    "strings"
     "time"
 
 
@@ -143,9 +145,21 @@ func main() {
     // Initialize Phase 8 services
     subscriptionService := services.NewSubscriptionService(db, rewardsService, streakService)
 
+    // Phase 9: parse ADMIN_USER_IDS env var (same pattern as DEV_PREMIUM_USER_IDS).
+    adminIDs := map[uint]bool{}
+    if raw := os.Getenv("ADMIN_USER_IDS"); raw != "" {
+        for _, part := range strings.Split(raw, ",") {
+            if id, err := strconv.ParseUint(strings.TrimSpace(part), 10, 64); err == nil {
+                adminIDs[uint(id)] = true
+            }
+        }
+    }
+
     // Initialize Phase 9 services
-    friendService := services.NewFriendService(db)
-    leaderboardService := services.NewLeaderboardService(db)
+    communityService := services.NewCommunityService(db, subscriptionChecker)
+
+    // Initialize Phase 10 services
+    mannaService := services.NewMannaService(db, blessingsService)
 
     // create validator instance
     validate := validator.New()
@@ -278,8 +292,21 @@ func main() {
     )
 
     // Phase 9 handlers
-    friendHandler := handlers.NewFriendHandler(friendService)
-    leaderboardHandler := handlers.NewLeaderboardHandler(leaderboardService, subscriptionChecker, settingsService)
+    communityHandler := handlers.NewCommunityHandler(communityService, subscriptionChecker, adminIDs)
+    // Wire community service into verseHandler for milestone auto-posts.
+    verseHandler.SetCommunityService(communityService)
+
+    // Phase 10 handlers
+    mannaHandler := handlers.NewMannaHandler(mannaService, subscriptionChecker)
+
+    // Phase 10: seed word bank on every start — idempotent (ON CONFLICT DO NOTHING).
+    // Running unconditionally means new words added to the SQL file are picked up
+    // on the next deploy without manual intervention.
+    if err := database.SeedMannaWords(db); err != nil {
+        log.Printf("WARNING: Manna seed failed: %v", err)
+    } else {
+        log.Printf("Manna word bank: %d words loaded", mannaService.SeedWordCount())
+    }
 
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
@@ -339,7 +366,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, friendHandler, leaderboardHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

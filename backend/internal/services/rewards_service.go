@@ -39,14 +39,16 @@ func (s *RewardsService) UpgradeBadgesToPremium(userID uint) {
 // ALL crossed milestones are granted, but only the most-recently-achieved undismissed one surfaces in
 // the next GET /api/streak response.
 //
+// Returns the list of newly granted milestone keys (empty if none were granted this call).
 // The goroutine that calls this must defer a recover() to prevent a panic from crashing the server.
-func (s *RewardsService) CheckMilestones(userID uint, currentStreak int) {
+func (s *RewardsService) CheckMilestones(userID uint, currentStreak int) []string {
 	defer func() {
 		if r := recover(); r != nil {
 			// Log and swallow — milestone checking must never crash the request path
 			_ = r
 		}
 	}()
+	var granted []string
 
 	// Load all milestones already achieved by this user.
 	var existing []models.UserMilestone
@@ -91,6 +93,8 @@ func (s *RewardsService) CheckMilestones(userID uint, currentStreak int) {
 		if result.RowsAffected > 0 {
 			// Only credit Blessings if this process won the insert race.
 			s.blessingsService.Credit(userID, def.BlessingsAwarded, "milestone_"+def.Key, 1.0)
+			granted = append(granted, def.Key)
 		}
 	}
+	return granted
 }

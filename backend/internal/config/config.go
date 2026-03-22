@@ -12,12 +12,18 @@ type Config struct {
     DBUser          string
     DBPassword      string
     DBName          string
-    DBSSLMode      string
-    Port             string
-    JWTSecret        string
-    BibleAPIKey      string
-    BibleVersionID    string
-    BibleAPIBaseURL  string
+    DBSSLMode       string
+    // DBLogLevel controls GORM SQL verbosity.
+    // "info"  — log every SQL statement (useful for debugging)
+    // "warn"  — log only slow queries and warnings (default)
+    // "error" — log only errors
+    // "silent"— no DB logging
+    DBLogLevel      string
+    Port            string
+    JWTSecret       string
+    BibleAPIKey     string
+    BibleVersionID  string
+    BibleAPIBaseURL string
     ServerAddress   string
 
     // Email service
@@ -41,6 +47,7 @@ func Load() (*Config, error) {
         DBPassword:      os.Getenv("DB_PASSWORD"),
         DBName:          os.Getenv("DB_NAME"),
         DBSSLMode:      os.Getenv("DB_SSLMODE"),
+        DBLogLevel:     getEnvOrDefault("DB_LOG_LEVEL", "warn"),
         Port:            getEnvOrDefault("PORT", "8888"),
         JWTSecret:       os.Getenv("JWT_SECRET"),
         BibleAPIKey:     os.Getenv("BIBLE_API_KEY"),

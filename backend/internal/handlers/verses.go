@@ -23,6 +23,7 @@ type VerseHandler struct {
 	settingsService     *services.SettingsService
 	rewardsService      *services.RewardsService
 	subscriptionChecker services.SubscriptionChecker
+	communityService    *services.CommunityService // Phase 9: milestone auto-post
 }
 
 // NewVerseHandler creates a new VerseHandler
@@ -46,6 +47,11 @@ func NewVerseHandler(
 		rewardsService:      rewardsService,
 		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// SetCommunityService wires the community service for milestone auto-posts (Phase 9).
+func (h *VerseHandler) SetCommunityService(cs *services.CommunityService) {
+	h.communityService = cs
 }
 
 // resolveVersion selects the API.Bible version to use for a request.
@@ -215,6 +221,8 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 			if h.rewardsService != nil {
 				uid := userID.(uint)
 				tz := settings.PreferredTimezone
+				cs := h.communityService
+				ss := h.settingsService
 				go func() {
 					defer func() {
 						if r := recover(); r != nil {
@@ -226,7 +234,35 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 					if streakSummary != nil {
 						currentStreak = streakSummary.CurrentStreak
 					}
-					h.rewardsService.CheckMilestones(uid, currentStreak)
+					grantedKeys := h.rewardsService.CheckMilestones(uid, currentStreak)
+
+					// Phase 9: fire a community milestone post for each newly granted key.
+					if cs != nil && len(grantedKeys) > 0 {
+						userSettings, err := ss.GetUserSettings(uid)
+						if err == nil && userSettings.MilestonePostsOptIn {
+							// Resolve the user's username for the post body.
+							var username string
+							if streakSummary != nil {
+								// Username isn't in StreakSummary — use a separate lookup below.
+							}
+							// Best-effort username fetch (same DB already warmed by settings read).
+							if uname, uErr := ss.GetUsernameByID(uid); uErr == nil {
+								username = uname
+							}
+							for _, key := range grantedKeys {
+								go func(milestoneKey string) {
+									defer func() {
+										if r := recover(); r != nil {
+											log.Printf("CreateMilestonePost panic user %d key %s: %v", uid, milestoneKey, r)
+										}
+									}()
+									if err := cs.CreateMilestonePost(uid, username, milestoneKey); err != nil {
+										log.Printf("CreateMilestonePost error user %d key %s: %v", uid, milestoneKey, err)
+									}
+								}(key)
+							}
+						}
+					}
 				}()
 			}
 		}
