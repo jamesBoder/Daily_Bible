@@ -46,7 +46,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 0.85rem 1.1rem;
-  border-radius: 12px;
+  border-radius: 16px;
   background: linear-gradient(
     135deg,
     rgba(245, 158, 11, 0.14) 0%,
@@ -64,7 +64,7 @@
   display: flex;
   gap: 0.25rem;
   background: var(--journal-surface, #fffcf4);
-  border-radius: 10px;
+  border-radius: 14px;
   padding: 0.25rem;
   margin-bottom: 1.1rem;
   border: 1px solid rgba(245, 158, 11, 0.18);
@@ -75,7 +75,7 @@
   top: 0.25rem;
   height: calc(100% - 0.5rem);
   background: var(--candle-amber);
-  border-radius: 8px;
+  border-radius: 10px;
   transition: left 0.22s ease, width 0.22s ease;
   pointer-events: none;
   z-index: 0;

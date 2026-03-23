@@ -127,7 +127,7 @@ export const CommunityPostCard: React.FC<Props> = ({
         padding: '0.9rem 1rem 0.75rem',
         marginBottom: '0.85rem',
         background: 'var(--card-bg, var(--parchment))',
-        borderRadius: 12,
+        borderRadius: 16,
         position: 'relative',
         animationDelay: entranceDelay,
         boxShadow: post.is_pinned

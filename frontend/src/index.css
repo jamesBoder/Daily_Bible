@@ -3,6 +3,10 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply text-gray-900;
     font-size: 16px;
@@ -19,9 +23,29 @@
 
     /* Safe area insets for devices with notches */
     padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* Bottom padding handled by BottomNav on mobile — not on body */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+  }
+
+  /* iOS auto-zoom prevention: Safari zooms the page when an input
+     has font-size < 16px. Enforce the minimum only on touch screens
+     so desktop small-text inputs are unaffected. */
+  @media (max-width: 767px) {
+    input,
+    textarea,
+    select {
+      font-size: max(1rem, 16px) !important;
+    }
+  }
+
+  /* Minimum tap target: 44×44px (Apple HIG / WCAG 2.5.8).
+     Use .tap-target on any visually small button to expand the hit area
+     with padding without changing the element's visual size.
+     Example: <button className="tap-target"><SomeIcon /></button> */
+  .tap-target {
+    position: relative;
+    padding: 0.75rem; /* 12px — expands most 20-24px icons to 44-48px hit area */
   }
 
   /* Dark mode gradient */
@@ -466,10 +490,43 @@
 }
 
 @layer components {
+  /* Base button — shared across btn-primary / btn-ghost / btn-sm */
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5
+           px-4 py-2 rounded-xl font-medium
+           transition-all duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60
+           disabled:opacity-50 disabled:cursor-not-allowed
+           select-none;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn:not(:disabled):active {
+    transform: scale(0.96);
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm rounded-lg;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-current;
+    border: 1.5px solid var(--theme-border, rgba(180, 130, 40, 0.28));
+  }
+
+  .btn-ghost:not(:disabled):hover {
+    background: rgba(245, 158, 11, 0.08);
+  }
+
   .btn-primary {
     @apply bg-primary-600 text-white px-4 py-2 rounded-xl
            hover:bg-primary-700 transition-colors
            dark:bg-primary-500 dark:hover:bg-primary-600;
+  }
+
+  .btn-primary:not(:disabled):active {
+    transform: scale(0.96);
   }
 
   .btn-secondary {
@@ -478,11 +535,16 @@
            dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
   }
 
+  .btn-secondary:not(:disabled):active {
+    transform: scale(0.96);
+  }
+
   .input-field {
     @apply w-full px-4 py-2 border border-gray-300 rounded-xl
            focus:ring-2 focus:ring-primary-500 focus:border-transparent
            dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100
            dark:focus:ring-primary-400;
+    font-size: 1rem; /* Explicit 16px — prevents iOS Safari auto-zoom on focus */
   }
 
   .card {
@@ -492,6 +554,7 @@
     background-color: var(--theme-surface);
     /* Amber-tinted border visible in light mode, on-brand with the premium card */
     border: 1.5px solid rgba(180, 130, 40, 0.30);
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
     box-shadow:
       /* [1] Inset top-edge highlight — subtle embossed paper ridge */
       inset 0 1px 0 rgba(255, 255, 255, 0.55),
@@ -519,6 +582,11 @@
       transparent 100%
     );
     pointer-events: none;
+  }
+
+  /* Card hover lift — subtle elevation increase on hover/focus-within */
+  .card:hover {
+    transform: translateY(-2px);
   }
 
   .dark .card {
@@ -839,7 +907,7 @@
   }
 
   .subscription-cta-btn--primary:active:not(:disabled) {
-    transform: translateY(0);
+    transform: translateY(0) scale(0.97);
   }
 
   .subscription-cta-btn--secondary {
@@ -985,10 +1053,10 @@
 
   .pricing-modal__close {
     position: absolute;
-    top: 1rem;
-    right: 1rem;
-    width: 2rem;
-    height: 2rem;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2.75rem;  /* 44px — minimum tap target */
+    height: 2.75rem;
     border-radius: 50%;
     border: none;
     background: rgba(0, 0, 0, 0.08);
@@ -1163,6 +1231,10 @@
     box-shadow: 0 6px 20px rgba(245, 158, 11, 0.50);
   }
 
+  .pricing-modal__cta:active:not(:disabled) {
+    transform: translateY(0) scale(0.97);
+  }
+
   .pricing-modal__cta:disabled {
     opacity: 0.55;
     cursor: not-allowed;
@@ -1267,6 +1339,21 @@
     font-size: 0.9375rem;
     opacity: 0.75;
     margin: 0;
+  }
+
+  /* ── Scroll containment — prevent rubber-band scroll-chaining out of modals/sheets ── */
+
+  /* Bottom sheet panels (Manna tutorial/stats, PricingModal, BottomNav More sheet) */
+  [role="dialog"],
+  .pricing-modal,
+  .manna-tutorial-panel {
+    overscroll-behavior: contain;
+  }
+
+  /* Horizontal scroll carousels — stop the page from bouncing vertically */
+  .milestone-wall--mobile {
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: none;
   }
 
   /* §8.18.4 — Checkout overlay (full-screen, blocks interaction during redirect) */

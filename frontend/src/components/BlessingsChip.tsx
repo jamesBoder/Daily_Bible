@@ -127,7 +127,7 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={[
-          'flex items-center space-x-1.5 px-2.5 py-1 rounded-lg',
+          'flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] rounded-lg',
           'bg-gradient-to-r from-yellow-50 to-amber-50',
           'dark:from-yellow-900/20 dark:to-amber-900/20',
           'border border-yellow-300 dark:border-yellow-700',

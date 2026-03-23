@@ -100,7 +100,7 @@ const StreakCandle: React.FC = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onKeyDown={e => e.key === 'Enter' && handleClick()}
-        className="flex items-center space-x-1.5 px-2.5 py-1 rounded-lg
+        className="flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] rounded-lg
                    bg-gradient-to-r from-orange-50 to-amber-50
                    dark:from-orange-900/20 dark:to-amber-900/20
                    border border-orange-200 dark:border-orange-800

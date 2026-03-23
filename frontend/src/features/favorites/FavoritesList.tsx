@@ -7,6 +7,8 @@ import { CommentSection } from "../verse/CommentSection";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
 import { showToast } from "../../utils/toast";
+import { usePullToRefresh } from "../../hooks/usePullToRefresh";
+import PullRefreshIndicator from "../../components/common/PullRefreshIndicator";
 
 type SortField = "date" | "reference" | "book" | "translation" | "chapter" | "verseNumber";
 type SortDirection = "asc" | "desc";
@@ -161,7 +163,8 @@ export const FavoritesList: React.FC = () => {
     { value: "chapter",     label: t('favorites.sortOptions.chapter')     },
     { value: "verseNumber", label: t('favorites.sortOptions.verseNumber') },
   ];
-  const { favorites, isLoading, error, removeFavorite } = useFavorites();
+  const { favorites, isLoading, error, removeFavorite, refetch } = useFavorites();
+  const ptr = usePullToRefresh({ onRefresh: () => { refetch(); } });
   const navigate = useNavigate();
   const [removingId, setRemovingId] = React.useState<number | null>(null);
   const [confirmingRemoveId, setConfirmingRemoveId] = React.useState<number | null>(null);
@@ -316,7 +319,13 @@ export const FavoritesList: React.FC = () => {
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8">
+    <div
+      className="max-w-4xl mx-auto px-4 py-8"
+      onTouchStart={ptr.onTouchStart}
+      onTouchMove={ptr.onTouchMove}
+      onTouchEnd={ptr.onTouchEnd}
+    >
+      <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
       {/* Header row: title left, sort controls right */}
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
         {/* Left: title + count */}

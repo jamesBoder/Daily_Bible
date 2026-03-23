@@ -4,6 +4,7 @@ import { X, Crown, Star, BookOpen, Palette, Calendar, Scroll } from '@phosphor-i
 import { usePricingModal } from '../../hooks/usePricingModal';
 import { useStreak } from '../../contexts/StreakContext';
 import { FocusTrap } from './FocusTrap';
+import { useSwipe } from '../../hooks/useSwipe';
 
 const PLAN_FEATURES: string[] = [
   'subscription.feature.all_themes',
@@ -92,6 +93,9 @@ export const PricingModal: React.FC = () => {
     if (e.target === overlayRef.current) closeModal();
   };
 
+  // Swipe down on the modal panel closes it on mobile
+  const swipeHandlers = useSwipe({ onSwipeDown: closeModal });
+
   return (
     <div
       className="pricing-modal-overlay"
@@ -102,7 +106,7 @@ export const PricingModal: React.FC = () => {
       aria-label={t('subscription.modal_label', 'Premium subscription')}
     >
       <FocusTrap active={true}>
-        <div className="pricing-modal">
+        <div className="pricing-modal" {...swipeHandlers}>
           {/* Mobile bottom-sheet drag handle */}
           <div className="pricing-modal__drag-handle" aria-hidden="true" />
 

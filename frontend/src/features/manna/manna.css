@@ -519,6 +519,10 @@
   font-weight: 700;
   cursor: pointer;
   user-select: none;
+  /* Prevent iOS from treating key taps as scroll gestures — critical for keeping
+     the bottom nav stable. Without this, each tap can trigger a micro-scroll
+     that collapses the iOS address bar and makes position:fixed elements jump. */
+  touch-action: manipulation;
   transition: background 0.18s ease, box-shadow 0.18s ease, transform 0.08s ease;
   background: var(--journal-surface);
   color: var(--foreground);

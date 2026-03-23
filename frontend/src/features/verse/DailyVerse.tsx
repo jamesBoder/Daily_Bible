@@ -5,6 +5,9 @@ import { useVerse } from "../../hooks/useVerse";
 import { useHistory } from "../../hooks/useHistory";
 import { useAuth } from "../../hooks/useAuth";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
+import { useSwipe } from "../../hooks/useSwipe";
+import { usePullToRefresh } from "../../hooks/usePullToRefresh";
+import PullRefreshIndicator from "../../components/common/PullRefreshIndicator";
 import { VerseCard } from "./VerseCard";
 import { SideBySideView } from "./SideBySideView";
 import { Button } from "../../components/common/Button";
@@ -275,19 +278,10 @@ export const DailyVerse: React.FC = () => {
   useKeyboardShortcuts(shortcuts);
 
   // Swipe left/right to cycle through history
-  const touchStartX = useRef(0);
-  const touchStartY = useRef(0);
-  const handleTouchStart = useCallback((e: React.TouchEvent) => {
-    touchStartX.current = e.touches[0].clientX;
-    touchStartY.current = e.touches[0].clientY;
-  }, []);
-  const handleTouchEnd = useCallback((e: React.TouchEvent) => {
-    const dx = touchStartX.current - e.changedTouches[0].clientX;
-    const dy = Math.abs(touchStartY.current - e.changedTouches[0].clientY);
-    if (Math.abs(dx) < 50 || dy > Math.abs(dx) * 0.75) return;
-    if (dx > 0) goBack();
-    else goForward();
-  }, [goBack, goForward]);
+  const swipeHandlers = useSwipe({ onSwipeLeft: goBack, onSwipeRight: goForward });
+
+  // Pull down to re-fetch today's verse (handy when returning to app)
+  const ptr = usePullToRefresh({ onRefresh: () => { refetch(); } });
 
   if (isLoading) {
     return <VerseCardSkeleton />;
@@ -354,9 +348,11 @@ export const DailyVerse: React.FC = () => {
   return (
     <div
       className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8"
-      onTouchStart={handleTouchStart}
-      onTouchEnd={handleTouchEnd}
+      onTouchStart={(e) => { swipeHandlers.onTouchStart(e); ptr.onTouchStart(e); }}
+      onTouchMove={ptr.onTouchMove}
+      onTouchEnd={(e) => { swipeHandlers.onTouchEnd(e); ptr.onTouchEnd(); }}
     >
+      <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
       {/* Streak-related banners and notifications */}
       {!isGuest && (
         <>

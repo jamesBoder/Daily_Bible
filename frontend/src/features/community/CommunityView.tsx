@@ -11,6 +11,8 @@ import { WalkingToday } from './WalkingToday';
 import { PrayerWallTab } from './PrayerWallTab';
 import { ChallengesTab } from './ChallengesTab';
 import { BookOpen, HandsPraying, Lightning } from '@phosphor-icons/react';
+import { usePullToRefresh } from '../../hooks/usePullToRefresh';
+import PullRefreshIndicator from '../../components/common/PullRefreshIndicator';
 import './community.css';
 
 type Tab = 'board' | 'prayer' | 'challenges';
@@ -95,8 +97,17 @@ export const CommunityView: React.FC = () => {
     }, 200);
   };
 
+  const ptr = usePullToRefresh({ onRefresh: reload });
+
   return (
-    <div style={{ maxWidth: 680, margin: '0 auto', padding: '0 1rem 2rem' }}>
+    <div
+      style={{ maxWidth: 680, margin: '0 auto', padding: '0 1rem 2rem' }}
+      onTouchStart={ptr.onTouchStart}
+      onTouchMove={ptr.onTouchMove}
+      onTouchEnd={ptr.onTouchEnd}
+    >
+
+      <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
 
       {/* ── Hero Header ──────────────────────────────────────────────────── */}
       <div className="community-hero">
