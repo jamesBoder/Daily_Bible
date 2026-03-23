@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface AvatarRingProps {
@@ -55,6 +55,18 @@ const AvatarRing: React.FC<AvatarRingProps> = ({
   size = 100,
 }) => {
   const { t } = useTranslation();
+
+  // §8.18.4: One-time glow when isPremium transitions false → true in a session
+  const prevIsPremiumRef = useRef(isPremium);
+  const [isGlowing, setIsGlowing] = useState(false);
+  useEffect(() => {
+    if (!prevIsPremiumRef.current && isPremium) {
+      setIsGlowing(true);
+      setTimeout(() => setIsGlowing(false), 2000);
+    }
+    prevIsPremiumRef.current = isPremium;
+  }, [isPremium]);
+
   // Premium ring overrides milestone tier when the user is a subscriber
   const tier = isPremium
     ? PREMIUM_RING
@@ -92,8 +104,11 @@ const AvatarRing: React.FC<AvatarRingProps> = ({
       viewBox={`0 0 ${size} ${size}`}
       role="img"
       aria-label={tooltipLabel}
-      className={tier.rotating ? 'avatar-ring--full-year' : undefined}
-      style={{ filter: tier.filter, overflow: 'visible' }}
+      className={[
+        tier.rotating ? 'avatar-ring--full-year' : '',
+        isGlowing ? 'avatar-ring--premium-glow' : '',
+      ].filter(Boolean).join(' ') || undefined}
+      style={{ filter: isGlowing ? undefined : tier.filter, overflow: 'visible' }}
     >
       {/* Avatar background circle */}
       <circle cx={center} cy={center} r={radius - 4} fill={avatarColor} />

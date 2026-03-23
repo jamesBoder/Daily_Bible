@@ -18,6 +18,7 @@ import { SoundService } from "./services/SoundService";
 import { PricingModalProvider } from "./hooks/usePricingModal";
 import { PricingModal } from "./components/common/PricingModal";
 import { PaymentAlert } from "./components/common/PaymentAlert";
+import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import "./App.css";
 
 
@@ -193,9 +194,30 @@ const router = createBrowserRouter([
         element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><CommunityView /></Suspense></GuestBlockedRoute>,
       },
       // Phase 10: Manna puzzle — authenticated users only
+      // M-23: ErrorBoundary catches runtime errors (e.g. malformed API response) so the page doesn't crash
       {
         path: "manna",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><MannaPuzzle /></Suspense></GuestBlockedRoute>,
+        element: (
+          <GuestBlockedRoute>
+            <ErrorBoundary fallback={
+              <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
+                <div className="text-5xl" aria-hidden>🌾</div>
+                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                  Could not load today's puzzle
+                </p>
+                <button
+                  onClick={() => window.location.reload()}
+                  className="px-6 py-2 rounded-xl font-semibold text-white"
+                  style={{ background: 'var(--blessing-gold)' }}
+                >
+                  Tap to retry
+                </button>
+              </div>
+            }>
+              <Suspense fallback={<VerseCardSkeleton />}><MannaPuzzle /></Suspense>
+            </ErrorBoundary>
+          </GuestBlockedRoute>
+        ),
       },
       // Journal routes (Phase 3)
       {

@@ -4,9 +4,13 @@ import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
 import { mannaApi, GuessEntry, HintLetter, MannaGameResponse, MannaLockedResponse, YesterdayResult } from '../../services/api/manna';
 import { SoundService } from '../../services/SoundService';
+import { useStreak } from '../../contexts/StreakContext';
+import { PHYSICAL_KEY_SOUND_KEY } from '../settings/MannaSettings';
 import { MannaLockedCard } from './MannaLockedCard';
 import { MannaTile, TileState } from './MannaTile';
 import { MannaKeyboard } from './MannaKeyboard';
+import { MannaHowToPlay, MANNA_TUTORIAL_KEY } from './MannaHowToPlay';
+import { MannaStatsModal } from './MannaStatsModal';
 import './manna.css';
 
 const MAX_GUESSES = 6;
@@ -45,6 +49,29 @@ function getFreePositions(hintLetters: HintLetter[] | undefined): number[] {
   return [0, 1, 2, 3, 4].filter(i => !hinted.has(i));
 }
 
+// M-11: hard mode — returns a violation message if the guess breaks a confirmed constraint,
+// or null if the guess is valid. Rules:
+//   • A letter confirmed CORRECT at position X must appear at position X in the new guess.
+//   • A letter confirmed PRESENT (in-word but wrong position) must appear somewhere in the guess.
+function checkHardModeViolation(pastGuesses: GuessEntry[], word: string): string | null {
+  for (const g of pastGuesses) {
+    for (let i = 0; i < g.result.length; i++) {
+      if (g.result[i] === 'correct') {
+        // Must reuse this letter at the same position
+        if (word[i]?.toUpperCase() !== g.word[i]?.toUpperCase()) {
+          return `Position ${i + 1} must be ${g.word[i].toUpperCase()} (hard mode)`;
+        }
+      } else if (g.result[i] === 'present') {
+        // Must include the letter somewhere
+        if (!word.toUpperCase().includes(g.word[i].toUpperCase())) {
+          return `Guess must contain ${g.word[i].toUpperCase()} (hard mode)`;
+        }
+      }
+    }
+  }
+  return null;
+}
+
 // Merges user-typed letters (for free positions) with hint letters into a full 5-letter word
 function buildSubmittedWord(typedLetters: string, hintLetters: HintLetter[] | undefined): string {
   const hintMap: Record<number, string> = Object.fromEntries(
@@ -58,12 +85,23 @@ function buildSubmittedWord(typedLetters: string, hintLetters: HintLetter[] | un
 
 export const MannaPuzzle: React.FC = () => {
   const { t } = useTranslation();
+  const { refreshStreak } = useStreak();
 
   const [loading, setLoading] = useState(true);
   const [locked, setLocked] = useState(false);
   const [yesterdayData, setYesterdayData] = useState<YesterdayResult | null>(null);
   const [game, setGame] = useState<MannaGameResponse | null>(null);
   const [hintLoading, setHintLoading] = useState(false);
+
+  // Tutorial — shown on first visit; re-openable via ? button
+  const [showTutorial, setShowTutorial] = useState(false);
+  const showTutorialRef = useRef(false);
+  useEffect(() => { showTutorialRef.current = showTutorial; }, [showTutorial]);
+
+  // Stats/history modal — opened via 📊 button
+  const [showStats, setShowStats] = useState(false);
+  const showStatsRef = useRef(false);
+  useEffect(() => { showStatsRef.current = showStats; }, [showStats]);
 
   // Letter entry pop — tracks which tile index just received a letter
   const [poppedTile, setPoppedTile] = useState<number | null>(null);
@@ -74,11 +112,29 @@ export const MannaPuzzle: React.FC = () => {
   // Current input: letters typed into free (non-hinted) positions only
   const [currentWord, setCurrentWord] = useState('');
 
-  const [pendingGuess, setPendingGuess] = useState<GuessEntry | null>(null);
-  const [flippingRow, setFlippingRow] = useState<number | null>(null);
+  // M-22: merged to avoid one-frame glitch between two separate setState calls
+  const [flipping, setFlipping] = useState<{ rowIdx: number; guess: GuessEntry } | null>(null);
   const [shakeRow, setShakeRow] = useState<number | null>(null);
   const [winRow, setWinRow] = useState<number | null>(null);
   const [submittingUI, setSubmittingUI] = useState(false);
+
+  // M-11: hard mode — snapshotted once when component mounts (i.e. when game loads).
+  // Using a ref prevents mid-game toggling from retroactively applying hard-mode
+  // constraints to guesses made before the toggle.
+  const hardModeRef = useRef(localStorage.getItem('mannaHardMode') === 'true');
+  const hardMode = () => hardModeRef.current;
+
+  // M-13: fetch stats once when game ends to display streak in post-game panel
+  const [postGameStreak, setPostGameStreak] = useState<number | null>(null);
+
+  // M-14: blessings burst — number of blessings awarded (drives particle count)
+  const [blessingsBurst, setBlessingsBurst] = useState<number | null>(null);
+
+  // M-17: grid bloom cascade — applied after win flip completes
+  const [bloomGrid, setBloomGrid] = useState(false);
+
+  // M-10: aria-live announcement for screen readers
+  const [announcement, setAnnouncement] = useState('');
 
   const submitting = useRef(false);
   const gameRef = useRef<MannaGameResponse | null>(null);
@@ -86,6 +142,14 @@ export const MannaPuzzle: React.FC = () => {
 
   useEffect(() => { gameRef.current = game; }, [game]);
   useEffect(() => { currentWordRef.current = currentWord; }, [currentWord]);
+
+  // M-13: lazy-fetch Manna streak once when the game ends — shown in post-game panel
+  useEffect(() => {
+    if (!game || game.status === 'in_progress' || postGameStreak !== null) return;
+    mannaApi.getStats()
+      .then(s => setPostGameStreak(s.current_streak))
+      .catch(() => {}); // non-critical — panel renders without streak on error
+  }, [game?.status]);
 
   // ─── Load today's game ────────────────────────────────────────────────────
   useEffect(() => {
@@ -103,6 +167,10 @@ export const MannaPuzzle: React.FC = () => {
           if (gameResp.status === 'solved' && !sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
             setShowConfetti(true);
             sessionStorage.setItem(CONFETTI_SESSION_KEY, '1');
+          }
+          // Show tutorial on first ever visit (not seen before)
+          if (!localStorage.getItem(MANNA_TUTORIAL_KEY)) {
+            setShowTutorial(true);
           }
         }
       })
@@ -165,12 +233,27 @@ export const MannaPuzzle: React.FC = () => {
       setShakeRow(rowIdx);
       setTimeout(() => setShakeRow(null), 400);
       SoundService.play('manna-invalid');
+      // M-19: haptic feedback on invalid guess
+      if (navigator.vibrate) navigator.vibrate(30);
       toast(t('manna.notEnoughLetters', 'Not enough letters'), { icon: '✏️' });
       return;
     }
 
     // Merge hint-locked letters with user-typed letters into the full submitted word
     const submittedWord = buildSubmittedWord(typedLetters, game.hint_letters);
+
+    // M-11: hard mode validation — confirmed letters must appear in the next guess
+    if (hardMode() && game.guesses.length > 0) {
+      const violation = checkHardModeViolation(game.guesses, submittedWord);
+      if (violation) {
+        setShakeRow(game.guesses.length);
+        setTimeout(() => setShakeRow(null), 400);
+        SoundService.play('manna-invalid');
+        if (navigator.vibrate) navigator.vibrate(30);
+        toast(violation, { icon: '🔒' });
+        return;
+      }
+    }
 
     submitting.current = true;
     setSubmittingUI(true);
@@ -182,24 +265,28 @@ export const MannaPuzzle: React.FC = () => {
       const newGuess: GuessEntry = { word: submittedWord, result: result.result };
       const updatedGuesses = [...game.guesses, newGuess];
 
-      setPendingGuess(newGuess);
-      setFlippingRow(rowIdx);
+      setFlipping({ rowIdx, guess: newGuess });
       setCurrentWord('');
 
-      newGuess.result.forEach((state, i) => {
-        setTimeout(() => {
-          const cue =
-            state === 'correct' ? 'manna-tile-correct' :
-            state === 'present' ? 'manna-tile-present' :
-                                  'manna-tile-absent';
-          SoundService.play(cue);
-        }, i * 120 + 250);
-      });
+      if (result.status === 'failed') {
+        // M-15: on a failed final resolve, play a quiet descending arpeggio instead
+        // of ascending per-tile tones — tonally congruent with losing.
+        setTimeout(() => SoundService.play('manna-tile-fail-resolve'), 250);
+      } else {
+        newGuess.result.forEach((state, i) => {
+          setTimeout(() => {
+            const cue =
+              state === 'correct' ? 'manna-tile-correct' :
+              state === 'present' ? 'manna-tile-present' :
+                                    'manna-tile-absent';
+            SoundService.play(cue);
+          }, i * 120 + 250);
+        });
+      }
 
       const flipDuration = (WORD_LENGTH - 1) * 120 + 500 + 100;
       setTimeout(() => {
-        setFlippingRow(null);
-        setPendingGuess(null);
+        setFlipping(null);
         setGame(prev => {
           if (!prev) return prev;
           return {
@@ -212,9 +299,28 @@ export const MannaPuzzle: React.FC = () => {
           };
         });
 
+        // M-10: announce guess result to screen readers
+        const resultWords = newGuess.result.map(r =>
+          r === 'correct'
+            ? t('manna.ariaCorrect', 'correct')
+            : r === 'present'
+              ? t('manna.ariaPresent', 'present')
+              : t('manna.ariaAbsent', 'absent')
+        );
+        setAnnouncement(
+          `${submittedWord}: ${resultWords.join(', ')}.`
+        );
+
         if (result.status === 'solved') {
           setWinRow(rowIdx);
           SoundService.play('manna-solve');
+          // U-02: positive haptic on win — two pulses (uplifting pattern)
+          if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
+          // M-17: after bounce animation finishes (~1.4s total), bloom the full grid
+          if (localStorage.getItem('celebrationAnimEnabled') !== 'false') {
+            setTimeout(() => setBloomGrid(true), 1500);
+          }
+          setAnnouncement(t('manna.ariaSolved', 'Solved! The word was {{word}}.', { word: result.answer ?? '' }));
           // Trigger confetti once per session
           setTimeout(() => {
             if (!sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
@@ -227,9 +333,19 @@ export const MannaPuzzle: React.FC = () => {
               t('manna.solved', '+{{n}} Blessings!', { n: result.blessings_awarded }),
               { icon: '✦' }
             );
+            // M-14: trigger blessings burst animation over post-game panel
+            if (localStorage.getItem('celebrationAnimEnabled') !== 'false') {
+              setBlessingsBurst(result.blessings_awarded);
+              setTimeout(() => setBlessingsBurst(null), 1800);
+            }
           }
+          // G-02: refresh streak count in header so blessings and streak display update immediately
+          refreshStreak().catch(() => {});
         } else if (result.status === 'failed') {
           SoundService.play('manna-fail');
+          setAnnouncement(t('manna.ariaFailed', 'Game over. The word was {{word}}.', { word: result.answer ?? '' }));
+          // G-02: refresh streak so blessings update after a failed game too
+          refreshStreak().catch(() => {});
         }
 
         submitting.current = false;
@@ -239,7 +355,14 @@ export const MannaPuzzle: React.FC = () => {
       submitting.current = false;
       setSubmittingUI(false);
       const msg = err?.response?.data?.error ?? '';
-      if (msg.includes('5 letters')) {
+      if (msg === 'not_a_word') {
+        // M-01/M-05: word not in the biblical word bank — shake the row and keep input intact
+        setShakeRow(rowIdx);
+        setTimeout(() => setShakeRow(null), 400);
+        SoundService.play('manna-invalid');
+        if (navigator.vibrate) navigator.vibrate(30); // M-19
+        toast(t('manna.notAWord', 'Not a recognized biblical word'), { icon: '📖' });
+      } else if (msg.includes('5 letters')) {
         toast.error(t('manna.errorLength', 'Guesses must be exactly 5 letters.'));
       } else if (msg.includes('letters A')) {
         toast.error(t('manna.errorChars', 'Guesses must contain only letters A–Z.'));
@@ -251,10 +374,16 @@ export const MannaPuzzle: React.FC = () => {
     }
   };
 
+  // hintLoading ref — lets handleKey (which is memoised) see the latest value
+  const hintLoadingRef = useRef(false);
+  useEffect(() => { hintLoadingRef.current = hintLoading; }, [hintLoading]);
+
   // ─── Keyboard handling ────────────────────────────────────────────────────
   const handleKey = useCallback((key: string) => {
     const game = gameRef.current;
-    if (!game || game.status !== 'in_progress' || submitting.current) return;
+    // Block game key input while any overlay is open or hint is loading
+    if (showTutorialRef.current || showStatsRef.current) return;
+    if (!game || game.status !== 'in_progress' || submitting.current || hintLoadingRef.current) return;
 
     if (key === '⌫' || key === 'Backspace') {
       setCurrentWord(w => w.slice(0, -1));
@@ -272,7 +401,11 @@ export const MannaPuzzle: React.FC = () => {
         // The actual tile index that will receive this letter
         const tileIdx = freePos[currentWordRef.current.length];
         setCurrentWord(w => w + key.toUpperCase());
-        SoundService.play('manna-key');
+        // M-16 / physical keyboard sound: play manna-key only if the user has
+        // opted into physical keyboard sounds (off by default — see MannaSettings).
+        if (localStorage.getItem(PHYSICAL_KEY_SOUND_KEY) === 'true') {
+          SoundService.play('manna-key');
+        }
         setPoppedTile(tileIdx);
         setTimeout(() => setPoppedTile(null), 180);
       }
@@ -331,10 +464,10 @@ export const MannaPuzzle: React.FC = () => {
         win: winRow === r,
         shake: false,
       });
-    } else if (r === game.guesses.length && flippingRow === r && pendingGuess) {
+    } else if (flipping && flipping.rowIdx === r) {
       rows.push({
-        letters: pendingGuess.word.split(''),
-        states: pendingGuess.result.map(x => x as TileState),
+        letters: flipping.guess.word.split(''),
+        states: flipping.guess.result.map(x => x as TileState),
         flipping: true,
         win: false,
         shake: false,
@@ -372,18 +505,33 @@ export const MannaPuzzle: React.FC = () => {
 
   return (
     <div className="manna-scene flex flex-col items-center gap-3 py-5 px-4 max-w-sm mx-auto">
+      {/* Tutorial overlay — shown on first visit or when ? is tapped */}
+      {showTutorial && (
+        <MannaHowToPlay onDismiss={() => setShowTutorial(false)} />
+      )}
+
+      {/* Stats & History modal — opened via 📊 button */}
+      {showStats && (
+        <MannaStatsModal onDismiss={() => setShowStats(false)} />
+      )}
+
+      {/* M-10: visually hidden aria-live region — screen readers announce guess results */}
+      <div
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+        className="sr-only"
+      >
+        {announcement}
+      </div>
+
       <Motes />
 
       {/* ── Header ── */}
       <div className="w-full flex items-center justify-between" style={{ position: 'relative', zIndex: 1 }}>
         <div className="flex items-center gap-2.5">
-          <span
-            className="text-3xl"
-            aria-hidden
-            style={{ filter: `drop-shadow(0 0 8px color-mix(in srgb, var(--blessing-gold) 55%, transparent))` }}
-          >
-            🌾
-          </span>
+          {/* M-18: SVG wheat icon — consistent rendering across all OS/browsers */}
+          <WheatIcon />
           <div>
             <h1 className="manna-title-glow text-xl font-display font-bold leading-tight" style={{ color: 'var(--blessing-gold)' }}>
               {t('manna.title', 'Manna')}
@@ -421,6 +569,24 @@ export const MannaPuzzle: React.FC = () => {
           <span className="manna-muted text-xs tabular-nums font-semibold">
             {game.guess_count}<span className="opacity-40">/</span>{MAX_GUESSES}
           </span>
+          {/* 📊 button — opens stats & history modal */}
+          <button
+            className="manna-help-btn"
+            onClick={() => setShowStats(true)}
+            aria-label={t('manna.statsModalLabel', 'Stats & History')}
+            title={t('manna.statsModalLabel', 'Stats & History')}
+          >
+            📊
+          </button>
+          {/* ? button — always visible; lets users replay the tutorial at any time */}
+          <button
+            className="manna-help-btn"
+            onClick={() => setShowTutorial(true)}
+            aria-label={t('manna.tutorialHelpBtn', 'How to play')}
+            title={t('manna.tutorialHelpBtn', 'How to play')}
+          >
+            ?
+          </button>
         </div>
       </div>
 
@@ -448,7 +614,7 @@ export const MannaPuzzle: React.FC = () => {
         {showConfetti && <Confetti />}
 
         <div
-          className="flex flex-col items-center gap-1.5"
+          className={`flex flex-col items-center gap-1.5 ${bloomGrid ? 'manna-grid--blooming' : ''}`}
           role="grid"
           aria-label={t('manna.grid', 'Puzzle grid')}
         >
@@ -457,9 +623,10 @@ export const MannaPuzzle: React.FC = () => {
               key={r}
               className={`flex gap-1.5 ${row.shake ? 'manna-row--shake' : ''} ${row.win ? 'manna-row--win' : ''}`}
               role="row"
+              style={{ '--row-idx': r } as React.CSSProperties}
             >
               {row.letters.map((letter, i) => {
-                const isActivePop = r === activeRow && i === poppedTile && !isOver && flippingRow === null;
+                const isActivePop = r === activeRow && i === poppedTile && !isOver && flipping === null;
                 return (
                   <MannaTile
                     key={i}
@@ -471,7 +638,7 @@ export const MannaPuzzle: React.FC = () => {
                     cursor={
                       !isOver &&
                       r === activeRow &&
-                      flippingRow === null &&
+                      flipping === null &&
                       i === cursorTileIdx
                     }
                   />
@@ -486,6 +653,8 @@ export const MannaPuzzle: React.FC = () => {
       {isOver ? (
         <div className={`manna-result-panel w-full ${isSolved ? 'manna-result-panel--solved' : ''}`}
              style={{ position: 'relative', zIndex: 1 }}>
+          {/* M-14: Blessings burst animation */}
+          {blessingsBurst !== null && <BlessingsBurst />}
           {isSolved ? (
             <p className="text-base font-semibold" style={{ color: 'var(--blessing-gold)' }}>
               ✦ {t('manna.solvedTitle', "You solved today's Manna!")}
@@ -513,13 +682,21 @@ export const MannaPuzzle: React.FC = () => {
 
           <ShareResult guesses={game.guesses} solved={isSolved} t={t} />
 
+          {/* M-13: Manna streak — appears once stats have loaded */}
+          {postGameStreak !== null && postGameStreak > 0 && (
+            <p className="manna-streak-badge">
+              🔥 {t('manna.streak', '{{n}}-day Manna streak', { n: postGameStreak })}
+            </p>
+          )}
+
           <p className="manna-muted text-xs mt-3">
             {t('manna.comeback', 'Come back tomorrow for a new word.')}
           </p>
+          <MannaCountdown t={t} />
         </div>
       ) : (
         <div className="manna-keyboard" style={{ position: 'relative', zIndex: 1 }}>
-          <MannaKeyboard keyStates={keyStates} onKey={handleKey} disabled={isOver} loading={submittingUI} />
+          <MannaKeyboard keyStates={keyStates} onKey={handleKey} disabled={isOver || hintLoading} loading={submittingUI} />
         </div>
       )}
     </div>
@@ -626,6 +803,42 @@ const Confetti: React.FC = () => (
   </div>
 );
 
+// ─── Blessings burst (M-14) ───────────────────────────────────────────────────
+
+// Gold sparkle particles radiate outward from the centre of the post-game panel
+// when Blessings are awarded. Gated on celebrationAnimEnabled !== 'false'.
+const BURST_PARTICLES = [
+  { angle:   0, dist: 55 }, { angle:  45, dist: 65 }, { angle:  90, dist: 50 },
+  { angle: 135, dist: 60 }, { angle: 180, dist: 55 }, { angle: 225, dist: 65 },
+  { angle: 270, dist: 50 }, { angle: 315, dist: 60 },
+  { angle:  22, dist: 80 }, { angle:  67, dist: 75 }, { angle: 112, dist: 85 },
+  { angle: 157, dist: 70 }, { angle: 202, dist: 80 }, { angle: 247, dist: 75 },
+  { angle: 292, dist: 85 }, { angle: 337, dist: 70 },
+];
+
+const BlessingsBurst: React.FC = () => (
+  <div className="manna-blessings-burst" aria-hidden="true">
+    {BURST_PARTICLES.map((p, i) => {
+      const rad = (p.angle * Math.PI) / 180;
+      const tx = Math.cos(rad) * p.dist;
+      const ty = Math.sin(rad) * p.dist;
+      return (
+        <span
+          key={i}
+          className="manna-blessings-particle"
+          style={{
+            '--tx': `${tx}px`,
+            '--ty': `${ty}px`,
+            animationDelay: `${(i % 4) * 0.05}s`,
+          } as React.CSSProperties}
+        >
+          ✦
+        </span>
+      );
+    })}
+  </div>
+);
+
 // ─── Floating light motes ─────────────────────────────────────────────────────
 
 const MOTE_CONFIG = [
@@ -654,6 +867,99 @@ const Motes: React.FC = () => (
       />
     ))}
   </div>
+);
+
+// ─── Next-puzzle countdown (M-08) ────────────────────────────────────────────
+
+function getSecondsUntilMidnightUTC(): number {
+  const now = new Date();
+  const midnight = new Date(Date.UTC(
+    now.getUTCFullYear(),
+    now.getUTCMonth(),
+    now.getUTCDate() + 1,
+  ));
+  return Math.max(0, Math.floor((midnight.getTime() - now.getTime()) / 1000));
+}
+
+function formatCountdown(seconds: number): string {
+  const h = Math.floor(seconds / 3600);
+  const m = Math.floor((seconds % 3600) / 60);
+  const s = seconds % 60;
+  const mm = String(m).padStart(2, '0');
+  const ss = String(s).padStart(2, '0');
+  return h > 0 ? `${h}:${mm}:${ss}` : `${mm}:${ss}`;
+}
+
+const MannaCountdown: React.FC<{ t: TFunction }> = ({ t }) => {
+  const [secs, setSecs] = React.useState(getSecondsUntilMidnightUTC);
+
+  React.useEffect(() => {
+    let id: ReturnType<typeof setInterval> | null = null;
+
+    const start = () => {
+      setSecs(getSecondsUntilMidnightUTC()); // re-sync after tab was hidden
+      id = setInterval(() => setSecs(getSecondsUntilMidnightUTC()), 1000);
+    };
+    const stop = () => {
+      if (id !== null) { clearInterval(id); id = null; }
+    };
+
+    const onVisibility = () => {
+      document.hidden ? stop() : start();
+    };
+
+    start();
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      stop();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
+  }, []);
+
+  return (
+    <p className="manna-muted text-xs mt-2">
+      {t('manna.nextPuzzle', 'Next word in')}
+      {' '}
+      <span className="manna-countdown tabular-nums font-semibold" aria-live="off">
+        {formatCountdown(secs)}
+      </span>
+    </p>
+  );
+};
+
+// ─── Wheat SVG icon (M-18) ────────────────────────────────────────────────────
+//
+// Replaces the 🌾 emoji — renders identically across all OS and browsers.
+// Styled using CSS variables so it inherits the active theme's blessing-gold.
+
+export const WheatIcon: React.FC<{ size?: number }> = ({ size = 40 }) => (
+  <svg
+    aria-hidden="true"
+    width={size}
+    height={size}
+    viewBox="0 0 40 40"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    style={{
+      filter: 'drop-shadow(0 0 8px color-mix(in srgb, var(--blessing-gold) 55%, transparent))',
+      flexShrink: 0,
+    }}
+  >
+    {/* Central stalk */}
+    <line x1="20" y1="36" x2="20" y2="6" stroke="var(--blessing-gold)" strokeWidth="2" strokeLinecap="round"/>
+    {/* Grain heads — left side (4 grains, stepping upward) */}
+    <ellipse cx="14" cy="28" rx="5" ry="2.8" fill="var(--blessing-gold)" transform="rotate(-30 14 28)"/>
+    <ellipse cx="13" cy="22" rx="5" ry="2.8" fill="var(--blessing-gold)" transform="rotate(-28 13 22)"/>
+    <ellipse cx="13" cy="16" rx="4.5" ry="2.5" fill="var(--blessing-gold)" transform="rotate(-25 13 16)"/>
+    <ellipse cx="14" cy="11" rx="4" ry="2.2" fill="var(--blessing-gold)" transform="rotate(-22 14 11)"/>
+    {/* Grain heads — right side */}
+    <ellipse cx="26" cy="28" rx="5" ry="2.8" fill="var(--blessing-gold)" transform="rotate(30 26 28)"/>
+    <ellipse cx="27" cy="22" rx="5" ry="2.8" fill="var(--blessing-gold)" transform="rotate(28 27 22)"/>
+    <ellipse cx="27" cy="16" rx="4.5" ry="2.5" fill="var(--blessing-gold)" transform="rotate(25 27 16)"/>
+    <ellipse cx="26" cy="11" rx="4" ry="2.2" fill="var(--blessing-gold)" transform="rotate(22 26 11)"/>
+    {/* Top grain */}
+    <ellipse cx="20" cy="7" rx="3.5" ry="2" fill="var(--blessing-gold)"/>
+  </svg>
 );
 
 // ─── Share result helper ──────────────────────────────────────────────────────

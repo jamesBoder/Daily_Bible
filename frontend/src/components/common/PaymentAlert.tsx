@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Warning, X } from '@phosphor-icons/react';
 import { useStreak } from '../../contexts/StreakContext';
+import { SoundService } from '../../services/SoundService';
 
 const DISMISS_KEY = 'paymentAlertDismissedAt';
 const DISMISS_TTL_MS = 24 * 60 * 60 * 1000; // 24 hours
@@ -10,6 +11,14 @@ export const PaymentAlert: React.FC = () => {
   const { t } = useTranslation();
   const { subscription, openPortal } = useStreak();
   const [visible, setVisible] = useState(false);
+
+  // §8.18.3: Play sound once per session when banner first appears
+  useEffect(() => {
+    if (!sessionStorage.getItem('paymentAlertSounded')) {
+      SoundService.play('payment-alert');
+      sessionStorage.setItem('paymentAlertSounded', '1');
+    }
+  }, []);
 
   useEffect(() => {
     if (subscription?.status !== 'past_due') {

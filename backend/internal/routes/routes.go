@@ -197,7 +197,14 @@ func SetupRoutes(
 				manna.GET("/today",   mannaHandler.GetToday)
 				manna.POST("/guess",  mannaHandler.SubmitGuess)
 				manna.POST("/hint",   mannaHandler.GetHint)
+				manna.GET("/stats",   mannaHandler.GetStats)
 				manna.GET("/history", mannaHandler.GetHistory)
+			}
+
+			// Phase 10 M-20: admin word management (auth-required; admin gate inside handler)
+			adminManna := protected.Group("/admin/manna")
+			{
+				adminManna.POST("/words", mannaHandler.AddWord)
 			}
 		}
 	}

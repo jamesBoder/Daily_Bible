@@ -1,5 +1,6 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
+import { SoundService } from '../../services/SoundService';
 import './manna.css';
 
 type KeyState = 'unused' | 'correct' | 'present' | 'absent';
@@ -41,7 +42,12 @@ export const MannaKeyboard: React.FC<MannaKeyboardProps> = ({ keyStates, onKey, 
             <button
               key={key}
               className={`manna-key ${key.length > 1 ? 'manna-key--wide' : ''} ${stateClass(key)} ${key === 'ENTER' && loading ? 'opacity-70' : ''}`}
-              onClick={() => !disabled && !loading && onKey(key)}
+              onClick={() => {
+                if (disabled || loading) return;
+                // M-16: play key sound only from on-screen taps, not physical keyboard
+                if (key.length === 1) SoundService.play('manna-key');
+                onKey(key);
+              }}
               disabled={disabled || (key === 'ENTER' && loading)}
               aria-label={key === '⌫' ? t('manna.delete', 'Delete') : key === 'ENTER' ? t('manna.enter', 'Enter') : key}
             >

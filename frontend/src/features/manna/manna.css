@@ -263,12 +263,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.5rem;
-  height: 3.5rem;
+  /* M-09: clamp prevents tiles from overflowing on small viewports (e.g. iPhone SE 375px)
+     while allowing the full 3.5rem size on larger screens. */
+  width: clamp(2.5rem, 14vw, 3.5rem);
+  height: clamp(2.5rem, 14vw, 3.5rem);
   /* Border uses theme-border token — shifts per theme */
   border: 2.5px solid var(--theme-border);
   border-radius: 8px;
-  font-size: 1.65rem;
+  font-size: clamp(1.2rem, 6vw, 1.65rem);
   font-weight: 800;
   letter-spacing: 0.02em;
   text-transform: uppercase;
@@ -337,6 +339,52 @@
   border-color: transparent;
   color: color-mix(in srgb, var(--foreground) 38%, transparent);
   box-shadow: none;
+}
+
+/* ── Tile state accessibility indicators ─────────────────────────────────────
+   Small shape markers in the bottom-right corner of each resolved tile convey
+   state independent of color — supports deuteranopia and other color vision
+   differences. Symbols: ✓ correct · ◆ present · – absent.            (M-03) */
+
+.manna-tile--correct::after {
+  content: '✓';
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  font-size: 0.42rem;
+  font-weight: 900;
+  line-height: 1;
+  color: color-mix(in srgb, var(--parchment) 60%, transparent);
+  pointer-events: none;
+}
+
+.manna-tile--present::after {
+  content: '◆';
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  font-size: 0.38rem;
+  font-weight: 900;
+  line-height: 1;
+  color: color-mix(in srgb, var(--parchment) 50%, transparent);
+  pointer-events: none;
+}
+
+.manna-tile--absent::after {
+  content: '–';
+  position: absolute;
+  bottom: 3px;
+  right: 4px;
+  font-size: 0.5rem;
+  font-weight: 700;
+  line-height: 1;
+  color: color-mix(in srgb, var(--foreground) 25%, transparent);
+  pointer-events: none;
+}
+
+/* Hide indicators during tile flip to avoid mid-animation visual conflict */
+.manna-tile--flipping::after {
+  display: none;
 }
 
 /* Flip — overrides state animations during the reveal */
@@ -462,11 +510,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 3.6rem;
-  min-width: 2.1rem;
-  padding: 0 0.5rem;
+  /* M-09: key height scales with viewport to match tile sizing */
+  height: clamp(2.8rem, 12vw, 3.6rem);
+  min-width: clamp(1.7rem, 7.5vw, 2.1rem);
+  padding: 0 0.4rem;
   border-radius: 8px;
-  font-size: 0.85rem;
+  font-size: clamp(0.72rem, 2.5vw, 0.85rem);
   font-weight: 700;
   cursor: pointer;
   user-select: none;
@@ -740,6 +789,531 @@
   box-shadow: 0 0 5px 1px color-mix(in srgb, var(--candle-amber) 25%, transparent);
 }
 
+/* ── Win bloom cascade (M-17) — gold bloom ripples across the whole grid ── */
+
+@keyframes cascadeBloom {
+  0%   { box-shadow: 0 0  0   0   color-mix(in srgb, var(--blessing-gold) 0%, transparent); }
+  40%  { box-shadow: 0 0 22px 8px  color-mix(in srgb, var(--blessing-gold) 55%, transparent),
+                    0 0 44px 16px color-mix(in srgb, var(--blessing-gold) 25%, transparent); }
+  100% { box-shadow: 0 0 10px 3px  color-mix(in srgb, var(--blessing-gold) 22%, transparent),
+                    0 0 24px  8px color-mix(in srgb, var(--blessing-gold)  8%, transparent); }
+}
+
+/* Each correct tile in the blooming grid gets a staggered gold bloom.
+   Delay = row_index * 180ms + tile_index * 70ms, approximated with nth-child.
+   The bloom settles into the regular bloomPulse after the cascade. */
+.manna-grid--blooming .manna-tile--correct {
+  animation:
+    cascadeBloom 0.7s ease-out calc(var(--row-idx, 0) * 180ms + var(--tile-index, 0) * 70ms) both,
+    bloomPulse 3.5s ease-in-out calc(var(--row-idx, 0) * 180ms + var(--tile-index, 0) * 70ms + 0.7s) infinite !important;
+}
+
+/* ── Blessings burst (M-14) — gold sparkles radiate from post-game panel ── */
+
+@keyframes blessingsBurst {
+  0%   { transform: translate(0, 0) scale(1); opacity: 1; }
+  70%  { opacity: 0.75; }
+  100% { transform: translate(var(--tx, 0), var(--ty, 0)) scale(0); opacity: 0; }
+}
+
+.manna-blessings-burst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 10;
+  width: 0;
+  height: 0;
+  overflow: visible;
+}
+
+.manna-blessings-particle {
+  position: absolute;
+  color: var(--blessing-gold);
+  font-size: 0.9rem;
+  line-height: 1;
+  animation: blessingsBurst 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--blessing-gold) 70%, transparent));
+}
+
+/* ── Streak badge (M-13) — shown in post-game panel ─────────────────────── */
+
+.manna-streak-badge {
+  display: inline-block;
+  margin-top: 0.65rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  background: color-mix(in srgb, var(--blessing-gold) 14%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blessing-gold) 40%, transparent);
+  color: var(--blessing-gold);
+}
+
+/* ── Next-puzzle countdown (M-08) ────────────────────────────────────────── */
+
+.manna-countdown {
+  color: var(--blessing-gold);
+  letter-spacing: 0.04em;
+}
+
+/* ── Stats & History modal (M-06 / M-07) ─────────────────────────────────── */
+
+/* Panel variant — slightly taller scroll area than tutorial */
+.manna-stats-panel {
+  max-height: 88vh;
+}
+
+/* Tab bar */
+.manna-stats-tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-border) 50%, transparent);
+  padding-bottom: 0;
+}
+
+.manna-stats-tab {
+  flex: 1;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  border-bottom: 2px solid transparent;
+  transition: color 0.18s, border-color 0.18s;
+  margin-bottom: -1px;
+}
+
+.manna-stats-tab--active {
+  color: var(--blessing-gold);
+  border-bottom-color: var(--blessing-gold);
+}
+
+/* Tab panel scroll container */
+.manna-stats-body {
+  min-height: 200px;
+}
+
+/* ── Key stats grid (2×2) ── */
+
+.manna-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.manna-stat-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  padding: 0.6rem 0.25rem;
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--foreground) 8%, transparent);
+  border-radius: 10px;
+}
+
+.manna-stat-value {
+  font-size: 1.45rem;
+  font-weight: 800;
+  color: var(--foreground);
+  line-height: 1;
+}
+
+.manna-stat-label {
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: color-mix(in srgb, var(--foreground) 48%, transparent);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ── Guess distribution bars ── */
+
+.manna-dist-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.manna-dist-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.manna-dist-label {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  width: 0.9rem;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.manna-dist-bar-wrap {
+  flex: 1;
+  background: color-mix(in srgb, var(--foreground) 7%, transparent);
+  border-radius: 4px;
+  height: 1.4rem;
+  overflow: hidden;
+}
+
+.manna-dist-bar {
+  height: 100%;
+  background: var(--blessing-gold);
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 0.4rem;
+  transition: width 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  min-width: 1.5rem;
+}
+
+.manna-dist-count {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--parchment);
+}
+
+/* ── History list ── */
+
+.manna-history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.manna-history-row {
+  display: grid;
+  grid-template-columns: 1.4rem 3.5rem 1fr 2.5rem;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid color-mix(in srgb, var(--theme-border) 30%, transparent);
+  font-size: 0.82rem;
+}
+
+.manna-history-row:last-child {
+  border-bottom: none;
+}
+
+.manna-history-icon {
+  font-size: 0.9rem;
+  text-align: center;
+}
+
+.manna-history-date {
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
+  font-size: 0.75rem;
+}
+
+.manna-history-word {
+  font-weight: 700;
+  font-size: 0.85rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.manna-history-guesses {
+  font-size: 0.75rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── How to Play tutorial overlay ────────────────────────────────────────── */
+
+/* Tutorial panel slide-up entrance (sheet-from-bottom on mobile) */
+@keyframes tutorialSlideUp {
+  0%   { opacity: 0; transform: translateY(32px) scale(0.98); }
+  100% { opacity: 1; transform: translateY(0)     scale(1);   }
+}
+
+/* Tutorial demo tile flip-in — reveals each tile from edge-on to face-forward */
+@keyframes tutorialTileReveal {
+  0%   { transform: rotateX(90deg); opacity: 0; }
+  100% { transform: rotateX(0deg);  opacity: 1; }
+}
+
+/* Full-screen dimming backdrop */
+.manna-tutorial-backdrop {
+  position: fixed;
+  inset: 0;
+  background: color-mix(in srgb, var(--foreground) 58%, transparent);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  z-index: 200;
+  padding: 0;
+}
+
+/* On taller viewports, center the panel instead of sheet-from-bottom */
+@media (min-height: 600px) {
+  .manna-tutorial-backdrop {
+    align-items: center;
+    padding: 1rem;
+  }
+}
+
+/* Panel card */
+.manna-tutorial-panel {
+  background: var(--journal-surface);
+  border: 1px solid color-mix(in srgb, var(--blessing-gold) 22%, transparent);
+  border-radius: 24px 24px 0 0;
+  padding: 1.5rem 1.5rem 2rem;
+  width: 100%;
+  max-width: 420px;
+  max-height: 92vh;
+  overflow-y: auto;
+  position: relative;
+  box-shadow:
+    0 -6px 40px color-mix(in srgb, var(--foreground) 22%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--blessing-gold) 18%, transparent);
+  animation: tutorialSlideUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@media (min-height: 600px) {
+  .manna-tutorial-panel {
+    border-radius: 24px;
+    box-shadow:
+      0 8px 60px color-mix(in srgb, var(--foreground) 30%, transparent),
+      inset 0 1px 0 color-mix(in srgb, var(--blessing-gold) 18%, transparent);
+  }
+}
+
+/* Drag handle notch — mobile sheet affordance */
+.manna-tutorial-panel::before {
+  content: '';
+  display: block;
+  width: 42px;
+  height: 4px;
+  background: color-mix(in srgb, var(--foreground) 18%, transparent);
+  border-radius: 2px;
+  margin: 0 auto 1.25rem;
+}
+
+@media (min-height: 600px) {
+  .manna-tutorial-panel::before {
+    display: none;
+  }
+}
+
+/* Close button — top-right × */
+.manna-tutorial-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 2rem;
+  height: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--foreground) 8%, transparent);
+  color: color-mix(in srgb, var(--foreground) 60%, transparent);
+  font-size: 0.85rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.manna-tutorial-close:hover {
+  background: color-mix(in srgb, var(--foreground) 15%, transparent);
+  color: var(--foreground);
+}
+
+/* Header — icon + title */
+.manna-tutorial-header {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.75rem;
+}
+
+.manna-tutorial-icon {
+  font-size: 2rem;
+  filter: drop-shadow(0 0 10px color-mix(in srgb, var(--blessing-gold) 50%, transparent));
+}
+
+.manna-tutorial-title {
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: var(--blessing-gold);
+  text-align: center;
+  animation: titleGlow 5s ease-in-out infinite;
+}
+
+.manna-tutorial-intro {
+  font-size: 0.9rem;
+  text-align: center;
+  color: var(--foreground);
+  font-weight: 600;
+  line-height: 1.5;
+  margin-bottom: 0.3rem;
+}
+
+.manna-tutorial-sub {
+  font-size: 0.8rem;
+  text-align: center;
+  color: color-mix(in srgb, var(--foreground) 58%, transparent);
+  line-height: 1.5;
+  margin-bottom: 1.25rem;
+}
+
+/* Color key section */
+.manna-tutorial-color-key {
+  margin-bottom: 0.5rem;
+}
+
+.manna-tutorial-section-label {
+  font-size: 0.78rem;
+  color: color-mix(in srgb, var(--foreground) 52%, transparent);
+  text-align: center;
+  margin-bottom: 1rem;
+  line-height: 1.4;
+}
+
+/* Three demo tiles in a horizontal row */
+.manna-tutorial-demos {
+  display: flex;
+  justify-content: center;
+  gap: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.manna-tutorial-demo {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+/* Demo tile: same manna-tile styling, but with a staggered flip-in reveal.
+   The ::after accessibility indicators (M-03) are naturally inherited here too,
+   which doubles as a visual explanation of the indicator system. */
+.manna-tutorial-demo-tile {
+  animation: tutorialTileReveal 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  /* Override the tile's continuous bloom/pulse — keep it static in tutorial */
+  animation-iteration-count: 1 !important;
+}
+
+.manna-tutorial-demo:nth-child(1) .manna-tutorial-demo-tile { animation-delay: 0.45s; }
+.manna-tutorial-demo:nth-child(2) .manna-tutorial-demo-tile { animation-delay: 0.72s; }
+.manna-tutorial-demo:nth-child(3) .manna-tutorial-demo-tile { animation-delay: 0.99s; }
+
+.manna-tutorial-demo-label {
+  font-size: 0.7rem;
+  font-weight: 600;
+  text-align: center;
+  line-height: 1.35;
+  max-width: 5.5rem;
+  white-space: pre-line;
+}
+
+.manna-tutorial-demo-label--correct { color: var(--blessing-gold); }
+.manna-tutorial-demo-label--present { color: var(--candle-amber); }
+.manna-tutorial-demo-label--absent  { color: color-mix(in srgb, var(--foreground) 52%, transparent); }
+
+/* Divider inside tutorial panel */
+.manna-tutorial-ornament {
+  margin: 0.75rem 0;
+  animation: none;
+}
+
+/* Tips row */
+.manna-tutorial-tips {
+  display: flex;
+  flex-direction: column;
+  gap: 0.55rem;
+  margin-bottom: 1.25rem;
+}
+
+.manna-tutorial-tip {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+  border: 1px solid color-mix(in srgb, var(--foreground) 7%, transparent);
+  border-radius: 10px;
+  padding: 0.65rem 0.8rem;
+}
+
+.manna-tutorial-tip > span {
+  font-size: 1.15rem;
+  flex-shrink: 0;
+  margin-top: 0.05rem;
+}
+
+.manna-tutorial-tip > p {
+  font-size: 0.8rem;
+  color: color-mix(in srgb, var(--foreground) 72%, transparent);
+  line-height: 1.5;
+}
+
+/* CTA button — extends .manna-cta-btn */
+.manna-tutorial-cta {
+  width: 100%;
+  padding: 0.9rem;
+  border-radius: 12px;
+  font-size: 1rem;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  letter-spacing: 0.01em;
+  transition: opacity 0.15s, box-shadow 0.15s;
+}
+
+.manna-tutorial-cta:hover {
+  opacity: 0.92;
+  box-shadow:
+    0 0 24px 6px  color-mix(in srgb, var(--blessing-gold) 45%, transparent),
+    0 0 48px 14px color-mix(in srgb, var(--blessing-gold) 18%, transparent);
+}
+
+/* "Tap ? anytime…" hint below the CTA */
+.manna-tutorial-reopen-hint {
+  text-align: center;
+  font-size: 0.72rem;
+  color: color-mix(in srgb, var(--foreground) 36%, transparent);
+}
+
+/* ? Help button in the puzzle header */
+.manna-help-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-radius: 50%;
+  border: 1.5px solid color-mix(in srgb, var(--blessing-gold) 38%, transparent);
+  background: color-mix(in srgb, var(--blessing-gold) 8%, transparent);
+  color: color-mix(in srgb, var(--blessing-gold) 75%, transparent);
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, color 0.18s;
+  flex-shrink: 0;
+}
+
+.manna-help-btn:hover {
+  background: color-mix(in srgb, var(--blessing-gold) 18%, transparent);
+  border-color: color-mix(in srgb, var(--blessing-gold) 65%, transparent);
+  color: var(--blessing-gold);
+}
+
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
 
 @media (prefers-reduced-motion: reduce) {
@@ -761,7 +1335,12 @@
   .manna-hint-strip,
   .manna-grid-wrap,
   .manna-confetti-piece,
-  .manna-ornament {
+  .manna-ornament,
+  .manna-tutorial-panel,
+  .manna-tutorial-demo-tile,
+  .manna-tutorial-title,
+  .manna-blessings-particle,
+  .manna-grid--blooming .manna-tile--correct {
     animation: none !important;
     text-shadow: none !important;
   }

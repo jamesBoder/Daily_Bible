@@ -119,13 +119,14 @@ func (s *MannaService) GetYesterdayWord() (*models.MannaWord, error) {
 
 func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 	var words []models.MannaWord
-	if err := s.db.Order("id asc").Find(&words).Error; err != nil {
+	if err := s.db.Where("LENGTH(word) = 5").Order("id asc").Find(&words).Error; err != nil {
 		return nil, err
 	}
 	if len(words) == 0 {
 		return nil, errors.New("word bank is empty")
 	}
 	dateStr := t.Format("20060102")
+	// Seed format: YYYYMMDD as int64. Safe until year 9999. Same seed = same word across all server instances.
 	seed, _ := strconv.ParseInt(dateStr, 10, 64)
 	rng := rand.New(rand.NewSource(seed))
 	return &words[rng.Intn(len(words))], nil
@@ -201,6 +202,16 @@ func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool
 		}
 	}
 
+	// M-01: Validate the guess is a recognized word in the word bank.
+	// The manna_words.word column has a unique index; this lookup is fast.
+	var wordCount int64
+	if err := s.db.Model(&models.MannaWord{}).Where("word = ?", guessWord).Count(&wordCount).Error; err != nil {
+		return nil, fmt.Errorf("validate word: %w", err)
+	}
+	if wordCount == 0 {
+		return nil, errors.New("not_a_word: Not a recognized biblical word")
+	}
+
 	today := time.Now().UTC().Truncate(24 * time.Hour)
 
 	var game models.MannaGame
@@ -251,27 +262,33 @@ func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool
 	}
 
 	if (game.Status == "solved" || game.Status == "failed") && !game.BlessingsAwarded {
-		s.db.Model(&game).Update("blessings_awarded", true)
+		// Atomic test-and-set: only the request that flips blessings_awarded false→true
+		// will get RowsAffected == 1. Concurrent duplicate requests see 0 and skip.
+		award := s.db.Model(&game).
+			Where("blessings_awarded = ?", false).
+			Update("blessings_awarded", true)
 
-		var base int
-		var reason string
-		if game.Status == "solved" {
-			base, reason = 20, "manna_solved"
-		} else {
-			base, reason = 10, "manna_played"
+		if award.RowsAffected > 0 {
+			var base int
+			var reason string
+			if game.Status == "solved" {
+				base, reason = 20, "manna_solved"
+			} else {
+				base, reason = 10, "manna_played"
+			}
+			multiplier := 1.0
+			if isPremium {
+				multiplier = 1.5
+			}
+
+			go func() {
+				defer func() { recover() }()
+				s.blessingsService.Credit(userID, base, reason, multiplier)
+			}()
+
+			blessings := int(float64(base) * multiplier)
+			resp.BlessingsAwarded = &blessings
 		}
-		multiplier := 1.0
-		if isPremium {
-			multiplier = 1.5
-		}
-
-		go func() {
-			defer func() { recover() }()
-			s.blessingsService.Credit(userID, base, reason, multiplier)
-		}()
-
-		blessings := int(float64(base) * multiplier)
-		resp.BlessingsAwarded = &blessings
 	}
 
 	if game.Status == "solved" || game.Status == "failed" {
@@ -414,10 +431,16 @@ func (s *MannaService) GetHistory(userID uint) ([]MannaGameSummary, error) {
 // buildScriptureClue replaces every whole-word occurrence of the target word
 // in the scripture text with underscores, giving players a contextual clue
 // without revealing the answer outright.
+//
+// Uses (^|[^A-Za-z]) boundary anchors instead of \b so that apostrophes,
+// hyphens, and other punctuation adjacent to the word are handled correctly.
+// Capture groups preserve the surrounding non-letter characters in the output.
 func buildScriptureClue(text, word string) string {
 	blank := strings.Repeat("_", len(word))
-	re := regexp.MustCompile(`(?i)\b` + regexp.QuoteMeta(word) + `\b`)
-	return re.ReplaceAllString(text, blank)
+	// Pattern: optional non-letter before, word (case-insensitive), optional non-letter after.
+	// Capture groups $1/$2 restore the surrounding chars so they are not swallowed.
+	re := regexp.MustCompile(`(?i)(^|[^A-Za-z])` + regexp.QuoteMeta(word) + `([^A-Za-z]|$)`)
+	return re.ReplaceAllString(text, "${1}"+blank+"${2}")
 }
 
 // ntBooks is the set of New Testament book name prefixes (lowercase).
@@ -483,7 +506,17 @@ func formatHintLetters(hints []HintLetter) string {
 
 // evaluateGuess returns a 5-element slice of "correct", "present", or "absent".
 // Uses two-pass algorithm to correctly handle duplicate letters.
+// Both answer and guess must be exactly 5 uppercase letters.
 func evaluateGuess(answer, guess string) []string {
+	if len(answer) != 5 || len(guess) != 5 {
+		// Defensive: caller already validates; this guard prevents an OOB panic
+		// if this function is ever called from a future path without validation.
+		result := make([]string, len(guess))
+		for i := range result {
+			result[i] = "absent"
+		}
+		return result
+	}
 	result := make([]string, 5)
 	answerCounts := map[rune]int{}
 
@@ -509,6 +542,95 @@ func evaluateGuess(answer, guess string) []string {
 	return result
 }
 
+// ─── Stats (M-06) ─────────────────────────────────────────────────────────────
+
+// MannaStats holds aggregated gameplay statistics for a user.
+type MannaStats struct {
+	Played        int            `json:"played"`
+	Won           int            `json:"won"`
+	WinRate       float64        `json:"win_rate"`        // 0–100
+	AvgGuesses    float64        `json:"avg_guesses"`     // for solved games only
+	CurrentStreak int            `json:"current_streak"`  // consecutive days played (solved or failed)
+	MaxStreak     int            `json:"max_streak"`      // all-time max consecutive days played
+	GuessDist     map[string]int `json:"guess_distribution"` // "1"–"6" → solved-game count per guess number
+}
+
+// GetStats computes aggregated Manna statistics for the given user.
+func (s *MannaService) GetStats(userID uint) (*MannaStats, error) {
+	var games []models.MannaGame
+	if err := s.db.
+		Where("user_id = ? AND status IN ('solved','failed')", userID).
+		Order("game_date asc").
+		Find(&games).Error; err != nil {
+		return nil, fmt.Errorf("GetStats query: %w", err)
+	}
+
+	stats := &MannaStats{GuessDist: map[string]int{"1": 0, "2": 0, "3": 0, "4": 0, "5": 0, "6": 0}}
+
+	var totalGuessesWon float64
+	for _, g := range games {
+		stats.Played++
+		if g.Status == "solved" {
+			stats.Won++
+			totalGuessesWon += float64(g.GuessCount)
+			key := strconv.Itoa(g.GuessCount)
+			if _, ok := stats.GuessDist[key]; ok {
+				stats.GuessDist[key]++
+			}
+		}
+	}
+
+	if stats.Played > 0 {
+		stats.WinRate = float64(stats.Won) / float64(stats.Played) * 100
+	}
+	if stats.Won > 0 {
+		stats.AvgGuesses = totalGuessesWon / float64(stats.Won)
+	}
+
+	// Streak calculation: consecutive calendar days (UTC) with any completed game.
+	// Walk backwards from today; a game on today counts even if still in_progress
+	// (but we only fetched solved/failed above — that's intentional: streak breaks on missed days).
+	today := time.Now().UTC().Truncate(24 * time.Hour)
+	dateSet := map[string]bool{}
+	for _, g := range games {
+		dateSet[g.GameDate.UTC().Truncate(24*time.Hour).Format("2006-01-02")] = true
+	}
+
+	// current streak: walk back from today (or yesterday if not played yet today)
+	checkDate := today
+	if !dateSet[checkDate.Format("2006-01-02")] {
+		checkDate = checkDate.AddDate(0, 0, -1)
+	}
+	for dateSet[checkDate.Format("2006-01-02")] {
+		stats.CurrentStreak++
+		checkDate = checkDate.AddDate(0, 0, -1)
+	}
+
+	// max streak: single pass through sorted date set
+	sorted := make([]time.Time, 0, len(dateSet))
+	for _, g := range games {
+		sorted = append(sorted, g.GameDate.UTC().Truncate(24*time.Hour))
+	}
+	cur := 0
+	for i, d := range sorted {
+		if i == 0 {
+			cur = 1
+		} else {
+			prev := sorted[i-1]
+			if d.Sub(prev) == 24*time.Hour {
+				cur++
+			} else {
+				cur = 1
+			}
+		}
+		if cur > stats.MaxStreak {
+			stats.MaxStreak = cur
+		}
+	}
+
+	return stats, nil
+}
+
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
 func (s *MannaService) loadGuesses(gameID uint) ([]GuessEntry, error) {
@@ -531,4 +653,33 @@ func (s *MannaService) SeedWordCount() int64 {
 	var count int64
 	s.db.Model(&models.MannaWord{}).Count(&count)
 	return count
+}
+
+// AddWord inserts a new word into the Manna word bank.
+// Returns an error if the word is not exactly 5 alphabetic letters, if the
+// scripture reference is empty, or if the word already exists.
+func (s *MannaService) AddWord(word, scriptureReference, scriptureText string) (*models.MannaWord, error) {
+	word = strings.ToUpper(strings.TrimSpace(word))
+	if len(word) != 5 {
+		return nil, errors.New("add_word_length: word must be exactly 5 letters")
+	}
+	if matched, _ := regexp.MatchString(`^[A-Z]{5}$`, word); !matched {
+		return nil, errors.New("add_word_chars: word must contain only letters A–Z")
+	}
+	if strings.TrimSpace(scriptureReference) == "" {
+		return nil, errors.New("add_word_ref: scripture reference is required")
+	}
+
+	m := &models.MannaWord{
+		Word:               word,
+		ScriptureReference: strings.TrimSpace(scriptureReference),
+		ScriptureText:      strings.TrimSpace(scriptureText),
+	}
+	if err := s.db.Create(m).Error; err != nil {
+		if strings.Contains(err.Error(), "unique") || strings.Contains(err.Error(), "duplicate") {
+			return nil, fmt.Errorf("add_word_duplicate: %q already exists in the word bank", word)
+		}
+		return nil, fmt.Errorf("add_word_db: %w", err)
+	}
+	return m, nil
 }

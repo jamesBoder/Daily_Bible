@@ -297,7 +297,7 @@ func main() {
     verseHandler.SetCommunityService(communityService)
 
     // Phase 10 handlers
-    mannaHandler := handlers.NewMannaHandler(mannaService, subscriptionChecker)
+    mannaHandler := handlers.NewMannaHandler(mannaService, subscriptionChecker, streakService, settingsService, adminIDs)
 
     // Phase 10: seed word bank on every start — idempotent (ON CONFLICT DO NOTHING).
     // Running unconditionally means new words added to the SQL file are picked up

@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 import StreakCandle from "../StreakCandle";
 import BlessingsChip from "../BlessingsChip";
+import { useStreak } from "../../contexts/StreakContext";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
@@ -27,6 +28,8 @@ export const Header: React.FC = () => {
   const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentLanguage: _lang } = useLanguage();
+  const { subscription } = useStreak();
+  const isPastDue = subscription?.status === 'past_due';
 
   const handleLogout = async () => {
     await logout();
@@ -104,9 +107,18 @@ export const Header: React.FC = () => {
                 {t("nav.manna", "Manna")}
               </NavLink>
             )}
-            <NavLink to="/settings" className={navLinkDesktop}>
-              {t("nav.settings")}
-            </NavLink>
+            <div className="relative">
+              <NavLink to="/settings" className={navLinkDesktop}>
+                {t("nav.settings")}
+              </NavLink>
+              {isPastDue && (
+                <span
+                  className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-amber-500"
+                  aria-label={t('subscription.nav_badge.tooltip', 'Payment issue — update your payment method')}
+                  title={t('subscription.nav_badge.tooltip', 'Payment issue — update your payment method')}
+                />
+              )}
+            </div>
           </div>
 
           {/* ── Desktop User Section ───────────────────────────────────────── */}
@@ -203,9 +215,17 @@ export const Header: React.FC = () => {
                   {t("nav.manna", "Manna")}
                 </NavLink>
               )}
-              <NavLink to="/settings" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
-                {t("nav.settings")}
-              </NavLink>
+              <div className="relative">
+                <NavLink to="/settings" className={navLinkMobile} onClick={() => setIsMenuOpen(false)}>
+                  {t("nav.settings")}
+                </NavLink>
+                {isPastDue && (
+                  <span
+                    className="absolute top-1 right-2 w-2 h-2 rounded-full bg-amber-500"
+                    aria-hidden="true"
+                  />
+                )}
+              </div>
 
               {/* Mobile user section */}
               <div className="pt-3 mt-1 border-t border-amber-300/30 dark:border-amber-700/20">

@@ -46,6 +46,8 @@ export const PricingModal: React.FC = () => {
   const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
   const [view, setView] = useState<'plans' | 'otp'>(initialView);
   const overlayRef = useRef<HTMLDivElement>(null);
+  // §8.18.1: prevent double-tap before overlay appears
+  const checkoutInFlight = useRef(false);
 
   // Sync view when the modal is re-opened with a different initialView
   useEffect(() => {
@@ -75,10 +77,14 @@ export const PricingModal: React.FC = () => {
   if (!isOpen) return null;
 
   const handleCheckout = async () => {
+    if (checkoutInFlight.current) return;
+    checkoutInFlight.current = true;
     try {
       await startCheckout(planChoice);
     } catch {
-      // redirect in progress
+      // redirect in progress or cancelled
+    } finally {
+      checkoutInFlight.current = false;
     }
   };
 

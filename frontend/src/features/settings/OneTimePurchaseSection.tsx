@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { BookOpen, Scroll, Palette, CalendarCheck, Sparkle, Heart } from '@phosphor-icons/react';
 import { useStreak } from '../../contexts/StreakContext';
+import { showToast } from '../../utils/toast';
 
 interface OTPProduct {
   key: string;
@@ -91,8 +92,10 @@ export const OneTimePurchaseSection: React.FC<{ ownedKeys?: string[]; hideHeader
       if (key === 'support_developer') {
         setThankYouVisible(true);
       }
-    } catch {
+    } catch (err: any) {
       setLoadingKey(null);
+      const msg = err?.response?.data?.error ?? t('otp.purchase_error', 'Could not start checkout. Please try again.');
+      showToast.error(msg);
     }
   };
 

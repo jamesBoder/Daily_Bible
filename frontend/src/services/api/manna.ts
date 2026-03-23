@@ -69,6 +69,16 @@ export interface MannaGameSummary {
   word: string;
 }
 
+export interface MannaStats {
+  played: number;
+  won: number;
+  win_rate: number;        // 0–100
+  avg_guesses: number;     // for solved games only; 0 if none yet
+  current_streak: number;
+  max_streak: number;
+  guess_distribution: Record<string, number>; // "1"–"6" → count
+}
+
 export const mannaApi = {
   getToday(): Promise<MannaResponse> {
     return apiClient.get<MannaResponse>('/api/manna/today').then(r => r.data);
@@ -88,5 +98,9 @@ export const mannaApi = {
 
   getHistory(): Promise<{ history: MannaGameSummary[] }> {
     return apiClient.get<{ history: MannaGameSummary[] }>('/api/manna/history').then(r => r.data);
+  },
+
+  getStats(): Promise<MannaStats> {
+    return apiClient.get<MannaStats>('/api/manna/stats').then(r => r.data);
   },
 };

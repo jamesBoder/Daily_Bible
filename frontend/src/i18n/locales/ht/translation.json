@@ -28,6 +28,8 @@
     "yesterdaysWord": "Mo ayè a",
     "yesterdaySection": "Mo ayè a",
     "unlockCta": "Debloke avèk yon abònman Words of Praise",
+    "socialProof": "{{n}} devoto ap rezoud mo jodi a",
+    "unlockScripture": "Debloke tèks konplè a",
     "solvedTitle": "Ou rezoud Manna jodi a!",
     "failedTitle": "Mo jodi a te:",
     "comeback": "Tounen demen pou yon nouvo mo.",
@@ -40,8 +42,52 @@
     "errorLength": "Repons yo dwe gen egzakteman 5 lèt.",
     "errorComplete": "Jwèt sa a deja fini.",
     "errorChars": "Repons yo dwe gen sèlman lèt A–Z.",
+    "notAWord": "Pa yon mo biblik yo rekonèt",
     "errorSubmit": "Pa ka voye repons. Eseye ankò.",
-    "noHints": "Pa gen endis"
+    "noHints": "Pa gen endis",
+    "howToPlay": "Kijan pou jwe",
+    "howToPlayTitle": "Kijan pou jwe",
+    "tutorialHelpBtn": "Kijan pou jwe",
+    "tutorialIntro": "Devine mo biblik 5 lèt la nan 6 eseye.",
+    "tutorialSub": "Chak eseye dwe yon mo biblik yo rekonèt.",
+    "tutorialColorKeyTitle": "Aprè chak eseye, pyès yo montre ki jan ou te pwòch :",
+    "tutorialCorrectLabel": "Bon lèt,\nbon pozisyon",
+    "tutorialPresentLabel": "Bon lèt,\nmauvais pozisyon",
+    "tutorialAbsentLabel": "Pa nan\nmo a",
+    "tutorialClue": "Chak kase-tèt montre yon vèsè biblik — jwenn mo ki manke a.",
+    "tutorialHints": "Endis yo révèle yon pozisyon lèt (koute 15 Benediksyon ✦). Jiska 3 pou chak kase-tèt.",
+    "tutorialBegin": "Kòmanse jwe",
+    "tutorialReopenHint": "Tape ? nenpòt ki lè pou revize règ yo.",
+    "statsModalLabel": "Estatistik & Istwa",
+    "statsTitle": "Estatistik Manna",
+    "statsTab": "Estatistik",
+    "historyTab": "Istwa",
+    "statPlayed": "Jwe",
+    "statWinRate": "% Viktwa",
+    "statStreak": "Seri",
+    "statMaxStreak": "Miyò",
+    "statAvgGuesses": "Mwayèn eseye (viktwa) : {{n}}",
+    "statDistribution": "Distribisyon Eseye",
+    "statGuesses": "eseye",
+    "statsEmpty": "Pako gen jwèt. Tounen apre premye puzzle ou!",
+    "statsError": "Pa ka chaje estatistik yo. Eseye ankò pita.",
+    "historyEmpty": "Pako gen jwèt pasé. Istwa w ap parèt isit apre premye puzzle ou.",
+    "historyError": "Pa ka chaje istwa a. Eseye ankò pita.",
+    "historyFailed": "X/6",
+    "nextPuzzle": "Pwochen mo nan",
+    "ariaCorrect": "kòrèk",
+    "ariaPresent": "prezan",
+    "ariaAbsent": "absan",
+    "ariaSolved": "Rezoud! Mo a te {{word}}.",
+    "ariaFailed": "Jwèt fini. Mo a te {{word}}.",
+    "streak": "Seri Manna {{n}} jou",
+    "clueIntro": "Jwenn mo ki manke :",
+    "hintAriaLabel": "Itilize yon konsey ({{n}} rete, koût 15 Benediksyon)",
+    "hintError": "Pa t kapab jwenn konsey a. Eseye ankò.",
+    "hintMax": "Pa gen konsey kè rete.",
+    "hintNoBlessings": "Pa gen ase Benediksyon pou yon konsey.",
+    "hintRevealed": "Pozisyon {{n}}: {{letter}}",
+    "hintsRevealed": "Revele:"
   },
   "dailyVerse": {
     "title": "Vèsè Jodi a",
@@ -215,7 +261,14 @@
     "sections": {
       "myJourney": "Vwayaj Mwen",
       "devotion": "Devotion ak Notifikasyon",
-      "appearance": "Aparans"
+      "appearance": "Aparans",
+      "manna": "Jwèt Manna"
+    },
+    "manna": {
+      "hardMode": "Mòd Difisil",
+      "hardModeDesc": "Lèt konfime yo dwe reutilize nan chak devine apre a.",
+      "physicalKeySound": "Son klavye fizik",
+      "physicalKeySoundDesc": "Jwe yon son lè w ap tape sou klavye fizik ou."
     },
     "graceDays": {
       "title": "Jou Gras",
@@ -392,15 +445,33 @@
     "achieved_label": "Etap Atenn",
     "blessings_label": "Benediksyon",
     "continue": "Kontinye",
-    "first_steps": { "name": "Premye Pas" },
-    "week_in_word": { "name": "Yon Semèn nan Pawòl la" },
-    "rooted": { "name": "Anrasinen" },
-    "month_of_grace": { "name": "Mwa Gras" },
-    "steadfast": { "name": "Fèm" },
-    "three_month": { "name": "Twa Mwa Solid" },
-    "half_year": { "name": "Demi Ane" },
-    "nine_months": { "name": "Nèf Mwa" },
-    "full_year": { "name": "Yon Ane Konplè" }
+    "first_steps": {
+      "name": "Premye Pas"
+    },
+    "week_in_word": {
+      "name": "Yon Semèn nan Pawòl la"
+    },
+    "rooted": {
+      "name": "Anrasinen"
+    },
+    "month_of_grace": {
+      "name": "Mwa Gras"
+    },
+    "steadfast": {
+      "name": "Fèm"
+    },
+    "three_month": {
+      "name": "Twa Mwa Solid"
+    },
+    "half_year": {
+      "name": "Demi Ane"
+    },
+    "nine_months": {
+      "name": "Nèf Mwa"
+    },
+    "full_year": {
+      "name": "Yon Ane Konplè"
+    }
   },
   "shop": {
     "title": "Kado Fidelite",
@@ -430,11 +501,11 @@
     "access_until": "Aksè jiska {{date}}",
     "reactivate": "Reaktive",
     "past_due_title": "Peman echwe",
-    "past_due_description": "Mete \u00e0 jou metòd peman ou pou kenbe aksè premium.",
-    "past_due_banner": "Dènye peman ou echwe. Mete \u00e0 jou metòd peman ou.",
-    "update_payment": "Mete \u00e0 jou peman",
+    "past_due_description": "Mete à jou metòd peman ou pou kenbe aksè premium.",
+    "past_due_banner": "Dènye peman ou echwe. Mete à jou metòd peman ou.",
+    "update_payment": "Mete à jou peman",
     "refresh": "Aktualize estati",
-    "loading": "Ap chaje\u2026",
+    "loading": "Ap chaje…",
     "modal_label": "Abonman premium",
     "modal_title": "Monte nan Premium",
     "modal_subtitle": "Apwofondichay pratik chak jou ou",
@@ -447,27 +518,59 @@
       "prompts": "Sijèsyon refleksyon chak semèn",
       "translations": "Tradiksyon Bib modèn",
       "streak_calendar": "Kalandriye seri konplè",
-      "blessings_multiplier": "Benediksyon \u00d71.5 pou chak aksyon",
+      "blessings_multiplier": "Benediksyon ×1.5 pou chak aksyon",
       "reflection_archive": "Achiv refleksyon konplè"
     }
   },
   "otp": {
     "section_title": "Ajoute ak achè inik",
-    "section_description": "Debloke fonksyon endividyèl pou toujou \u2014 san abonman.",
+    "section_description": "Debloke fonksyon endividyèl pou toujou — san abonman.",
     "owned": "Posede",
-    "loading": "\u2026",
+    "loading": "…",
     "success_toast": "Achè konplè!",
-    "journal_unlock": { "title": "Debloke Jounal", "desc": "Antre san limit ak edisyon rich, pou toujou.", "price": "$4.99" },
-    "reflection_archive": { "title": "Achiv Refleksyon", "desc": "Aksede tout refleksyon ou anvan yo.", "price": "$2.99" },
-    "modern_translations": { "title": "Tradiksyon Modèn", "desc": "NIV, ESV, NLT ak plis \u2014 debloke pou toujou.", "price": "$3.99" },
-    "grace_day_pack": { "title": "Pak Jou Gras", "desc": "3 jou gras anplis.", "price": "$0.99" },
-    "theme_sanctuary": { "title": "Tèm Sanktiyè", "desc": "Yon estetik cho ak sakre.", "price": "$1.99" },
-    "theme_desert_sand": { "title": "Tèm Sab Dezè", "desc": "Ton tè enspire pa dezè ansyen.", "price": "$1.99" },
-    "theme_celestial": { "title": "Tèm Selès", "desc": "Yon palèt pwofon ak etwal.", "price": "$1.99" },
-    "full_theme_library": { "title": "Bibliyotèk Tèm Konplè", "desc": "Tout tèm premium, pase ak lavni.", "price": "$5.99" },
+    "journal_unlock": {
+      "title": "Debloke Jounal",
+      "desc": "Antre san limit ak edisyon rich, pou toujou.",
+      "price": "$4.99"
+    },
+    "reflection_archive": {
+      "title": "Achiv Refleksyon",
+      "desc": "Aksede tout refleksyon ou anvan yo.",
+      "price": "$2.99"
+    },
+    "modern_translations": {
+      "title": "Tradiksyon Modèn",
+      "desc": "NIV, ESV, NLT ak plis — debloke pou toujou.",
+      "price": "$3.99"
+    },
+    "grace_day_pack": {
+      "title": "Pak Jou Gras",
+      "desc": "3 jou gras anplis.",
+      "price": "$0.99"
+    },
+    "theme_sanctuary": {
+      "title": "Tèm Sanktiyè",
+      "desc": "Yon estetik cho ak sakre.",
+      "price": "$1.99"
+    },
+    "theme_desert_sand": {
+      "title": "Tèm Sab Dezè",
+      "desc": "Ton tè enspire pa dezè ansyen.",
+      "price": "$1.99"
+    },
+    "theme_celestial": {
+      "title": "Tèm Selès",
+      "desc": "Yon palèt pwofon ak etwal.",
+      "price": "$1.99"
+    },
+    "full_theme_library": {
+      "title": "Bibliyotèk Tèm Konplè",
+      "desc": "Tout tèm premium, pase ak lavni.",
+      "price": "$5.99"
+    },
     "support_developer": {
       "title": "Sipòte Devloppè a",
-      "desc": "Achte yon kafe \u2615 pou mwen \u2014 mèsi anpil.",
+      "desc": "Achte yon kafe ☕ pou mwen — mèsi anpil.",
       "price": "$2.99",
       "thankyou_label": "Mèsi",
       "thankyou_title": "Mèsi!",
@@ -485,33 +588,94 @@
   },
   "checkout": {
     "overlay": {
-      "title": "Ap redirije nan peman\u2026",
+      "title": "Ap redirije nan peman…",
       "subtitle": "Ou pral al nan Stripe pou konplete peman ou."
     }
   },
   "community": {
-    "section": { "title": "Kominote" },
+    "section": {
+      "title": "Kominote"
+    },
     "walking_today": "{{count}} moun li Pawòl la jodi a",
-    "tab": { "board": "Tablo", "prayer": "Mi Priyè", "challenges": "Defi" },
-    "post_type": { "announcement": "Anons", "milestone": "Etap", "prayer": "Demann Priyè", "challenge": "Defi" },
+    "tab": {
+      "board": "Tablo",
+      "prayer": "Mi Priyè",
+      "challenges": "Defi"
+    },
+    "post_type": {
+      "announcement": "Anons",
+      "milestone": "Etap",
+      "prayer": "Demann Priyè",
+      "challenge": "Defi"
+    },
     "admin_author": "Words of Praise",
     "anonymous_author": "Anonim",
-    "reaction": { "amen": "Amèn", "pray": "Priye", "heart": "❤", "join": "Rantre" },
-    "composer": { "placeholder": "Pataje yon refleksyon...", "post_btn": "Pibliye", "char_limit": "{{count}} karaktè rete", "locked": "Vin manm pou pataje refleksyon ak kominote a." },
-    "prayer": { "placeholder": "Voye yon demann priyè...", "anonymous_label": "Pibliye anonim", "submit_btn": "Voye", "expire_notice": "Demann priyè yo ekspire apre 7 jou.", "open_to_all": "Demann priyè yo ouvè pou tout manm." },
-    "challenge": { "joined_count": "{{count}} moun rantre", "join_btn": "Rantre nan defi a", "joined_btn": "Rantre ✓" },
-    "empty": { "board": "Pa gen refleksyon ankò — ou kapab premye pataje.", "prayer": "Pa gen demann priyè kounye a.", "challenge": "Pa gen defi aktif semèn sa a." },
-    "delete": { "confirm": "Efase pòs sa a?", "btn": "Efase" },
-    "error": { "post_failed": "Pa kapab pibliye. Tanpri eseye ankò.", "react_failed": "Pa kapab sove reyaksyon ou.", "rate_limit": "Twòp pòs — tanpri tann kèk minit." },
-    "admin": { "panel_title": "Admin — Nouvo Pòs", "body_placeholder": "Ekri yon anons oswa defi...", "pin_label": "Kole anwo", "expires_label": "Ekspire:", "publish_btn": "Pibliye", "publishing": "Ap pibliye...", "error": "Echèk piblikasyon." },
-    "expiry": { "expires_in_days": "Ekspire nan {{count}} jou", "expiring_soon": "Ekspire byento" },
-    "time": { "just_now": "kounye a", "mins_ago": "{{count}}min de sa", "hours_ago": "{{count}}h de sa", "days_ago": "{{count}}j de sa" },
+    "reaction": {
+      "amen": "Amèn",
+      "pray": "Priye",
+      "heart": "❤",
+      "join": "Rantre"
+    },
+    "composer": {
+      "placeholder": "Pataje yon refleksyon...",
+      "post_btn": "Pibliye",
+      "char_limit": "{{count}} karaktè rete",
+      "locked": "Vin manm pou pataje refleksyon ak kominote a."
+    },
+    "prayer": {
+      "placeholder": "Voye yon demann priyè...",
+      "anonymous_label": "Pibliye anonim",
+      "submit_btn": "Voye",
+      "expire_notice": "Demann priyè yo ekspire apre 7 jou.",
+      "open_to_all": "Demann priyè yo ouvè pou tout manm."
+    },
+    "challenge": {
+      "joined_count": "{{count}} moun rantre",
+      "join_btn": "Rantre nan defi a",
+      "joined_btn": "Rantre ✓"
+    },
+    "empty": {
+      "board": "Pa gen refleksyon ankò — ou kapab premye pataje.",
+      "prayer": "Pa gen demann priyè kounye a.",
+      "challenge": "Pa gen defi aktif semèn sa a."
+    },
+    "delete": {
+      "confirm": "Efase pòs sa a?",
+      "btn": "Efase"
+    },
+    "error": {
+      "post_failed": "Pa kapab pibliye. Tanpri eseye ankò.",
+      "react_failed": "Pa kapab sove reyaksyon ou.",
+      "rate_limit": "Twòp pòs — tanpri tann kèk minit."
+    },
+    "admin": {
+      "panel_title": "Admin — Nouvo Pòs",
+      "body_placeholder": "Ekri yon anons oswa defi...",
+      "pin_label": "Kole anwo",
+      "expires_label": "Ekspire:",
+      "publish_btn": "Pibliye",
+      "publishing": "Ap pibliye...",
+      "error": "Echèk piblikasyon."
+    },
+    "expiry": {
+      "expires_in_days": "Ekspire nan {{count}} jou",
+      "expiring_soon": "Ekspire byento"
+    },
+    "time": {
+      "just_now": "kounye a",
+      "mins_ago": "{{count}}min de sa",
+      "hours_ago": "{{count}}h de sa",
+      "days_ago": "{{count}}j de sa"
+    },
     "new_posts_banner": "Nouvo pòs — touche pou aktualize"
   },
-  "leaderboard": { "title": "Kominote", "this_weeks_challenge": "Defi semèn sa a" },
+  "leaderboard": {
+    "title": "Kominote",
+    "this_weeks_challenge": "Defi semèn sa a"
+  },
   "streak": {
     "share_button": "Pataje seri mwen",
-    "share_generating": "Ap jenere\u2026",
+    "share_generating": "Ap jenere…",
     "share_subtitle": "jou nan Pawòl la",
     "share_locked": "Vin Premium pou pataje vwayaj seri ou a ak lòt moun."
   },

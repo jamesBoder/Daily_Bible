@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 import { Crown, Check, Palette, Sparkle } from '@phosphor-icons/react';
@@ -7,6 +7,7 @@ import { ThemePicker } from '../settings/ThemePicker';
 import { OneTimePurchaseSection } from '../settings/OneTimePurchaseSection';
 import BlessingsChip from '../../components/BlessingsChip';
 import { useStreak } from '../../contexts/StreakContext';
+import { SoundService } from '../../services/SoundService';
 import styles from './RewardsShop.module.css';
 
 const PLAN_FEATURES = [
@@ -35,6 +36,8 @@ export const RewardsShop: React.FC = () => {
   } = useStreak();
   const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
   const [portalLoading, setPortalLoading] = useState(false);
+  // §8.18.1: prevent double-tap before overlay appears
+  const checkoutInFlight = useRef(false);
 
   // Handle Stripe return (?subscribed=true or ?purchased=<key>)
   React.useEffect(() => {
@@ -50,8 +53,10 @@ export const RewardsShop: React.FC = () => {
 
     refreshSubscription().then(() => {
       if (subscribed === 'true') {
-        toast.success(t('subscription.success_toast', 'Welcome to Premium!'));
+        // subscription-success sound fires via StreakContext isPremium transition watcher
       } else if (purchased) {
+        // §8.18.3: play purchase-success sound after OTP purchase
+        SoundService.play('purchase-success');
         toast.success(t('otp.success_toast', 'Purchase complete!'));
       }
     });
@@ -66,12 +71,24 @@ export const RewardsShop: React.FC = () => {
   const ownedKeys = subscription?.owned_purchase_keys ?? [];
 
   const handleCheckout = async () => {
-    try { await startCheckout(planChoice); } catch { /* redirect in progress */ }
+    if (checkoutInFlight.current) return;
+    checkoutInFlight.current = true;
+    try { await startCheckout(planChoice); }
+    catch (err: any) {
+      const msg = err?.response?.data?.error ?? t('subscription.checkout_error', 'Could not start checkout. Please try again.');
+      toast.error(msg);
+    }
+    finally { checkoutInFlight.current = false; }
   };
 
   const handlePortal = async () => {
     setPortalLoading(true);
-    try { await openPortal(); } catch { setPortalLoading(false); }
+    try { await openPortal(); }
+    catch (err: any) {
+      setPortalLoading(false);
+      const msg = err?.response?.data?.error ?? t('subscription.portal_error', 'Could not open subscription portal. Please try again.');
+      toast.error(msg);
+    }
   };
 
   return (

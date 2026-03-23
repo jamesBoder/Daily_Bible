@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Crown, ArrowClockwise, X, Warning } from '@phosphor-icons/react';
 import { useStreak } from '../../contexts/StreakContext';
@@ -21,6 +21,8 @@ export const SubscriptionSection: React.FC = () => {
   const { openModal } = usePricingModal();
   const [portalLoading, setPortalLoading] = useState(false);
   const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
+  // §8.18.1: prevent double-tap before overlay appears
+  const checkoutInFlight = useRef(false);
 
   const status = subscription?.status ?? 'none';
   const plan = subscription?.plan ?? '';
@@ -40,10 +42,15 @@ export const SubscriptionSection: React.FC = () => {
   };
 
   const handleCheckout = async () => {
+    if (checkoutInFlight.current) return;
+    checkoutInFlight.current = true;
     try {
       await startCheckout(planChoice);
-    } catch {
-      // redirect in progress — no-op
+    } catch (err: any) {
+      const msg = err?.response?.data?.error ?? t('subscription.checkout_error', 'Could not start checkout. Please try again.');
+      showToast.error(msg);
+    } finally {
+      checkoutInFlight.current = false;
     }
   };
 

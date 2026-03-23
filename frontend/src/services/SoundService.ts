@@ -8,8 +8,13 @@ type AudioCue =
   | 'manna-tile-absent'
   | 'manna-tile-present'
   | 'manna-tile-correct'
+  | 'manna-tile-fail-resolve'
   | 'manna-invalid'
-  | 'manna-key';
+  | 'manna-key'
+  | 'checkout-tap'
+  | 'subscription-success'
+  | 'purchase-success'
+  | 'payment-alert';
 
 class SoundServiceClass {
   private ctx: AudioContext | null = null;
@@ -71,11 +76,16 @@ class SoundServiceClass {
         case 'blessings-earned': return this.playBlessingsEarned();
         case 'manna-solve':          return this.playMannaSolve();
         case 'manna-fail':           return this.playMannaFail();
-        case 'manna-tile-absent':    return this.playMannaTileAbsent();
-        case 'manna-tile-present':   return this.playMannaTilePresent();
-        case 'manna-tile-correct':   return this.playMannaTileCorrect();
-        case 'manna-invalid':        return this.playMannaInvalid();
+        case 'manna-tile-absent':       return this.playMannaTileAbsent();
+        case 'manna-tile-present':      return this.playMannaTilePresent();
+        case 'manna-tile-correct':      return this.playMannaTileCorrect();
+        case 'manna-tile-fail-resolve': return this.playMannaFailResolve();
+        case 'manna-invalid':           return this.playMannaInvalid();
         case 'manna-key':            return this.playMannaKey();
+        case 'checkout-tap':         return this.playCheckoutTap();
+        case 'subscription-success': return this.playSubscriptionSuccess();
+        case 'purchase-success':     return this.playPurchaseSuccess();
+        case 'payment-alert':        return this.playPaymentAlert();
       }
     } catch {
       // Web Audio failures are non-critical — never surface to user
@@ -188,6 +198,26 @@ class SoundServiceClass {
     this.playTone(523, 0.09, 0.30, 'sine');
   }
 
+  // M-15: Failed resolve — a short quiet descending arpeggio instead of per-tile reveals.
+  // Tonally congruent with losing: three notes stepping down, at half the solve volume.
+  private playMannaFailResolve(): void {
+    const ctx = this.getCtx();
+    [392, 330, 262].forEach((freq, i) => { // G4 → E4 → C4 descending
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + i * 0.18;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.06, start + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.38);
+      osc.start(start);
+      osc.stop(start + 0.38);
+    });
+  }
+
   // Row-shake: a quick low thud — word not valid
   private playMannaInvalid(): void {
     this.playTone(150, 0.07, 0.15, 'triangle');
@@ -212,6 +242,68 @@ class SoundServiceClass {
     gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + duration);
     osc.start(ctx.currentTime);
     osc.stop(ctx.currentTime + duration);
+  }
+
+  // §8.18.3: Very short tap click — immediate feedback on checkout button press
+  private playCheckoutTap(): void {
+    this.playTone(800, 0.03, 0.06, 'triangle');
+  }
+
+  // §8.18.3: Warm celebratory bell — C5→E5→G5→C6 ascending, marks becoming premium
+  private playSubscriptionSuccess(): void {
+    const ctx = this.getCtx();
+    [523, 659, 784, 1047].forEach((freq, i) => { // C5 E5 G5 C6
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + i * 0.15;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.18, start + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.8);
+      osc.start(start);
+      osc.stop(start + 0.8);
+    });
+  }
+
+  // §8.18.3: Lighter reward chime — C5→G5, distinct from subscription sound
+  private playPurchaseSuccess(): void {
+    const ctx = this.getCtx();
+    [[523, 0], [784, 0.18]] .forEach(([freq, delay]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + delay;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.13, start + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+      osc.start(start);
+      osc.stop(start + 0.5);
+    });
+  }
+
+  // §8.18.3: Neutral attention-getter — two equal tones, not alarming
+  private playPaymentAlert(): void {
+    const ctx = this.getCtx();
+    [440, 440].forEach((freq, i) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + i * 0.25;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.08, start + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
+      osc.start(start);
+      osc.stop(start + 0.3);
+    });
   }
 
   // Soft descending tone — quiet acknowledgment of a completed game

@@ -29,6 +29,8 @@
     "yesterdaysWord": "Yesterday's word",
     "yesterdaySection": "Yesterday's word",
     "unlockCta": "Unlock with a Words of Praise membership",
+    "socialProof": "{{n}} devotees are solving today's word",
+    "unlockScripture": "Unlock full text",
     "solvedTitle": "You solved today's Manna!",
     "failedTitle": "Today's word was:",
     "comeback": "Come back tomorrow for a new word.",
@@ -41,6 +43,7 @@
     "errorLength": "Guesses must be exactly 5 letters.",
     "errorComplete": "This game is already complete.",
     "errorChars": "Guesses must contain only letters A–Z.",
+    "notAWord": "Not a recognized biblical word",
     "errorSubmit": "Failed to submit guess. Try again.",
     "noHints": "No hints",
     "clueIntro": "Find the missing word:",
@@ -49,7 +52,43 @@
     "hintNoBlessings": "Not enough Blessings for a hint.",
     "hintError": "Could not get hint. Try again.",
     "hintRevealed": "Position {{n}}: {{letter}}",
-    "hintsRevealed": "Revealed:"
+    "hintsRevealed": "Revealed:",
+    "howToPlay": "How to Play",
+    "howToPlayTitle": "How to Play",
+    "tutorialHelpBtn": "How to play",
+    "tutorialIntro": "Guess the 5-letter Biblical word in 6 tries.",
+    "tutorialSub": "Each guess must be a recognized Biblical word.",
+    "tutorialColorKeyTitle": "After each guess, tiles reveal how close you were:",
+    "tutorialCorrectLabel": "Right letter,\nright position",
+    "tutorialPresentLabel": "Right letter,\nwrong position",
+    "tutorialAbsentLabel": "Not in\nthe word",
+    "tutorialClue": "Each puzzle shows a Bible verse — find the missing word that fills the blank.",
+    "tutorialHints": "Hints reveal a letter position (costs 15 Blessings ✦). Up to 3 per puzzle.",
+    "tutorialBegin": "Begin Playing",
+    "tutorialReopenHint": "Tap ? anytime to review these rules.",
+    "statsModalLabel": "Stats & History",
+    "statsTitle": "Manna Stats",
+    "statsTab": "Stats",
+    "historyTab": "History",
+    "statPlayed": "Played",
+    "statWinRate": "Win %",
+    "statStreak": "Streak",
+    "statMaxStreak": "Best",
+    "statAvgGuesses": "Average guesses (wins): {{n}}",
+    "statDistribution": "Guess Distribution",
+    "statGuesses": "guesses",
+    "statsEmpty": "No games played yet. Come back after your first puzzle!",
+    "statsError": "Could not load stats. Try again later.",
+    "historyEmpty": "No past games yet. Your history will appear here after your first puzzle.",
+    "historyError": "Could not load history. Try again later.",
+    "historyFailed": "X/6",
+    "nextPuzzle": "Next word in",
+    "ariaCorrect": "correct",
+    "ariaPresent": "present",
+    "ariaAbsent": "absent",
+    "ariaSolved": "Solved! The word was {{word}}.",
+    "ariaFailed": "Game over. The word was {{word}}.",
+    "streak": "{{n}}-day Manna streak"
   },
   "journal": {
     "title": "My Journal",
@@ -160,7 +199,7 @@
     },
     "ascending": "Asc",
     "descending": "Desc",
-    "filterPlaceholder": "Filter by keyword (verse text, reference, book, translation\u2026)",
+    "filterPlaceholder": "Filter by keyword (verse text, reference, book, translation…)",
     "viewDailyVerse": "View Daily Verse",
     "shareVerse": "Share this verse",
     "added": "Added",
@@ -258,7 +297,14 @@
     "sections": {
       "myJourney": "My Journey",
       "devotion": "Devotion & Notifications",
-      "appearance": "Appearance"
+      "appearance": "Appearance",
+      "manna": "Manna Puzzle"
+    },
+    "manna": {
+      "hardMode": "Hard Mode",
+      "hardModeDesc": "Confirmed letters must be reused in every subsequent guess.",
+      "physicalKeySound": "Physical Keyboard Sounds",
+      "physicalKeySoundDesc": "Play a sound when typing with your physical keyboard."
     },
     "graceDays": {
       "title": "Grace Days",
@@ -282,9 +328,9 @@
       "preferredLanguage": "Preferred Language",
       "languages": {
         "en": "English",
-        "es": "Spanish (Espa\u00f1ol)",
-        "fr": "French (Fran\u00e7ais)",
-        "ht": "Haitian Creole (Krey\u00f2l Ayisyen)"
+        "es": "Spanish (Español)",
+        "fr": "French (Français)",
+        "ht": "Haitian Creole (Kreyòl Ayisyen)"
       }
     },
     "translation": {
@@ -292,7 +338,7 @@
       "label": "Preferred Bible Version",
       "saved": "Translation saved",
       "saveFailed": "Could not save translation",
-      "premiumNote": "\uD83D\uDD12 Locked translations are available with a Words of Praise membership."
+      "premiumNote": "🔒 Locked translations are available with a Words of Praise membership."
     },
     "account": {
       "changePassword": "Change Password",
@@ -354,9 +400,9 @@
     "getInTouch": "Get in Touch",
     "contactDesc": "We'd love to hear from you! Whether you've found a bug, have a suggestion, or just want to share your thoughts, please reach out.",
     "emailUs": "Email us at:",
-    "responseTime": "\u23f1\ufe0f We typically respond within 24-48 hours",
+    "responseTime": "⏱️ We typically respond within 24-48 hours",
     "followInstagram": "Follow us on Instagram:",
-    "instagramUpdate": "\ud83d\udcf1 Stay updated with daily inspiration and app updates",
+    "instagramUpdate": "📱 Stay updated with daily inspiration and app updates",
     "inLovingMemory": "In Loving Memory",
     "devotedChild": "A devoted child of God"
   },
@@ -450,7 +496,7 @@
     "firstEngagement": "Welcome to your faith journey!",
     "firstEngagementMessage": "You've started your daily reading streak. Keep coming back each day to grow your faithfulness.",
     "share_button": "Share my streak",
-    "share_generating": "Generating\u2026",
+    "share_generating": "Generating…",
     "share_subtitle": "days in the Word",
     "share_locked": "Upgrade to Premium to share your streak journey with others."
   },
@@ -500,15 +546,33 @@
     "achieved_label": "Milestone Achieved",
     "blessings_label": "Blessings",
     "continue": "Continue",
-    "first_steps": { "name": "First Steps" },
-    "week_in_word": { "name": "Week in the Word" },
-    "rooted": { "name": "Rooted" },
-    "month_of_grace": { "name": "Month of Grace" },
-    "steadfast": { "name": "Steadfast" },
-    "three_month": { "name": "Three Months Strong" },
-    "half_year": { "name": "Half Year" },
-    "nine_months": { "name": "Nine Months" },
-    "full_year": { "name": "Full Year" }
+    "first_steps": {
+      "name": "First Steps"
+    },
+    "week_in_word": {
+      "name": "Week in the Word"
+    },
+    "rooted": {
+      "name": "Rooted"
+    },
+    "month_of_grace": {
+      "name": "Month of Grace"
+    },
+    "steadfast": {
+      "name": "Steadfast"
+    },
+    "three_month": {
+      "name": "Three Months Strong"
+    },
+    "half_year": {
+      "name": "Half Year"
+    },
+    "nine_months": {
+      "name": "Nine Months"
+    },
+    "full_year": {
+      "name": "Full Year"
+    }
   },
   "shop": {
     "title": "Gifts of Faithfulness",
@@ -542,7 +606,7 @@
     "past_due_banner": "Your last payment failed. Please update your payment method to keep premium access.",
     "update_payment": "Update Payment Method",
     "refresh": "Refresh Status",
-    "loading": "Loading\u2026",
+    "loading": "Loading…",
     "modal_label": "Premium subscription",
     "modal_title": "Go Premium",
     "modal_subtitle": "Deepen your daily practice",
@@ -555,15 +619,15 @@
       "prompts": "Weekly reflection prompts",
       "translations": "Modern Bible translations",
       "streak_calendar": "Full streak calendar",
-      "blessings_multiplier": "1.5\u00d7 Blessings on every action",
+      "blessings_multiplier": "1.5× Blessings on every action",
       "reflection_archive": "Full reflection archive"
     }
   },
   "otp": {
     "section_title": "Add-ons & One-Time Purchases",
-    "section_description": "Unlock individual features forever \u2014 no subscription required.",
+    "section_description": "Unlock individual features forever — no subscription required.",
     "owned": "Owned",
-    "loading": "\u2026",
+    "loading": "…",
     "success_toast": "Purchase complete!",
     "journal_unlock": {
       "title": "Journal Unlock",
@@ -577,7 +641,7 @@
     },
     "modern_translations": {
       "title": "Modern Translations",
-      "desc": "NIV, ESV, NLT and more \u2014 unlocked permanently.",
+      "desc": "NIV, ESV, NLT and more — unlocked permanently.",
       "price": "$3.99"
     },
     "grace_day_pack": {
@@ -607,7 +671,7 @@
     },
     "support_developer": {
       "title": "Support the Developer",
-      "desc": "Buy me a coffee \u2615 \u2014 deeply appreciated.",
+      "desc": "Buy me a coffee ☕ — deeply appreciated.",
       "price": "$2.99",
       "thankyou_label": "Thank you",
       "thankyou_title": "Thank You!",
@@ -625,7 +689,7 @@
   },
   "checkout": {
     "overlay": {
-      "title": "Redirecting to checkout\u2026",
+      "title": "Redirecting to checkout…",
       "subtitle": "You'll be taken to Stripe to complete your payment."
     }
   },

@@ -1,6 +1,9 @@
 import React, { createContext, useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import api from '../services/api/api';
+import toast from 'react-hot-toast';
+import { useTranslation } from 'react-i18next';
+import { SoundService } from '../services/SoundService';
 
 interface Milestone {
   key: string;
@@ -44,6 +47,9 @@ interface StreakContextType {
   startCheckout: (plan: string) => Promise<void>;
   startOneTimePurchase: (productKey: string) => Promise<void>;
   openPortal: () => Promise<void>;
+  // §8.18.4
+  checkoutOverlayVisible: boolean;
+  cancelCheckout: () => void;
 }
 
 const StreakContext = createContext<StreakContextType | undefined>(undefined);
@@ -67,6 +73,7 @@ export const useStreak = () => {
 
 export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isGuest } = useAuth();
+  const { t } = useTranslation();
   const [streakData, setStreakData] = useState<StreakData | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -75,6 +82,14 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const refreshTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
   const lastFetchRef = useRef<number>(0);
   const lastSubFetchRef = useRef<number>(0);
+
+  // §8.18.4: Checkout overlay state
+  const [checkoutOverlayVisible, setCheckoutOverlayVisible] = useState(false);
+  const checkoutControllerRef = useRef<AbortController | null>(null);
+
+  // §8.18.4: Track subscription transitions for welcome ceremony and past_due resolution
+  const prevIsPremiumRef = useRef<boolean | undefined>(undefined);
+  const prevStatusRef = useRef<string | undefined>(undefined);
 
   // Debounced refresh function to prevent rapid API calls
   const refreshStreak = useCallback(async () => {
@@ -129,6 +144,44 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setSubscriptionLoading(false);
     }
   }, [isAuthenticated, isGuest]);
+
+  // §8.18.3/8.18.4: Watch for subscription transitions
+  useEffect(() => {
+    if (subscription === null) return;
+
+    const wasPremium = prevIsPremiumRef.current;
+    const isPremium = subscription.is_premium;
+    const prevStatus = prevStatusRef.current;
+
+    // Welcome ceremony: false → true (guarded by sessionStorage to play once per session)
+    if (wasPremium === false && isPremium === true) {
+      if (!sessionStorage.getItem('welcomeCeremonyPlayed')) {
+        sessionStorage.setItem('welcomeCeremonyPlayed', '1');
+        if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
+        SoundService.play('subscription-success');
+        setTimeout(() => {
+          toast.success(t('subscription.became_premium', 'Welcome to Premium! 🎉'));
+        }, 200);
+      }
+    }
+
+    // past_due → active: quiet confirmation
+    if (prevStatus === 'past_due' && subscription.status === 'active') {
+      toast.success(t('subscription.past_due_resolved', 'Payment resolved. Your subscription is active.'));
+      localStorage.removeItem('paymentAlertDismissedAt');
+      sessionStorage.removeItem('paymentAlertSounded');
+    }
+
+    prevIsPremiumRef.current = isPremium;
+    prevStatusRef.current = subscription.status;
+  }, [subscription?.is_premium, subscription?.status, t]);
+
+  // §8.18.4: Cancel in-flight checkout
+  const cancelCheckout = useCallback(() => {
+    checkoutControllerRef.current?.abort();
+    checkoutControllerRef.current = null;
+    setCheckoutOverlayVisible(false);
+  }, []);
 
   // §8.18.2 — Recover a pending Stripe redirect that was interrupted
   const checkPendingCheckout = useCallback(async () => {
@@ -185,21 +238,45 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   }, [isAuthenticated, refreshStreak]);
 
   const startCheckout = useCallback(async (plan: string) => {
-    const res = await api.post('/api/subscription/checkout', { plan });
-    const { url } = res.data;
-    sessionStorage.setItem('pendingStripeUrl', url);
-    sessionStorage.setItem('pendingStripeType', 'subscription');
-    sessionStorage.setItem('pendingStripeInitiatedAt', String(Date.now()));
-    window.location.href = url;
+    // §8.18.1/8.18.3/8.18.4: play tap sound, show overlay, abort previous if any
+    checkoutControllerRef.current?.abort();
+    const controller = new AbortController();
+    checkoutControllerRef.current = controller;
+    SoundService.play('checkout-tap');
+    setCheckoutOverlayVisible(true);
+    try {
+      const res = await api.post('/api/subscription/checkout', { plan },
+        { signal: controller.signal });
+      const { url } = res.data;
+      sessionStorage.setItem('pendingStripeUrl', url);
+      sessionStorage.setItem('pendingStripeType', 'subscription');
+      sessionStorage.setItem('pendingStripeInitiatedAt', String(Date.now()));
+      window.location.href = url;
+      // overlay persists until page navigates away
+    } catch (err: any) {
+      setCheckoutOverlayVisible(false);
+      throw err; // let callers handle the error toast
+    }
   }, []);
 
   const startOneTimePurchase = useCallback(async (productKey: string) => {
-    const res = await api.post('/api/subscription/checkout', { product_key: productKey });
-    const { url } = res.data;
-    sessionStorage.setItem('pendingStripeUrl', url);
-    sessionStorage.setItem('pendingStripeType', 'one_time');
-    sessionStorage.setItem('pendingStripeInitiatedAt', String(Date.now()));
-    window.location.href = url;
+    checkoutControllerRef.current?.abort();
+    const controller = new AbortController();
+    checkoutControllerRef.current = controller;
+    SoundService.play('checkout-tap');
+    setCheckoutOverlayVisible(true);
+    try {
+      const res = await api.post('/api/subscription/checkout', { product_key: productKey },
+        { signal: controller.signal });
+      const { url } = res.data;
+      sessionStorage.setItem('pendingStripeUrl', url);
+      sessionStorage.setItem('pendingStripeType', 'one_time');
+      sessionStorage.setItem('pendingStripeInitiatedAt', String(Date.now()));
+      window.location.href = url;
+    } catch (err: any) {
+      setCheckoutOverlayVisible(false);
+      throw err;
+    }
   }, []);
 
   const openPortal = useCallback(async () => {
@@ -278,6 +355,8 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         startCheckout,
         startOneTimePurchase,
         openPortal,
+        checkoutOverlayVisible,
+        cancelCheckout,
       }}
     >
       {children}

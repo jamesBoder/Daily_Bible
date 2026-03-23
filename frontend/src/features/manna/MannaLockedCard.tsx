@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { usePricingModal } from '../../hooks/usePricingModal';
+import { useStreak } from '../../contexts/StreakContext';
 import { mannaApi, YesterdayResult } from '../../services/api/manna';
 import { MannaTile } from './MannaTile';
 import { MannaKeyboard } from './MannaKeyboard';
@@ -15,6 +16,8 @@ interface MannaLockedCardProps {
 export const MannaLockedCard: React.FC<MannaLockedCardProps> = ({ yesterday: initialYesterday }) => {
   const { t } = useTranslation();
   const { openModal } = usePricingModal();
+  const { subscription } = useStreak();
+  const isPremium = subscription?.is_premium ?? false;
   const [yesterday, setYesterday] = useState<YesterdayResult | null>(initialYesterday ?? null);
 
   useEffect(() => {
@@ -82,6 +85,11 @@ export const MannaLockedCard: React.FC<MannaLockedCardProps> = ({ yesterday: ini
         {t('manna.unlockCta', 'Unlock with a Words of Praise membership')}
       </button>
 
+      {/* M-21: Social proof — static count communicates active community */}
+      <p className="manna-muted text-xs text-center" style={{ position: 'relative', zIndex: 1 }}>
+        {t('manna.socialProof', '{{n}} devotees are solving today\'s word', { n: 247 })}
+      </p>
+
       {/* Yesterday's word — always visible to drive curiosity */}
       {yesterday && (
         <div
@@ -95,12 +103,27 @@ export const MannaLockedCard: React.FC<MannaLockedCardProps> = ({ yesterday: ini
           <p className="manna-title-glow text-2xl font-bold font-display tracking-widest" style={{ color: 'var(--blessing-gold)' }}>
             {yesterday.word}
           </p>
-          <blockquote className="manna-scripture">
-            <p>{yesterday.scripture_text}</p>
-            <cite className="not-italic font-semibold text-xs mt-1 block" style={{ color: 'var(--blessing-gold)' }}>
+          {/* M-25: full scripture text is premium-only; free users see only the reference */}
+          {isPremium ? (
+            <blockquote className="manna-scripture">
+              <p>{yesterday.scripture_text}</p>
+              <cite className="not-italic font-semibold text-xs mt-1 block" style={{ color: 'var(--blessing-gold)' }}>
+                — {yesterday.scripture_reference}
+              </cite>
+            </blockquote>
+          ) : (
+            <p className="manna-muted text-xs mt-1">
               — {yesterday.scripture_reference}
-            </cite>
-          </blockquote>
+              {' '}
+              <button
+                onClick={() => openModal('plans')}
+                className="underline"
+                style={{ color: 'var(--blessing-gold)' }}
+              >
+                {t('manna.unlockScripture', 'Unlock full text')}
+              </button>
+            </p>
+          )}
         </div>
       )}
     </div>

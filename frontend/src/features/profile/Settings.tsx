@@ -12,6 +12,7 @@ import { AppearanceSettings } from "../settings/AppearanceSettings";
 import { useAuth } from "../../hooks/useAuth";
 import { useTheme } from "../../contexts/ThemeContext";
 import { CommunitySection } from "../settings/CommunitySection";
+import { MannaSettings } from "../settings/MannaSettings";
 import { AboutContent } from "../about/About";
 
 import { settingsService } from "../../services/api/settings";
@@ -95,6 +96,16 @@ export const Settings: React.FC = () => {
             </h2>
             <AppearanceSettings />
           </Card>
+
+          {/* Manna — authenticated users only (Phase 10) */}
+          {!isGuest && (
+            <Card>
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.manna', 'Manna Puzzle')}
+              </h2>
+              <MannaSettings />
+            </Card>
+          )}
 
           {/* Community — authenticated users only (Phase 9) */}
           {!isGuest && (

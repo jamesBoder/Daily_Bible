@@ -28,6 +28,8 @@
     "yesterdaysWord": "Le mot d'hier",
     "yesterdaySection": "Le mot d'hier",
     "unlockCta": "Débloquez avec un abonnement Words of Praise",
+    "socialProof": "{{n}} fidèles résolvent le mot d'aujourd'hui",
+    "unlockScripture": "Débloquer le texte complet",
     "solvedTitle": "Vous avez trouvé la Manne du jour !",
     "failedTitle": "Le mot du jour était :",
     "comeback": "Revenez demain pour un nouveau mot.",
@@ -40,8 +42,52 @@
     "errorLength": "Les réponses doivent comporter exactement 5 lettres.",
     "errorComplete": "Cette partie est déjà terminée.",
     "errorChars": "Les réponses ne doivent contenir que les lettres A–Z.",
+    "notAWord": "Mot biblique non reconnu",
     "errorSubmit": "Échec de l'envoi. Réessayez.",
-    "noHints": "Plus d'indices"
+    "noHints": "Plus d'indices",
+    "howToPlay": "Comment jouer",
+    "howToPlayTitle": "Comment jouer",
+    "tutorialHelpBtn": "Comment jouer",
+    "tutorialIntro": "Devinez le mot biblique de 5 lettres en 6 essais.",
+    "tutorialSub": "Chaque tentative doit être un mot biblique reconnu.",
+    "tutorialColorKeyTitle": "Après chaque essai, les tuiles révèlent votre proximité :",
+    "tutorialCorrectLabel": "Bonne lettre,\nbonne position",
+    "tutorialPresentLabel": "Bonne lettre,\nmauvaise position",
+    "tutorialAbsentLabel": "Absente\ndu mot",
+    "tutorialClue": "Chaque puzzle montre un verset biblique — trouvez le mot manquant.",
+    "tutorialHints": "Les indices révèlent une position de lettre (coûte 15 Bénédictions ✦). 3 par puzzle maximum.",
+    "tutorialBegin": "Commencer à jouer",
+    "tutorialReopenHint": "Appuyez sur ? à tout moment pour revoir ces règles.",
+    "statsModalLabel": "Stats & Historique",
+    "statsTitle": "Stats Manne",
+    "statsTab": "Stats",
+    "historyTab": "Historique",
+    "statPlayed": "Joués",
+    "statWinRate": "Victoires",
+    "statStreak": "Série",
+    "statMaxStreak": "Record",
+    "statAvgGuesses": "Essais moyens (victoires) : {{n}}",
+    "statDistribution": "Distribution des essais",
+    "statGuesses": "essais",
+    "statsEmpty": "Aucune partie jouée. Revenez après votre premier puzzle !",
+    "statsError": "Impossible de charger les stats. Réessayez plus tard.",
+    "historyEmpty": "Pas encore de parties passées. L'historique apparaîtra après votre premier puzzle.",
+    "historyError": "Impossible de charger l'historique. Réessayez plus tard.",
+    "historyFailed": "X/6",
+    "nextPuzzle": "Prochain mot dans",
+    "ariaCorrect": "correct",
+    "ariaPresent": "présent",
+    "ariaAbsent": "absent",
+    "ariaSolved": "Résolu ! Le mot était {{word}}.",
+    "ariaFailed": "Fin de partie. Le mot était {{word}}.",
+    "streak": "Série Manne de {{n}} jours",
+    "clueIntro": "Trouvez le mot manquant :",
+    "hintAriaLabel": "Utiliser un indice ({{n}} restant(s), coûte 15 Bénédictions)",
+    "hintError": "Impossible d’obtenir l’indice. Réessayez.",
+    "hintMax": "Aucun indice restant.",
+    "hintNoBlessings": "Pas assez de Bénédictions pour un indice.",
+    "hintRevealed": "Position {{n}} : {{letter}}",
+    "hintsRevealed": "Révélées :"
   },
   "dailyVerse": {
     "title": "Verset du Jour",
@@ -215,7 +261,14 @@
     "sections": {
       "myJourney": "Mon Chemin",
       "devotion": "Dévotion et Notifications",
-      "appearance": "Apparence"
+      "appearance": "Apparence",
+      "manna": "Puzzle Manne"
+    },
+    "manna": {
+      "hardMode": "Mode Difficile",
+      "hardModeDesc": "Les lettres confirmées doivent être réutilisées dans chaque supposition suivante.",
+      "physicalKeySound": "Sons du clavier physique",
+      "physicalKeySoundDesc": "Joue un son lorsque vous tapez sur votre clavier physique."
     },
     "graceDays": {
       "title": "Jours de Grâce",
@@ -392,15 +445,33 @@
     "achieved_label": "Jalon Atteint",
     "blessings_label": "Bénédictions",
     "continue": "Continuer",
-    "first_steps": { "name": "Premiers Pas" },
-    "week_in_word": { "name": "Une Semaine dans la Parole" },
-    "rooted": { "name": "Enraciné" },
-    "month_of_grace": { "name": "Mois de Grâce" },
-    "steadfast": { "name": "Ferme" },
-    "three_month": { "name": "Trois Mois Solides" },
-    "half_year": { "name": "Demi-Année" },
-    "nine_months": { "name": "Neuf Mois" },
-    "full_year": { "name": "Une Année Complète" }
+    "first_steps": {
+      "name": "Premiers Pas"
+    },
+    "week_in_word": {
+      "name": "Une Semaine dans la Parole"
+    },
+    "rooted": {
+      "name": "Enraciné"
+    },
+    "month_of_grace": {
+      "name": "Mois de Grâce"
+    },
+    "steadfast": {
+      "name": "Ferme"
+    },
+    "three_month": {
+      "name": "Trois Mois Solides"
+    },
+    "half_year": {
+      "name": "Demi-Année"
+    },
+    "nine_months": {
+      "name": "Neuf Mois"
+    },
+    "full_year": {
+      "name": "Une Année Complète"
+    }
   },
   "shop": {
     "title": "Dons de Fidélité",
@@ -409,68 +480,100 @@
   },
   "subscription": {
     "title": "Premium",
-    "free_description": "D\u00e9bloquez toutes les fonctionnalit\u00e9s premium avec un abonnement.",
+    "free_description": "Débloquez toutes les fonctionnalités premium avec un abonnement.",
     "choose_plan": "Choisir un plan",
     "plan": {
       "monthly": "Mensuel",
       "monthly_price": "$2.99 / mois",
       "annual": "Annuel",
       "annual_price": "$29.99 / an",
-      "annual_save": "\u00c9conomisez 17%"
+      "annual_save": "Économisez 17%"
     },
-    "upgrade_cta": "Passer \u00e0 Premium",
+    "upgrade_cta": "Passer à Premium",
     "view_addons": "Voir les modules",
     "active_title": "Membre Premium",
-    "active_plan": "Plan\u00a0:",
+    "active_plan": "Plan :",
     "renews": "Renouvellement",
-    "manage": "G\u00e9rer l'abonnement",
+    "manage": "Gérer l'abonnement",
     "trial_title": "Essai gratuit",
     "trial_ends": "Essai se termine le {{date}}",
-    "canceled_title": "Abonnement annul\u00e9",
-    "access_until": "Acc\u00e8s jusqu'au {{date}}",
-    "reactivate": "R\u00e9activer",
-    "past_due_title": "Paiement \u00e9chou\u00e9",
-    "past_due_description": "Veuillez mettre \u00e0 jour votre moyen de paiement pour conserver l'acc\u00e8s premium.",
-    "past_due_banner": "Votre dernier paiement a \u00e9chou\u00e9. Mettez \u00e0 jour votre moyen de paiement.",
-    "update_payment": "Mettre \u00e0 jour le paiement",
+    "canceled_title": "Abonnement annulé",
+    "access_until": "Accès jusqu'au {{date}}",
+    "reactivate": "Réactiver",
+    "past_due_title": "Paiement échoué",
+    "past_due_description": "Veuillez mettre à jour votre moyen de paiement pour conserver l'accès premium.",
+    "past_due_banner": "Votre dernier paiement a échoué. Mettez à jour votre moyen de paiement.",
+    "update_payment": "Mettre à jour le paiement",
     "refresh": "Actualiser le statut",
-    "loading": "Chargement\u2026",
+    "loading": "Chargement…",
     "modal_label": "Abonnement premium",
     "modal_title": "Passer Premium",
     "modal_subtitle": "Approfondissez votre pratique quotidienne",
-    "modal_legal": "Annulez \u00e0 tout moment. Aucun frais cach\u00e9.",
-    "success_toast": "Bienvenue dans Premium\u00a0!",
-    "nav_badge_tooltip": "Vous \u00eates membre Premium",
+    "modal_legal": "Annulez à tout moment. Aucun frais caché.",
+    "success_toast": "Bienvenue dans Premium !",
+    "nav_badge_tooltip": "Vous êtes membre Premium",
     "feature": {
-      "all_themes": "Tous les th\u00e8mes premium",
-      "journal": "Entr\u00e9es de journal illimit\u00e9es",
-      "prompts": "Invites de r\u00e9flexion hebdomadaires",
+      "all_themes": "Tous les thèmes premium",
+      "journal": "Entrées de journal illimitées",
+      "prompts": "Invites de réflexion hebdomadaires",
       "translations": "Traductions bibliques modernes",
-      "streak_calendar": "Calendrier de s\u00e9rie complet",
-      "blessings_multiplier": "B\u00e9n\u00e9dictions \u00d71,5 \u00e0 chaque action",
-      "reflection_archive": "Archive compl\u00e8te des r\u00e9flexions"
+      "streak_calendar": "Calendrier de série complet",
+      "blessings_multiplier": "Bénédictions ×1,5 à chaque action",
+      "reflection_archive": "Archive complète des réflexions"
     }
   },
   "otp": {
     "section_title": "Modules et achats uniques",
-    "section_description": "D\u00e9bloquez des fonctionnalit\u00e9s individuelles pour toujours \u2014 sans abonnement.",
+    "section_description": "Débloquez des fonctionnalités individuelles pour toujours — sans abonnement.",
     "owned": "Acquis",
-    "loading": "\u2026",
-    "success_toast": "Achat effectu\u00e9\u00a0!",
-    "journal_unlock": { "title": "Journal d\u00e9verrouill\u00e9", "desc": "Entr\u00e9es illimit\u00e9es et \u00e9dition enrichie, pour toujours.", "price": "$4.99" },
-    "reflection_archive": { "title": "Archive de r\u00e9flexions", "desc": "Acc\u00e9dez \u00e0 toutes vos r\u00e9flexions pass\u00e9es.", "price": "$2.99" },
-    "modern_translations": { "title": "Traductions modernes", "desc": "NIV, ESV, NLT et plus \u2014 d\u00e9verrouill\u00e9s en permanence.", "price": "$3.99" },
-    "grace_day_pack": { "title": "Pack de jours de gr\u00e2ce", "desc": "3 jours de gr\u00e2ce suppl\u00e9mentaires.", "price": "$0.99" },
-    "theme_sanctuary": { "title": "Th\u00e8me Sanctuaire", "desc": "Une esth\u00e9tique chaleureuse et sacr\u00e9e.", "price": "$1.99" },
-    "theme_desert_sand": { "title": "Th\u00e8me Sable du d\u00e9sert", "desc": "Tons terreux inspir\u00e9s du d\u00e9sert ancien.", "price": "$1.99" },
-    "theme_celestial": { "title": "Th\u00e8me C\u00e9leste", "desc": "Une palette profonde et \u00e9toil\u00e9e.", "price": "$1.99" },
-    "full_theme_library": { "title": "Biblioth\u00e8que compl\u00e8te de th\u00e8mes", "desc": "Tous les th\u00e8mes premium, pass\u00e9s et futurs.", "price": "$5.99" },
+    "loading": "…",
+    "success_toast": "Achat effectué !",
+    "journal_unlock": {
+      "title": "Journal déverrouillé",
+      "desc": "Entrées illimitées et édition enrichie, pour toujours.",
+      "price": "$4.99"
+    },
+    "reflection_archive": {
+      "title": "Archive de réflexions",
+      "desc": "Accédez à toutes vos réflexions passées.",
+      "price": "$2.99"
+    },
+    "modern_translations": {
+      "title": "Traductions modernes",
+      "desc": "NIV, ESV, NLT et plus — déverrouillés en permanence.",
+      "price": "$3.99"
+    },
+    "grace_day_pack": {
+      "title": "Pack de jours de grâce",
+      "desc": "3 jours de grâce supplémentaires.",
+      "price": "$0.99"
+    },
+    "theme_sanctuary": {
+      "title": "Thème Sanctuaire",
+      "desc": "Une esthétique chaleureuse et sacrée.",
+      "price": "$1.99"
+    },
+    "theme_desert_sand": {
+      "title": "Thème Sable du désert",
+      "desc": "Tons terreux inspirés du désert ancien.",
+      "price": "$1.99"
+    },
+    "theme_celestial": {
+      "title": "Thème Céleste",
+      "desc": "Une palette profonde et étoilée.",
+      "price": "$1.99"
+    },
+    "full_theme_library": {
+      "title": "Bibliothèque complète de thèmes",
+      "desc": "Tous les thèmes premium, passés et futurs.",
+      "price": "$5.99"
+    },
     "support_developer": {
-      "title": "Soutenir le d\u00e9veloppeur",
-      "desc": "Offrez-moi un caf\u00e9 \u2615 \u2014 tr\u00e8s appr\u00e9ci\u00e9.",
+      "title": "Soutenir le développeur",
+      "desc": "Offrez-moi un café ☕ — très apprécié.",
       "price": "$2.99",
       "thankyou_label": "Merci",
-      "thankyou_title": "Merci\u00a0!",
+      "thankyou_title": "Merci !",
       "thankyou_body": "Votre soutien compte beaucoup."
     }
   },
@@ -485,33 +588,94 @@
   },
   "checkout": {
     "overlay": {
-      "title": "Redirection vers le paiement\u2026",
-      "subtitle": "Vous serez redirig\u00e9 vers Stripe pour finaliser votre paiement."
+      "title": "Redirection vers le paiement…",
+      "subtitle": "Vous serez redirigé vers Stripe pour finaliser votre paiement."
     }
   },
   "community": {
-    "section": { "title": "Communauté" },
+    "section": {
+      "title": "Communauté"
+    },
     "walking_today": "{{count}} personnes ont lu la Parole aujourd'hui",
-    "tab": { "board": "Tableau", "prayer": "Mur de prière", "challenges": "Défis" },
-    "post_type": { "announcement": "Annonce", "milestone": "Étape", "prayer": "Demande de prière", "challenge": "Défi" },
+    "tab": {
+      "board": "Tableau",
+      "prayer": "Mur de prière",
+      "challenges": "Défis"
+    },
+    "post_type": {
+      "announcement": "Annonce",
+      "milestone": "Étape",
+      "prayer": "Demande de prière",
+      "challenge": "Défi"
+    },
     "admin_author": "Words of Praise",
     "anonymous_author": "Anonyme",
-    "reaction": { "amen": "Amen", "pray": "Prier", "heart": "❤", "join": "Rejoindre" },
-    "composer": { "placeholder": "Partagez une réflexion...", "post_btn": "Publier", "char_limit": "{{count}} caractères restants", "locked": "Abonnez-vous pour partager des réflexions avec la communauté." },
-    "prayer": { "placeholder": "Soumettre une demande de prière...", "anonymous_label": "Publier anonymement", "submit_btn": "Envoyer", "expire_notice": "Les demandes de prière expirent après 7 jours.", "open_to_all": "Les demandes de prière sont ouvertes à tous les membres." },
-    "challenge": { "joined_count": "{{count}} personnes ont rejoint", "join_btn": "Rejoindre le défi", "joined_btn": "Rejoint ✓" },
-    "empty": { "board": "Aucune réflexion encore — soyez le premier à partager.", "prayer": "Aucune demande de prière en ce moment.", "challenge": "Aucun défi actif cette semaine." },
-    "delete": { "confirm": "Supprimer ce post ?", "btn": "Supprimer" },
-    "error": { "post_failed": "Impossible de publier. Veuillez réessayer.", "react_failed": "Impossible de sauvegarder votre réaction.", "rate_limit": "Trop de publications — veuillez attendre quelques minutes." },
-    "admin": { "panel_title": "Admin — Nouveau post", "body_placeholder": "Rédigez une annonce ou un défi...", "pin_label": "Épingler en haut", "expires_label": "Expire le :", "publish_btn": "Publier", "publishing": "Publication...", "error": "Échec de la publication." },
-    "expiry": { "expires_in_days": "Expire dans {{count}} jour", "expiring_soon": "Expire bientôt" },
-    "time": { "just_now": "à l'instant", "mins_ago": "il y a {{count}}min", "hours_ago": "il y a {{count}}h", "days_ago": "il y a {{count}}j" },
+    "reaction": {
+      "amen": "Amen",
+      "pray": "Prier",
+      "heart": "❤",
+      "join": "Rejoindre"
+    },
+    "composer": {
+      "placeholder": "Partagez une réflexion...",
+      "post_btn": "Publier",
+      "char_limit": "{{count}} caractères restants",
+      "locked": "Abonnez-vous pour partager des réflexions avec la communauté."
+    },
+    "prayer": {
+      "placeholder": "Soumettre une demande de prière...",
+      "anonymous_label": "Publier anonymement",
+      "submit_btn": "Envoyer",
+      "expire_notice": "Les demandes de prière expirent après 7 jours.",
+      "open_to_all": "Les demandes de prière sont ouvertes à tous les membres."
+    },
+    "challenge": {
+      "joined_count": "{{count}} personnes ont rejoint",
+      "join_btn": "Rejoindre le défi",
+      "joined_btn": "Rejoint ✓"
+    },
+    "empty": {
+      "board": "Aucune réflexion encore — soyez le premier à partager.",
+      "prayer": "Aucune demande de prière en ce moment.",
+      "challenge": "Aucun défi actif cette semaine."
+    },
+    "delete": {
+      "confirm": "Supprimer ce post ?",
+      "btn": "Supprimer"
+    },
+    "error": {
+      "post_failed": "Impossible de publier. Veuillez réessayer.",
+      "react_failed": "Impossible de sauvegarder votre réaction.",
+      "rate_limit": "Trop de publications — veuillez attendre quelques minutes."
+    },
+    "admin": {
+      "panel_title": "Admin — Nouveau post",
+      "body_placeholder": "Rédigez une annonce ou un défi...",
+      "pin_label": "Épingler en haut",
+      "expires_label": "Expire le :",
+      "publish_btn": "Publier",
+      "publishing": "Publication...",
+      "error": "Échec de la publication."
+    },
+    "expiry": {
+      "expires_in_days": "Expire dans {{count}} jour",
+      "expiring_soon": "Expire bientôt"
+    },
+    "time": {
+      "just_now": "à l'instant",
+      "mins_ago": "il y a {{count}}min",
+      "hours_ago": "il y a {{count}}h",
+      "days_ago": "il y a {{count}}j"
+    },
     "new_posts_banner": "Nouveaux posts — appuyez pour actualiser"
   },
-  "leaderboard": { "title": "Communauté", "this_weeks_challenge": "Le défi de cette semaine" },
+  "leaderboard": {
+    "title": "Communauté",
+    "this_weeks_challenge": "Le défi de cette semaine"
+  },
   "streak": {
     "share_button": "Partager ma série",
-    "share_generating": "Génération\u2026",
+    "share_generating": "Génération…",
     "share_subtitle": "jours dans la Parole",
     "share_locked": "Passez à Premium pour partager votre parcours de série avec les autres."
   },
