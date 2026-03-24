@@ -7,6 +7,7 @@ import (
 	"dailybible/internal/utils"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -51,26 +52,55 @@ type MilestoneAchievementDTO struct {
 func (h *StreakHandler) GetStreakSummary(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
+	// Fetch settings first — streak query needs the timezone.
 	settings, err := h.settingsService.GetUserSettings(userID)
 	if err != nil {
 		settings = &models.UserSettings{PreferredTimezone: "UTC"}
 	}
 
-	streak, streakRecoverable, err := h.streakService.GetStreakSummary(userID, settings.PreferredTimezone)
-	if err != nil {
+	// Fan out: streak, balance, milestones, and undismissed milestone are all
+	// independent after settings resolve. Run them concurrently.
+	var (
+		streak            *models.UserStreak
+		streakRecoverable bool
+		streakErr         error
+		balance           int
+		achievedMilestones []models.UserMilestone
+		undismissed        models.UserMilestone
+		hasUndismissed     bool
+	)
+
+	var wg sync.WaitGroup
+	wg.Add(4)
+
+	go func() {
+		defer wg.Done()
+		streak, streakRecoverable, streakErr = h.streakService.GetStreakSummary(userID, settings.PreferredTimezone)
+	}()
+	go func() {
+		defer wg.Done()
+		balance, _ = h.blessingsService.GetBalance(userID)
+	}()
+	go func() {
+		defer wg.Done()
+		h.db.Where("user_id = ?", userID).Find(&achievedMilestones)
+	}()
+	go func() {
+		defer wg.Done()
+		hasUndismissed = h.db.
+			Where("user_id = ? AND celebration_dismissed_at IS NULL", userID).
+			Order("achieved_at DESC").
+			First(&undismissed).Error == nil
+	}()
+
+	wg.Wait()
+
+	if streakErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get streak data"})
 		return
 	}
 
-	balance, err := h.blessingsService.GetBalance(userID)
-	if err != nil {
-		balance = 0
-	}
-
 	// ── Milestones ────────────────────────────────────────────────────────────
-	var achievedMilestones []models.UserMilestone
-	h.db.Where("user_id = ?", userID).Find(&achievedMilestones)
-
 	achievedMap := make(map[string]bool, len(achievedMilestones))
 	for _, m := range achievedMilestones {
 		achievedMap[m.MilestoneKey] = true
@@ -89,11 +119,7 @@ func (h *StreakHandler) GetStreakSummary(c *gin.Context) {
 
 	// Find the most recently achieved undismissed milestone (for the celebration modal).
 	var newlyAchievedDTO *MilestoneAchievementDTO
-	var undismissed models.UserMilestone
-	if err := h.db.
-		Where("user_id = ? AND celebration_dismissed_at IS NULL", userID).
-		Order("achieved_at DESC").
-		First(&undismissed).Error; err == nil {
+	if hasUndismissed {
 		for _, def := range config.MilestoneDefinitions {
 			if def.Key == undismissed.MilestoneKey {
 				ts := undismissed.AchievedAt.Format(time.RFC3339)

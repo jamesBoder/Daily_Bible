@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -138,43 +139,95 @@ func (h *ProfileHandler) GetProfileAggregate(c *gin.Context) {
 		return
 	}
 
-	// fetch user from userRepo
-	user, err := h.userRepo.GetByID(userID.(uint))
-	if err != nil || user == nil {
+	uid := userID.(uint)
+
+	// ── Batch 1: user + settings (independent; streak needs timezone from settings) ──
+	var (
+		user     *models.User
+		userErr  error
+		settings *models.UserSettings
+	)
+	var wg1 sync.WaitGroup
+	wg1.Add(2)
+	go func() {
+		defer wg1.Done()
+		user, userErr = h.userRepo.GetByID(uid)
+	}()
+	go func() {
+		defer wg1.Done()
+		var err error
+		settings, err = h.settingsService.GetUserSettings(uid)
+		if err != nil {
+			settings = &models.UserSettings{PreferredTimezone: "UTC"}
+		}
+	}()
+	wg1.Wait()
+
+	if userErr != nil || user == nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
 		return
 	}
 
-	// Get user's timezone preference
-	settings, err := h.settingsService.GetUserSettings(userID.(uint))
-	if err != nil {
-		settings = &models.UserSettings{PreferredTimezone: "UTC"}
-	}
+	// ── Batch 2: 8 independent queries in parallel ────────────────────────────
+	var (
+		streak             *models.UserStreak
+		streakRecoverable  bool
+		balance            int
+		favCount           int64
+		histCount          int64
+		commentCount       int64
+		activeDaysCount    int64
+		achievedMilestones []models.UserMilestone
+		undismissed        models.UserMilestone
+		hasUndismissed     bool
+	)
 
-	// Get streak data
-	streak, streakRecoverable, err := h.streakService.GetStreakSummary(userID.(uint), settings.PreferredTimezone)
-	if err != nil {
-		// Log error but continue with default values
-		streak = &models.UserStreak{}
-	}
+	var wg2 sync.WaitGroup
+	wg2.Add(8)
 
-	// Get blessings balance
-	balance, _ := h.blessingsService.GetBalance(userID.(uint))
+	go func() {
+		defer wg2.Done()
+		var err error
+		streak, streakRecoverable, err = h.streakService.GetStreakSummary(uid, settings.PreferredTimezone)
+		if err != nil {
+			streak = &models.UserStreak{}
+		}
+	}()
+	go func() {
+		defer wg2.Done()
+		balance, _ = h.blessingsService.GetBalance(uid)
+	}()
+	go func() {
+		defer wg2.Done()
+		favCount, _ = h.favoriteRepo.CountByUserID(uid)
+	}()
+	go func() {
+		defer wg2.Done()
+		histCount, _ = h.historyRepo.CountByUserID(uid)
+	}()
+	go func() {
+		defer wg2.Done()
+		commentCount, _ = h.commentRepo.CountByUserID(uid)
+	}()
+	go func() {
+		defer wg2.Done()
+		h.db.Model(&models.UserActivityLog{}).
+			Where("user_id = ? AND action_type = 'daily_engagement'", uid).
+			Count(&activeDaysCount)
+	}()
+	go func() {
+		defer wg2.Done()
+		h.db.Where("user_id = ?", uid).Find(&achievedMilestones)
+	}()
+	go func() {
+		defer wg2.Done()
+		hasUndismissed = h.db.
+			Where("user_id = ? AND celebration_dismissed_at IS NULL", uid).
+			Order("achieved_at DESC").
+			First(&undismissed).Error == nil
+	}()
 
-	// Get reading stats
-	favCount, _ := h.favoriteRepo.CountByUserID(userID.(uint))
-	histCount, _ := h.historyRepo.CountByUserID(userID.(uint))
-	commentCount, _ := h.commentRepo.CountByUserID(userID.(uint))
-
-	// Count unique active days from the activity log (ground truth, more accurate than history count).
-	var activeDaysCount int64
-	h.db.Model(&models.UserActivityLog{}).
-		Where("user_id = ? AND action_type = 'daily_engagement'", userID.(uint)).
-		Count(&activeDaysCount)
-
-	// Load all achieved milestones for this user.
-	var achievedMilestones []models.UserMilestone
-	h.db.Where("user_id = ?", userID.(uint)).Find(&achievedMilestones)
+	wg2.Wait()
 
 	achievedMap := make(map[string]*models.UserMilestone, len(achievedMilestones))
 	for i := range achievedMilestones {
@@ -224,11 +277,7 @@ func (h *ProfileHandler) GetProfileAggregate(c *gin.Context) {
 
 	// Find undismissed milestone (for celebration modal surfacing).
 	var newlyAchievedDTO interface{}
-	var undismissed models.UserMilestone
-	if err := h.db.
-		Where("user_id = ? AND celebration_dismissed_at IS NULL", userID.(uint)).
-		Order("achieved_at DESC").
-		First(&undismissed).Error; err == nil {
+	if hasUndismissed {
 		for _, def := range config.MilestoneDefinitions {
 			if def.Key == undismissed.MilestoneKey {
 				ts := undismissed.AchievedAt.Format(time.RFC3339)

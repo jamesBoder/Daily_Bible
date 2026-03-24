@@ -25,6 +25,7 @@ import (
 type SubscriptionHandler struct {
 	subscriptionService *services.SubscriptionService
 	subscriptionChecker services.SubscriptionChecker
+	cachedChecker       *services.CachedSubscriptionChecker // nil when caching is not configured
 	userRepo            repository.UserRepository
 	db                  interface{ Transaction(func(interface{}) error) error } // unused — tx handled inside service
 	// Per-user rate limiters: max 3 checkout requests per 5 minutes.
@@ -33,14 +34,17 @@ type SubscriptionHandler struct {
 }
 
 // NewSubscriptionHandler creates a SubscriptionHandler.
+// cachedChecker may be nil if subscription caching is not in use.
 func NewSubscriptionHandler(
 	subscriptionService *services.SubscriptionService,
 	subscriptionChecker services.SubscriptionChecker,
+	cachedChecker *services.CachedSubscriptionChecker,
 	userRepo repository.UserRepository,
 ) *SubscriptionHandler {
 	return &SubscriptionHandler{
 		subscriptionService: subscriptionService,
 		subscriptionChecker: subscriptionChecker,
+		cachedChecker:       cachedChecker,
 		userRepo:            userRepo,
 		limiters:            make(map[uint]*rate.Limiter),
 	}
@@ -111,10 +115,14 @@ func (h *SubscriptionHandler) HandleStripeWebhook(c *gin.Context) {
 		if sub.Customer != nil {
 			customerID = sub.Customer.ID
 		}
-		if err := h.subscriptionService.SyncFromWebhook(
+		if affectedUserID, err := h.subscriptionService.SyncFromWebhook(
 			sub.ID, string(sub.Status), priceID, customerID, periodEnd, canceledAt,
 		); err != nil {
 			log.Printf("Webhook: SyncFromWebhook failed: %v", err)
+		} else if h.cachedChecker != nil {
+			// Invalidate the IsPremium cache for this user so the status change
+			// takes effect immediately rather than waiting for TTL expiry.
+			h.cachedChecker.Invalidate(affectedUserID)
 		}
 
 	case "checkout.session.completed":

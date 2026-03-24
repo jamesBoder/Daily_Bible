@@ -7,6 +7,7 @@ import (
 	"regexp"
 	"strconv"
 	"strings"
+	"sync"
 	"time"
 
 	"dailybible/internal/models"
@@ -19,15 +20,29 @@ const maxMannaGuesses = 6
 const maxMannaHints = 3
 const hintCost = 15
 
+// wordCache caches today's selected MannaWord and yesterday's, avoiding the
+// full-table scan of manna_words on every GET /api/manna/today request.
+// Both entries are keyed by "YYYYMMDD" date string and invalidate automatically
+// when the date changes. Thread-safe via sync.RWMutex.
+type wordCache struct {
+	mu      sync.RWMutex
+	entries map[string]*models.MannaWord // key: "YYYYMMDD"
+}
+
 // MannaService manages the daily Manna word puzzle.
 type MannaService struct {
 	db               *gorm.DB
 	blessingsService *BlessingsService
+	wordCache        wordCache
 }
 
 // NewMannaService creates a MannaService.
 func NewMannaService(db *gorm.DB, blessingsService *BlessingsService) *MannaService {
-	return &MannaService{db: db, blessingsService: blessingsService}
+	return &MannaService{
+		db:               db,
+		blessingsService: blessingsService,
+		wordCache:        wordCache{entries: make(map[string]*models.MannaWord)},
+	}
 }
 
 // ─── Response types ───────────────────────────────────────────────────────────
@@ -118,6 +133,17 @@ func (s *MannaService) GetYesterdayWord() (*models.MannaWord, error) {
 }
 
 func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
+	dateStr := t.Format("20060102")
+
+	// Cache hit: return without touching the DB.
+	s.wordCache.mu.RLock()
+	if w, ok := s.wordCache.entries[dateStr]; ok {
+		s.wordCache.mu.RUnlock()
+		return w, nil
+	}
+	s.wordCache.mu.RUnlock()
+
+	// Cache miss: fetch the full word bank and pick deterministically.
 	var words []models.MannaWord
 	if err := s.db.Where("LENGTH(word) = 5").Order("id asc").Find(&words).Error; err != nil {
 		return nil, err
@@ -125,11 +151,24 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 	if len(words) == 0 {
 		return nil, errors.New("word bank is empty")
 	}
-	dateStr := t.Format("20060102")
-	// Seed format: YYYYMMDD as int64. Safe until year 9999. Same seed = same word across all server instances.
+	// Seed format: YYYYMMDD as int64. Same seed = same word across all server instances.
 	seed, _ := strconv.ParseInt(dateStr, 10, 64)
 	rng := rand.New(rand.NewSource(seed))
-	return &words[rng.Intn(len(words))], nil
+	word := &words[rng.Intn(len(words))]
+
+	// Populate cache. Evict stale keys (yesterday and older) to keep memory bounded.
+	today := time.Now().UTC().Format("20060102")
+	yesterday := time.Now().UTC().AddDate(0, 0, -1).Format("20060102")
+	s.wordCache.mu.Lock()
+	for k := range s.wordCache.entries {
+		if k != today && k != yesterday {
+			delete(s.wordCache.entries, k)
+		}
+	}
+	s.wordCache.entries[dateStr] = word
+	s.wordCache.mu.Unlock()
+
+	return word, nil
 }
 
 // ─── Game management ──────────────────────────────────────────────────────────

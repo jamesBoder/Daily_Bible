@@ -128,8 +128,13 @@ func main() {
     settingsService := services.NewSettingsService(db)
     
     // Initialize Phase 1 services
-    // Phase 8: replace StubSubscriptionChecker with the real Stripe-backed implementation.
-    subscriptionChecker := services.NewStripeSubscriptionChecker(db)
+    // Phase 8: real Stripe-backed checker, wrapped with a 5-minute in-memory cache.
+    // The cache eliminates a DB round-trip on every premium-gated request.
+    // The Stripe webhook handler calls cachedChecker.Invalidate(userID) on status
+    // changes so cancels and upgrades take effect within seconds, not 5 minutes.
+    stripeChecker := services.NewStripeSubscriptionChecker(db)
+    cachedChecker := services.NewCachedSubscriptionChecker(stripeChecker, 0) // 0 = default 5 min TTL
+    subscriptionChecker := services.SubscriptionChecker(cachedChecker)
     streakService := services.NewStreakService(db, subscriptionChecker)
     blessingsService := services.NewBlessingsService(db)
 
@@ -288,6 +293,7 @@ func main() {
     subscriptionHandler := handlers.NewSubscriptionHandler(
         subscriptionService,
         subscriptionChecker,
+        cachedChecker,
         userRepo,
     )
 

@@ -89,14 +89,15 @@ func (s *SubscriptionService) GetSubscription(userID uint) models.UserSubscripti
 
 // SyncFromWebhook upserts the local UserSubscription from Stripe webhook event data.
 // Idempotent: safe to call multiple times for the same event (Save/upsert on primary key).
-func (s *SubscriptionService) SyncFromWebhook(stripeSubID, stripeStatus, stripePriceID, customerID string, periodEnd *time.Time, canceledAt *time.Time) error {
+// Returns the internal userID that was updated so the caller can invalidate any caches.
+func (s *SubscriptionService) SyncFromWebhook(stripeSubID, stripeStatus, stripePriceID, customerID string, periodEnd *time.Time, canceledAt *time.Time) (uint, error) {
 	plan := planFromPriceID(stripePriceID)
 	status := mapStripeStatus(stripeStatus)
 
 	// Look up userID by StripeCustomerID (requires index on stripe_customer_id).
 	var existing models.UserSubscription
 	if err := s.db.Where("stripe_customer_id = ?", customerID).First(&existing).Error; err != nil {
-		return fmt.Errorf("no local user found for Stripe customer %s", customerID)
+		return 0, fmt.Errorf("no local user found for Stripe customer %s", customerID)
 	}
 
 	existing.Status               = status
@@ -110,7 +111,7 @@ func (s *SubscriptionService) SyncFromWebhook(stripeSubID, stripeStatus, stripeP
 	existing.PendingCheckoutExpiresAt = nil
 
 	if err := s.db.Save(&existing).Error; err != nil {
-		return err
+		return 0, err
 	}
 
 	// On activation: upgrade badges and flush any queued grace days from pre-upgrade purchases.
@@ -129,7 +130,7 @@ func (s *SubscriptionService) SyncFromWebhook(stripeSubID, stripeStatus, stripeP
 		}()
 	}
 
-	return nil
+	return existing.UserID, nil
 }
 
 // StorePendingCheckout stores the pending Stripe checkout session ID to prevent duplicates.

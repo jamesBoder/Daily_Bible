@@ -4,19 +4,29 @@ import (
     "crypto/md5"
     "encoding/hex"
     "fmt"
+    "sync"
     "time"
 	"strconv"
     "strings"
     "dailybible/internal/models"
     "dailybible/internal/repository"
-	
-	
 )
+
+// dailyVerseCache holds the in-process cached verse for the current effective day.
+// This avoids a DB round-trip for every request to GET /api/verses/daily when the
+// verse is already known for today. The effective day uses UTC-10 (same logic as
+// GetDailyVerse) so the cache invalidates at the same moment the verse changes.
+type dailyVerseCache struct {
+    mu           sync.RWMutex
+    verse        *models.Verse
+    effectiveDay string // "YYYY-MM-DD" at UTC-10
+}
 
 type DailyVerseService struct {
     bibleAPI     BibleAPIService
     verseRepo    repository.VerseRepository
     curatedList  []string
+    cache        dailyVerseCache
 }
 
 func NewDailyVerseService(
@@ -112,31 +122,40 @@ func (s *DailyVerseService) GetDailyVerseForDate(date string) (*models.Verse, er
 	return verse, nil
 }
 
-// GetDailyVerse returns the verse of the day
-// Uses UTC-10 timezone (Hawaii) to ensure the verse updates early in the morning for users
-// worldwide. When it's midnight in Hawaii (UTC-10), it's 10 AM UTC, which is:
-// - 5-6 AM Eastern Time
-// - 2-3 AM Pacific Time
-// - Early morning for most users globally
-// This prevents the verse from updating in the evening (7 PM Eastern).
+// GetDailyVerse returns the verse of the day.
+// Uses UTC-10 (Hawaii) so the verse rolls over at 10 AM UTC — early morning
+// for users worldwide rather than mid-evening Eastern time.
+//
+// Two-level cache:
+//  1. In-process memory cache (this struct) — zero DB cost for repeat calls
+//     within the same effective day. Invalidates automatically when the date changes.
+//  2. DB row cache (verseRepo.GetByDate) — fast path when the in-process cache
+//     is cold (e.g., after a server restart).
 func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
-    // Get current UTC time
-    now := time.Now().UTC()
-    
-    // Subtract 10 hours to get the "effective date"
-    // When it's 10 AM UTC (5-6 AM Eastern), this becomes midnight (new day)
-    effectiveTime := now.Add(-10 * time.Hour)
-    today := effectiveTime.Format("2006-01-02")
-    
-    // Check cache first - see if we already have a verse for today
+    today := time.Now().UTC().Add(-10 * time.Hour).Format("2006-01-02")
+
+    // Level 1: in-process cache hit.
+    s.cache.mu.RLock()
+    if s.cache.effectiveDay == today && s.cache.verse != nil {
+        v := s.cache.verse
+        s.cache.mu.RUnlock()
+        return v, nil
+    }
+    s.cache.mu.RUnlock()
+
+    // Level 2: DB cache — verse already resolved for today.
     cached, err := s.verseRepo.GetByDate(today)
     if err == nil && cached != nil {
+        s.cache.mu.Lock()
+        s.cache.verse = cached
+        s.cache.effectiveDay = today
+        s.cache.mu.Unlock()
         return cached, nil
     }
     
     // Select verse for today
     reference := s.selectVerseForDate(today)
-    
+
     // Check if verse already exists by reference
     existingVerse, err := s.verseRepo.GetByReference(reference)
     if err == nil && existingVerse != nil {
@@ -145,15 +164,19 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         if err := s.verseRepo.Update(existingVerse); err != nil {
             return nil, fmt.Errorf("failed to update verse daily date: %w", err)
         }
+        s.cache.mu.Lock()
+        s.cache.verse = existingVerse
+        s.cache.effectiveDay = today
+        s.cache.mu.Unlock()
         return existingVerse, nil
     }
-    
-    // Fetch from Bible API
+
+    // Fetch from Bible API (cold path — only happens once per day per server instance)
     apiVerse, err := s.bibleAPI.GetVerse(reference)
     if err != nil {
         return nil, fmt.Errorf("failed to fetch verse from API: %w", err)
     }
-    
+
     // Convert and save new verse
     verse := &models.Verse{
         Reference: apiVerse.Reference,
@@ -161,15 +184,20 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         Book:      extractBook(apiVerse.Reference),
         Chapter:   extractChapter(apiVerse.Reference),
         VerseNumber: extractVerse(apiVerse.Reference),
-        Version: "KJV", // Default
-        Translation: "KJV", // Default
+        Version: "KJV",
+        Translation: "KJV",
         DailyDate: &today,
     }
-    
+
     if err := s.verseRepo.Create(verse); err != nil {
         return nil, fmt.Errorf("failed to save verse: %w", err)
     }
-    
+
+    s.cache.mu.Lock()
+    s.cache.verse = verse
+    s.cache.effectiveDay = today
+    s.cache.mu.Unlock()
+
     return verse, nil
 }
 
