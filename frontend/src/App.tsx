@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useEffect } from "react";
 import {
   createBrowserRouter,
   RouterProvider,
-  Navigate,
+  Navigate,  // used by catch-all route
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
 import { ProtectedRoute, GuestBlockedRoute, PublicOnlyRoute } from "./components/common/ProtectedRoute";
@@ -159,10 +159,13 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><Layout /></ProtectedRoute>,
     children: [
       {
-        // Redirect bare "/" to "/daily" — the index route had rendering issues
-        // at the root path that were previously hidden by the /login redirect.
+        // Render DailyVerse at "/" directly. Nginx 301-redirects "/" → "/daily"
+        // server-side for the canonical URL, but if React handles "/" (stale
+        // browser cache, no-nginx env) it must render content immediately —
+        // a client-side <Navigate> produces zero output during the transition
+        // which causes a blank screen in some browsers.
         index: true,
-        element: <Navigate to="/daily" replace />,
+        element: <Suspense fallback={<VerseCardSkeleton />}><DailyVerse /></Suspense>,
       },
       {
         path: "daily",
