@@ -112,49 +112,60 @@ export const Header: React.FC = () => {
             {/* Vertical divider */}
             <div className="w-px h-6 bg-amber-300/50 dark:bg-amber-700/40" />
 
-            {/* Streak + Blessings */}
-            {!isGuest && (
+            {isGuest ? (
+              /* Guest: Sign In + Sign Up */
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors px-3 py-1.5"
+                >
+                  {t("nav.signin", "Sign In")}
+                </button>
+                <Button onClick={() => navigate("/signup")} variant="primary" className="text-sm">
+                  {t("nav.signup", "Sign Up")}
+                </Button>
+              </div>
+            ) : (
+              /* Authenticated: streak, blessings, avatar, logout */
               <>
                 <StreakCandle />
                 <BlessingsChip />
+                <div className="flex items-center gap-2">
+                  {userInitial && (
+                    <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-300/60 dark:border-amber-600/40 flex items-center justify-center text-xs font-bold text-amber-700 dark:text-amber-400 shrink-0">
+                      {userInitial}
+                    </div>
+                  )}
+                  <span className="text-sm text-gray-500 dark:text-gray-400">
+                    {t("auth.welcome", { username: user?.username })}
+                  </span>
+                  <Button onClick={handleLogout} variant="secondary" className="text-sm">
+                    {t("nav.logout")}
+                  </Button>
+                </div>
               </>
             )}
-
-            {/* Avatar + welcome + logout */}
-            <div className="flex items-center gap-2">
-              {!isGuest && userInitial && (
-                <div className="w-7 h-7 rounded-full bg-amber-100 dark:bg-amber-900/40 border border-amber-300/60 dark:border-amber-600/40 flex items-center justify-center text-xs font-bold text-amber-700 dark:text-amber-400 shrink-0">
-                  {userInitial}
-                </div>
-              )}
-              <span className="text-sm text-gray-500 dark:text-gray-400">
-                {isGuest
-                  ? t("auth.browsingAsGuest")
-                  : t("auth.welcome", { username: user?.username })}
-              </span>
-              {isGuest && (
-                <Button onClick={() => navigate("/signup")} variant="primary" className="text-sm">
-                  {t("nav.signup")}
-                </Button>
-              )}
-              <Button onClick={handleLogout} variant="secondary" className="text-sm">
-                {isGuest ? t("auth.exitGuest") : t("nav.logout")}
-              </Button>
-            </div>
           </div>
 
-          {/* ── Mobile: streak + blessings (replaces hamburger — nav is in BottomNav) */}
+          {/* ── Mobile: streak + blessings for auth users; Sign In for guests */}
           <div className="md:hidden flex items-center gap-2">
-            {!isGuest && (
+            {isGuest ? (
+              <>
+                <button
+                  onClick={() => navigate("/login")}
+                  className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors px-2 py-1.5"
+                >
+                  {t("nav.signin", "Sign In")}
+                </button>
+                <Button onClick={() => navigate("/signup")} variant="primary" className="text-sm">
+                  {t("nav.signup", "Sign Up")}
+                </Button>
+              </>
+            ) : (
               <>
                 <StreakCandle />
                 <BlessingsChip />
               </>
-            )}
-            {isGuest && (
-              <Button onClick={() => navigate("/signup")} variant="primary" className="text-sm">
-                {t("nav.signup")}
-              </Button>
             )}
           </div>
         </div>

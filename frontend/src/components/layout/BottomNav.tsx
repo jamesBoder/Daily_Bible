@@ -15,12 +15,16 @@ import {
   Gear,
   SignOut,
   X,
+  LockSimple,
+  UserPlus,
+  SignIn,
 } from '@phosphor-icons/react';
 import { useSwipe } from '../../hooks/useSwipe';
 
 // ── BottomNav ─────────────────────────────────────────────────────────────────
 // Mobile-only persistent tab bar. Hidden on md+ screens where the header nav
-// handles everything. Shows only for authenticated, non-guest users.
+// handles everything. Shown to all users including guests — restricted tabs
+// display a lock indicator and lead to the guest upsell screen.
 // ─────────────────────────────────────────────────────────────────────────────
 
 const BottomNav: React.FC = () => {
@@ -40,7 +44,7 @@ const BottomNav: React.FC = () => {
     setSheetOpen(false);
   }, [location.pathname]);
 
-  // Close sheet on backdrop click / outside tap
+  // Close sheet on escape key
   useEffect(() => {
     if (!sheetOpen) return;
     const onKey = (e: KeyboardEvent) => {
@@ -56,12 +60,19 @@ const BottomNav: React.FC = () => {
     navigate('/login');
   };
 
-  if (isGuest) return null;
-
   const tabBase =
     'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] font-medium transition-colors select-none focus:outline-none min-w-0';
   const tabActive = 'text-amber-700 dark:text-amber-400';
   const tabInactive = 'text-gray-500 dark:text-gray-400';
+
+  // Lock badge overlaid on restricted tab icons for guest users
+  const LockBadge = () => (
+    <LockSimple
+      size={9}
+      weight="fill"
+      className="absolute -top-0.5 -right-1 text-gray-400 dark:text-gray-500"
+    />
+  );
 
   return (
     <>
@@ -75,10 +86,9 @@ const BottomNav: React.FC = () => {
         aria-label={t('nav.mainNavigation', 'Main navigation')}
       >
         <div className="flex items-stretch h-14">
-          {/* Home */}
+          {/* Home — always unlocked */}
           <NavLink
-            to="/"
-            end
+            to="/daily"
             className={({ isActive }) =>
               `${tabBase} ${isActive ? tabActive : tabInactive}`
             }
@@ -102,7 +112,10 @@ const BottomNav: React.FC = () => {
           >
             {({ isActive }) => (
               <>
-                <TextT size={22} weight={isActive ? 'fill' : 'regular'} />
+                <span className="relative">
+                  <TextT size={22} weight={isActive ? 'fill' : 'regular'} />
+                  {isGuest && <LockBadge />}
+                </span>
                 <span>{t('nav.manna', 'Manna')}</span>
               </>
             )}
@@ -118,7 +131,10 @@ const BottomNav: React.FC = () => {
           >
             {({ isActive }) => (
               <>
-                <Users size={22} weight={isActive ? 'fill' : 'regular'} />
+                <span className="relative">
+                  <Users size={22} weight={isActive ? 'fill' : 'regular'} />
+                  {isGuest && <LockBadge />}
+                </span>
                 <span>{t('nav.leaderboard', 'Community')}</span>
               </>
             )}
@@ -136,9 +152,11 @@ const BottomNav: React.FC = () => {
               <>
                 <span className="relative">
                   <Crown size={22} weight={isActive ? 'fill' : 'regular'} />
-                  {isPastDue && (
+                  {isGuest ? (
+                    <LockBadge />
+                  ) : isPastDue ? (
                     <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500" />
-                  )}
+                  ) : null}
                 </span>
                 <span>{t('nav.shop', 'Shop')}</span>
               </>
@@ -153,7 +171,10 @@ const BottomNav: React.FC = () => {
             aria-haspopup="dialog"
             aria-expanded={sheetOpen}
           >
-            <List size={22} weight={sheetOpen ? 'fill' : 'regular'} />
+            <span className="relative">
+              <List size={22} weight={sheetOpen ? 'fill' : 'regular'} />
+              {isGuest && <LockBadge />}
+            </span>
             <span>{t('nav.more', 'More')}</span>
           </button>
         </div>
@@ -198,79 +219,108 @@ const BottomNav: React.FC = () => {
           <X size={18} />
         </button>
 
-        <div className="px-4 pb-4 pt-2">
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-1">
-            {t('nav.moreMenu', 'More')}
-          </p>
-
-          <div className="flex flex-col gap-1">
-            <NavLink
-              to="/favorites"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                }`
-              }
-            >
-              <Heart size={20} weight="duotone" />
-              {t('nav.favorites', 'Favorites')}
-            </NavLink>
-
-            <NavLink
-              to="/journal"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                }`
-              }
-            >
-              <BookOpen size={20} weight="duotone" />
-              {t('nav.journal', 'Journal')}
-            </NavLink>
-
-            <NavLink
-              to="/search"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                }`
-              }
-            >
-              <MagnifyingGlass size={20} weight="duotone" />
-              {t('nav.search', 'Search')}
-            </NavLink>
-
-            <NavLink
-              to="/settings"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                }`
-              }
-            >
-              <Gear size={20} weight="duotone" />
-              {t('nav.settings', 'Settings')}
-            </NavLink>
-
-            <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
-
-            <button
-              onClick={handleLogout}
-              className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left"
-            >
-              <SignOut size={20} />
-              {t('nav.logout', 'Log out')}
-            </button>
+        {isGuest ? (
+          /* ── Guest sheet: sign-up prompt ─────────────────────────────── */
+          <div className="px-4 pb-6 pt-2">
+            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-1">
+              {t('nav.moreMenu', 'More')}
+            </p>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-5 px-1">
+              Create a free account to unlock favorites, journal, search, and more.
+            </p>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => { setSheetOpen(false); navigate('/signup'); }}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 transition-colors w-full"
+              >
+                <UserPlus size={20} />
+                Sign Up Free
+              </button>
+              <button
+                onClick={() => { setSheetOpen(false); navigate('/login'); }}
+                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors w-full"
+              >
+                <SignIn size={20} />
+                Sign In
+              </button>
+            </div>
           </div>
-        </div>
+        ) : (
+          /* ── Authenticated sheet: full nav ───────────────────────────── */
+          <div className="px-4 pb-4 pt-2">
+            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-1">
+              {t('nav.moreMenu', 'More')}
+            </p>
+
+            <div className="flex flex-col gap-1">
+              <NavLink
+                to="/favorites"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                    isActive
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                  }`
+                }
+              >
+                <Heart size={20} weight="duotone" />
+                {t('nav.favorites', 'Favorites')}
+              </NavLink>
+
+              <NavLink
+                to="/journal"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                    isActive
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                  }`
+                }
+              >
+                <BookOpen size={20} weight="duotone" />
+                {t('nav.journal', 'Journal')}
+              </NavLink>
+
+              <NavLink
+                to="/search"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                    isActive
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                  }`
+                }
+              >
+                <MagnifyingGlass size={20} weight="duotone" />
+                {t('nav.search', 'Search')}
+              </NavLink>
+
+              <NavLink
+                to="/settings"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                    isActive
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                  }`
+                }
+              >
+                <Gear size={20} weight="duotone" />
+                {t('nav.settings', 'Settings')}
+              </NavLink>
+
+              <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
+
+              <button
+                onClick={handleLogout}
+                className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left"
+              >
+                <SignOut size={20} />
+                {t('nav.logout', 'Log out')}
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </>
   );

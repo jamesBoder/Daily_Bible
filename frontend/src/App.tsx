@@ -159,8 +159,10 @@ const router = createBrowserRouter([
     element: <ProtectedRoute><Layout /></ProtectedRoute>,
     children: [
       {
+        // Redirect bare "/" to "/daily" — the index route had rendering issues
+        // at the root path that were previously hidden by the /login redirect.
         index: true,
-        element: <Suspense fallback={<VerseCardSkeleton />}><DailyVerse /></Suspense>,
+        element: <Navigate to="/daily" replace />,
       },
       {
         path: "daily",
@@ -234,10 +236,10 @@ const router = createBrowserRouter([
       },
     ],
   },
-  // Catch all - redirect to home
+  // Catch all - redirect to daily verse
   {
     path: "*",
-    element: <Navigate to="/" replace />,
+    element: <Navigate to="/daily" replace />,
   },
 ]);
 
