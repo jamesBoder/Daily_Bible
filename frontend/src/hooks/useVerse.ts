@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { verseService } from '../services/api/verse';
+import { msUntilDailyReset } from '../lib/queryClient';
 
 export const useVerse = (language: string = 'en', version?: string) => {
   // Include today's date, language, and version in the query key.
@@ -9,8 +10,8 @@ export const useVerse = (language: string = 'en', version?: string) => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['dailyVerse', today, language, version ?? ''],
     queryFn: () => verseService.getDailyVerse(language, version),
-    staleTime: 60 * 60 * 1000, // 1 hour
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours
+    staleTime: msUntilDailyReset, // fresh until the verse actually changes
+    gcTime: 24 * 60 * 60 * 1000, // keep in memory for 24 hours
   });
 
   return {
