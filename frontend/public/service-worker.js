@@ -8,11 +8,14 @@
  *  - All other API calls: Network-first (fall back to cache if offline).
  */
 
-const SHELL_CACHE   = 'wop-shell-v1';
+// v2: removed '/' from pre-cache; navigation requests now go network-first
+// so the nginx 301 redirect (/ → /daily) is respected instead of bypassed.
+const SHELL_CACHE   = 'wop-shell-v2';
 const API_CACHE     = 'wop-api-v1';
 
-// App-shell assets to pre-cache on install
-const SHELL_URLS = ['/', '/index.html'];
+// Do NOT include '/' — nginx 301-redirects it to '/daily'. Caching '/'
+// here would serve the old index.html directly, bypassing the redirect.
+const SHELL_URLS = ['/index.html'];
 
 // ── Install ───────────────────────────────────────────────────────────────────
 self.addEventListener('install', (event) => {
@@ -60,7 +63,20 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Cache-first for app-shell assets (JS / CSS / images / fonts)
+  // Navigation requests (HTML page loads) — always go to the network so
+  // nginx server-side redirects (e.g. / → /daily) are honoured. Falls back
+  // to cached /index.html only when offline.
+  if (request.mode === 'navigate') {
+    event.respondWith(
+      fetch(request).catch(async () => {
+        const cached = await caches.match('/index.html', { cacheName: SHELL_CACHE });
+        return cached ?? new Response('Offline', { status: 503 });
+      })
+    );
+    return;
+  }
+
+  // Cache-first for static assets (JS / CSS / images / fonts)
   event.respondWith(cacheFirst(request, SHELL_CACHE));
 });
 
