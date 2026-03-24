@@ -5,6 +5,8 @@ import { SearchResultCard } from './SearchResultCard';
 import { SearchEmptyState } from './SearchEmptyState';
 import { SavedSearchesTeaser } from './SavedSearchesTeaser';
 import { useVerseSearch } from '../../hooks/useVerseSearch';
+import { useTutorial } from '../../hooks/useTutorial';
+import { SearchTutorial, SEARCH_TUTORIAL_KEY } from './SearchTutorial';
 import styles from './SearchResultsPage.module.css';
 
 const SearchIcon: React.FC = () => (
@@ -28,6 +30,7 @@ export const SearchResultsPage: React.FC = () => {
   const initialQuery = searchParams.get('q') ?? '';
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
+  const { showTutorial, dismissTutorial, openTutorial } = useTutorial(SEARCH_TUTORIAL_KEY);
 
   const {
     results,
@@ -69,7 +72,22 @@ export const SearchResultsPage: React.FC = () => {
 
   return (
     <div className={styles.page}>
-      <h1 className={styles.heading}>{t('search.title', 'Search Scripture')}</h1>
+      {/* Tutorial overlay */}
+      {showTutorial && <SearchTutorial onDismiss={dismissTutorial} />}
+
+      <div className="flex items-center gap-2 mb-1">
+        <h1 className={styles.heading} style={{ margin: 0 }}>{t('search.title', 'Search Scripture')}</h1>
+        <button
+          className="w-7 h-7 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          onClick={openTutorial}
+          aria-label={t('common.help', 'Help')}
+          title={t('common.help', 'Help')}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
+      </div>
 
       <form className={styles.searchForm} onSubmit={handleSubmit} role="search">
         <div className={styles.inputWrapper}>

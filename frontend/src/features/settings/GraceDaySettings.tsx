@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStreak } from '../../contexts/StreakContext';
 import { CalendarCheck, ShieldStar } from '@phosphor-icons/react';
+import { GraceDayTutorial } from './GraceDayTutorial';
 import styles from './GraceDaySettings.module.css';
 
 export const GraceDaySettings: React.FC = () => {
@@ -9,6 +10,7 @@ export const GraceDaySettings: React.FC = () => {
   const { streakData, useGraceDay: applyGraceDay } = useStreak();
   const [confirming, setConfirming] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const remaining = streakData?.grace_days_remaining ?? 0;
 
@@ -28,9 +30,10 @@ export const GraceDaySettings: React.FC = () => {
 
   return (
     <div className={styles.banner}>
+      {showTutorial && <GraceDayTutorial onDismiss={() => setShowTutorial(false)} />}
       <div className={styles.bannerHeader}>
         <ShieldStar size={24} weight="duotone" className={styles.bannerIcon} />
-        <div>
+        <div style={{ flex: 1 }}>
           <h3 className={styles.bannerTitle}>
             {t('settings.graceDays.title', 'Grace Days')}
           </h3>
@@ -38,6 +41,16 @@ export const GraceDaySettings: React.FC = () => {
             {t('settings.graceDays.description', 'Missed a day? Use a Grace Day to protect your streak.')}
           </p>
         </div>
+        <button
+          className="w-7 h-7 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500 flex-shrink-0"
+          onClick={() => setShowTutorial(true)}
+          aria-label={t('common.help', 'Help')}
+          title={t('common.help', 'Help')}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
       </div>
 
       <div className={styles.pipsRow}>

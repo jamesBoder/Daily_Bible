@@ -8,6 +8,8 @@ import { OneTimePurchaseSection } from '../settings/OneTimePurchaseSection';
 import BlessingsChip from '../../components/BlessingsChip';
 import { useStreak } from '../../contexts/StreakContext';
 import { SoundService } from '../../services/SoundService';
+import { useTutorial } from '../../hooks/useTutorial';
+import { ShopTutorial, SHOP_TUTORIAL_KEY } from './ShopTutorial';
 import styles from './RewardsShop.module.css';
 
 const PLAN_FEATURES = [
@@ -38,6 +40,7 @@ export const RewardsShop: React.FC = () => {
   const [portalLoading, setPortalLoading] = useState(false);
   // §8.18.1: prevent double-tap before overlay appears
   const checkoutInFlight = useRef(false);
+  const { showTutorial, dismissTutorial, openTutorial } = useTutorial(SHOP_TUTORIAL_KEY);
 
   // Handle Stripe return (?subscribed=true or ?purchased=<key>)
   React.useEffect(() => {
@@ -93,13 +96,26 @@ export const RewardsShop: React.FC = () => {
 
   return (
     <div className={styles.page}>
+      {/* Tutorial overlay */}
+      {showTutorial && <ShopTutorial onDismiss={dismissTutorial} />}
+
       {/* ── Header ──────────────────────────────────────────────────────── */}
-      <div className={styles.header}>
+      <div className={styles.header} style={{ position: 'relative' }}>
         <h1 className={styles.title}>{t('shop.title')}</h1>
         <p className={styles.subtitle}>{t('shop.subtitle')}</p>
         <div className={styles.chipRow}>
           <BlessingsChip showZero />
         </div>
+        <button
+          className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          onClick={openTutorial}
+          aria-label={t('common.help', 'Help')}
+          title={t('common.help', 'Help')}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
       </div>
 
       {/* ── Premium hero card (free / non-premium users) ─────────────────── */}

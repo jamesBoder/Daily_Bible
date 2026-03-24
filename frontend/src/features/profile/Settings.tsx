@@ -14,6 +14,7 @@ import { useTheme } from "../../contexts/ThemeContext";
 import { CommunitySection } from "../settings/CommunitySection";
 import { MannaSettings } from "../settings/MannaSettings";
 import { AboutContent } from "../about/About";
+import { TutorialsSection } from "../settings/TutorialsSection";
 
 import { settingsService } from "../../services/api/settings";
 import type { ThemeId } from "../../contexts/ThemeContext";
@@ -113,6 +114,17 @@ export const Settings: React.FC = () => {
               <CommunitySection />
             </Card>
           )}
+
+          {/* Help & Tutorials */}
+          <Card>
+            <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
+              {t('settings.sections.help', 'Help & Tutorials')}
+            </h2>
+            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              {t('settings.sections.helpDesc', 'Tap any feature to view its guide again.')}
+            </p>
+            <TutorialsSection />
+          </Card>
 
           {/* Account */}
           <Card>

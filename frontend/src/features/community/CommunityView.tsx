@@ -2,6 +2,8 @@ import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStreak } from '../../contexts/StreakContext';
 import { useCommunity } from '../../hooks/useCommunity';
+import { useTutorial } from '../../hooks/useTutorial';
+import { CommunityTutorial, COMMUNITY_TUTORIAL_KEY } from './CommunityTutorial';
 import { communityApi } from '../../services/api/community';
 import { CommunityPostCard } from './CommunityPostCard';
 import { CommunityPostSkeleton } from './CommunityPostSkeleton';
@@ -30,6 +32,7 @@ export const CommunityView: React.FC = () => {
   const { t } = useTranslation();
   const { subscription } = useStreak();
   const isPremium = subscription?.is_premium ?? false;
+  const { showTutorial, dismissTutorial, openTutorial } = useTutorial(COMMUNITY_TUTORIAL_KEY);
 
   const [activeTab, setActiveTab] = useState<Tab>('board');
   // 'hidden' | 'visible' | 'dismissing'
@@ -109,6 +112,9 @@ export const CommunityView: React.FC = () => {
 
       <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
 
+      {/* Tutorial overlay */}
+      {showTutorial && <CommunityTutorial onDismiss={dismissTutorial} />}
+
       {/* ── Hero Header ──────────────────────────────────────────────────── */}
       <div className="community-hero">
         <div className="community-hero-icon">✝</div>
@@ -120,6 +126,16 @@ export const CommunityView: React.FC = () => {
             {t('community.hero.tagline', 'Walk together in faith')}
           </p>
         </div>
+        <button
+          className="ml-auto flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          onClick={openTutorial}
+          aria-label={t('common.help', 'Help')}
+          title={t('common.help', 'Help')}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
       </div>
 
       {/* Admin compose panel */}

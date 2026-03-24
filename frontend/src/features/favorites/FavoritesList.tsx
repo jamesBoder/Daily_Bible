@@ -9,6 +9,8 @@ import { useTranslation } from "react-i18next";
 import { showToast } from "../../utils/toast";
 import { usePullToRefresh } from "../../hooks/usePullToRefresh";
 import PullRefreshIndicator from "../../components/common/PullRefreshIndicator";
+import { useTutorial } from "../../hooks/useTutorial";
+import { FavoritesTutorial, FAVORITES_TUTORIAL_KEY } from "./FavoritesTutorial";
 
 type SortField = "date" | "reference" | "book" | "translation" | "chapter" | "verseNumber";
 type SortDirection = "asc" | "desc";
@@ -154,6 +156,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
 // ── Main Component ────────────────────────────────────────────────────────────
 export const FavoritesList: React.FC = () => {
   const { t } = useTranslation();
+  const { showTutorial, dismissTutorial, openTutorial } = useTutorial(FAVORITES_TUTORIAL_KEY);
 
   const SORT_OPTIONS: { value: SortField; label: string }[] = [
     { value: "date",        label: t('favorites.sortOptions.date')        },
@@ -325,14 +328,29 @@ export const FavoritesList: React.FC = () => {
       onTouchMove={ptr.onTouchMove}
       onTouchEnd={ptr.onTouchEnd}
     >
+      {/* Tutorial overlay */}
+      {showTutorial && <FavoritesTutorial onDismiss={dismissTutorial} />}
+
       <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
       {/* Header row: title left, sort controls right */}
       <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-        {/* Left: title + count */}
+        {/* Left: title + count + help button */}
         <div>
-          <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-1 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
-            {t('favorites.title')}
-          </h1>
+          <div className="flex items-center gap-2">
+            <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-1 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+              {t('favorites.title')}
+            </h1>
+            <button
+              className="mb-1 w-7 h-7 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+              onClick={openTutorial}
+              aria-label={t('common.help', 'Help')}
+              title={t('common.help', 'Help')}
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+            </button>
+          </div>
           <p className="text-gray-600 dark:text-gray-400 text-sm">
             {keyword.trim()
               ? `${sortedFavorites.length} ${t('favorites.of')} ${favorites.length} ${favorites.length === 1 ? t('favorites.verse') : t('favorites.verses')}`
