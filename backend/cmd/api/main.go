@@ -313,6 +313,9 @@ func main() {
     } else {
         log.Printf("Manna word bank: %d words loaded", mannaService.SeedWordCount())
     }
+    if err := database.SeedCommunityPosts(db); err != nil {
+        log.Printf("WARNING: Community posts seed failed: %v", err)
+    }
 
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
