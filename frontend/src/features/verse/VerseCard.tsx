@@ -10,6 +10,9 @@ import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
 import { TranslationBadge } from "./TranslationBadge";
 import { TranslationSwitcherPopover } from "./TranslationSwitcherPopover";
+import { verseService } from "../../services/api/verse";
+import { showBlessingsToast } from "../../components/BlessingsToast";
+import { useStreak } from "../../contexts/StreakContext";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
 const buildShareText = (verse: Verse): string => {
@@ -77,6 +80,19 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
     }
   };
 
+  // ── Share helpers ─────────────────────────────────────────────────────────
+  // Called once after any share action succeeds. Fire-and-forget — never blocks UI.
+  const { refreshStreak } = useStreak();
+  const creditShareBlessings = () => {
+    if (isGuest) return;
+    verseService.recordShare().then((credited) => {
+      if (credited > 0) {
+        showBlessingsToast(credited, 'verse_shared');
+        refreshStreak().catch(() => {});
+      }
+    });
+  };
+
   // ── Share handlers ────────────────────────────────────────────────────────
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -84,6 +100,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       await navigator.clipboard.writeText(buildShareText(verse));
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
+      creditShareBlessings();
     } catch {
       showToast.error('Could not copy to clipboard');
     }
@@ -93,18 +110,21 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
     e.stopPropagation();
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleWhatsAppShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleFacebookShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://www.facebook.com/sharer/sharer.php?quote=${text}`, "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleInstagramShare = async (e: React.MouseEvent) => {
@@ -117,12 +137,14 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       showToast.error('Could not copy to clipboard');
     }
     window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleNativeShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       await navigator.share({ title: "Bible Verse", text: buildShareText(verse) });
+      creditShareBlessings();
     } catch (err: any) {
       // AbortError = user cancelled the share sheet — ignore it
       if (err?.name !== 'AbortError') {

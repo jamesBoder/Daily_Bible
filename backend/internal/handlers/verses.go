@@ -413,3 +413,26 @@ func (h *VerseHandler) SearchVerses(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"results": results})
 }
+
+// RecordShare credits Blessings when an authenticated user shares a verse.
+// Capped at 2 shares per day (UTC) to prevent farming.
+// Returns { blessings_credited: N } — N is 0 when the daily cap has been reached.
+func (h *VerseHandler) RecordShare(c *gin.Context) {
+	userID, exists := c.Get("userID")
+	if !exists {
+		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
+		return
+	}
+
+	blessingsMultiplier := 1.0
+	if c.GetBool("isPremium") {
+		blessingsMultiplier = 1.5
+	}
+
+	credited, err := h.blessingsService.CreditWithDailyCap(userID.(uint), 5, "verse_shared", blessingsMultiplier, 2)
+	if err != nil {
+		log.Printf("RecordShare: blessings credit failed for user %d: %v", userID, err)
+	}
+
+	c.JSON(http.StatusOK, gin.H{"blessings_credited": credited})
+}

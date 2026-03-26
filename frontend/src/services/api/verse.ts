@@ -5,16 +5,19 @@ import { showToast } from '../../utils/toast';
 
 export const verseService = {
   // Get daily verse
-  getDailyVerse: async (language?: string, version?: string): Promise<Verse> => {
+  getDailyVerse: async (language?: string, version?: string): Promise<{ verse: Verse; blessings_credited: number }> => {
     try {
       const params: Record<string, string> = {};
       if (language) params.lang = language;
       if (version) params.version = version;
-      const response = await apiClient.get<DailyVerseResponse>(
+      const response = await apiClient.get<DailyVerseResponse & { blessings_credited?: number }>(
         API_ENDPOINTS.DAILY_VERSE,
         { params }
       );
-      return response.data.verse;
+      return {
+        verse: response.data.verse,
+        blessings_credited: response.data.blessings_credited ?? 0,
+      };
     } catch (error: any) {
       showToast.error('Failed to load daily verse. Please refresh the page.');
       throw error;
@@ -37,6 +40,17 @@ export const verseService = {
         showToast.error('Failed to load verse');
       }
       throw error;
+    }
+  },
+
+  // Record a verse share and credit Blessings (capped at 2/day).
+  // Returns the number of Blessings credited (0 when cap is reached).
+  recordShare: async (): Promise<number> => {
+    try {
+      const response = await apiClient.post<{ blessings_credited: number }>('/api/verses/share');
+      return response.data.blessings_credited ?? 0;
+    } catch {
+      return 0;
     }
   },
 

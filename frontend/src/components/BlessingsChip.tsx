@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStreak } from '../contexts/StreakContext';
 import { useTranslation } from 'react-i18next';
 import { SoundService } from '../services/SoundService';
+import { Star } from '@phosphor-icons/react';
 
 const POPOVER_WIDTH = 240;
 const POPOVER_ID = 'blessings';
@@ -127,7 +128,7 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         className={[
-          'flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] rounded-lg',
+          'flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-lg',
           'bg-gradient-to-r from-yellow-50 to-amber-50',
           'dark:from-yellow-900/20 dark:to-amber-900/20',
           'border border-yellow-300 dark:border-yellow-700',
@@ -136,9 +137,7 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
         ].join(' ')}
         aria-label={t('blessings.balance', 'Blessings balance')}
       >
-        <svg className="w-4 h-4 text-yellow-600 dark:text-yellow-400" fill="currentColor" viewBox="0 0 24 24">
-          <path d="M12 2L15.09 8.26L22 9.27L17 14.14L18.18 21.02L12 17.77L5.82 21.02L7 14.14L2 9.27L8.91 8.26L12 2Z" />
-        </svg>
+        <Star size={18} weight="duotone" className="text-yellow-500 dark:text-yellow-400" />
         <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
           {streakData.blessings_balance}
         </span>
@@ -147,11 +146,16 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
       {showPopover && (
         <div
           ref={popoverRef}
-          className="fixed z-50 w-60 max-w-[calc(100vw-1rem)] p-3
+          className="fixed z-50 w-60 max-w-[90vw] p-3
                      bg-white dark:bg-gray-800 rounded-lg shadow-xl
                      border border-gray-200 dark:border-gray-700
                      animate-fade-in"
-          style={{ top: popoverPos.top, right: popoverPos.right }}
+          style={{
+            top: popoverPos.top,
+            right: popoverPos.right,
+            maxHeight: `calc(100dvh - ${popoverPos.top}px - 12px)`,
+            overflowY: 'auto',
+          }}
           onMouseEnter={() => clearTimeout(hoverTimerRef.current)}
           onMouseLeave={() => { if (isHoverSourceRef.current) closePopover(); }}
         >

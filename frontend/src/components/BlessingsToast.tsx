@@ -80,8 +80,18 @@ const BlessingsToast: React.FC<BlessingsToastProps> = () => {
         return t('blessings.earned.reflection', 'Reflection added');
       case 'verse_favorited':
         return t('blessings.earned.favorite', 'Verse favorited');
+      case 'verse_shared':
+        return t('blessings.earned.shared', 'Verse shared');
+      case 'journal_entry_written':
+        return t('blessings.earned.journal', 'Journal entry written');
       case 'milestone_achieved':
         return t('blessings.earned.milestone', 'Milestone achieved');
+      case 'manna_solved':
+        return t('blessings.earned.manna_solved', 'Manna puzzle solved');
+      case 'manna_played':
+        return t('blessings.earned.manna_played', 'Manna puzzle played');
+      case 'manna_streak_bonus':
+        return t('blessings.earned.manna_streak_bonus', 'Manna streak bonus');
       default:
         return t('blessings.earned.generic', 'Blessings earned');
     }
@@ -90,7 +100,12 @@ const BlessingsToast: React.FC<BlessingsToastProps> = () => {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 space-y-2">
+    <div
+      className="fixed bottom-20 right-4 z-50 space-y-2 sm:bottom-4"
+      role="status"
+      aria-live="polite"
+      aria-label={t('blessings.label', 'Blessings')}
+    >
       {toasts.map((toast) => (
         <div
           key={toast.id}

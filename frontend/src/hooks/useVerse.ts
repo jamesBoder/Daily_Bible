@@ -15,7 +15,10 @@ export const useVerse = (language: string = 'en', version?: string) => {
   });
 
   return {
-    verse: data ?? null,
+    verse: data?.verse ?? null,
+    // blessings_credited > 0 only on the first fetch of the day (wasNew on backend).
+    // Callers must guard against showing the toast more than once per session.
+    blessingsCredited: data?.blessings_credited ?? 0,
     isLoading,
     error: error?.message ?? null,
     refetch,

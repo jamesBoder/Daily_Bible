@@ -201,7 +201,7 @@ export const CommunityView: React.FC = () => {
             className={`community-tab-btn${activeTab === id ? ' community-tab-btn-active' : ''}`}
             onClick={() => setActiveTab(id)}
           >
-            <Icon size={14} weight={activeTab === id ? 'fill' : 'regular'} />
+            <Icon size={14} weight={activeTab === id ? 'duotone' : 'regular'} />
             {t(labelKey, fallback)}
           </button>
         ))}

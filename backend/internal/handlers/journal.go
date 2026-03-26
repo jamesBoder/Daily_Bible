@@ -142,7 +142,8 @@ type createEntryRequest struct {
 }
 
 // CreateEntry handles POST /api/journal
-// Creates a new journal entry and credits 8 Blessings asynchronously.
+// Creates a new journal entry and credits 8 Blessings (capped 1/day).
+// Returns blessings_credited so the frontend can show the blessings toast.
 func (h *JournalHandler) CreateEntry(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 	// Use cached isPremium from auth middleware (avoids extra DB query per request).
@@ -171,7 +172,7 @@ func (h *JournalHandler) CreateEntry(c *gin.Context) {
 		blessingsMultiplier = 1.5
 	}
 
-	entry, err := h.journalService.CreateEntry(
+	entry, blessingsCredited, err := h.journalService.CreateEntry(
 		userID,
 		hasAccess,
 		req.ContentPlain,
@@ -185,15 +186,19 @@ func (h *JournalHandler) CreateEntry(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, journalEntryResponse{
-		ID:           entry.ID,
-		ContentPlain: entry.ContentPlain,
-		ContentRich:  entry.ContentRich,
-		LinkedVerse:  entry.LinkedVerse,
-		PromptID:     entry.PromptID,
-		CreatedAt:    entry.CreatedAt.Format("2006-01-02T15:04:05Z"),
-		UpdatedAt:    entry.UpdatedAt.Format("2006-01-02T15:04:05Z"),
-	})
+	resp := gin.H{
+		"id":            entry.ID,
+		"content_plain": entry.ContentPlain,
+		"content_rich":  entry.ContentRich,
+		"linked_verse":  entry.LinkedVerse,
+		"prompt_id":     entry.PromptID,
+		"created_at":    entry.CreatedAt.Format("2006-01-02T15:04:05Z"),
+		"updated_at":    entry.UpdatedAt.Format("2006-01-02T15:04:05Z"),
+	}
+	if blessingsCredited > 0 {
+		resp["blessings_credited"] = blessingsCredited
+	}
+	c.JSON(http.StatusCreated, resp)
 }
 
 // updateEntryRequest is the expected JSON body for PUT /api/journal/:id.

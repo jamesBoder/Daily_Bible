@@ -72,14 +72,14 @@ export const favoriteService = {
  * @returns Promise with success message
  * @throws Error if verse is already favorited (409) or other errors
  */
-  addFavorite: async (verseId: number) => {
+  addFavorite: async (verseId: number): Promise<AddFavoriteResponse & { blessings_credited?: number }> => {
     try {
-        const response = await apiClient.post<AddFavoriteResponse>(
-        API_ENDPOINTS.FAVORITES, 
+        const response = await apiClient.post<AddFavoriteResponse & { blessings_credited?: number }>(
+        API_ENDPOINTS.FAVORITES,
         { verse_id: verseId }
         );
         showToast.success('Added to favorites!');
-        return response.data; // { message: "Favorite added successfully" }
+        return response.data;
     } catch (error: any) {
       // Correct status code for conflict
       if (error.response?.status === 409) {

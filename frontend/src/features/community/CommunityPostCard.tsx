@@ -54,6 +54,10 @@ export const CommunityPostCard: React.FC<Props> = ({
   const { t } = useTranslation();
   // Track which reaction type was just selected so we can fire the pop animation.
   const [poppedReaction, setPoppedReaction] = useState<string | null>(null);
+  // Long post truncation — "Show more / Show less"
+  const BODY_CHAR_LIMIT = 280;
+  const isLong = post.body.length > BODY_CHAR_LIMIT;
+  const [expanded, setExpanded] = useState(false);
 
   const isAnnouncement = post.post_type === 'announcement';
   const isMilestone   = post.post_type === 'milestone';
@@ -67,7 +71,7 @@ export const CommunityPostCard: React.FC<Props> = ({
     : isPrayer
     ? 'var(--grace-lavender)'
     : isChallenge
-    ? 'var(--candle-amber)'
+    ? 'var(--challenge-accent)'
     : 'var(--theme-border, var(--journal-border))';
 
   // Keep borderColor alias so reaction bar code stays unchanged
@@ -184,7 +188,7 @@ export const CommunityPostCard: React.FC<Props> = ({
         {/* Name + type badge + timestamp */}
         <div style={{ flex: 1, minWidth: 0 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem', flexWrap: 'wrap' }}>
-            {isMilestone && <Flame size={13} weight="fill" style={{ color: 'var(--blessing-gold)', flexShrink: 0 }} />}
+            {isMilestone && <Flame size={13} weight="duotone" style={{ color: 'var(--blessing-gold)', flexShrink: 0 }} />}
             <span
               style={{
                 fontSize: '0.85rem',
@@ -210,10 +214,37 @@ export const CommunityPostCard: React.FC<Props> = ({
       </div>
 
       {/* Body */}
-      <p style={{ color: 'var(--foreground)', fontSize: '0.92rem', lineHeight: 1.5, margin: '0 0 0.5rem' }}>
+      <p style={{
+        color: 'var(--foreground)',
+        fontSize: '0.92rem',
+        lineHeight: 1.5,
+        margin: '0 0 0.5rem',
+        ...(!expanded && isLong ? {
+          display: '-webkit-box',
+          WebkitLineClamp: 5,
+          WebkitBoxOrient: 'vertical' as const,
+          overflow: 'hidden',
+        } : {}),
+      }}>
         {isPrayer && <span style={{ marginRight: '0.3rem', fontSize: '1rem' }}>🙏</span>}
         {post.body}
       </p>
+      {isLong && (
+        <button
+          onClick={() => setExpanded(e => !e)}
+          style={{
+            background: 'none',
+            border: 'none',
+            padding: '0 0 0.4rem',
+            fontSize: '0.8rem',
+            fontWeight: 600,
+            color: 'var(--candle-amber)',
+            cursor: 'pointer',
+          }}
+        >
+          {expanded ? 'Show less' : 'Show more'}
+        </button>
+      )}
 
       {/* Prayer expiry countdown — shown when <= 3 days remain */}
       {isPrayer && post.expires_at && (() => {
@@ -257,7 +288,8 @@ export const CommunityPostCard: React.FC<Props> = ({
                 display: 'flex',
                 alignItems: 'center',
                 gap: '0.25rem',
-                padding: '0.2rem 0.5rem',
+                padding: '0.5rem 0.75rem',
+                minHeight: 44,
                 borderRadius: 20,
                 border: `1px solid ${reacted ? borderColor : 'var(--journal-surface)'}`,
                 background: reacted ? `${borderColor}22` : 'transparent',

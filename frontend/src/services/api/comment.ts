@@ -5,14 +5,17 @@ import { showToast } from '../../utils/toast';
 
 export const commentService = {
   // Add or update comment
-  addOrUpdateComment: async (data: AddCommentRequest): Promise<Comment> => {
+  addOrUpdateComment: async (data: AddCommentRequest): Promise<{ comment: Comment; blessings_credited: number }> => {
     try {
-      const response = await apiClient.post<{ comment: Comment }>(
+      const response = await apiClient.post<{ comment: Comment; blessings_credited?: number }>(
         API_ENDPOINTS.COMMENTS,
         data
       );
       showToast.success('Comment saved!');
-      return response.data.comment;
+      return {
+        comment: response.data.comment,
+        blessings_credited: response.data.blessings_credited ?? 0,
+      };
     } catch (error: any) {
       if (error.response?.status === 400) {
         showToast.error('Invalid comment data');

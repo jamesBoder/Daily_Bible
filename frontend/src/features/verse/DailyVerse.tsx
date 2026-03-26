@@ -4,6 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import { useVerse } from "../../hooks/useVerse";
 import { useHistory } from "../../hooks/useHistory";
 import { useAuth } from "../../hooks/useAuth";
+import { useStreak } from "../../contexts/StreakContext";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { useSwipe } from "../../hooks/useSwipe";
 import { usePullToRefresh } from "../../hooks/usePullToRefresh";
@@ -16,6 +17,7 @@ import { useTranslation } from "react-i18next";
 import GraceDayBanner from "../../components/GraceDayBanner";
 import StreakResetAcknowledgment from "../../components/StreakResetAcknowledgment";
 import FirstEngagementOnboarding from "../../components/FirstEngagementOnboarding";
+import { showBlessingsToast } from "../../components/BlessingsToast";
 import api from "../../services/api/api";
 import { Verse } from "../../types/verse";
 import { HistoryEntry } from "../../types/history";
@@ -93,6 +95,7 @@ const MAX_DAYS_BACK = 30;
 export const DailyVerse: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isGuest } = useAuth();
+  const { refreshStreak } = useStreak();
 
   // Per-session version override (key like "kjv", "web"). Empty = use server preference.
   const [sessionVersion, setSessionVersion] = useState<string | undefined>(undefined);
@@ -108,15 +111,15 @@ export const DailyVerse: React.FC = () => {
   const [isFetchingDate, setIsFetchingDate] = useState(false);
   const [fetchDateError, setFetchDateError] = useState(false);
 
-  const { verse, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
+  const { verse, blessingsCredited, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
   const { history } = useHistory(!isGuest);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [historyIndex, setHistoryIndex] = useState(0);
 
-  // Build today's date string in local timezone (YYYY-MM-DD)
+  // Build today's date string in UTC (YYYY-MM-DD) to match the backend's daily cap reset boundary.
   const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
+  const todayStr = now.toISOString().split('T')[0];
 
   // Virtual list of past dates (yesterday, day-before, …) in local timezone.
   // Every user can navigate back up to MAX_DAYS_BACK days regardless of whether
@@ -166,6 +169,18 @@ export const DailyVerse: React.FC = () => {
       streakSoundFiredRef.current = true;
     }
   }, [verse, historyIndex]);
+
+  // Show blessings toast once per calendar day when the daily verse credits blessings.
+  // Guarded by sessionStorage so it doesn't re-fire on every component mount.
+  useEffect(() => {
+    if (isGuest || !verse || historyIndex !== 0 || blessingsCredited <= 0) return;
+    const sessionKey = `blessings-daily-toasted-${todayStr}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+    sessionStorage.setItem(sessionKey, '1');
+    showBlessingsToast(blessingsCredited, 'daily_view');
+    refreshStreak().catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verse, blessingsCredited]);
 
   // Reset index + session version when language changes
   useEffect(() => {

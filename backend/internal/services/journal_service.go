@@ -72,8 +72,8 @@ func (s *JournalService) GetEntry(userID uint, entryID uint) (*models.JournalEnt
 // linkedVerse is stored for all users. contentRich (Tiptap JSON) is only stored
 // for premium users and silently discarded otherwise.
 //
-// On success, 8 Blessings are credited asynchronously. A failed Blessings write
-// does not roll back the entry creation.
+// On success, 8 Blessings are credited synchronously (1/day cap) and the credited
+// amount is returned so the handler can surface it to the frontend.
 func (s *JournalService) CreateEntry(
 	userID uint,
 	isPremium bool,
@@ -82,7 +82,7 @@ func (s *JournalService) CreateEntry(
 	linkedVerse string,
 	promptID *uint,
 	blessingsMultiplier float64,
-) (*models.JournalEntry, error) {
+) (*models.JournalEntry, int, error) {
 	entry := models.JournalEntry{
 		UserID:       userID,
 		ContentPlain: contentPlain,
@@ -94,18 +94,15 @@ func (s *JournalService) CreateEntry(
 	}
 
 	if err := s.db.Create(&entry).Error; err != nil {
-		return nil, err
+		return nil, 0, err
 	}
 
-	// Credit 8 Blessings asynchronously, capped at 3 journal entries per day
-	// (24 Blessings/day max) to prevent farming. A panic here must not kill the request.
-	bs := s.blessingsService
-	go func() {
-		defer func() { recover() }() //nolint:errcheck
-		bs.CreditWithDailyCap(userID, 8, "journal_entry_written", blessingsMultiplier, 3)
-	}()
+	// Credit 8 Blessings synchronously (fast DB upsert) so the handler can return
+	// the credited amount to the frontend for the blessings toast.
+	// Capped at 1 journal entry per day to prevent farming.
+	credited, _ := s.blessingsService.CreditWithDailyCap(userID, 8, "journal_entry_written", blessingsMultiplier, 1)
 
-	return &entry, nil
+	return &entry, credited, nil
 }
 
 // UpdateEntry saves changes to an existing entry, enforcing ownership.

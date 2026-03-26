@@ -237,9 +237,14 @@ const router = createBrowserRouter([
         path: "journal/:id",
         element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><JournalEditor /></Suspense></GuestBlockedRoute>,
       },
+      // Nested catch-all: any unmatched path inside the Layout (e.g. /daily/foo) → /daily
+      {
+        path: "*",
+        element: <Navigate to="/daily" replace />,
+      },
     ],
   },
-  // Catch all - redirect to daily verse
+  // Top-level catch-all: paths that don't match "/" at all → /daily
   {
     path: "*",
     element: <Navigate to="/daily" replace />,
@@ -259,7 +264,8 @@ function App() {
           <LanguageProvider>
             <PricingModalProvider>
               <Toaster
-                position="top-right"
+                position="top-center"
+                containerStyle={{ top: '4.5rem' }}
                 toastOptions={{
                   duration: 3000,
                   style: {

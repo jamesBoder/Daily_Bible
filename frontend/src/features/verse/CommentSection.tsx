@@ -4,6 +4,8 @@ import { Button } from "../../components/common/Button";
 import { commentService } from "../../services/api/comment";
 import { Comment } from "../../types/comment";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
+import { useStreak } from "../../contexts/StreakContext";
+import { showBlessingsToast } from "../../components/BlessingsToast";
 
 interface CommentSectionProps {
   verseId: number;
@@ -17,6 +19,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   onCommentSaved,
 }) => {
   const { t } = useTranslation();
+  const { refreshStreak } = useStreak();
   const [comment, setComment] = useState<Comment | null>(null);
   const [commentText, setCommentText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -74,7 +77,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     setError("");
 
     try {
-      const savedComment = await commentService.addOrUpdateComment({
+      const { comment: savedComment, blessings_credited } = await commentService.addOrUpdateComment({
         verse_id: verseId,
         verse_reference: verseReference,
         comment_text: commentText.trim(),
@@ -83,6 +86,10 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       setComment(savedComment);
       setIsEditing(false);
       onCommentSaved?.();
+      if (blessings_credited > 0) {
+        showBlessingsToast(blessings_credited, 'reflection_written');
+        refreshStreak().catch(() => {});
+      }
     } catch (err: any) {
       setError(err.response?.data?.error || t('notes.saveFailed'));
     } finally {

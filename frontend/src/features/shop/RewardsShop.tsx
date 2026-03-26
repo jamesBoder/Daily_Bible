@@ -34,7 +34,7 @@ export const RewardsShop: React.FC = () => {
   const location = useLocation();
   const {
     subscription, subscriptionLoading,
-    startCheckout, openPortal, refreshSubscription,
+    startCheckout, openPortal, refreshSubscription, refreshStreak,
   } = useStreak();
   const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
   const [portalLoading, setPortalLoading] = useState(false);
@@ -55,6 +55,9 @@ export const RewardsShop: React.FC = () => {
     sessionStorage.removeItem('pendingStripeInitiatedAt');
 
     refreshSubscription().then(() => {
+      // Always refresh blessings balance alongside subscription — OTP purchases
+      // (e.g. Grace Day Pack) may credit blessings, and the chip must update.
+      refreshStreak().catch(() => {});
       if (subscribed === 'true') {
         // subscription-success sound fires via StreakContext isPremium transition watcher
       } else if (purchased) {
@@ -157,7 +160,7 @@ export const RewardsShop: React.FC = () => {
                 className="sr-only"
               />
               <span className={styles.planName}>{t('subscription.plan.monthly', 'Monthly')}</span>
-              <span className={styles.planPrice}>{t('subscription.plan.monthly_price', '$2.99 / mo')}</span>
+              <span className={styles.planPrice}>{t('subscription.plan.monthly_price', '$1.99 / mo')}</span>
             </label>
             <label className={`${styles.planOption}${planChoice === 'annual' ? ` ${styles.planOptionActive}` : ''}`}>
               <input
@@ -170,9 +173,9 @@ export const RewardsShop: React.FC = () => {
               />
               <div className={styles.planNameRow}>
                 <span className={styles.planName}>{t('subscription.plan.annual', 'Annual')}</span>
-                <span className={styles.planBestValue}>{t('subscription.plan.annual_save', 'Save 17%')}</span>
+                <span className={styles.planBestValue}>{t('subscription.plan.annual_save', 'Save 25%')}</span>
               </div>
-              <span className={styles.planPrice}>{t('subscription.plan.annual_price', '$29.99 / yr')}</span>
+              <span className={styles.planPrice}>{t('subscription.plan.annual_price', '$17.99 / yr')}</span>
             </label>
           </div>
 

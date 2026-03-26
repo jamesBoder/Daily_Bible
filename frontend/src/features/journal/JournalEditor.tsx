@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import api from "../../services/api/api";
 import { showToast } from "../../utils/toast";
 import { SoundService } from "../../services/SoundService";
+import { useStreak } from "../../contexts/StreakContext";
+import { showBlessingsToast } from "../../components/BlessingsToast";
 import "./JournalEditor.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -48,6 +50,7 @@ export const JournalEditor: React.FC = () => {
   const navigate = useNavigate();
   const { id } = useParams<{ id?: string }>();
   const { t } = useTranslation();
+  const { refreshStreak } = useStreak();
 
   const isEditMode = Boolean(id);
 
@@ -132,12 +135,16 @@ export const JournalEditor: React.FC = () => {
     try {
       if (entryId === null) {
         // First save — POST to create
-        const res = await api.post<JournalEntry>("/api/journal", {
+        const res = await api.post<JournalEntry & { blessings_credited?: number }>("/api/journal", {
           content_plain: plain,
           linked_verse: verse,
           prompt_id: pId,
         });
         setEntryId(res.data.id);
+        if (res.data.blessings_credited && res.data.blessings_credited > 0) {
+          showBlessingsToast(res.data.blessings_credited, 'journal_entry_written');
+          refreshStreak().catch(() => {});
+        }
       } else {
         // Subsequent saves — PUT to update
         await api.put(`/api/journal/${entryId}`, {

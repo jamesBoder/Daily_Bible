@@ -122,7 +122,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, isGuest]);
 
   const refreshSubscription = useCallback(async () => {
     const now = Date.now();
