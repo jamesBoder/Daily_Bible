@@ -11,6 +11,7 @@ type MannaGame struct {
 	WordID           uint      `gorm:"index"` // FK to MannaWord — never sent in API response
 	Status           string    `gorm:"size:20;default:'in_progress'"`
 	GuessCount       int       `gorm:"default:0"`
+	MaxGuesses       int       `gorm:"default:6"`
 	BlessingsAwarded bool      `gorm:"default:false"` // prevent double-crediting
 	// Hint system — up to 3 hints per game, each costs 15 Blessings
 	HintsUsed   int    `gorm:"default:0"`

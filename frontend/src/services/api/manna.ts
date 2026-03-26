@@ -18,6 +18,7 @@ export interface MannaGameResponse {
   max_guesses: number;
   guesses: GuessEntry[];
   word_length: number;
+  is_free_play: boolean;
   // Scripture clue — shown from the start; word is blanked out
   scripture_reference: string;
   scripture_clue: string;   // verse text with target word replaced by _____
@@ -46,6 +47,8 @@ export interface GuessResult {
   scripture_reference?: string;
   scripture_text?: string;
   blessings_awarded?: number;
+  streak_bonus?: number;
+  win_streak?: number;
 }
 
 export interface HintResult {
@@ -66,6 +69,7 @@ export interface MannaGameSummary {
   game_date: string;
   status: 'in_progress' | 'solved' | 'failed';
   guess_count: number;
+  max_guesses: number; // 4 for free games, 6 for premium
   word: string;
 }
 
@@ -102,5 +106,17 @@ export const mannaApi = {
 
   getStats(): Promise<MannaStats> {
     return apiClient.get<MannaStats>('/api/manna/stats').then(r => r.data);
+  },
+
+  getArchive(date: string): Promise<MannaGameResponse> {
+    return apiClient.get<MannaGameResponse>(`/api/manna/archive/${date}`).then(r => r.data);
+  },
+
+  submitArchiveGuess(date: string, guess: string): Promise<GuessResult> {
+    return apiClient.post<GuessResult>(`/api/manna/archive/${date}/guess`, { guess }).then(r => r.data);
+  },
+
+  getArchiveHint(date: string): Promise<HintResult> {
+    return apiClient.post<HintResult>(`/api/manna/archive/${date}/hint`).then(r => r.data);
   },
 };

@@ -17,6 +17,7 @@ import (
 )
 
 const maxMannaGuesses = 6
+const freeMannaGuesses = 4
 const maxMannaHints = 3
 const hintCost = 15
 
@@ -84,6 +85,9 @@ type MannaGameResponse struct {
 	ScriptureClue      string `json:"scripture_clue"` // text with word → _____
 	Testament          string `json:"testament"`       // "Old Testament" | "New Testament"
 
+	// Free play indicator — true for free (non-premium) users
+	IsFreePlay bool `json:"is_free_play"`
+
 	// Hints
 	HintsUsed   int          `json:"hints_used"`
 	HintLetters []HintLetter `json:"hint_letters,omitempty"`
@@ -102,6 +106,8 @@ type GuessResult struct {
 	ScriptureReference *string  `json:"scripture_reference,omitempty"`
 	ScriptureText      *string  `json:"scripture_text,omitempty"`
 	BlessingsAwarded   *int     `json:"blessings_awarded,omitempty"`
+	StreakBonus        *int     `json:"streak_bonus,omitempty"`  // extra blessings awarded for win streak
+	WinStreak          *int     `json:"win_streak,omitempty"`   // current consecutive-solve streak
 }
 
 // YesterdayResult is returned from GET /api/manna/yesterday.
@@ -116,6 +122,7 @@ type MannaGameSummary struct {
 	GameDate   string `json:"game_date"`
 	Status     string `json:"status"`
 	GuessCount int    `json:"guess_count"`
+	MaxGuesses int    `json:"max_guesses"` // 4 for free games, 6 for premium
 	Word       string `json:"word,omitempty"` // revealed after game is over
 }
 
@@ -173,21 +180,26 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 
 // ─── Game management ──────────────────────────────────────────────────────────
 
-// GetOrCreateGame returns the user's game for today, creating one if absent.
-func (s *MannaService) GetOrCreateGame(userID uint) (*MannaGameResponse, error) {
-	todayWord, err := s.GetTodayWord()
+// getOrCreateGameForDate returns the user's game for the given date, creating one if absent.
+// isPremium controls max guesses and whether scripture clue is included.
+func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time, isPremium bool) (*MannaGameResponse, error) {
+	word, err := s.getWordForDate(date)
 	if err != nil {
-		return nil, fmt.Errorf("GetTodayWord: %w", err)
+		return nil, fmt.Errorf("getWordForDate: %w", err)
 	}
 
-	today := time.Now().UTC().Truncate(24 * time.Hour)
+	maxGuesses := maxMannaGuesses
+	if !isPremium {
+		maxGuesses = freeMannaGuesses
+	}
 
 	var game models.MannaGame
 	newGame := models.MannaGame{
-		UserID:   userID,
-		GameDate: today,
-		WordID:   todayWord.ID,
-		Status:   "in_progress",
+		UserID:     userID,
+		GameDate:   date,
+		WordID:     word.ID,
+		Status:     "in_progress",
+		MaxGuesses: maxGuesses,
 	}
 	ins := s.db.Clauses(clause.OnConflict{DoNothing: true}).Create(&newGame)
 	if ins.Error != nil {
@@ -196,8 +208,12 @@ func (s *MannaService) GetOrCreateGame(userID uint) (*MannaGameResponse, error) 
 	if ins.RowsAffected > 0 {
 		game = newGame
 	} else {
-		if err := s.db.Where("user_id = ? AND game_date = ?", userID, today).First(&game).Error; err != nil {
+		if err := s.db.Where("user_id = ? AND game_date = ?", userID, date).First(&game).Error; err != nil {
 			return nil, fmt.Errorf("refetch game: %w", err)
+		}
+		// Use the stored MaxGuesses if the game already exists
+		if game.MaxGuesses > 0 {
+			maxGuesses = game.MaxGuesses
 		}
 	}
 
@@ -206,31 +222,58 @@ func (s *MannaService) GetOrCreateGame(userID uint) (*MannaGameResponse, error) 
 		return nil, err
 	}
 
+	// Derive effective max guesses from the stored game (handles mid-day upgrades correctly).
+	// For newly created games, game.MaxGuesses == maxGuesses (set above).
+	// For pre-existing games, game.MaxGuesses reflects what was set at creation time.
+	effectiveMax := game.MaxGuesses
+	if effectiveMax == 0 {
+		effectiveMax = maxMannaGuesses // backward compat for rows before this migration
+	}
+	isFreeGame := effectiveMax == freeMannaGuesses
+
 	resp := &MannaGameResponse{
-		Locked:             false,
-		GameID:             game.ID,
-		Status:             game.Status,
-		GuessCount:         game.GuessCount,
-		MaxGuesses:         maxMannaGuesses,
-		Guesses:            guesses,
-		WordLength:         5,
-		ScriptureReference: todayWord.ScriptureReference,
-		ScriptureClue:      buildScriptureClue(todayWord.ScriptureText, todayWord.Word),
-		Testament:          getTestament(todayWord.ScriptureReference),
-		HintsUsed:          game.HintsUsed,
-		HintLetters:        parseHintLetters(game.HintLetters),
+		Locked:      false,
+		GameID:      game.ID,
+		Status:      game.Status,
+		GuessCount:  game.GuessCount,
+		MaxGuesses:  effectiveMax,
+		Guesses:     guesses,
+		WordLength:  5,
+		IsFreePlay:  isFreeGame,
+		HintsUsed:   game.HintsUsed,
+		HintLetters: parseHintLetters(game.HintLetters),
+	}
+
+	// Scripture clue is a premium-only feature — only populate for premium games.
+	if !isFreeGame {
+		resp.ScriptureReference = word.ScriptureReference
+		resp.ScriptureClue = buildScriptureClue(word.ScriptureText, word.Word)
+		resp.Testament = getTestament(word.ScriptureReference)
 	}
 
 	if game.Status == "solved" || game.Status == "failed" {
-		resp.Answer = &todayWord.Word
-		resp.ScriptureText = &todayWord.ScriptureText
+		resp.Answer = &word.Word
+		// Full scripture text is premium-only — do not send to free-game responses.
+		if !isFreeGame {
+			resp.ScriptureText = &word.ScriptureText
+		}
 	}
 
 	return resp, nil
 }
 
-// SubmitGuess validates a guess and advances the game state.
-func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool) (*GuessResult, error) {
+// GetOrCreateGame returns the user's game for today, creating one if absent.
+func (s *MannaService) GetOrCreateGame(userID uint, isPremium bool) (*MannaGameResponse, error) {
+	return s.getOrCreateGameForDate(userID, time.Now().UTC().Truncate(24*time.Hour), isPremium)
+}
+
+// GetOrCreateArchiveGame returns a premium game for a past date, creating one if absent.
+func (s *MannaService) GetOrCreateArchiveGame(userID uint, date time.Time) (*MannaGameResponse, error) {
+	return s.getOrCreateGameForDate(userID, date, true)
+}
+
+// submitGuessForDate validates a guess and advances the game state for the given date.
+func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremium bool, date time.Time) (*GuessResult, error) {
 	guessWord = strings.ToUpper(strings.TrimSpace(guessWord))
 	if len(guessWord) != 5 {
 		return nil, errors.New("guess_length: Guesses must be exactly 5 letters")
@@ -251,10 +294,8 @@ func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool
 		return nil, errors.New("not_a_word: Not a recognized biblical word")
 	}
 
-	today := time.Now().UTC().Truncate(24 * time.Hour)
-
 	var game models.MannaGame
-	if err := s.db.Where("user_id = ? AND game_date = ?", userID, today).First(&game).Error; err != nil {
+	if err := s.db.Where("user_id = ? AND game_date = ?", userID, date).First(&game).Error; err != nil {
 		return nil, fmt.Errorf("game not found: %w", err)
 	}
 
@@ -282,7 +323,11 @@ func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool
 	game.GuessCount++
 
 	solved := guessWord == word.Word
-	failed := !solved && game.GuessCount >= maxMannaGuesses
+	effectiveMax := game.MaxGuesses
+	if effectiveMax == 0 {
+		effectiveMax = maxMannaGuesses
+	}
+	failed := !solved && game.GuessCount >= effectiveMax
 
 	if solved {
 		game.Status = "solved"
@@ -327,6 +372,22 @@ func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool
 
 			blessings := int(float64(base) * multiplier)
 			resp.BlessingsAwarded = &blessings
+
+			// Streak bonus: only for today's solved game (not archive plays).
+			today := time.Now().UTC().Truncate(24 * time.Hour)
+			if game.Status == "solved" && date.Equal(today) {
+				winStreak := s.computeMannaWinStreak(userID, date)
+				bonusBase := mannaStreakBonusBase(winStreak)
+				if bonusBase > 0 {
+					bonus := int(float64(bonusBase) * multiplier)
+					go func() {
+						defer func() { recover() }()
+						s.blessingsService.Credit(userID, bonusBase, "manna_streak_bonus", multiplier)
+					}()
+					resp.StreakBonus = &bonus
+					resp.WinStreak = &winStreak
+				}
+			}
 		}
 	}
 
@@ -339,13 +400,22 @@ func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool
 	return resp, nil
 }
 
-// GetHint reveals one unrevealed letter position, costing hintCost Blessings.
-// Returns an error if: game is over, max hints reached, or insufficient blessings.
-func (s *MannaService) GetHint(userID uint) (*HintResponse, error) {
-	today := time.Now().UTC().Truncate(24 * time.Hour)
+// SubmitGuess validates a guess and advances today's game state.
+func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool) (*GuessResult, error) {
+	return s.submitGuessForDate(userID, guessWord, isPremium, time.Now().UTC().Truncate(24*time.Hour))
+}
 
+// SubmitArchiveGuess validates a guess for an archive (past) game.
+func (s *MannaService) SubmitArchiveGuess(userID uint, guessWord string, date time.Time) (*GuessResult, error) {
+	return s.submitGuessForDate(userID, guessWord, true, date)
+}
+
+// getHintForDate reveals one unrevealed letter position for a game on the given date,
+// costing hintCost Blessings.
+// Returns an error if: game is over, max hints reached, or insufficient blessings.
+func (s *MannaService) getHintForDate(userID uint, date time.Time) (*HintResponse, error) {
 	var game models.MannaGame
-	if err := s.db.Where("user_id = ? AND game_date = ?", userID, today).First(&game).Error; err != nil {
+	if err := s.db.Where("user_id = ? AND game_date = ?", userID, date).First(&game).Error; err != nil {
 		return nil, errors.New("hint_no_game: No active game for today")
 	}
 	if game.Status != "in_progress" {
@@ -414,6 +484,16 @@ func (s *MannaService) GetHint(userID uint) (*HintResponse, error) {
 	}, nil
 }
 
+// GetHint reveals one unrevealed letter position for today's game.
+func (s *MannaService) GetHint(userID uint) (*HintResponse, error) {
+	return s.getHintForDate(userID, time.Now().UTC().Truncate(24*time.Hour))
+}
+
+// GetArchiveHint reveals one unrevealed letter position for an archive game.
+func (s *MannaService) GetArchiveHint(userID uint, date time.Time) (*HintResponse, error) {
+	return s.getHintForDate(userID, date)
+}
+
 // GetYesterdayResult returns yesterday's word + scripture. Public — no auth needed.
 func (s *MannaService) GetYesterdayResult() (*YesterdayResult, error) {
 	word, err := s.GetYesterdayWord()
@@ -455,10 +535,15 @@ func (s *MannaService) GetHistory(userID uint) ([]MannaGameSummary, error) {
 
 	summaries := make([]MannaGameSummary, 0, len(games))
 	for _, g := range games {
+		mg := g.MaxGuesses
+		if mg == 0 {
+			mg = maxMannaGuesses // backward compat for pre-migration rows
+		}
 		summaries = append(summaries, MannaGameSummary{
 			GameDate:   g.GameDate.Format("2006-01-02"),
 			Status:     g.Status,
 			GuessCount: g.GuessCount,
+			MaxGuesses: mg,
 			Word:       wordMap[g.WordID],
 		})
 	}
@@ -668,6 +753,42 @@ func (s *MannaService) GetStats(userID uint) (*MannaStats, error) {
 	}
 
 	return stats, nil
+}
+
+// ─── Streak Bonus ──────────────────────────────────────────────────────────────
+
+// mannaStreakBonusBase returns the base (pre-multiplier) bonus blessings for a
+// given consecutive-solve streak length. Tiers: 3-day = 5, 7-day = 10, 14-day = 20.
+func mannaStreakBonusBase(streak int) int {
+	switch {
+	case streak >= 14:
+		return 20
+	case streak >= 7:
+		return 10
+	case streak >= 3:
+		return 5
+	default:
+		return 0
+	}
+}
+
+// computeMannaWinStreak counts consecutive calendar days (UTC) ending on solvedDate
+// where the user solved the Manna puzzle. solvedDate itself counts as day 1.
+func (s *MannaService) computeMannaWinStreak(userID uint, solvedDate time.Time) int {
+	streak := 1
+	checkDate := solvedDate.AddDate(0, 0, -1)
+	for i := 0; i < 30; i++ {
+		var count int64
+		s.db.Model(&models.MannaGame{}).
+			Where("user_id = ? AND status = 'solved' AND game_date = ?", userID, checkDate).
+			Count(&count)
+		if count == 0 {
+			break
+		}
+		streak++
+		checkDate = checkDate.AddDate(0, 0, -1)
+	}
+	return streak
 }
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────

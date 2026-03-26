@@ -5,15 +5,16 @@ import toast from 'react-hot-toast';
 import { mannaApi, GuessEntry, HintLetter, MannaGameResponse, MannaLockedResponse, YesterdayResult } from '../../services/api/manna';
 import { SoundService } from '../../services/SoundService';
 import { useStreak } from '../../contexts/StreakContext';
+import { usePricingModal } from '../../hooks/usePricingModal';
 import { PHYSICAL_KEY_SOUND_KEY } from '../settings/MannaSettings';
 import { MannaLockedCard } from './MannaLockedCard';
 import { MannaTile, TileState } from './MannaTile';
 import { MannaKeyboard } from './MannaKeyboard';
 import { MannaHowToPlay, MANNA_TUTORIAL_KEY } from './MannaHowToPlay';
 import { MannaStatsModal } from './MannaStatsModal';
+import { MannaArchive } from './MannaArchive';
 import './manna.css';
 
-const MAX_GUESSES = 6;
 const WORD_LENGTH = 5;
 
 // Session key — confetti fires once per solved game per browser session
@@ -85,13 +86,19 @@ function buildSubmittedWord(typedLetters: string, hintLetters: HintLetter[] | un
 
 export const MannaPuzzle: React.FC = () => {
   const { t } = useTranslation();
-  const { refreshStreak } = useStreak();
+  const { refreshStreak, subscription } = useStreak();
+  const isPremium = subscription?.is_premium ?? false;
+  const { openModal } = usePricingModal();
 
   const [loading, setLoading] = useState(true);
   const [locked, setLocked] = useState(false);
   const [yesterdayData, setYesterdayData] = useState<YesterdayResult | null>(null);
   const [game, setGame] = useState<MannaGameResponse | null>(null);
   const [hintLoading, setHintLoading] = useState(false);
+
+  // Archive state
+  const [archiveDate, setArchiveDate] = useState<string | null>(null); // "YYYY-MM-DD" or null for today
+  const [showArchive, setShowArchive] = useState(false); // show archive browser
 
   // Tutorial — shown on first visit; re-openable via ? button
   const [showTutorial, setShowTutorial] = useState(false);
@@ -143,40 +150,48 @@ export const MannaPuzzle: React.FC = () => {
   useEffect(() => { gameRef.current = game; }, [game]);
   useEffect(() => { currentWordRef.current = currentWord; }, [currentWord]);
 
-  // M-13: lazy-fetch Manna streak once when the game ends — shown in post-game panel
+  // M-13: lazy-fetch Manna streak once when the game ends — shown in post-game panel.
+  // Free users and archive games skip this: stats are premium-only.
   useEffect(() => {
     if (!game || game.status === 'in_progress' || postGameStreak !== null) return;
+    if (game.is_free_play || archiveDate) return;
     mannaApi.getStats()
       .then(s => setPostGameStreak(s.current_streak))
       .catch(() => {}); // non-critical — panel renders without streak on error
-  }, [game?.status]);
+  }, [game?.status, game?.is_free_play, archiveDate]);
 
-  // ─── Load today's game ────────────────────────────────────────────────────
+  // ─── Load today's game (or archive game) ──────────────────────────────────
   useEffect(() => {
-    mannaApi
-      .getToday()
-      .then(resp => {
-        if (resp.locked) {
-          setLocked(true);
-          const lockedResp = resp as MannaLockedResponse;
-          if (lockedResp.yesterday) setYesterdayData(lockedResp.yesterday);
-        } else {
-          const gameResp = resp as MannaGameResponse;
-          setGame(gameResp);
-          // Show confetti if already solved — once per session to avoid re-firing on reload
-          if (gameResp.status === 'solved' && !sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
-            setShowConfetti(true);
-            sessionStorage.setItem(CONFETTI_SESSION_KEY, '1');
+    setLoading(true);
+    const fetchPromise = archiveDate
+      ? mannaApi.getArchive(archiveDate)
+      : mannaApi.getToday().then(resp => {
+          if (resp.locked) {
+            setLocked(true);
+            const lockedResp = resp as MannaLockedResponse;
+            if (lockedResp.yesterday) setYesterdayData(lockedResp.yesterday);
+            return null;
           }
-          // Show tutorial on first ever visit (not seen before)
-          if (!localStorage.getItem(MANNA_TUTORIAL_KEY)) {
-            setShowTutorial(true);
-          }
+          return resp as MannaGameResponse;
+        });
+
+    fetchPromise
+      .then(gameResp => {
+        if (!gameResp) return; // locked path already handled
+        setGame(gameResp);
+        // Show confetti if already solved — once per session to avoid re-firing on reload
+        if (gameResp.status === 'solved' && !archiveDate && !sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
+          setShowConfetti(true);
+          sessionStorage.setItem(CONFETTI_SESSION_KEY, '1');
+        }
+        // Show tutorial on first ever visit (not seen before)
+        if (!archiveDate && !localStorage.getItem(MANNA_TUTORIAL_KEY)) {
+          setShowTutorial(true);
         }
       })
       .catch(() => toast.error(t('manna.errorLoading', 'Failed to load today\'s puzzle.')))
       .finally(() => setLoading(false));
-  }, [t]);
+  }, [t, archiveDate]);
 
   // ─── Hint handler ─────────────────────────────────────────────────────────
   const handleHint = async () => {
@@ -189,7 +204,7 @@ export const MannaPuzzle: React.FC = () => {
 
     setHintLoading(true);
     try {
-      const result = await mannaApi.getHint();
+      const result = await (archiveDate ? mannaApi.getArchiveHint(archiveDate) : mannaApi.getHint());
       setGame(prev => prev ? {
         ...prev,
         hints_used: result.hints_used,
@@ -197,11 +212,13 @@ export const MannaPuzzle: React.FC = () => {
       } : prev);
       // Clear current input — hinted positions may have shifted free slots
       setCurrentWord('');
+      // Blessings were spent — refresh chip balance immediately
+      refreshStreak().catch(() => {});
       toast.success(
-        t('manna.hintRevealed', 'Position {{n}}: {{letter}}', {
+        `${t('manna.hintRevealed', 'Position {{n}}: {{letter}}', {
           n: result.position + 1,
           letter: result.letter,
-        }),
+        })}\n−15 ${t('blessings.label', 'Blessings')} · ${result.blessings_remaining} ${t('manna.hintBlessingsLeft', 'remaining')}`,
         { icon: '💡' }
       );
     } catch (err: any) {
@@ -260,7 +277,9 @@ export const MannaPuzzle: React.FC = () => {
     const rowIdx = game.guesses.length;
 
     try {
-      const result = await mannaApi.submitGuess(submittedWord);
+      const result = await (archiveDate
+        ? mannaApi.submitArchiveGuess(archiveDate, submittedWord)
+        : mannaApi.submitGuess(submittedWord));
 
       const newGuess: GuessEntry = { word: submittedWord, result: result.result };
       const updatedGuesses = [...game.guesses, newGuess];
@@ -321,11 +340,12 @@ export const MannaPuzzle: React.FC = () => {
             setTimeout(() => setBloomGrid(true), 1500);
           }
           setAnnouncement(t('manna.ariaSolved', 'Solved! The word was {{word}}.', { word: result.answer ?? '' }));
-          // Trigger confetti once per session
+          // Trigger confetti once per session per game (archive games use a per-date key)
           setTimeout(() => {
-            if (!sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
+            const confettiKey = archiveDate ? `manna-confetti-${archiveDate}` : CONFETTI_SESSION_KEY;
+            if (!sessionStorage.getItem(confettiKey)) {
               setShowConfetti(true);
-              sessionStorage.setItem(CONFETTI_SESSION_KEY, '1');
+              sessionStorage.setItem(confettiKey, '1');
             }
           }, 650);
           if (result.blessings_awarded) {
@@ -333,6 +353,17 @@ export const MannaPuzzle: React.FC = () => {
               t('manna.solved', '+{{n}} Blessings!', { n: result.blessings_awarded }),
               { icon: '✦' }
             );
+            if (result.streak_bonus && result.win_streak) {
+              setTimeout(() => {
+                toast.success(
+                  t('manna.streakBonus', '+{{bonus}} streak bonus! ({{streak}}-day solve streak 🔥)', {
+                    bonus: result.streak_bonus,
+                    streak: result.win_streak,
+                  }),
+                  { icon: '🔥', duration: 4000 }
+                );
+              }, 800);
+            }
             // M-14: trigger blessings burst animation over post-game panel
             if (localStorage.getItem('celebrationAnimEnabled') !== 'false') {
               setBlessingsBurst(result.blessings_awarded);
@@ -435,11 +466,23 @@ export const MannaPuzzle: React.FC = () => {
   }
 
   if (locked) return <MannaLockedCard yesterday={yesterdayData} />;
+
+  // Archive browser overlay
+  if (showArchive) {
+    return (
+      <MannaArchive
+        onSelectDate={(d) => { setArchiveDate(d); setShowArchive(false); setGame(null); setLoading(true); }}
+        onClose={() => setShowArchive(false)}
+      />
+    );
+  }
+
   if (!game) return null;
 
   const keyStates = buildKeyStates(game.guesses);
   const isOver = game.status !== 'in_progress';
   const isSolved = game.status === 'solved';
+  const isFreePlay = game.is_free_play ?? false;
   const hintsLeft = 3 - (game.hints_used ?? 0);
 
   // Hint map for active row rendering
@@ -454,7 +497,7 @@ export const MannaPuzzle: React.FC = () => {
 
   const rows: { letters: string[]; states: TileState[]; flipping: boolean; win: boolean; shake: boolean }[] = [];
 
-  for (let r = 0; r < MAX_GUESSES; r++) {
+  for (let r = 0; r < (game?.max_guesses ?? 6); r++) {
     if (r < game.guesses.length) {
       const g = game.guesses[r];
       rows.push({
@@ -537,12 +580,37 @@ export const MannaPuzzle: React.FC = () => {
               {t('manna.title', 'Manna')}
             </h1>
             <p className="manna-muted text-xs leading-tight">
-              {t('manna.subtitle', 'A daily Biblical word puzzle')}
+              {archiveDate
+                ? new Date(archiveDate + 'T12:00:00').toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+                : t('manna.subtitle', 'A daily Biblical word puzzle')}
             </p>
           </div>
         </div>
         <div className="flex items-center gap-2.5">
-          {!isOver && (
+          {/* Archive navigation back buttons */}
+          {archiveDate && (
+            <>
+              <button
+                className="manna-help-btn text-xs px-2"
+                onClick={() => { setArchiveDate(null); setGame(null); setLoading(true); }}
+                aria-label={t('manna.backToToday', '← Today')}
+                title={t('manna.backToToday', '← Today')}
+              >
+                <span className="hidden sm:inline">← Today</span>
+                <span className="sm:hidden" aria-hidden="true">🏠</span>
+              </button>
+              <button
+                className="manna-help-btn text-xs px-2"
+                onClick={() => { setShowArchive(true); }}
+                aria-label={t('manna.backToArchive', '← Archive')}
+                title={t('manna.backToArchive', '← Archive')}
+              >
+                <span className="hidden sm:inline">← Archive</span>
+                <span className="sm:hidden" aria-hidden="true">📅</span>
+              </button>
+            </>
+          )}
+          {!isFreePlay && !isOver && (
             <button
               className="manna-hint-btn"
               onClick={handleHint}
@@ -567,17 +635,30 @@ export const MannaPuzzle: React.FC = () => {
             </button>
           )}
           <span className="manna-muted text-xs tabular-nums font-semibold">
-            {game.guess_count}<span className="opacity-40">/</span>{MAX_GUESSES}
+            {game.guess_count}<span className="opacity-40">/</span>{game.max_guesses}
           </span>
-          {/* 📊 button — opens stats & history modal */}
-          <button
-            className="manna-help-btn"
-            onClick={() => setShowStats(true)}
-            aria-label={t('manna.statsModalLabel', 'Stats & History')}
-            title={t('manna.statsModalLabel', 'Stats & History')}
-          >
-            📊
-          </button>
+          {/* 📊 stats button — premium only; hidden on mobile when in archive to prevent overflow */}
+          {!isFreePlay && (
+            <button
+              className={`manna-help-btn${archiveDate ? ' hidden sm:flex' : ''}`}
+              onClick={() => setShowStats(true)}
+              aria-label={t('manna.statsModalLabel', 'Stats & History')}
+              title={t('manna.statsModalLabel', 'Stats & History')}
+            >
+              📊
+            </button>
+          )}
+          {/* 📅 archive button — premium only, today's view only */}
+          {isPremium && !archiveDate && (
+            <button
+              className="manna-help-btn"
+              onClick={() => setShowArchive(true)}
+              aria-label={t('manna.archiveLabel', 'Archive')}
+              title={t('manna.archiveLabel', 'Archive')}
+            >
+              📅
+            </button>
+          )}
           {/* ? button — always visible; lets users replay the tutorial at any time */}
           <button
             className="manna-help-btn"
@@ -590,13 +671,36 @@ export const MannaPuzzle: React.FC = () => {
         </div>
       </div>
 
-      {/* ── Scripture clue ── */}
-      <ScriptureClue
-        testament={game.testament}
-        reference={game.scripture_reference}
-        clue={game.scripture_clue}
-        t={t}
-      />
+      {/* ── Free play banner ── */}
+      {isFreePlay && (
+        <div
+          className="w-full flex items-center justify-between gap-2 px-3 py-2 rounded-lg text-xs"
+          style={{ background: 'var(--panel-bg)', border: '1px solid var(--border-muted)', position: 'relative', zIndex: 1 }}
+        >
+          <span style={{ color: 'var(--text-primary)' }}>
+            <span className="font-semibold">{t('manna.freeBanner', 'Free Play')}</span>
+            {' · '}
+            <span className="opacity-70">{t('manna.freeBannerDetail', '4 guesses · Upgrade for scripture clues, hints & more')}</span>
+          </span>
+          <button
+            className="manna-hint-btn shrink-0"
+            onClick={() => openModal()}
+            style={{ fontSize: '0.7rem', padding: '2px 8px' }}
+          >
+            {t('manna.freeUpgradeCta', 'Upgrade to Premium')}
+          </button>
+        </div>
+      )}
+
+      {/* ── Scripture clue — premium only ── */}
+      {!isFreePlay && (
+        <ScriptureClue
+          testament={game.testament}
+          reference={game.scripture_reference}
+          clue={game.scripture_clue}
+          t={t}
+        />
+      )}
 
       {/* ── Ornament divider ── */}
       <div className="manna-ornament">
@@ -657,11 +761,15 @@ export const MannaPuzzle: React.FC = () => {
           {blessingsBurst !== null && <BlessingsBurst />}
           {isSolved ? (
             <p className="text-base font-semibold" style={{ color: 'var(--blessing-gold)' }}>
-              ✦ {t('manna.solvedTitle', "You solved today's Manna!")}
+              ✦ {archiveDate
+                ? t('manna.solvedArchiveTitle', 'You solved it!')
+                : t('manna.solvedTitle', "You solved today's Manna!")}
             </p>
           ) : (
             <p className="manna-muted text-base font-semibold">
-              {t('manna.failedTitle', "Today's word was:")}
+              {archiveDate
+                ? t('manna.failedArchiveTitle', 'The word was:')
+                : t('manna.failedTitle', "Today's word was:")}
             </p>
           )}
 
@@ -671,7 +779,7 @@ export const MannaPuzzle: React.FC = () => {
             </p>
           )}
 
-          {game.scripture_text && (
+          {!isFreePlay && game.scripture_text && (
             <blockquote className="manna-scripture">
               <p>{game.scripture_text}</p>
               <cite className="not-italic font-semibold text-xs mt-1 block" style={{ color: 'var(--blessing-gold)' }}>
@@ -680,19 +788,36 @@ export const MannaPuzzle: React.FC = () => {
             </blockquote>
           )}
 
-          <ShareResult guesses={game.guesses} solved={isSolved} t={t} />
+          {isFreePlay && (
+            <div className="flex flex-col items-center gap-2 mt-2">
+              <p className="manna-muted text-xs text-center">
+                {t('manna.freeUpgradePostGame', 'Upgrade to see the full scripture and track your streaks.')}
+              </p>
+              <button
+                className="manna-hint-btn"
+                onClick={() => openModal()}
+                style={{ fontSize: '0.75rem' }}
+              >
+                {t('manna.freeUpgradeCta', 'Upgrade to Premium')}
+              </button>
+            </div>
+          )}
 
-          {/* M-13: Manna streak — appears once stats have loaded */}
-          {postGameStreak !== null && postGameStreak > 0 && (
+          <ShareResult guesses={game.guesses} solved={isSolved} maxGuesses={game.max_guesses} t={t} />
+
+          {/* M-13: Manna streak — appears once stats have loaded (premium only) */}
+          {!isFreePlay && postGameStreak !== null && postGameStreak > 0 && (
             <p className="manna-streak-badge">
               🔥 {t('manna.streak', '{{n}}-day Manna streak', { n: postGameStreak })}
             </p>
           )}
 
-          <p className="manna-muted text-xs mt-3">
-            {t('manna.comeback', 'Come back tomorrow for a new word.')}
-          </p>
-          <MannaCountdown t={t} />
+          {!isFreePlay && !archiveDate && (
+            <p className="manna-muted text-xs mt-3">
+              {t('manna.comeback', 'Come back tomorrow for a new word.')}
+            </p>
+          )}
+          {!isFreePlay && !archiveDate && <MannaCountdown t={t} />}
         </div>
       ) : (
         <div className="manna-keyboard" style={{ position: 'relative', zIndex: 1 }}>
@@ -973,15 +1098,16 @@ const EMOJI: Record<string, string> = {
 interface ShareResultProps {
   guesses: GuessEntry[];
   solved: boolean;
+  maxGuesses: number;
   t: TFunction;
 }
 
-const ShareResult: React.FC<ShareResultProps> = ({ guesses, solved, t }) => {
+const ShareResult: React.FC<ShareResultProps> = ({ guesses, solved, maxGuesses, t }) => {
   const handleShare = () => {
     const grid = guesses
       .map(g => g.result.map(r => EMOJI[r] ?? '⬜').join(''))
       .join('\n');
-    const text = `Manna — Words of Praise\n${solved ? guesses.length : 'X'}/${MAX_GUESSES}\n\n${grid}`;
+    const text = `Manna — Words of Praise\n${solved ? guesses.length : 'X'}/${maxGuesses}\n\n${grid}`;
 
     if (navigator.share) {
       navigator.share({ text }).catch(() => {});

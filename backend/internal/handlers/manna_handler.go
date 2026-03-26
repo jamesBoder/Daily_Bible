@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	"dailybible/internal/models"
 	"dailybible/internal/services"
@@ -38,40 +39,34 @@ func NewMannaHandler(
 }
 
 // GetToday returns the user's game for today.
-// Free users receive { "locked": true }.
+// Free users get a limited game (4 guesses, no scripture clue).
 // GET /api/manna/today
 func (h *MannaHandler) GetToday(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	uid := userID.(uint)
 
-	if !h.subscriptionChecker.IsPremium(uid) {
-		// Still show yesterday's word so free users are curious
-		yesterday, _ := h.mannaService.GetYesterdayResult()
-		c.JSON(http.StatusOK, gin.H{
-			"locked":    true,
-			"message":   "Manna is available with a Words of Praise membership.",
-			"yesterday": yesterday,
-		})
-		return
-	}
+	isPremium := h.subscriptionChecker.IsPremium(uid)
 
-	game, err := h.mannaService.GetOrCreateGame(uid)
+	game, err := h.mannaService.GetOrCreateGame(uid, isPremium)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load today's game"})
 		return
 	}
 
 	// Record daily engagement so Manna play counts toward the reading streak.
+	// Only premium users get streak credit for Manna.
 	// Fires in a goroutine — streak update must not block the puzzle response.
-	go func() {
-		settings, err := h.settingsService.GetUserSettings(uid)
-		if err != nil {
-			settings = &models.UserSettings{PreferredTimezone: "UTC"}
-		}
-		if _, err := h.streakService.RecordDailyEngagement(uid, settings.PreferredTimezone); err != nil {
-			log.Printf("manna RecordDailyEngagement user %d: %v", uid, err)
-		}
-	}()
+	if isPremium {
+		go func() {
+			settings, err := h.settingsService.GetUserSettings(uid)
+			if err != nil {
+				settings = &models.UserSettings{PreferredTimezone: "UTC"}
+			}
+			if _, err := h.streakService.RecordDailyEngagement(uid, settings.PreferredTimezone); err != nil {
+				log.Printf("manna RecordDailyEngagement user %d: %v", uid, err)
+			}
+		}()
+	}
 
 	c.JSON(http.StatusOK, game)
 }
@@ -82,11 +77,6 @@ func (h *MannaHandler) SubmitGuess(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	uid := userID.(uint)
 
-	if !h.subscriptionChecker.IsPremium(uid) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Manna is a premium feature."})
-		return
-	}
-
 	var req struct {
 		Guess string `json:"guess" binding:"required"`
 	}
@@ -95,7 +85,7 @@ func (h *MannaHandler) SubmitGuess(c *gin.Context) {
 		return
 	}
 
-	isPremium := true // already gated above
+	isPremium := h.subscriptionChecker.IsPremium(uid)
 	result, err := h.mannaService.SubmitGuess(uid, req.Guess, isPremium)
 	if err != nil {
 		msg := err.Error()
@@ -136,7 +126,7 @@ func (h *MannaHandler) GetHint(c *gin.Context) {
 	uid := userID.(uint)
 
 	if !h.subscriptionChecker.IsPremium(uid) {
-		c.JSON(http.StatusForbidden, gin.H{"error": "Manna is a premium feature."})
+		c.JSON(http.StatusForbidden, gin.H{"error": "Hints are a premium feature."})
 		return
 	}
 
@@ -201,6 +191,120 @@ func (h *MannaHandler) GetHistory(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{"history": history})
+}
+
+// GetArchive returns a premium user's game for a past date.
+// GET /api/manna/archive/:date
+func (h *MannaHandler) GetArchive(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	uid := userID.(uint)
+	if !h.subscriptionChecker.IsPremium(uid) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Archive is a premium feature."})
+		return
+	}
+	dateStr := c.Param("date")
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format. Use YYYY-MM-DD."})
+		return
+	}
+	if !date.Before(time.Now().UTC().Truncate(24 * time.Hour)) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Archive date must be in the past."})
+		return
+	}
+	game, err := h.mannaService.GetOrCreateArchiveGame(uid, date)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load archive game"})
+		return
+	}
+	c.JSON(http.StatusOK, game)
+}
+
+// SubmitArchiveGuess handles a guess submission for an archive (past) game.
+// POST /api/manna/archive/:date/guess
+func (h *MannaHandler) SubmitArchiveGuess(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	uid := userID.(uint)
+	if !h.subscriptionChecker.IsPremium(uid) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Archive is a premium feature."})
+		return
+	}
+	dateStr := c.Param("date")
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format."})
+		return
+	}
+	if !date.Before(time.Now().UTC().Truncate(24 * time.Hour)) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Archive date must be in the past."})
+		return
+	}
+	var req struct {
+		Guess string `json:"guess" binding:"required"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing guess field"})
+		return
+	}
+	result, err := h.mannaService.SubmitArchiveGuess(uid, req.Guess, date)
+	if err != nil {
+		msg := err.Error()
+		switch {
+		case strings.HasPrefix(msg, "guess_length:"):
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must be exactly 5 letters."})
+		case strings.HasPrefix(msg, "guess_chars:"):
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must contain only letters A–Z."})
+		case strings.HasPrefix(msg, "not_a_word:"):
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "not_a_word"})
+		case strings.HasPrefix(msg, "game_over:"):
+			c.JSON(http.StatusConflict, gin.H{"error": "This game is already complete."})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to submit guess"})
+		}
+		return
+	}
+	c.JSON(http.StatusOK, result)
+}
+
+// GetArchiveHint reveals one unrevealed letter for an archive game.
+// POST /api/manna/archive/:date/hint
+func (h *MannaHandler) GetArchiveHint(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	uid := userID.(uint)
+	if !h.subscriptionChecker.IsPremium(uid) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Archive is a premium feature."})
+		return
+	}
+	dateStr := c.Param("date")
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format."})
+		return
+	}
+	if !date.Before(time.Now().UTC().Truncate(24 * time.Hour)) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Archive date must be in the past."})
+		return
+	}
+	result, err := h.mannaService.GetArchiveHint(uid, date)
+	if err != nil {
+		msg := err.Error()
+		switch {
+		case strings.HasPrefix(msg, "hint_no_game:"):
+			c.JSON(http.StatusNotFound, gin.H{"error": "No active game found for that date."})
+		case strings.HasPrefix(msg, "hint_game_over:"):
+			c.JSON(http.StatusConflict, gin.H{"error": "The game is already complete."})
+		case strings.HasPrefix(msg, "hint_max:"):
+			c.JSON(http.StatusConflict, gin.H{"error": "No hints remaining for this game."})
+		case strings.HasPrefix(msg, "hint_none_left:"):
+			c.JSON(http.StatusConflict, gin.H{"error": "All positions already revealed."})
+		case strings.HasPrefix(msg, "hint_blessings:"):
+			c.JSON(http.StatusPaymentRequired, gin.H{"error": "Not enough Blessings for a hint."})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get hint"})
+		}
+		return
+	}
+	c.JSON(http.StatusOK, result)
 }
 
 // AddWord inserts a new word into the Manna word bank (admin only).

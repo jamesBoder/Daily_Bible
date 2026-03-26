@@ -20,28 +20,30 @@ export const MannaStatsModal: React.FC<MannaStatsModalProps> = ({ onDismiss }) =
   const [loadingHistory, setLoadingHistory] = useState(false);
   const [statsError, setStatsError] = useState(false);
   const [historyError, setHistoryError] = useState(false);
+  const [statsRetry, setStatsRetry] = useState(0);
+  const [historyRetry, setHistoryRetry] = useState(0);
 
-  // Load stats when tab is active
+  // Load stats when tab is active (re-runs on retry)
   useEffect(() => {
-    if (tab !== 'stats' || stats !== null) return;
+    if (tab !== 'stats') return;
     setLoadingStats(true);
     setStatsError(false);
     mannaApi.getStats()
       .then(s => setStats(s))
       .catch(() => setStatsError(true))
       .finally(() => setLoadingStats(false));
-  }, [tab, stats]);
+  }, [tab, statsRetry]);
 
-  // Load history when tab is active
+  // Load history when tab is active (re-runs on retry)
   useEffect(() => {
-    if (tab !== 'history' || history !== null) return;
+    if (tab !== 'history') return;
     setLoadingHistory(true);
     setHistoryError(false);
     mannaApi.getHistory()
       .then(r => setHistory(r.history))
       .catch(() => setHistoryError(true))
       .finally(() => setLoadingHistory(false));
-  }, [tab, history]);
+  }, [tab, historyRetry]);
 
   // Close on backdrop click
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -125,9 +127,14 @@ export const MannaStatsModal: React.FC<MannaStatsModalProps> = ({ onDismiss }) =
           <div role="tabpanel" className="manna-stats-body">
             {loadingStats && <Spinner />}
             {statsError && (
-              <p className="manna-muted text-sm text-center py-6">
-                {t('manna.statsError', 'Could not load stats. Try again later.')}
-              </p>
+              <div className="flex flex-col items-center gap-3 py-6">
+                <p className="manna-muted text-sm text-center">
+                  {t('manna.statsError', 'Could not load stats.')}
+                </p>
+                <button className="manna-hint-btn" onClick={() => setStatsRetry(n => n + 1)}>
+                  {t('common.retry', 'Retry')}
+                </button>
+              </div>
             )}
             {stats && !loadingStats && (
               <StatsContent stats={stats} t={t} />
@@ -140,9 +147,14 @@ export const MannaStatsModal: React.FC<MannaStatsModalProps> = ({ onDismiss }) =
           <div role="tabpanel" className="manna-stats-body">
             {loadingHistory && <Spinner />}
             {historyError && (
-              <p className="manna-muted text-sm text-center py-6">
-                {t('manna.historyError', 'Could not load history. Try again later.')}
-              </p>
+              <div className="flex flex-col items-center gap-3 py-6">
+                <p className="manna-muted text-sm text-center">
+                  {t('manna.historyError', 'Could not load history.')}
+                </p>
+                <button className="manna-hint-btn" onClick={() => setHistoryRetry(n => n + 1)}>
+                  {t('common.retry', 'Retry')}
+                </button>
+              </div>
             )}
             {history && !loadingHistory && (
               <HistoryContent history={history} t={t} />
@@ -253,9 +265,9 @@ const HistoryContent: React.FC<{ history: MannaGameSummary[]; t: TFunction }> = 
           </span>
           <span className="manna-history-guesses manna-muted">
             {g.status === 'solved'
-              ? `${g.guess_count}/6`
+              ? `${g.guess_count}/${g.max_guesses ?? 6}`
               : g.status === 'failed'
-                ? t('manna.historyFailed', 'X/6')
+                ? `X/${g.max_guesses ?? 6}`
                 : '—'
             }
           </span>

@@ -107,7 +107,7 @@
   }
 }
 
-/* Present tile: candle-amber halo — var(--candle-amber) shifts per theme */
+/* Present tile: candle-amber halo — kept for active border shimmer */
 @keyframes amberPulse {
   0%, 100% {
     box-shadow:
@@ -118,6 +118,20 @@
     box-shadow:
       0 0  8px 3px  color-mix(in srgb, var(--candle-amber) 65%, transparent),
       0 0 22px 8px  color-mix(in srgb, var(--candle-amber) 30%, transparent);
+  }
+}
+
+/* Present tile: teal pulse — clearly distinct from gold correct tiles */
+@keyframes presentPulse {
+  0%, 100% {
+    box-shadow:
+      0 0  5px 1px  color-mix(in srgb, var(--challenge-accent) 55%, transparent),
+      0 0 14px 4px  color-mix(in srgb, var(--challenge-accent) 24%, transparent);
+  }
+  50% {
+    box-shadow:
+      0 0  9px 3px  color-mix(in srgb, var(--challenge-accent) 70%, transparent),
+      0 0 22px 8px  color-mix(in srgb, var(--challenge-accent) 32%, transparent);
   }
 }
 
@@ -195,7 +209,7 @@
 
 /* Muted text — 50% opacity of the theme foreground; adapts to every palette */
 .manna-muted {
-  color: color-mix(in srgb, var(--foreground) 52%, transparent);
+  color: color-mix(in srgb, var(--foreground) 68%, transparent);
 }
 
 /* CTA button — blessing-gold fill with a theme-aware glow */
@@ -287,8 +301,8 @@
 }
 
 .manna-tile--empty {
-  border-color: color-mix(in srgb, var(--theme-border) 55%, transparent);
-  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--foreground) 4%, transparent);
+  border-color: var(--theme-border);
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--foreground) 6%, transparent);
 }
 
 /* Letter-entry pop — applied for ~150ms via JS, creates Wordle-style bounce */
@@ -320,24 +334,24 @@
   animation: bloomPulse 3.5s ease-in-out infinite;
 }
 
-/* Present: candle-amber halo */
+/* Present: teal — clearly distinct from the gold correct tile */
 .manna-tile--present {
-  background: var(--candle-amber);
-  border-color: var(--candle-amber);
+  background: var(--challenge-accent);
+  border-color: var(--challenge-accent);
   color: var(--parchment);
   font-weight: 900;
   text-shadow: 0 1px 4px color-mix(in srgb, var(--foreground) 25%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent),
-    0 2px 5px color-mix(in srgb, var(--candle-amber) 45%, transparent);
-  animation: amberPulse 3.5s ease-in-out infinite;
+    0 2px 5px color-mix(in srgb, var(--challenge-accent) 45%, transparent);
+  animation: presentPulse 3.5s ease-in-out infinite;
 }
 
 /* Absent: clearly dead — dark, no glow, receded */
 .manna-tile--absent {
-  background: color-mix(in srgb, var(--foreground) 22%, var(--journal-surface));
+  background: color-mix(in srgb, var(--foreground) 30%, var(--journal-surface));
   border-color: transparent;
-  color: color-mix(in srgb, var(--foreground) 38%, transparent);
+  color: color-mix(in srgb, var(--foreground) 58%, transparent);
   box-shadow: none;
 }
 
@@ -405,17 +419,17 @@
 /* ── Grid card backdrop ───────────────────────────────────────────────────── */
 
 .manna-grid-wrap {
-  background: color-mix(in srgb, var(--journal-surface) 55%, transparent);
+  background: color-mix(in srgb, var(--journal-surface) 82%, transparent);
   backdrop-filter: blur(4px);
   -webkit-backdrop-filter: blur(4px);
-  border: 1px solid color-mix(in srgb, var(--blessing-gold) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blessing-gold) 30%, transparent);
   border-radius: 18px;
   padding: 1.1rem 0.9rem 1rem;
   position: relative;
   box-shadow:
-    0 4px 24px color-mix(in srgb, var(--foreground) 9%, transparent),
-    0 1px  6px color-mix(in srgb, var(--foreground) 5%, transparent),
-    inset 0 1px 0 color-mix(in srgb, var(--blessing-gold) 14%, transparent);
+    0 4px 24px color-mix(in srgb, var(--foreground) 14%, transparent),
+    0 1px  6px color-mix(in srgb, var(--foreground) 8%, transparent),
+    inset 0 1px 0 color-mix(in srgb, var(--blessing-gold) 22%, transparent);
   animation: gridEnter 0.45s ease-out both;
 }
 
@@ -454,7 +468,7 @@
   background: linear-gradient(
     90deg,
     transparent,
-    color-mix(in srgb, var(--blessing-gold) 35%, transparent),
+    color-mix(in srgb, var(--blessing-gold) 55%, transparent),
     transparent
   );
 }
@@ -527,7 +541,7 @@
   background: var(--journal-surface);
   color: var(--foreground);
   /* Border tracks theme-border token */
-  border: 1.5px solid color-mix(in srgb, var(--theme-border) 75%, transparent);
+  border: 1.5px solid var(--theme-border);
   position: relative;
   z-index: 1;
   /* 3D depth — bottom shadow gives a "key cap" feel */
@@ -567,21 +581,21 @@
     0 0 14px 4px color-mix(in srgb, var(--blessing-gold) 20%, transparent);
 }
 
-/* Present key: candle-amber glow — tracks theme */
+/* Present key: teal glow — matches present tile color */
 .manna-key--present {
-  background: var(--candle-amber);
-  border-color: var(--candle-amber);
+  background: var(--challenge-accent);
+  border-color: var(--challenge-accent);
   color: var(--parchment);
   box-shadow:
-    0 0 5px 1px color-mix(in srgb, var(--candle-amber) 45%, transparent),
-    0 0 12px 3px color-mix(in srgb, var(--candle-amber) 18%, transparent);
+    0 0 5px 1px color-mix(in srgb, var(--challenge-accent) 50%, transparent),
+    0 0 12px 3px color-mix(in srgb, var(--challenge-accent) 20%, transparent);
 }
 
 /* Absent key: recede into theme, no glow */
 .manna-key--absent {
-  background: color-mix(in srgb, var(--foreground) 12%, var(--parchment));
+  background: color-mix(in srgb, var(--foreground) 18%, var(--parchment));
   border-color: transparent;
-  color: color-mix(in srgb, var(--foreground) 40%, transparent);
+  color: color-mix(in srgb, var(--foreground) 55%, transparent);
   box-shadow: none;
 }
 
@@ -660,8 +674,8 @@
 /* ── Scripture clue panel ─────────────────────────────────────────────────── */
 
 .manna-scripture-clue {
-  background: color-mix(in srgb, var(--journal-surface) 88%, transparent);
-  border: 1px solid color-mix(in srgb, var(--blessing-gold) 35%, transparent);
+  background: color-mix(in srgb, var(--journal-surface) 92%, transparent);
+  border: 1px solid color-mix(in srgb, var(--blessing-gold) 50%, transparent);
   border-radius: 14px;
   padding: 1rem 1.1rem;
   position: relative;
@@ -719,7 +733,7 @@
 
 .manna-clue-text {
   font-size: 0.82rem;
-  color: color-mix(in srgb, var(--foreground) 58%, transparent);
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
   line-height: 1.6;
   margin-top: 0.1rem;
 }
@@ -767,8 +781,8 @@
   gap: 0.5rem;
   padding: 0.4rem 0.75rem;
   border-radius: 8px;
-  background: color-mix(in srgb, var(--candle-amber) 8%, transparent);
-  border: 1px solid color-mix(in srgb, var(--candle-amber) 25%, transparent);
+  background: color-mix(in srgb, var(--candle-amber) 12%, transparent);
+  border: 1px solid color-mix(in srgb, var(--candle-amber) 45%, transparent);
   animation: panelEnter 0.3s ease-out forwards;
 }
 
@@ -781,9 +795,9 @@
   border-radius: 4px;
   font-size: 0.8rem;
   font-weight: 700;
-  border: 1px solid color-mix(in srgb, var(--theme-border) 50%, transparent);
+  border: 1px solid var(--theme-border);
   background: var(--journal-surface);
-  color: color-mix(in srgb, var(--foreground) 30%, transparent);
+  color: color-mix(in srgb, var(--foreground) 50%, transparent);
 }
 
 .manna-hint-tile--revealed {
@@ -874,7 +888,7 @@
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1.25rem;
-  border-bottom: 1px solid color-mix(in srgb, var(--theme-border) 50%, transparent);
+  border-bottom: 1px solid var(--theme-border);
   padding-bottom: 0;
 }
 
@@ -886,7 +900,7 @@
   border: none;
   background: none;
   cursor: pointer;
-  color: color-mix(in srgb, var(--foreground) 50%, transparent);
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
   border-bottom: 2px solid transparent;
   transition: color 0.18s, border-color 0.18s;
   margin-bottom: -1px;
@@ -1095,6 +1109,14 @@
   }
 }
 
+/* Landscape / short-screen: reduce padding so content area is as large as possible */
+@media (max-height: 500px) {
+  .manna-tutorial-panel {
+    padding: 1rem 1rem 1.25rem;
+    max-height: 88vh;
+  }
+}
+
 /* Drag handle notch — mobile sheet affordance */
 .manna-tutorial-panel::before {
   content: '';
@@ -1193,7 +1215,8 @@
 .manna-tutorial-demos {
   display: flex;
   justify-content: center;
-  gap: 1.75rem;
+  /* Responsive gap: collapses on narrow phones to prevent overflow */
+  gap: clamp(0.75rem, 5vw, 1.75rem);
   margin-bottom: 0.75rem;
 }
 
@@ -1227,7 +1250,7 @@
 }
 
 .manna-tutorial-demo-label--correct { color: var(--blessing-gold); }
-.manna-tutorial-demo-label--present { color: var(--candle-amber); }
+.manna-tutorial-demo-label--present { color: var(--challenge-accent); }
 .manna-tutorial-demo-label--absent  { color: color-mix(in srgb, var(--foreground) 52%, transparent); }
 
 /* Divider inside tutorial panel */
@@ -1294,13 +1317,13 @@
   color: color-mix(in srgb, var(--foreground) 36%, transparent);
 }
 
-/* ? Help button in the puzzle header */
+/* ? Help button in the puzzle header — minimum 2.75rem (44px) for touch targets */
 .manna-help-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
+  width: 2.75rem;
+  height: 2.75rem;
   border-radius: 50%;
   border: 1.5px solid color-mix(in srgb, var(--blessing-gold) 38%, transparent);
   background: color-mix(in srgb, var(--blessing-gold) 8%, transparent);
@@ -1316,6 +1339,46 @@
   background: color-mix(in srgb, var(--blessing-gold) 18%, transparent);
   border-color: color-mix(in srgb, var(--blessing-gold) 65%, transparent);
   color: var(--blessing-gold);
+}
+
+/* ── Short-viewport layout tightening (landscape phones, iPhone SE, etc.) ─── */
+/* Target: screens shorter than ~700px (portrait iPhone SE, landscape mid-range).
+   Reduces tile + key sizes and trims padding so the full puzzle fits without
+   scrolling on phones that have limited vertical real estate.               */
+
+@media (max-height: 700px) and (max-width: 767px) {
+  /* Shrink tiles — was clamp(2.5rem, 14vw, 3.5rem) */
+  .manna-tile {
+    width:  clamp(2.1rem, 11.5vw, 2.8rem);
+    height: clamp(2.1rem, 11.5vw, 2.8rem);
+    font-size: clamp(1rem, 5vw, 1.3rem);
+  }
+
+  /* Shrink keys — was height clamp(2.8rem, 12vw, 3.6rem).
+     Floor raised to 2.5rem (~40px) so keys remain tappable on portrait iPhones
+     (e.g. iPhone 8 at 667px height falls into this media query). */
+  .manna-key {
+    height:    clamp(2.5rem, 9.5vw, 2.8rem);
+    min-width: clamp(1.45rem, 6.2vw, 1.8rem);
+    font-size: clamp(0.62rem, 2.1vw, 0.78rem);
+  }
+
+  /* Tighter grid card padding */
+  .manna-grid-wrap {
+    padding: 0.65rem 0.7rem 0.6rem;
+  }
+
+  /* Reduce outer scene gap + vertical padding */
+  .manna-scene {
+    gap: 0.5rem !important;
+    padding-top: 0.65rem !important;
+    padding-bottom: 0.65rem !important;
+  }
+
+  /* Trim ornament divider height */
+  .manna-ornament {
+    margin: -0.15rem 0;
+  }
 }
 
 /* ── Reduced motion ───────────────────────────────────────────────────────── */
@@ -1356,4 +1419,51 @@
   .manna-tile--present {
     box-shadow: 0 0 0 2px color-mix(in srgb, var(--candle-amber) 35%, transparent) !important;
   }
+}
+
+/* ── Light-mode: gold/amber text contrast overrides ─────────────────────────
+   --blessing-gold (#fbbf24) and --candle-amber (#f59e0b) are vivid yellows —
+   perfect for tile fills and bloom glows, but only ~2:1 contrast on the
+   near-white light surfaces (WCAG AA requires 4.5:1 for text).
+   In light themes, swap text-only uses to --theme-accent (#b45309 in Parchment,
+   #8b4513 in Desert Sand), which reaches 6-8:1 contrast.
+   Dark themes (.dark, sanctuary, celestial, scarlet-grace) are unaffected.    */
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-testament-badge {
+  color: var(--theme-accent);
+  border-color: color-mix(in srgb, var(--theme-accent) 45%, transparent);
+}
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-streak-badge {
+  color: var(--theme-accent);
+  border-color: color-mix(in srgb, var(--theme-accent) 45%, transparent);
+}
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-countdown {
+  color: var(--theme-accent);
+}
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-stats-tab--active {
+  color: var(--theme-accent);
+  border-bottom-color: var(--theme-accent);
+}
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-tile--hint {
+  color: var(--theme-accent);
+  border-color: color-mix(in srgb, var(--theme-accent) 65%, transparent);
+}
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-hint-tile--revealed {
+  color: var(--theme-accent);
+  border-color: color-mix(in srgb, var(--theme-accent) 65%, transparent);
+}
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-hint-btn {
+  color: var(--theme-accent);
+  border-color: color-mix(in srgb, var(--theme-accent) 50%, transparent);
+  background: color-mix(in srgb, var(--theme-accent) 10%, transparent);
+}
+
+html:not(.dark):not([data-theme="sanctuary"]):not([data-theme="celestial"]):not([data-theme="scarlet-grace"]) .manna-ornament-star {
+  color: color-mix(in srgb, var(--blessing-gold) 85%, #000);
 }
