@@ -61,7 +61,7 @@ const BottomNav: React.FC = () => {
   };
 
   const tabBase =
-    'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] font-medium transition-colors select-none focus:outline-none min-w-0';
+    'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] font-medium transition-colors select-none focus:outline-none min-w-0 overflow-hidden';
   const tabActive = 'text-amber-700 dark:text-amber-400';
   const tabInactive = 'text-gray-500 dark:text-gray-400';
 
@@ -82,6 +82,10 @@ const BottomNav: React.FC = () => {
         style={{
           background: 'var(--header-bg)',
           paddingBottom: 'env(safe-area-inset-bottom)',
+          // Force GPU compositing so iOS Safari's dynamic viewport resize
+          // (address-bar hide/show) doesn't cause the nav to visually float.
+          willChange: 'transform',
+          transform: 'translateZ(0)',
         }}
         aria-label={t('nav.mainNavigation', 'Main navigation')}
       >
@@ -97,7 +101,7 @@ const BottomNav: React.FC = () => {
             {({ isActive }) => (
               <>
                 <House size={22} weight={isActive ? 'fill' : 'regular'} />
-                <span>{t('nav.home', 'Home')}</span>
+                <span className="truncate w-full text-center">{t('nav.home', 'Home')}</span>
               </>
             )}
           </NavLink>
@@ -116,7 +120,7 @@ const BottomNav: React.FC = () => {
                   <TextT size={22} weight={isActive ? 'fill' : 'regular'} />
                   {isGuest && <LockBadge />}
                 </span>
-                <span>{t('nav.manna', 'Manna')}</span>
+                <span className="truncate w-full text-center">{t('nav.manna', 'Manna')}</span>
               </>
             )}
           </NavLink>
@@ -135,7 +139,7 @@ const BottomNav: React.FC = () => {
                   <Users size={22} weight={isActive ? 'fill' : 'regular'} />
                   {isGuest && <LockBadge />}
                 </span>
-                <span>{t('nav.leaderboard', 'Community')}</span>
+                <span className="truncate w-full text-center">{t('nav.leaderboard', 'Community')}</span>
               </>
             )}
           </NavLink>
@@ -158,7 +162,7 @@ const BottomNav: React.FC = () => {
                     <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500" />
                   ) : null}
                 </span>
-                <span>{t('nav.shop', 'Shop')}</span>
+                <span className="truncate w-full text-center">{t('nav.shop', 'Shop')}</span>
               </>
             )}
           </NavLink>
@@ -175,7 +179,7 @@ const BottomNav: React.FC = () => {
               <List size={22} weight={sheetOpen ? 'fill' : 'regular'} />
               {isGuest && <LockBadge />}
             </span>
-            <span>{t('nav.more', 'More')}</span>
+            <span className="truncate w-full text-center">{t('nav.more', 'More')}</span>
           </button>
         </div>
       </nav>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useStreak } from '../contexts/StreakContext';
 import { useTranslation } from 'react-i18next';
+import { Fire } from '@phosphor-icons/react';
 
 const POPOVER_WIDTH = 208;
 const POPOVER_ID = 'streak';
@@ -100,24 +101,14 @@ const StreakCandle: React.FC = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onKeyDown={e => e.key === 'Enter' && handleClick()}
-        className="flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] rounded-lg
+        className="flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-lg
                    bg-gradient-to-r from-orange-50 to-amber-50
                    dark:from-orange-900/20 dark:to-amber-900/20
                    border border-orange-200 dark:border-orange-800
                    hover:shadow-md transition-all duration-200 cursor-pointer select-none"
         aria-label={t('streak.tooltip', 'Day {{count}} streak', { count: streakData.current_streak })}
       >
-        <div className="relative flex-shrink-0">
-          <svg className="w-4 h-4 text-orange-500 dark:text-orange-400" fill="currentColor" viewBox="0 0 24 24">
-            <path d="M12 2C11.45 2 11 2.45 11 3V15C11 15.55 11.45 16 12 16C12.55 16 13 15.55 13 15V3C13 2.45 12.55 2 12 2Z" />
-            <path d="M12 22C13.1 22 14 21.1 14 20H10C10 21.1 10.9 22 12 22Z" />
-          </svg>
-          <div
-            className="absolute -top-1 left-1/2 -translate-x-1/2 w-1.5 h-2.5
-                       bg-gradient-to-t from-yellow-400 to-orange-400 rounded-full"
-            style={{ filter: 'blur(0.5px)', animation: 'flicker 2s ease-in-out infinite' }}
-          />
-        </div>
+        <Fire size={20} weight="duotone" className="flex-shrink-0 text-orange-500 dark:text-orange-400" />
         <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
           {streakData.current_streak}
         </span>
@@ -130,13 +121,18 @@ const StreakCandle: React.FC = () => {
                      bg-white dark:bg-gray-800 rounded-lg shadow-xl
                      border border-gray-200 dark:border-gray-700
                      animate-fade-in"
-          style={{ top: popoverPos.top, right: popoverPos.right }}
+          style={{
+            top: popoverPos.top,
+            right: popoverPos.right,
+            maxHeight: `calc(100dvh - ${popoverPos.top}px - 12px)`,
+            overflowY: 'auto',
+          }}
           onMouseEnter={() => clearTimeout(hoverTimerRef.current)}
           onMouseLeave={() => { if (isHoverSourceRef.current) closePopover(); }}
         >
           <div className="space-y-1.5">
             <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
-              🕯 {t('streak.popover.title', '{{count}}-Day Streak', { count: streakData.current_streak })}
+              🔥 {t('streak.popover.title', '{{count}}-Day Streak', { count: streakData.current_streak })}
             </h3>
             <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
               {t('streak.popover.description', "You've been reading daily for {{count}} days in a row. Keep it up!", { count: streakData.current_streak })}

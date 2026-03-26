@@ -88,7 +88,25 @@
     "ariaAbsent": "absent",
     "ariaSolved": "Solved! The word was {{word}}.",
     "ariaFailed": "Game over. The word was {{word}}.",
-    "streak": "{{n}}-day Manna streak"
+    "streak": "{{n}}-day Manna streak",
+    "archive": "Archive",
+    "archiveSubtitle": "Play any past day's word puzzle.",
+    "archiveNotPlayed": "Not played",
+    "archiveSolved": "Solved in {{n}}",
+    "archiveFailed": "Failed",
+    "freeBanner": "Free Play",
+    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
+    "freeUpgradeCta": "Upgrade to Premium",
+    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
+    "archiveLabel": "Archive",
+    "backToToday": "← Today",
+    "backToArchive": "← Archive",
+    "archiveInProgress": "In progress",
+    "archiveError": "Could not load history. Tap a date to play anyway.",
+    "archivePlay": "Play",
+    "solvedArchiveTitle": "You solved it!",
+    "failedArchiveTitle": "The word was:",
+    "streakBonus": "+{{bonus}} streak bonus! ({{streak}}-day solve streak 🔥)"
   },
   "journal": {
     "title": "My Journal",
@@ -118,7 +136,24 @@
     "link": "Link",
     "placeholder": "Begin writing — a reflection, a prayer, or simply what's on your heart…",
     "editorLabel": "Journal entry",
-    "characters": "characters"
+    "characters": "characters",
+    "shareTitle": "Journal Entry",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Could not copy to clipboard",
+    "tutorial": {
+      "step1Title": "Write daily reflections",
+      "step1Body": "Tap \"New Entry\" to start writing. Each entry can include a reflection, prayer, or whatever is on your heart.",
+      "step2Title": "Link to a verse",
+      "step2Body": "Entries can be connected to the daily verse or any scripture passage for deeper context.",
+      "step3Title": "Edit & revisit",
+      "step3Body": "Tap any entry to open and edit it. Your journal grows with you day by day.",
+      "step4Title": "Private & secure",
+      "step4Body": "Your entries are only visible to you. Premium members can store unlimited entries.",
+      "title": "My Journal",
+      "subtitle": "A private space for prayer, reflection, and spiritual growth.",
+      "cta": "Start Writing",
+      "reopenHint": "Tap ? anytime to see this guide again."
+    }
   },
   "dailyVerse": {
     "title": "Today's Verse",
@@ -479,7 +514,8 @@
     "search": "Search",
     "noResults": "No results found",
     "contact": "Contact",
-    "comment": "Add a reflection"
+    "comment": "Add a reflection",
+    "help": "Help"
   },
   "streak": {
     "tooltip": "Day {{count}} streak",
@@ -509,7 +545,12 @@
       "daily_view": "Daily verse viewed",
       "reflection": "Reflection added",
       "favorite": "Verse favorited",
+      "shared": "Verse shared",
+      "journal": "Journal entry written",
       "milestone": "Milestone achieved",
+      "manna_solved": "Manna puzzle solved",
+      "manna_played": "Manna puzzle played",
+      "manna_streak_bonus": "Manna streak bonus",
       "generic": "Blessings earned"
     }
   },
@@ -582,10 +623,10 @@
     "choose_plan": "Choose plan",
     "plan": {
       "monthly": "Monthly",
-      "monthly_price": "$2.99 / mo",
+      "monthly_price": "$1.99 / mo",
       "annual": "Annual",
-      "annual_price": "$29.99 / yr",
-      "annual_save": "Save 17%"
+      "annual_price": "$17.99 / yr",
+      "annual_save": "Save 25%"
     },
     "upgrade_cta": "Upgrade to Premium",
     "view_addons": "View Add-ons",
@@ -629,7 +670,7 @@
     "journal_unlock": {
       "title": "Journal Unlock",
       "desc": "Unlimited journal entries and rich text editing, forever.",
-      "price": "$4.99"
+      "price": "$2.99"
     },
     "reflection_archive": {
       "title": "Reflection Archive",
@@ -664,12 +705,12 @@
     "full_theme_library": {
       "title": "Full Theme Library",
       "desc": "Every premium theme, past and future.",
-      "price": "$5.99"
+      "price": "$3.99"
     },
     "support_developer": {
       "title": "Support the Developer",
       "desc": "Buy me a coffee ☕ — deeply appreciated.",
-      "price": "$2.99",
+      "price": "$1.99",
       "thankyou_label": "Thank you",
       "thankyou_title": "Thank You!",
       "thankyou_body": "Your support means the world."
@@ -773,5 +814,24 @@
   },
   "premium": {
     "go_premium": "Go Premium"
+  },
+  "tutorial": {
+    "howItWorks": "How it works",
+    "gotIt": "Got it!",
+    "newBadge": "New"
+  },
+  "graceDayTutorial": {
+    "step1Title": "Your streak matters",
+    "step1Body": "Read the daily verse every day to build your streak. Streaks unlock milestones and earn you Blessings ✦.",
+    "step2Title": "Grace Days protect your streak",
+    "step2Body": "If you miss a day, use a Grace Day to keep your streak alive. You get 2 Grace Days per period.",
+    "step3Title": "How to use one",
+    "step3Body": "Tap \"Use a Grace Day\" below and confirm. It counts yesterday as a reading day, keeping your streak alive.",
+    "step4Title": "Grace Days refill automatically",
+    "step4Body": "Your 2 Grace Days refill each calendar month. Use them wisely — once used they're gone until the next reset.",
+    "title": "Grace Days",
+    "subtitle": "Missed a day? Protect your streak with a Grace Day.",
+    "cta": "Got it!",
+    "reopenHint": "Tap ? in the Grace Days panel to see this again."
   }
 }

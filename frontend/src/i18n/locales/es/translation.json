@@ -88,7 +88,25 @@
     "hintMax": "No quedan pistas.",
     "hintNoBlessings": "No tienes suficientes Bendiciones para una pista.",
     "hintRevealed": "Posición {{n}}: {{letter}}",
-    "hintsRevealed": "Reveladas:"
+    "hintsRevealed": "Reveladas:",
+    "archive": "Archive",
+    "archiveSubtitle": "Play any past day's word puzzle.",
+    "archiveNotPlayed": "Not played",
+    "archiveSolved": "Solved in {{n}}",
+    "archiveFailed": "Failed",
+    "freeBanner": "Free Play",
+    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
+    "freeUpgradeCta": "Upgrade to Premium",
+    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
+    "archiveLabel": "Archive",
+    "backToToday": "← Today",
+    "backToArchive": "← Archive",
+    "archiveInProgress": "In progress",
+    "archiveError": "Could not load history. Tap a date to play anyway.",
+    "archivePlay": "Play",
+    "solvedArchiveTitle": "You solved it!",
+    "failedArchiveTitle": "The word was:",
+    "streakBonus": "+{{bonus}} bono de racha! (racha de {{streak}} días 🔥)"
   },
   "journal": {
     "title": "Mi Diario",
@@ -118,7 +136,24 @@
     "link": "Enlazar",
     "placeholder": "Comienza a escribir — una reflexión, una oración, o simplemente lo que hay en tu corazón…",
     "editorLabel": "Entrada del diario",
-    "characters": "caracteres"
+    "characters": "caracteres",
+    "shareTitle": "Entrada del Diario",
+    "copied": "Copiado al portapapeles",
+    "copyFailed": "No se pudo copiar al portapapeles",
+    "tutorial": {
+      "step1Title": "Escribe reflexiones diarias",
+      "step1Body": "Toca «Nueva Entrada» para comenzar a escribir. Cada entrada puede incluir una reflexión, una oración o lo que tengas en el corazón.",
+      "step2Title": "Enlaza a un versículo",
+      "step2Body": "Las entradas pueden conectarse al versículo del día o a cualquier pasaje de las Escrituras para mayor contexto.",
+      "step3Title": "Edita y revisita",
+      "step3Body": "Toca cualquier entrada para abrirla y editarla. Tu diario crece contigo día a día.",
+      "step4Title": "Privado y seguro",
+      "step4Body": "Tus entradas solo son visibles para ti. Los miembros premium pueden almacenar entradas ilimitadas.",
+      "title": "Mi Diario",
+      "subtitle": "Un espacio privado para la oración, la reflexión y el crecimiento espiritual.",
+      "cta": "Comenzar a Escribir",
+      "reopenHint": "Toca ? en cualquier momento para ver esta guía de nuevo."
+    }
   },
   "dailyVerse": {
     "title": "Versículo de Hoy",
@@ -479,7 +514,8 @@
     "search": "Buscar",
     "noResults": "No se encontraron resultados",
     "contact": "Contacto",
-    "comment": "Agregar una reflexión"
+    "comment": "Agregar una reflexión",
+    "help": "Ayuda"
   },
   "streak": {
     "tooltip": "Racha de {{count}} días",
@@ -509,7 +545,12 @@
       "daily_view": "Versículo diario visto",
       "reflection": "Reflexión agregada",
       "favorite": "Versículo agregado a favoritos",
+      "shared": "Versículo compartido",
+      "journal": "Entrada de diario escrita",
       "milestone": "Hito alcanzado",
+      "manna_solved": "Puzzle de Maná resuelto",
+      "manna_played": "Puzzle de Maná jugado",
+      "manna_streak_bonus": "Bonificación de racha de Maná",
       "generic": "Bendiciones ganadas"
     }
   },
@@ -582,10 +623,10 @@
     "choose_plan": "Elige un plan",
     "plan": {
       "monthly": "Mensual",
-      "monthly_price": "$2.99 / mes",
+      "monthly_price": "$1.99 / mes",
       "annual": "Anual",
-      "annual_price": "$29.99 / año",
-      "annual_save": "Ahorra 17%"
+      "annual_price": "$17.99 / año",
+      "annual_save": "Ahorra 25%"
     },
     "upgrade_cta": "Mejorar a Premium",
     "view_addons": "Ver complementos",
@@ -629,7 +670,7 @@
     "journal_unlock": {
       "title": "Desbloqueo de diario",
       "desc": "Entradas ilimitadas y edición enriquecida, para siempre.",
-      "price": "$4.99"
+      "price": "$2.99"
     },
     "reflection_archive": {
       "title": "Archivo de reflexiones",
@@ -664,12 +705,12 @@
     "full_theme_library": {
       "title": "Biblioteca completa de temas",
       "desc": "Todos los temas premium, pasados y futuros.",
-      "price": "$5.99"
+      "price": "$3.99"
     },
     "support_developer": {
       "title": "Apoya al desarrollador",
       "desc": "Invítame un café ☕ — muy agradecido.",
-      "price": "$2.99",
+      "price": "$1.99",
       "thankyou_label": "Gracias",
       "thankyou_title": "¡Gracias!",
       "thankyou_body": "Tu apoyo significa mucho."
@@ -773,5 +814,24 @@
   },
   "premium": {
     "go_premium": "Hazte Premium"
+  },
+  "tutorial": {
+    "howItWorks": "Cómo funciona",
+    "gotIt": "¡Entendido!",
+    "newBadge": "Nuevo"
+  },
+  "graceDayTutorial": {
+    "step1Title": "Tu racha importa",
+    "step1Body": "Lee el versículo diario todos los días para construir tu racha. Las rachas desbloquean hitos y te ganan Bendiciones ✦.",
+    "step2Title": "Los Días de Gracia protegen tu racha",
+    "step2Body": "Si te pierdes un día, usa un Día de Gracia para mantener tu racha viva. Obtienes 2 Días de Gracia por período.",
+    "step3Title": "Cómo usar uno",
+    "step3Body": "Toca «Usar un Día de Gracia» abajo y confirma. Cuenta ayer como día de lectura, manteniendo tu racha viva.",
+    "step4Title": "Los Días de Gracia se recargan automáticamente",
+    "step4Body": "Tus 2 Días de Gracia se recargan cada mes calendario. Úsalos sabiamente — una vez usados desaparecen hasta el próximo reinicio.",
+    "title": "Días de Gracia",
+    "subtitle": "¿Perdiste un día? Protege tu racha con un Día de Gracia.",
+    "cta": "¡Entendido!",
+    "reopenHint": "Toca ? en el panel de Días de Gracia para ver esto de nuevo."
   }
 }

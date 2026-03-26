@@ -15,6 +15,7 @@
     "logout": "Déconnexion",
     "search": "Rechercher",
     "shop": "Boutique",
+    "journal": "Journal",
     "leaderboard": "Communauté",
     "manna": "Manne"
   },
@@ -87,7 +88,72 @@
     "hintMax": "Aucun indice restant.",
     "hintNoBlessings": "Pas assez de Bénédictions pour un indice.",
     "hintRevealed": "Position {{n}} : {{letter}}",
-    "hintsRevealed": "Révélées :"
+    "hintsRevealed": "Révélées :",
+    "archive": "Archive",
+    "archiveSubtitle": "Play any past day's word puzzle.",
+    "archiveNotPlayed": "Not played",
+    "archiveSolved": "Solved in {{n}}",
+    "archiveFailed": "Failed",
+    "freeBanner": "Free Play",
+    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
+    "freeUpgradeCta": "Upgrade to Premium",
+    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
+    "archiveLabel": "Archive",
+    "backToToday": "← Today",
+    "backToArchive": "← Archive",
+    "archiveInProgress": "In progress",
+    "archiveError": "Could not load history. Tap a date to play anyway.",
+    "archivePlay": "Play",
+    "solvedArchiveTitle": "You solved it!",
+    "failedArchiveTitle": "The word was:",
+    "streakBonus": "+{{bonus}} bonus de série ! (série de {{streak}} jours 🔥)"
+  },
+  "journal": {
+    "title": "Mon Journal",
+    "subtitle": "Un espace privé pour la prière, la réflexion et la croissance.",
+    "newEntry": "Nouvelle Entrée",
+    "todayIs": "Aujourd'hui, {{date}}",
+    "whatOnYourHeart": "Qu'avez-vous sur le cœur ?",
+    "beginWriting": "Commencer à Écrire →",
+    "emptyTitle": "Votre parcours dévotionnel commence ici.",
+    "emptyBody": "Écrivez votre première entrée — une réflexion, une prière, ou simplement ce qui est sur votre cœur.",
+    "writeFirstEntry": "Écrire votre première entrée →",
+    "lockedEntries": "{{count}} entrées plus anciennes sont stockées en toute sécurité. Débloquez l'historique complet avec un abonnement Paroles de Louange.",
+    "unlockHistory": "Débloquer l'Historique Complet",
+    "errorLoading": "Échec du chargement des entrées du journal. Veuillez réessayer.",
+    "backToJournal": "Retour au Journal",
+    "deleteEntry": "Supprimer l'Entrée",
+    "confirmDelete": "Supprimer cette entrée ? Cette action est irréversible.",
+    "unsavedChanges": "Vous avez des modifications non enregistrées. Quitter sans enregistrer ?",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "thisWeeksPrompt": "Réflexion de Cette Semaine",
+    "hidePrompt": "Masquer la réflexion",
+    "hide": "Masquer",
+    "linkAVerse": "Lier un verset",
+    "removeVerse": "Supprimer le verset lié",
+    "verseInputPlaceholder": "ex. Romains 8:28",
+    "link": "Lier",
+    "placeholder": "Commencez à écrire — une réflexion, une prière, ou simplement ce qui est sur votre cœur…",
+    "editorLabel": "Entrée du journal",
+    "characters": "caractères",
+    "shareTitle": "Entrée du Journal",
+    "copied": "Copié dans le presse-papiers",
+    "copyFailed": "Impossible de copier dans le presse-papiers",
+    "tutorial": {
+      "step1Title": "Écrivez des réflexions quotidiennes",
+      "step1Body": "Appuyez sur «Nouvelle Entrée» pour commencer à écrire. Chaque entrée peut inclure une réflexion, une prière ou ce qui est sur votre cœur.",
+      "step2Title": "Liez à un verset",
+      "step2Body": "Les entrées peuvent être connectées au verset du jour ou à tout passage des Écritures pour un contexte plus profond.",
+      "step3Title": "Modifier et revisiter",
+      "step3Body": "Appuyez sur n'importe quelle entrée pour l'ouvrir et la modifier. Votre journal grandit avec vous jour après jour.",
+      "step4Title": "Privé et sécurisé",
+      "step4Body": "Vos entrées ne sont visibles que par vous. Les membres premium peuvent stocker un nombre illimité d'entrées.",
+      "title": "Mon Journal",
+      "subtitle": "Un espace privé pour la prière, la réflexion et la croissance spirituelle.",
+      "cta": "Commencer à Écrire",
+      "reopenHint": "Appuyez sur ? à tout moment pour revoir ce guide."
+    }
   },
   "dailyVerse": {
     "title": "Verset du Jour",
@@ -436,7 +502,8 @@
     "search": "Rechercher",
     "noResults": "Aucun résultat trouvé",
     "contact": "Contact",
-    "comment": "Ajouter une réflexion"
+    "comment": "Ajouter une réflexion",
+    "help": "Aide"
   },
   "milestone": {
     "achieved_label": "Jalon Atteint",
@@ -481,10 +548,10 @@
     "choose_plan": "Choisir un plan",
     "plan": {
       "monthly": "Mensuel",
-      "monthly_price": "$2.99 / mois",
+      "monthly_price": "$1.99 / mois",
       "annual": "Annuel",
-      "annual_price": "$29.99 / an",
-      "annual_save": "Économisez 17%"
+      "annual_price": "$17.99 / an",
+      "annual_save": "Économisez 25%"
     },
     "upgrade_cta": "Passer à Premium",
     "view_addons": "Voir les modules",
@@ -528,7 +595,7 @@
     "journal_unlock": {
       "title": "Journal déverrouillé",
       "desc": "Entrées illimitées et édition enrichie, pour toujours.",
-      "price": "$4.99"
+      "price": "$2.99"
     },
     "reflection_archive": {
       "title": "Archive de réflexions",
@@ -563,12 +630,12 @@
     "full_theme_library": {
       "title": "Bibliothèque complète de thèmes",
       "desc": "Tous les thèmes premium, passés et futurs.",
-      "price": "$5.99"
+      "price": "$3.99"
     },
     "support_developer": {
       "title": "Soutenir le développeur",
       "desc": "Offrez-moi un café ☕ — très apprécié.",
-      "price": "$2.99",
+      "price": "$1.99",
       "thankyou_label": "Merci",
       "thankyou_title": "Merci !",
       "thankyou_body": "Votre soutien compte beaucoup."
@@ -678,5 +745,45 @@
   },
   "premium": {
     "go_premium": "Passer Premium"
+  },
+  "tutorial": {
+    "howItWorks": "Comment ça fonctionne",
+    "gotIt": "Compris !",
+    "newBadge": "Nouveau"
+  },
+  "blessings": {
+    "label": "Bénédictions",
+    "balance": "Solde de bénédictions",
+    "popover": {
+      "title": "Bénédictions",
+      "description": "Gagnez des Bénédictions en interagissant avec les versets quotidiens, en ajoutant des réflexions et en maintenant votre série.",
+      "balance": "Solde actuel : {{count}}"
+    },
+    "earned": {
+      "daily_view": "Verset quotidien consulté",
+      "reflection": "Réflexion ajoutée",
+      "favorite": "Verset mis en favori",
+      "shared": "Verset partagé",
+      "journal": "Entrée de journal écrite",
+      "milestone": "Jalon atteint",
+      "manna_solved": "Puzzle Manna résolu",
+      "manna_played": "Puzzle Manna joué",
+      "manna_streak_bonus": "Bonus de série Manna",
+      "generic": "Bénédictions gagnées"
+    }
+  },
+  "graceDayTutorial": {
+    "step1Title": "Votre série compte",
+    "step1Body": "Lisez le verset quotidien chaque jour pour construire votre série. Les séries débloquent des jalons et vous font gagner des Bénédictions ✦.",
+    "step2Title": "Les Jours de Grâce protègent votre série",
+    "step2Body": "Si vous manquez un jour, utilisez un Jour de Grâce pour garder votre série en vie. Vous obtenez 2 Jours de Grâce par période.",
+    "step3Title": "Comment en utiliser un",
+    "step3Body": "Appuyez sur «Utiliser un Jour de Grâce» ci-dessous et confirmez. Cela compte hier comme jour de lecture, gardant votre série en vie.",
+    "step4Title": "Les Jours de Grâce se rechargent automatiquement",
+    "step4Body": "Vos 2 Jours de Grâce se rechargent chaque mois civil. Utilisez-les judicieusement — une fois utilisés, ils disparaissent jusqu'à la prochaine réinitialisation.",
+    "title": "Jours de Grâce",
+    "subtitle": "Manqué un jour ? Protégez votre série avec un Jour de Grâce.",
+    "cta": "Compris !",
+    "reopenHint": "Appuyez sur ? dans le panneau Jours de Grâce pour revoir ceci."
   }
 }

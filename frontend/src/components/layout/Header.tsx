@@ -7,6 +7,7 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import StreakCandle from "../StreakCandle";
 import BlessingsChip from "../BlessingsChip";
 import { useStreak } from "../../contexts/StreakContext";
+import { MagnifyingGlass } from "@phosphor-icons/react";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
@@ -51,9 +52,9 @@ export const Header: React.FC = () => {
         <div className="flex justify-between items-center h-14">
 
           {/* ── Logo ───────────────────────────────────────────────────────── */}
-          <Link to="/" className="flex items-center gap-2 group shrink-0">
-            <span className="text-lg leading-none" aria-hidden="true">🕯</span>
-            <span className="text-xl font-display font-bold text-amber-700 dark:text-amber-400 tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(245,158,11,0.55)]">
+          <Link to="/" className="flex items-center gap-2 group shrink-0 min-w-0">
+            <span className="text-lg leading-none shrink-0" aria-hidden="true">🕯</span>
+            <span className="text-xl font-display font-bold text-amber-700 dark:text-amber-400 tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(245,158,11,0.55)] truncate">
               Words of Praise
             </span>
           </Link>
@@ -62,9 +63,7 @@ export const Header: React.FC = () => {
           <div className="hidden md:flex items-center gap-1">
             {!isGuest && (
               <NavLink to="/search" className={navLinkDesktop}>
-                <svg className="w-3.5 h-3.5 shrink-0" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-4.35-4.35M17 11A6 6 0 105 11a6 6 0 0012 0z" />
-                </svg>
+                <MagnifyingGlass size={14} weight="duotone" className="shrink-0" />
                 {t("nav.search")}
               </NavLink>
             )}

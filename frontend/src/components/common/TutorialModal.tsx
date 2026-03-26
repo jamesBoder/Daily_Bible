@@ -81,14 +81,14 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
     >
       <div
         ref={panelRef}
-        className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[calc(100vh-2rem)] sm:max-h-[90vh] overflow-y-auto"
       >
         {/* Decorative top accent — sticky so it stays visible when scrolling */}
         <div className="sticky top-0 z-10 h-1 w-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400" />
 
         {/* Close button */}
         <button
-          className="absolute top-4 right-4 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={onDismiss}
           aria-label={t('common.close', 'Close')}
         >
@@ -97,7 +97,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
           </svg>
         </button>
 
-        <div className="px-6 pb-6 pt-5">
+        <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-4 sm:pt-5">
           {/* Header */}
           <div className="flex flex-col items-center text-center mb-5">
             <div className="text-4xl mb-3" aria-hidden>{icon}</div>

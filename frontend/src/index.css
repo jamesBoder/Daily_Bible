@@ -100,6 +100,7 @@
     --grace-lavender: #9b8fc4;
     --grace-lavender-bg: rgba(155, 143, 196, 0.12);
     --milestone-glow: #fde047;
+    --challenge-accent: #3a9b8c;
     --parchment: #faf8f3;
 
     /* Phase 3 — Journal tokens (light mode) */
@@ -117,7 +118,7 @@
     /* Phase 6 — base theme surface tokens (Parchment) */
     --foreground: #1a1208;
     --theme-surface: #f0ece0;
-    --theme-border: rgba(245, 158, 11, 0.20);
+    --theme-border: rgba(245, 158, 11, 0.38);
     --theme-accent: #b45309;
 
     /* Header background — parchment-tinted frosted glass */
@@ -133,6 +134,7 @@
     --candle-amber: #c8a84b;
     --blessing-gold: #d4af37;
     --grace-lavender: #8fa68a;
+    --challenge-accent: #5ec6b8;
     --milestone-glow: #a8c97f;
     --theme-surface: #1f2e28;
     --theme-border: rgba(200, 168, 75, 0.20);
@@ -156,7 +158,7 @@
     --grace-lavender: #9b8a7a;
     --milestone-glow: #e8c070;
     --theme-surface: #ede0d0;
-    --theme-border: rgba(201, 124, 43, 0.22);
+    --theme-border: rgba(201, 124, 43, 0.38);
     --theme-accent: #8b4513;
     --header-bg: rgba(245, 237, 224, 0.88);
     /* Journal / Manna tiles — slightly warmer than root default */
@@ -176,6 +178,7 @@
     --blessing-gold: #c0c8f0;
     --grace-lavender: #7788cc;
     --milestone-glow: #aabbee;
+    --challenge-accent: #5ec6b8;
     --theme-surface: #121840;
     --theme-border: rgba(136, 153, 221, 0.20);
     --theme-accent: #4455aa;
@@ -197,6 +200,7 @@
     --blessing-gold: #d4af37;
     --grace-lavender: #c08080;
     --milestone-glow: #e8c060;
+    --challenge-accent: #5ec6b8;
     --theme-surface: #220808;
     --theme-border: rgba(200, 134, 42, 0.22);
     --theme-accent: #8b0000;
@@ -227,6 +231,10 @@
   [data-theme="midnight"], [data-theme="dark"], .dark {
     --parchment: #2C2519;
     --foreground: #e8d5b0;
+    /* Amber is lightened for dark-mode readability — #f59e0b is marginal contrast
+       on dark surfaces; #f5b942 adds ~0.5 contrast ratio for body/label text */
+    --candle-amber: #f5b942;
+    --blessing-gold: #fcd34d;
     --grace-lavender-bg: rgba(155, 143, 196, 0.18);
 
     /* Phase 6 — Midnight theme surface tokens */
@@ -736,7 +744,7 @@
 
   .settings-section__description {
     font-size: 0.875rem;
-    opacity: 0.7;
+    opacity: 0.82;
     margin: 0;
     line-height: 1.5;
   }
@@ -756,8 +764,8 @@
     gap: 0.75rem;
     padding: 0.875rem 1rem;
     border-radius: 0.875rem;
-    border: 1.5px solid rgba(0, 0, 0, 0.08);
-    background: rgba(255, 255, 255, 0.55);
+    border: 1.5px solid rgba(180, 130, 40, 0.28);
+    background: rgba(255, 255, 255, 0.82);
     transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
   }
 
@@ -816,7 +824,7 @@
 
   .otp-card__desc {
     font-size: 0.75rem;
-    opacity: 0.62;
+    opacity: 0.75;
     margin: 0;
     line-height: 1.4;
     display: -webkit-box;
@@ -1029,6 +1037,15 @@
   @media (min-width: 640px) {
     .pricing-modal {
       border-radius: 1.5rem;
+    }
+  }
+
+  /* Landscape phones / short viewports: reduce padding so CTA stays reachable */
+  @media (max-height: 500px) {
+    .pricing-modal {
+      max-height: 88vh;
+      padding: 0.875rem 1.25rem 1.25rem;
+      gap: 0.625rem;
     }
   }
 
@@ -1280,7 +1297,8 @@
   }
 
   .pricing-modal__otp-buy {
-    padding: 0.3rem 0.75rem;
+    padding: 0.5rem 0.85rem;
+    min-height: 2rem;
     border-radius: 999px;
     background: linear-gradient(135deg, #f59e0b, #d97706);
     color: #fff;
@@ -1488,7 +1506,8 @@
     border: none;
     cursor: pointer;
     color: #92400e;
-    padding: 0.25rem;
+    /* Increased to 0.5rem for minimum ~32px touch target */
+    padding: 0.5rem;
     border-radius: 0.25rem;
   }
 

@@ -15,6 +15,7 @@
     "logout": "Dekonekte",
     "search": "Chèche",
     "shop": "Boutik",
+    "journal": "Jounal",
     "leaderboard": "Kominote",
     "manna": "Manna"
   },
@@ -87,7 +88,72 @@
     "hintMax": "Pa gen konsey kè rete.",
     "hintNoBlessings": "Pa gen ase Benediksyon pou yon konsey.",
     "hintRevealed": "Pozisyon {{n}}: {{letter}}",
-    "hintsRevealed": "Revele:"
+    "hintsRevealed": "Revele:",
+    "archive": "Archive",
+    "archiveSubtitle": "Play any past day's word puzzle.",
+    "archiveNotPlayed": "Not played",
+    "archiveSolved": "Solved in {{n}}",
+    "archiveFailed": "Failed",
+    "freeBanner": "Free Play",
+    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
+    "freeUpgradeCta": "Upgrade to Premium",
+    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
+    "archiveLabel": "Archive",
+    "backToToday": "← Today",
+    "backToArchive": "← Archive",
+    "archiveInProgress": "In progress",
+    "archiveError": "Could not load history. Tap a date to play anyway.",
+    "archivePlay": "Play",
+    "solvedArchiveTitle": "You solved it!",
+    "failedArchiveTitle": "The word was:",
+    "streakBonus": "+{{bonus}} bonus seri! (seri {{streak}} jou 🔥)"
+  },
+  "journal": {
+    "title": "Jounal Mwen",
+    "subtitle": "Yon espas prive pou lapriyè, refleksyon ak kwasans.",
+    "newEntry": "Nouvo Antre",
+    "todayIs": "Jodi a, {{date}}",
+    "whatOnYourHeart": "Kisa ou gen nan kè ou?",
+    "beginWriting": "Kòmanse Ekri →",
+    "emptyTitle": "Vwayaj devosyonèl ou kòmanse isit la.",
+    "emptyBody": "Ekri premye antre ou — yon refleksyon, yon priyè, oswa tou senpleman sa ou gen nan kè ou.",
+    "writeFirstEntry": "Ekri premye antre ou →",
+    "lockedEntries": "{{count}} ansyen antre yo estoke an sekirite. Debloke istwa konplè a ak yon manm Pawòl Lwanj.",
+    "unlockHistory": "Debloke Istwa Konplè",
+    "errorLoading": "Pa rive chaje antre jounal yo. Tanpri eseye ankò.",
+    "backToJournal": "Tounen nan Jounal",
+    "deleteEntry": "Efase Antre",
+    "confirmDelete": "Efase antre sa a? Sa pa ka defèt.",
+    "unsavedChanges": "Ou gen chanjman ou pa anrejistre. Kite san anrejistre?",
+    "saving": "Ap anrejistre…",
+    "saved": "Anrejistre",
+    "thisWeeksPrompt": "Sijèsyon Semèn Sa a",
+    "hidePrompt": "Kache sijèsyon",
+    "hide": "Kache",
+    "linkAVerse": "Mete lyen yon vèsè",
+    "removeVerse": "Retire vèsè ki gen lyen",
+    "verseInputPlaceholder": "egz. Women 8:28",
+    "link": "Mete lyen",
+    "placeholder": "Kòmanse ekri — yon refleksyon, yon priyè, oswa tou senpleman sa ou gen nan kè ou…",
+    "editorLabel": "Antre jounal",
+    "characters": "karaktè",
+    "shareTitle": "Antre Jounal",
+    "copied": "Kopye nan pòch-papye",
+    "copyFailed": "Pa rive kopye nan pòch-papye",
+    "tutorial": {
+      "step1Title": "Ekri refleksyon chak jou",
+      "step1Body": "Tape «Nouvo Antre» pou kòmanse ekri. Chak antre ka gen yon refleksyon, yon priyè, oswa sa ou gen nan kè ou.",
+      "step2Title": "Mete lyen yon vèsè",
+      "step2Body": "Antre yo ka konekte ak vèsè jou a oswa nenpòt pasaj nan Ekriti pou plis kontèks.",
+      "step3Title": "Modifye ak revisit",
+      "step3Body": "Tape nenpòt antre pou louvri l epi modifye l. Jounal ou grandi avèk ou jou apre jou.",
+      "step4Title": "Prive ak an sekirite",
+      "step4Body": "Antre ou yo sèlman vizib pa ou. Manm premium yo ka estoke antre san limit.",
+      "title": "Jounal Mwen",
+      "subtitle": "Yon espas prive pou lapriyè, refleksyon ak kwasans espirityèl.",
+      "cta": "Kòmanse Ekri",
+      "reopenHint": "Tape ? nenpòt ki lè pou wè gid sa a ankò."
+    }
   },
   "dailyVerse": {
     "title": "Vèsè Jodi a",
@@ -436,7 +502,8 @@
     "search": "Chèche",
     "noResults": "Pa jwenn rezilta",
     "contact": "Kontak",
-    "comment": "Ajoute yon refleksyon"
+    "comment": "Ajoute yon refleksyon",
+    "help": "Èd"
   },
   "milestone": {
     "achieved_label": "Etap Atenn",
@@ -481,10 +548,10 @@
     "choose_plan": "Chwazi yon plan",
     "plan": {
       "monthly": "Chak mwa",
-      "monthly_price": "$2.99 / mwa",
+      "monthly_price": "$1.99 / mwa",
       "annual": "Anyèl",
-      "annual_price": "$29.99 / ane",
-      "annual_save": "Ekonomize 17%"
+      "annual_price": "$17.99 / ane",
+      "annual_save": "Ekonomize 25%"
     },
     "upgrade_cta": "Monte nan Premium",
     "view_addons": "Wè ajoute yo",
@@ -528,7 +595,7 @@
     "journal_unlock": {
       "title": "Debloke Jounal",
       "desc": "Antre san limit ak edisyon rich, pou toujou.",
-      "price": "$4.99"
+      "price": "$2.99"
     },
     "reflection_archive": {
       "title": "Achiv Refleksyon",
@@ -563,12 +630,12 @@
     "full_theme_library": {
       "title": "Bibliyotèk Tèm Konplè",
       "desc": "Tout tèm premium, pase ak lavni.",
-      "price": "$5.99"
+      "price": "$3.99"
     },
     "support_developer": {
       "title": "Sipòte Devloppè a",
       "desc": "Achte yon kafe ☕ pou mwen — mèsi anpil.",
-      "price": "$2.99",
+      "price": "$1.99",
       "thankyou_label": "Mèsi",
       "thankyou_title": "Mèsi!",
       "thankyou_body": "Sipò ou vle di anpil."
@@ -678,5 +745,45 @@
   },
   "premium": {
     "go_premium": "Vin Premium"
+  },
+  "tutorial": {
+    "howItWorks": "Kijan sa travay",
+    "gotIt": "Konprann!",
+    "newBadge": "Nouvo"
+  },
+  "blessings": {
+    "label": "Benediksyon",
+    "balance": "Balans Benediksyon",
+    "popover": {
+      "title": "Benediksyon",
+      "description": "Ranmase Benediksyon lè ou angaje ak vèsè jounen an, ajoute refleksyon, ak kenbe seri ou.",
+      "balance": "Balans aktyèl: {{count}}"
+    },
+    "earned": {
+      "daily_view": "Vèsè jounen an li",
+      "reflection": "Refleksyon ajoute",
+      "favorite": "Vèsè mete nan favori",
+      "shared": "Vèsè pataje",
+      "journal": "Antre jounal ekri",
+      "milestone": "Etap rive",
+      "manna_solved": "Puzzle Manna rezoud",
+      "manna_played": "Puzzle Manna jwe",
+      "manna_streak_bonus": "Bonis seri Manna",
+      "generic": "Benediksyon ranmase"
+    }
+  },
+  "graceDayTutorial": {
+    "step1Title": "Seri ou enpòtan",
+    "step1Body": "Li vèsè jounen an chak jou pou bati seri ou. Seri yo debloke etap ak fè ou ranmase Benediksyon ✦.",
+    "step2Title": "Jou Gras yo pwoteje seri ou",
+    "step2Body": "Si ou rate yon jou, itilize yon Jou Gras pou kenbe seri ou vivan. Ou jwenn 2 Jou Gras chak peryòd.",
+    "step3Title": "Kijan pou itilize youn",
+    "step3Body": "Tape «Itilize yon Jou Gras» anba a epi konfime. Li konte yè kòm jou lekti, kenbe seri ou vivan.",
+    "step4Title": "Jou Gras yo rechaje otomatikman",
+    "step4Body": "2 Jou Gras ou yo rechaje chak mwa kalandriye. Itilize yo avèk sajès — yon fwa itilize yo disparèt jouk pwochen reInitialization.",
+    "title": "Jou Gras",
+    "subtitle": "Rate yon jou? Pwoteje seri ou ak yon Jou Gras.",
+    "cta": "Konprann!",
+    "reopenHint": "Tape ? nan panèl Jou Gras pou wè sa ankò."
   }
 }
