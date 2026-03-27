@@ -316,6 +316,8 @@ export const JournalEditor: React.FC = () => {
   }
 
   const charCount = contentPlain.length;
+  const wordCount = contentPlain.trim() ? contentPlain.trim().split(/\s+/).length : 0;
+  const readTimeMins = Math.max(1, Math.ceil(wordCount / 200));
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6">
@@ -487,10 +489,13 @@ export const JournalEditor: React.FC = () => {
           spellCheck
         />
 
-        {/* Character count */}
-        {charCount > CHAR_COUNT_THRESHOLD && (
+        {/* Word count + read time */}
+        {wordCount > 0 && (
           <p className="journal-char-count" aria-live="polite">
-            {charCount.toLocaleString()} {t("journal.characters", "characters")}
+            {wordCount} {wordCount === 1 ? t("journal.word", "word") : t("journal.words", "words")}
+            {charCount > CHAR_COUNT_THRESHOLD && (
+              <> · ~{readTimeMins} {t("journal.minRead", "min read")}</>
+            )}
           </p>
         )}
       </div>

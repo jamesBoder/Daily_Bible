@@ -81,10 +81,10 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
     >
       <div
         ref={panelRef}
-        className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[calc(100vh-2rem)] sm:max-h-[90vh] overflow-y-auto"
+        className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[calc(100vh-2rem)] sm:max-h-[90vh] flex flex-col overflow-hidden"
       >
-        {/* Decorative top accent — sticky so it stays visible when scrolling */}
-        <div className="sticky top-0 z-10 h-1 w-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400" />
+        {/* Decorative top accent */}
+        <div className="flex-shrink-0 h-1 w-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400" />
 
         {/* Close button */}
         <button
@@ -97,9 +97,9 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
           </svg>
         </button>
 
-        <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-4 sm:pt-5">
-          {/* Header */}
-          <div className="flex flex-col items-center text-center mb-5">
+        {/* Non-scrolling header */}
+        <div className="flex-shrink-0 px-4 sm:px-6 pt-4 sm:pt-5 pb-3">
+          <div className="flex flex-col items-center text-center">
             <div className="text-4xl mb-3" aria-hidden>{icon}</div>
             <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 font-display">
               {title}
@@ -110,18 +110,18 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
               </p>
             )}
           </div>
-
-          {/* Divider */}
-          <div className="flex items-center gap-3 mb-5">
+          <div className="flex items-center gap-3 mt-4">
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
             <span className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-widest">
               {t('tutorial.howItWorks', 'How it works')}
             </span>
             <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
           </div>
+        </div>
 
-          {/* Steps */}
-          <div className="space-y-4 mb-6">
+        {/* Scrollable steps only */}
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 min-h-0">
+          <div className="space-y-4 py-2">
             {steps.map((step, i) => (
               <div key={i} className="flex gap-3 items-start">
                 <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-lg" aria-hidden>
@@ -138,16 +138,16 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
               </div>
             ))}
           </div>
+        </div>
 
-          {/* CTA */}
+        {/* Non-scrolling footer */}
+        <div className="flex-shrink-0 px-4 sm:px-6 pb-4 sm:pb-6 pt-3">
           <button
             className="w-full py-3 rounded-xl bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white font-semibold text-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
             onClick={onDismiss}
           >
             {ctaLabel ?? t('tutorial.gotIt', 'Got it!')}
           </button>
-
-          {/* Re-open hint */}
           {reopenHint && (
             <p className="mt-3 text-center text-xs text-gray-400 dark:text-gray-500">
               {reopenHint}
