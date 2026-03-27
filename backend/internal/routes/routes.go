@@ -64,6 +64,9 @@ func SetupRoutes(
 		// Phase 8: Stripe webhook — public (no auth), must be before any body-parsing middleware
 		api.POST("/webhooks/stripe", subscriptionHandler.HandleStripeWebhook)
 
+		// Public — no auth required (user arrives from email link)
+		api.GET("/settings/unsubscribe", settingsHandler.Unsubscribe)
+
 		// translations route (Phase 4) — public with optional auth
 		translationsGroup := api.Group("/translations")
 		translationsGroup.Use(middleware.OptionalAuthMiddleware(tokenService, subscriptionChecker))

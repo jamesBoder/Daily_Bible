@@ -63,6 +63,70 @@ func (s *EmailService) SendVerificationEmail(toEmail, username, token string) er
 	return err
 }
 
+var reminderSubjects = map[string]string{
+	"en": "Your Word for Today — %s",
+	"es": "Tu Palabra de Hoy — %s",
+	"fr": "Votre Parole du Jour — %s",
+	"ht": "Mo Pawòl Jodi a — %s",
+}
+
+const reminderHTMLTemplate = `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:0;background:#faf8f3;">
+  <div style="background:#f59e0b;padding:20px 24px;text-align:center;">
+    <span style="font-size:24px;color:#fff;font-weight:bold;">🕯 Words of Praise</span>
+  </div>
+  <div style="padding:32px 24px;">
+    <p style="margin:0 0 8px;font-size:16px;color:#374151;">Good morning, <strong>%s</strong>!</p>
+    <p style="margin:0 0 24px;font-size:16px;color:#374151;">Here is your verse for today:</p>
+    <blockquote style="margin:0 0 24px;padding:20px 24px;background:#fff;border-left:4px solid #f59e0b;border-radius:4px;">
+      <p style="margin:0 0 12px;font-size:18px;color:#1f2937;font-style:italic;">"%s"</p>
+      <p style="margin:0;font-size:14px;color:#6b7280;">— %s</p>
+    </blockquote>
+    <a href="%s" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">Read Today's Verse →</a>
+  </div>
+  <div style="padding:20px 24px;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0 0 8px;font-size:12px;color:#9ca3af;">You're receiving this because you enabled Daily Verse Reminders.</p>
+    <p style="margin:0;font-size:12px;color:#9ca3af;">
+      <a href="%s" style="color:#6b7280;">Unsubscribe</a>
+      &nbsp;·&nbsp;
+      <a href="%s" style="color:#6b7280;">Manage Settings</a>
+    </p>
+    <p style="margin:8px 0 0;font-size:11px;color:#d1d5db;">Words of Praise · wordsofpraise.app</p>
+  </div>
+</div>`
+
+// SendDailyReminder sends the daily verse reminder email to an opted-in user.
+func (s *EmailService) SendDailyReminder(
+	toEmail string,
+	username string,
+	verseText string,
+	reference string,
+	lang string,
+	unsubURL string,
+	settingsURL string,
+) error {
+	subjectFmt, ok := reminderSubjects[lang]
+	if !ok {
+		subjectFmt = reminderSubjects["en"]
+	}
+	subject := fmt.Sprintf(subjectFmt, reference)
+	html := fmt.Sprintf(reminderHTMLTemplate,
+		username, verseText, reference,
+		s.frontendURL+"/daily",
+		unsubURL, settingsURL,
+	)
+	_, err := s.client.Emails.Send(&resend.SendEmailRequest{
+		From:    s.fromEmail,
+		To:      []string{toEmail},
+		Subject: subject,
+		Html:    html,
+		Headers: map[string]string{
+			"List-Unsubscribe":      "<" + unsubURL + ">",
+			"List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+		},
+	})
+	return err
+}
+
 // SendPasswordResetEmail sends a password reset link to the user
 func (s *EmailService) SendPasswordResetEmail(toEmail, username, token string) error {
 	url := fmt.Sprintf("%s/reset-password?token=%s", s.frontendURL, token)

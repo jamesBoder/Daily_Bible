@@ -11,11 +11,13 @@ import (
 
 type SettingsHandler struct {
     settingsService *services.SettingsService
+    tokenService    *services.TokenService
 }
 
-func NewSettingsHandler(settingsService *services.SettingsService) *SettingsHandler {
+func NewSettingsHandler(settingsService *services.SettingsService, tokenService *services.TokenService) *SettingsHandler {
     return &SettingsHandler{
         settingsService: settingsService,
+        tokenService:    tokenService,
     }
 }
 
@@ -181,6 +183,28 @@ func (h *SettingsHandler) GetLanguage(c *gin.Context) {
     }
     
     c.JSON(http.StatusOK, gin.H{"language": language})
+}
+
+// Unsubscribe handles one-click unsubscribe from daily verse reminder emails.
+// It is a public endpoint — the user arrives from a link in their email with no auth cookie.
+func (h *SettingsHandler) Unsubscribe(c *gin.Context) {
+    tokenStr := c.Query("token")
+    if tokenStr == "" {
+        c.Redirect(http.StatusFound, "/settings?unsubscribe=invalid")
+        return
+    }
+    userID, err := h.tokenService.VerifyUnsubscribeToken(tokenStr)
+    if err != nil {
+        c.Redirect(http.StatusFound, "/settings?unsubscribe=invalid")
+        return
+    }
+    if _, err := h.settingsService.UpdateUserSettings(userID, map[string]interface{}{
+        "daily_verse_reminder": false,
+    }); err != nil {
+        c.Redirect(http.StatusFound, "/settings?unsubscribe=error")
+        return
+    }
+    c.Redirect(http.StatusFound, "/settings?unsubscribed=true")
 }
 
 // UpdateLanguage updates just the language preference

@@ -78,6 +78,45 @@ func (tc *TokenService) ValidateToken(tokenString string) (*TokenClaims, error) 
 	return claims, nil
 }
 
+// UnsubClaims is used exclusively for email unsubscribe tokens.
+// The Type field prevents these tokens from being accepted as auth tokens.
+type UnsubClaims struct {
+	UserID uint   `json:"uid"`
+	Type   string `json:"type"` // always "unsub"
+	jwt.RegisteredClaims
+}
+
+// GenerateUnsubscribeToken creates a JWT valid for 90 days that can only be
+// used to unsubscribe the given user from daily reminder emails.
+func (tc *TokenService) GenerateUnsubscribeToken(userID uint) (string, error) {
+	claims := &UnsubClaims{
+		UserID: userID,
+		Type:   "unsub",
+		RegisteredClaims: jwt.RegisteredClaims{
+			ExpiresAt: jwt.NewNumericDate(time.Now().Add(90 * 24 * time.Hour)),
+			IssuedAt:  jwt.NewNumericDate(time.Now()),
+		},
+	}
+	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+	return token.SignedString([]byte(tc.config.JWTSecret))
+}
+
+// VerifyUnsubscribeToken validates an unsubscribe token and returns the UserID.
+// Returns an error if the token is invalid, expired, or not of type "unsub".
+func (tc *TokenService) VerifyUnsubscribeToken(tokenStr string) (uint, error) {
+	claims := &UnsubClaims{}
+	token, err := jwt.ParseWithClaims(tokenStr, claims, func(t *jwt.Token) (interface{}, error) {
+		return []byte(tc.config.JWTSecret), nil
+	})
+	if err != nil || !token.Valid {
+		return 0, fmt.Errorf("invalid or expired unsubscribe token")
+	}
+	if claims.Type != "unsub" {
+		return 0, fmt.Errorf("wrong token type")
+	}
+	return claims.UserID, nil
+}
+
 // RefreshToken Method
 func (tc *TokenService) RefreshToken(tokenString string) (string, error) {
 	claims, err := tc.ValidateToken(tokenString)

@@ -37,6 +37,11 @@ type Config struct {
     VAPIDSubscriber string // e.g. "mailto:admin@wordsofpraise.app"
     // Hour of day (UTC, 0-23) to dispatch daily verse push reminders.
     PushReminderHour int
+
+    // Email reminder scheduler
+    ReminderEnabled   bool
+    ReminderSendHour  int
+    ReminderBatchSize int
 }
 
 func Load() (*Config, error) {
@@ -67,7 +72,10 @@ func Load() (*Config, error) {
         VAPIDPublicKey:  os.Getenv("VAPID_PUBLIC_KEY"),
         VAPIDPrivateKey: os.Getenv("VAPID_PRIVATE_KEY"),
         VAPIDSubscriber: getEnvOrDefault("VAPID_SUBSCRIBER", "mailto:admin@wordsofpraise.app"),
-        PushReminderHour: parsePushHour(getEnvOrDefault("PUSH_REMINDER_HOUR", "8")),
+        PushReminderHour:  parsePushHour(getEnvOrDefault("PUSH_REMINDER_HOUR", "8")),
+        ReminderEnabled:   getEnvOrDefault("REMINDER_ENABLED", "true") == "true",
+        ReminderSendHour:  parseIntOrDefault("REMINDER_SEND_HOUR", 8),
+        ReminderBatchSize: parseIntOrDefault("REMINDER_BATCH_SIZE", 100),
     }, nil
 }
 
@@ -78,6 +86,15 @@ func parsePushHour(s string) int {
         return 8
     }
     return h
+}
+
+func parseIntOrDefault(key string, def int) int {
+    if v := os.Getenv(key); v != "" {
+        if n, err := strconv.Atoi(v); err == nil {
+            return n
+        }
+    }
+    return def
 }
 
 func getEnvOrDefault(key, defaultValue string) string {

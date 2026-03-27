@@ -35,6 +35,8 @@ func RunMigrations(db *gorm.DB) error {
         &models.MannaGuess{},
         // Push notifications
         &models.PushSubscription{},
+        // Email reminders
+        &models.EmailReminderLog{},
     ); err != nil {
         return err
     }

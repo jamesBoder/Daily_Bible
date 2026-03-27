@@ -42,6 +42,10 @@ func errorHandler(c *gin.Context) {
 }
 
 func main() {
+    // Top-level context used to signal background goroutines (scheduler) to stop.
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
+
     // 1. Load config
     cfg, err := config.Load()
     if err != nil {
@@ -179,6 +183,16 @@ func main() {
         log.Println("Push notifications: VAPID keys not set — push disabled (set VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY to enable)")
     }
 
+    // Email reminder scheduler
+    reminderScheduler := services.NewReminderScheduler(
+        db, emailService, dailyVerseService, tokenService, cfg,
+    )
+    if cfg.ReminderEnabled {
+        go reminderScheduler.RunHourly(ctx)
+        log.Printf("ReminderScheduler: started (send_hour=%d, batch=%d)",
+            cfg.ReminderSendHour, cfg.ReminderBatchSize)
+    }
+
     // create validator instance
     validate := validator.New()
     _ = validate // currently not used, but can be integrated into services or handlers later
@@ -259,6 +273,7 @@ func main() {
     // init settingsHandler variable
     settingsHandler := handlers.NewSettingsHandler(
         settingsService,
+        tokenService,
     )
     
     // init streakHandler variable
@@ -447,10 +462,12 @@ func main() {
     <-quit
     log.Println("Shutting down server...")
 
-    // wait for signal
-    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    defer cancel()
-    if err := c.Shutdown(ctx); err != nil {
+    // Signal background goroutines (reminder scheduler) to stop.
+    cancel()
+
+    shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer shutdownCancel()
+    if err := c.Shutdown(shutdownCtx); err != nil {
         log.Fatal("Server forced to shutdown:", err)
     }
 

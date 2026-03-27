@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import { settingsService } from '../../services/api/settings';
@@ -36,6 +37,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 }) => {
   const { t } = useTranslation();
   const { isGuest } = useAuth();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [emailNotifications, setEmailNotifications] = useState(initialEmail ?? true);
   const [dailyVerseReminder, setDailyVerseReminder] = useState(initialReminder ?? true);
   const [pushReminderTime, setPushReminderTime] = useState(initialPushReminderTime ?? '08:00');
@@ -43,6 +45,16 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
   const { isSupported, permission, subscribed, loading, subscribe, unsubscribe } =
     usePushNotifications();
+
+  // Show confirmation toast when user lands here after clicking the unsubscribe link in an email.
+  useEffect(() => {
+    if (searchParams.get('unsubscribed') === 'true') {
+      showToast.success(t('notifications.unsubscribed', 'You have been unsubscribed from daily reminders.'));
+      const next = new URLSearchParams(searchParams);
+      next.delete('unsubscribed');
+      setSearchParams(next, { replace: true });
+    }
+  }, []);
 
   // Only fetch independently when parent didn't provide initial values
   useEffect(() => {
