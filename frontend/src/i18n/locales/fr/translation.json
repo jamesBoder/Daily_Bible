@@ -351,7 +351,14 @@
       "emailNotifications": "Notifications par Email",
       "emailDescription": "Recevoir des mises à jour par email",
       "dailyReminder": "Rappel du Verset Quotidien",
-      "reminderDescription": "Recevez un rappel pour lire votre verset quotidien"
+      "reminderDescription": "Recevez un rappel pour lire votre verset quotidien",
+      "pushNotifications": "Notifications Push",
+      "pushDesc": "Recevez une notification quotidienne quand le verset est prêt.",
+      "pushActiveDesc": "Vous recevrez un rappel à l'heure choisie.",
+      "pushDenied": "Les notifications sont bloquées. Autorisez-les dans les paramètres du navigateur, puis réessayez.",
+      "pushUnsupported": "Non pris en charge sur ce navigateur. Utilisez Chrome sur Android ou Safari sur iPhone.",
+      "pushReminderLabel": "Me rappeler à",
+      "pushTimeSaved": "Heure de rappel mise à jour : {{time}}"
     },
     "language": {
       "title": "Langue",
@@ -785,5 +792,32 @@
     "subtitle": "Manqué un jour ? Protégez votre série avec un Jour de Grâce.",
     "cta": "Compris !",
     "reopenHint": "Appuyez sur ? dans le panneau Jours de Grâce pour revoir ceci."
+  },
+  "pwa": {
+    "install": {
+      "label": "Install app prompt",
+      "title": "Ajouter à l'écran d'accueil",
+      "subtitle": "Accès instantané, même hors ligne.",
+      "cta": "Installer"
+    },
+    "settings": {
+      "sectionTitle": "Installer l'app",
+      "installed": "Déjà sur votre écran d'accueil",
+      "installedDesc": "Vous utilisez l'app installée.",
+      "androidTitle": "Ajouter à l'écran d'accueil",
+      "androidDesc": "Accès instantané, même hors ligne.",
+      "androidCta": "Installer",
+      "iosTitle": "Ajouter à l'écran d'accueil",
+      "iosDesc": "Ouvrez-la instantanément depuis votre écran d'accueil.",
+      "iosStep1": "Appuyez sur le bouton",
+      "iosStep1Share": "Partager",
+      "iosStep1After": "en bas de Safari",
+      "iosStep2": "Faites défiler et appuyez sur",
+      "iosStep2AddToHome": "« Ajouter à l'écran d'accueil »",
+      "iosStep3": "Appuyez sur",
+      "iosStep3Add": "« Ajouter »",
+      "iosStep3After": "en haut à droite",
+      "genericHint": "Ouvrez cette app dans Chrome (Android) ou Safari (iPhone) pour l'ajouter à votre écran d'accueil."
+    }
   }
 }

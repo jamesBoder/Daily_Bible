@@ -33,4 +33,8 @@ type UserSettings struct {
 
     // Phase 9: community board — auto-post streak milestone celebrations (premium users only)
     MilestonePostsOptIn bool `gorm:"default:true" json:"milestone_posts_opt_in"`
+
+    // Push notification reminder time — stored as "HH:00" in the user's PreferredTimezone.
+    // Scheduler reads this hourly and sends when the user's local hour matches.
+    PushReminderTime string `gorm:"size:5;default:'08:00'" json:"push_reminder_time"`
 }

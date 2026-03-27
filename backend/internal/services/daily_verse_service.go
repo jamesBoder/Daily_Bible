@@ -135,11 +135,12 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
     today := time.Now().UTC().Add(-10 * time.Hour).Format("2006-01-02")
 
     // Level 1: in-process cache hit.
+    // Return a struct copy, not the pointer, so callers cannot mutate the cache.
     s.cache.mu.RLock()
     if s.cache.effectiveDay == today && s.cache.verse != nil {
-        v := s.cache.verse
+        v := *s.cache.verse // defensive copy
         s.cache.mu.RUnlock()
-        return v, nil
+        return &v, nil
     }
     s.cache.mu.RUnlock()
 
@@ -150,7 +151,8 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         s.cache.verse = cached
         s.cache.effectiveDay = today
         s.cache.mu.Unlock()
-        return cached, nil
+        copy := *cached // defensive copy before returning
+        return &copy, nil
     }
     
     // Select verse for today
@@ -168,7 +170,8 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         s.cache.verse = existingVerse
         s.cache.effectiveDay = today
         s.cache.mu.Unlock()
-        return existingVerse, nil
+        copy := *existingVerse // defensive copy before returning
+        return &copy, nil
     }
 
     // Fetch from Bible API (cold path — only happens once per day per server instance)
@@ -198,7 +201,8 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
     s.cache.effectiveDay = today
     s.cache.mu.Unlock()
 
-    return verse, nil
+    copy := *verse // defensive copy before returning
+    return &copy, nil
 }
 
 // selectVerseForDate selects a verse based on the date

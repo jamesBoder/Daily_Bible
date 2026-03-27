@@ -69,7 +69,9 @@ export const CommunityView: React.FC = () => {
   }, [posts]);
 
   useEffect(() => {
-    const interval = setInterval(async () => {
+    const poll = async () => {
+      // Skip when the tab is backgrounded — no point fetching posts the user can't see.
+      if (document.hidden) return;
       try {
         const data = await communityApi.getFeed(0, 1);
         const latestId = data.posts?.[0]?.id;
@@ -79,7 +81,9 @@ export const CommunityView: React.FC = () => {
       } catch {
         // Ignore polling errors silently
       }
-    }, NEW_POSTS_POLL_INTERVAL_MS);
+    };
+
+    const interval = setInterval(poll, NEW_POSTS_POLL_INTERVAL_MS);
     return () => clearInterval(interval);
   }, []);
 

@@ -12,7 +12,7 @@ interface MannaTileProps {
   popped?: boolean;
 }
 
-export const MannaTile: React.FC<MannaTileProps> = ({
+export const MannaTile: React.FC<MannaTileProps> = React.memo(({
   letter,
   state,
   flipping = false,
@@ -34,4 +34,4 @@ export const MannaTile: React.FC<MannaTileProps> = ({
       {letter}
     </div>
   );
-};
+});

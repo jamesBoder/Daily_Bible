@@ -471,43 +471,61 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 	})
 }
 
-// GetStats handler 
+// GetStats handler
 func (h *ProfileHandler) GetStats(c *gin.Context) {
-	// extract userID from context (set by auth middleware)
-	userID, exists := c.Get("userID") 
+	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	// count favorite favoriteRepo.CountByUserID
-	favCount, err := h.favoriteRepo.CountByUserID(userID.(uint))
+	uid := userID.(uint)
 
+	// All four queries are independent — run them concurrently.
+	var (
+		favCount     int64
+		histCount    int64
+		commentCount int64
+		user         *models.User
+		favErr       error
+		histErr      error
+		commentErr   error
+		userErr      error
+	)
 
-	if err != nil {
+	var wg sync.WaitGroup
+	wg.Add(4)
+	go func() {
+		defer wg.Done()
+		favCount, favErr = h.favoriteRepo.CountByUserID(uid)
+	}()
+	go func() {
+		defer wg.Done()
+		histCount, histErr = h.historyRepo.CountByUserID(uid)
+	}()
+	go func() {
+		defer wg.Done()
+		commentCount, commentErr = h.commentRepo.CountByUserID(uid)
+	}()
+	go func() {
+		defer wg.Done()
+		user, userErr = h.userRepo.GetByID(uid)
+	}()
+	wg.Wait()
+
+	if favErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch favorite count"})
 		return
 	}
-
-	// count history: historyRepo.CountByUserID
-	histCount, err := h.historyRepo.CountByUserID(userID.(uint))
-
-
-	if err != nil {
+	if histErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch history count"})
 		return
 	}
-
-	// count comments: commentRepo.CountByUserID
-	commentCount, err := h.commentRepo.CountByUserID(userID.(uint))
-	if err != nil {
+	if commentErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch comment count"})
 		return
 	}
-
-	// calculate account age: time.Since(user.CreatedAt)
-	user, err := h.userRepo.GetByID(userID.(uint)) 
-	if err != nil {
+	if userErr != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
 		return
 	}
@@ -516,13 +534,12 @@ func (h *ProfileHandler) GetStats(c *gin.Context) {
 		return
 	}
 
-	accountAge := int64((time.Since(user.CreatedAt)).Hours() / 24) // in days
+	accountAge := int64((time.Since(user.CreatedAt)).Hours() / 24)
 
-	// respond with stats
 	c.JSON(http.StatusOK, gin.H{
-		"favorite_count": favCount,
-		"history_count":  histCount,
-		"comment_count":  commentCount,
+		"favorite_count":   favCount,
+		"history_count":    histCount,
+		"comment_count":    commentCount,
 		"account_age_days": accountAge,
 	})
 }

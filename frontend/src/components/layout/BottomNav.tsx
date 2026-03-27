@@ -20,6 +20,8 @@ import {
   SignIn,
 } from '@phosphor-icons/react';
 import { useSwipe } from '../../hooks/useSwipe';
+import { useInstallPromptContext } from '../../contexts/InstallPromptContext';
+import { DeviceMobile } from '@phosphor-icons/react';
 
 // ── BottomNav ─────────────────────────────────────────────────────────────────
 // Mobile-only persistent tab bar. Hidden on md+ screens where the header nav
@@ -37,6 +39,9 @@ const BottomNav: React.FC = () => {
   const sheetRef = useRef<HTMLDivElement>(null);
 
   const isPastDue = subscription?.status === 'past_due';
+  const { canInstall, isInstalled, isIOS, install } = useInstallPromptContext();
+  // Show nudge dot when the app can be installed and isn't already
+  const showInstallNudge = !isInstalled && (canInstall || isIOS);
   const sheetSwipe = useSwipe({ onSwipeDown: () => setSheetOpen(false) });
 
   // Close sheet on route change
@@ -61,7 +66,7 @@ const BottomNav: React.FC = () => {
   };
 
   const tabBase =
-    'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[10px] font-medium transition-colors select-none focus:outline-none min-w-0 overflow-hidden';
+    'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[11px] font-medium transition-colors select-none focus:outline-none min-w-0 overflow-hidden';
   const tabActive = 'text-amber-700 dark:text-amber-400';
   const tabInactive = 'text-gray-500 dark:text-gray-400';
 
@@ -177,7 +182,9 @@ const BottomNav: React.FC = () => {
           >
             <span className="relative">
               <List size={22} weight={sheetOpen ? 'fill' : 'regular'} />
-              {isGuest && <LockBadge />}
+              {isGuest ? <LockBadge /> : showInstallNudge && (
+                <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500" aria-hidden="true" />
+              )}
             </span>
             <span className="truncate w-full text-center">{t('nav.more', 'More')}</span>
           </button>
@@ -298,6 +305,30 @@ const BottomNav: React.FC = () => {
                 <MagnifyingGlass size={20} weight="duotone" />
                 {t('nav.search', 'Search')}
               </NavLink>
+
+              {/* Install App — only shown when app is installable and not yet installed */}
+              {showInstallNudge && (
+                canInstall ? (
+                  <button
+                    onClick={async () => { setSheetOpen(false); await install(); }}
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 w-full text-left"
+                  >
+                    <DeviceMobile size={20} weight="duotone" />
+                    <span className="flex-1">{t('pwa.settings.androidTitle', 'Add to Home Screen')}</span>
+                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" aria-hidden="true" />
+                  </button>
+                ) : (
+                  <NavLink
+                    to="/settings"
+                    className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                    onClick={() => setSheetOpen(false)}
+                  >
+                    <DeviceMobile size={20} weight="duotone" />
+                    <span className="flex-1">{t('pwa.settings.iosTitle', 'Add to Home Screen')}</span>
+                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" aria-hidden="true" />
+                  </NavLink>
+                )
+              )}
 
               <NavLink
                 to="/settings"

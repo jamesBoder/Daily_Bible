@@ -64,15 +64,35 @@ func (h *VerseHandler) SetCommunityService(cs *services.CommunityService) {
 // Premium gate: if the resolved version requires premium and the user is not
 // premium (or not authenticated), silently falls back to the free default.
 // Unknown version keys are treated as missing and trigger the same fallback.
-func (h *VerseHandler) resolveVersion(c *gin.Context, langCode string) config.BibleVersion {
+//
+// preloadedSettings may be non-nil when the caller has already fetched user
+// settings (e.g. GetDailyVerse fetches them for timezone), avoiding a second
+// DB round-trip. Pass nil to have this function fetch them itself.
+func (h *VerseHandler) resolveVersion(c *gin.Context, langCode string, preloadedSettings *models.UserSettings) config.BibleVersion {
 	versionKey := c.DefaultQuery("version", "")
 
-	// Read from user settings if not overridden by query param
+	// Read from user settings if not overridden by query param.
+	// Only honour the stored preference when it belongs to the requested language.
+	// A mismatch arises when the user changes their UI language without explicitly
+	// picking a new Bible version (e.g. preferred_language was previously "fr" so
+	// the backfill set preferred_bible_version = "jnd", then the user switched UI
+	// to "en" — we must not serve the French verse for an English request).
 	if versionKey == "" {
 		if userID, ok := c.Get("userID"); ok {
-			settings, err := h.settingsService.GetUserSettings(userID.(uint))
-			if err == nil && settings.PreferredBibleVersion != "" {
-				versionKey = settings.PreferredBibleVersion
+			var settings *models.UserSettings
+			if preloadedSettings != nil {
+				settings = preloadedSettings
+			} else {
+				var err error
+				settings, err = h.settingsService.GetUserSettings(userID.(uint))
+				if err != nil {
+					settings = nil
+				}
+			}
+			if settings != nil && settings.PreferredBibleVersion != "" {
+				if v, known := config.BibleVersions[settings.PreferredBibleVersion]; known && v.LanguageCode == langCode {
+					versionKey = settings.PreferredBibleVersion
+				}
 			}
 		}
 	}
@@ -141,11 +161,12 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 			return
 		}
 
-		resolvedVersion := h.resolveVersion(c, language)
+		resolvedVersion := h.resolveVersion(c, language, nil)
 		const kjvVersionID = "de4e12af7f28f599-02"
+		verseText := verse.Text
 		if resolvedVersion.ID != kjvVersionID && resolvedVersion.ID != "" {
 			if translatedVerse, err := h.bibleAPIService.GetVerseWithVersionID(verse.Reference, resolvedVersion.ID); err == nil {
-				verse.Text = translatedVerse.Text
+				verseText = translatedVerse.Text
 			} else {
 				log.Printf("GetVerseWithVersionID(%q, %q) failed for date %q: %v; serving KJV fallback",
 					verse.Reference, resolvedVersion.ID, dateStr, err)
@@ -158,7 +179,7 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 			"verse": gin.H{
 				"id":         verse.ID,
 				"reference":  verse.Reference,
-				"text":       verse.Text,
+				"text":       verseText,
 				"book":       verse.Book,
 				"chapter":    verse.Chapter,
 				"verse":      verse.VerseNumber,
@@ -189,12 +210,14 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	}()
 
 	var blessingsCredited int
+	var cachedSettings *models.UserSettings // reused by resolveVersion to avoid a second DB call
 	if userID, authenticated := c.Get("userID"); authenticated {
 		// Get user settings for timezone
 		settings, err := h.settingsService.GetUserSettings(userID.(uint))
 		if err != nil {
 			settings = &models.UserSettings{PreferredTimezone: "UTC"}
 		}
+		cachedSettings = settings
 
 		wasNew, err := h.streakService.RecordDailyEngagement(userID.(uint), settings.PreferredTimezone)
 		if err != nil {
@@ -279,15 +302,19 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 
 	// Resolve which Bible translation to serve (Phase 4).
 	// resolveVersion respects ?version= > user settings > language default > premium gate.
-	resolvedVersion := h.resolveVersion(c, language)
+	// Pass cachedSettings to avoid a second GetUserSettings DB call.
+	resolvedVersion := h.resolveVersion(c, language, cachedSettings)
 
 	// If the resolved version differs from the cached KJV text, fetch the translation.
 	// The daily verse service always caches KJV (ID: "de4e12af7f28f599-02"); any other
 	// version requires an additional API call (served from in-memory cache on repeat hits).
+	// IMPORTANT: never mutate verse.Text — it points into the in-process memory cache.
+	// Mutating it would poison the cache for all subsequent requests.
 	const kjvVersionID = "de4e12af7f28f599-02"
+	verseText := verse.Text
 	if resolvedVersion.ID != kjvVersionID && resolvedVersion.ID != "" {
 		if translatedVerse, err := h.bibleAPIService.GetVerseWithVersionID(verse.Reference, resolvedVersion.ID); err == nil {
-			verse.Text = translatedVerse.Text
+			verseText = translatedVerse.Text
 		} else {
 			log.Printf("GetVerseWithVersionID(%q, %q) failed: %v; serving KJV fallback", verse.Reference, resolvedVersion.ID, err)
 		}
@@ -305,15 +332,18 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 		}()
 	}
 
-	// Cache for 1 hour on the client; CDN/proxy may cache publicly for the same period.
-	// The verse changes at most once per day so this is safe.
-	c.Header("Cache-Control", "public, max-age=3600, stale-while-revalidate=60")
+	// Do not cache today's verse in the browser HTTP cache. The response is
+	// user-specific (preferred_bible_version affects which translation is served)
+	// so a public or shared cache could serve the wrong-language verse to a
+	// different user or after settings change. The service worker provides
+	// offline support via its own cache (wop-api-v4).
+	c.Header("Cache-Control", "no-store")
 
 	response := gin.H{
 		"verse": gin.H{
 			"id":           verse.ID,
 			"reference":    verse.Reference,
-			"text":         verse.Text,
+			"text":         verseText,
 			"book":         verse.Book,
 			"chapter":      verse.Chapter,
 			"verse":        verse.VerseNumber,
@@ -339,7 +369,7 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 	}
 	language := c.DefaultQuery("lang", "en")
 
-	resolvedVersion := h.resolveVersion(c, language)
+	resolvedVersion := h.resolveVersion(c, language, nil)
 
 	var verse *services.BibleAPIVerse
 	var err error

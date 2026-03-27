@@ -33,6 +33,8 @@ func RunMigrations(db *gorm.DB) error {
         &models.MannaWord{},
         &models.MannaGame{},
         &models.MannaGuess{},
+        // Push notifications
+        &models.PushSubscription{},
     ); err != nil {
         return err
     }

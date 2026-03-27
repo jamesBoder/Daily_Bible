@@ -16,6 +16,7 @@ import { VerseCardSkeleton } from "./components/common/Skeleton";
 import BlessingsToast from "./components/BlessingsToast";
 import { SoundService } from "./services/SoundService";
 import { PricingModalProvider } from "./hooks/usePricingModal";
+import { InstallPromptProvider } from "./contexts/InstallPromptContext";
 import { PricingModal } from "./components/common/PricingModal";
 import { PaymentAlert } from "./components/common/PaymentAlert";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
@@ -262,6 +263,7 @@ function App() {
       <AuthProvider>
         <StreakProvider>
           <LanguageProvider>
+            <InstallPromptProvider>
             <PricingModalProvider>
               <Toaster
                 position="top-center"
@@ -293,6 +295,7 @@ function App() {
               <PricingModal />
               <RouterProvider router={router} />
             </PricingModalProvider>
+            </InstallPromptProvider>
           </LanguageProvider>
         </StreakProvider>
       </AuthProvider>

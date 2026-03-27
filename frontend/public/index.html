@@ -32,20 +32,14 @@
     <!-- Twitter Card Tags -->
 
     <!-- Security Meta Tags -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data: https:; connect-src 'self' http://localhost:8080 http://localhost:8888 http://localhost:18080 https://api.wordsofpraise.app https://wordsofpraise-backend.fly.dev https://accounts.google.com https://rest.api.bible/v1 https://fonts.googleapis.com https://fonts.gstatic.com; frame-src https://apis.google.com https://accounts.google.com;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' http://localhost:8080 http://localhost:8888 http://localhost:18080 https://api.wordsofpraise.app https://wordsofpraise-backend.fly.dev https://accounts.google.com https://rest.api.bible/v1; frame-src https://apis.google.com https://accounts.google.com;" />
 
     
-    <!-- Google Fonts - Optimized with async loading and font-display=swap -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    
-    <!-- Preload critical fonts for faster rendering -->
-    <link rel="preload" href="https://fonts.gstatic.com/s/inter/v12/UcCO3FwrK3iLTeHuS_fvQtMwCp50KnMw2boKoduKmMEVuLyfAZ9hiA.woff2" as="font" type="font/woff2" crossorigin />
-    <link rel="preload" href="https://fonts.gstatic.com/s/merriweather/v30/u-440qyriQwlOrhSvowK_l5-fCZM.woff2" as="font" type="font/woff2" crossorigin />
-    
-    <!-- Async load Google Fonts CSS to eliminate render-blocking -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Merriweather:wght@400&family=Playfair+Display:wght@600;700&display=swap" as="style" onload="this.onload=null;this.rel='stylesheet'">
-    <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700&family=Merriweather:wght@400&family=Playfair+Display:wght@600;700&display=swap"></noscript>
+    <!-- Self-hosted fonts — no external CDN round-trip, same-origin delivery -->
+    <!-- Preload the two most-used subsets so they're in-flight before CSS parses -->
+    <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/merriweather-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="stylesheet" href="/fonts/fonts.css" />
 
     <!-- DNS prefetch removed for production - uncomment only for local development if needed -->
     <!-- <link rel="dns-prefetch" href="//localhost:8080"> -->
@@ -91,23 +85,22 @@
       @keyframes pulse{50%{opacity:.5}}
     </style>
     
-    <!-- Inline script for async CSS loading support -->
-    <script>
-      /*! loadCSS rel=preload polyfill. [c]2017 Filament Group, Inc. MIT License */
-      !function(t){"use strict";t.loadCSS||(t.loadCSS=function(){});var e=loadCSS.relpreload={};if(e.support=function(){var e;try{e=t.document.createElement("link").relList.supports("preload")}catch(t){e=!1}return function(){return e}}(),e.bindMediaToggle=function(t){var e=t.media||"all";function a(){t.addEventListener?t.removeEventListener("load",a):t.attachEvent&&t.detachEvent("onload",a),t.setAttribute("onload",null),t.media=e}t.addEventListener?t.addEventListener("load",a):t.attachEvent&&t.attachEvent("onload",a),setTimeout(function(){t.rel="stylesheet",t.media="only x"}),setTimeout(function(){t.onload&&t.onload()},0)},!e.support()){var a=t.document.getElementsByTagName("link");for(var n=0;n<a.length;n++){var o=a[n];"preload"!==o.rel||"style"!==o.getAttribute("as")||o.getAttribute("data-loadcss")||(o.setAttribute("data-loadcss",!0),e.bindMediaToggle(o))}}}("undefined"!=typeof global?global:this);
-    </script>
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
     <div id="root"></div>
     
-    <!-- Load non-critical CSS asynchronously after page loads -->
+    <!-- Early verse prefetch: starts the API call immediately while the JS bundle
+         downloads and parses. By the time React mounts, the response is ready to
+         be read from window.__VERSE_PREFETCH__ and seeded into the React Query cache,
+         eliminating the verse API round-trip from the LCP critical path. -->
     <script>
-      // Defer loading of main CSS to prevent render-blocking
-      window.addEventListener('load', function() {
-        // React build will inject the main CSS automatically
-        // This ensures fonts and critical styles are already loaded
-      });
+      // cache:'no-store' bypasses the browser HTTP cache so a stale response
+      // (e.g. a verse in the wrong language from a previous backend version)
+      // is never served here — the network is always consulted.
+      window.__VERSE_PREFETCH__ = fetch('/api/verses/daily?lang=en', { cache: 'no-store' })
+        .then(function(r) { return r.ok ? r.json() : null; })
+        .catch(function() { return null; });
     </script>
   </body>
 </html>

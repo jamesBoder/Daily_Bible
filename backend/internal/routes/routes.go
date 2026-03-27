@@ -36,6 +36,8 @@ func SetupRoutes(
 	communityHandler *handlers.CommunityHandler,
 	// Phase 10
 	mannaHandler *handlers.MannaHandler,
+	// Push notifications
+	pushHandler *handlers.PushHandler,
 ) {
 	api := router.Group("/api")
 	{
@@ -222,4 +224,13 @@ func SetupRoutes(
 
 	// Phase 10: yesterday's word — public, no auth
 	api.GET("/manna/yesterday", mannaHandler.GetYesterday)
+
+	// Push notifications — public VAPID key endpoint + protected subscribe/unsubscribe
+	api.GET("/push/vapid-key", pushHandler.GetVAPIDPublicKey)
+	push := api.Group("/push")
+	push.Use(middleware.AuthMiddleware(tokenService, subscriptionChecker))
+	{
+		push.POST("/subscribe", pushHandler.Subscribe)
+		push.POST("/unsubscribe", pushHandler.Unsubscribe)
+	}
 }

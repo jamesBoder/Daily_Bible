@@ -356,7 +356,14 @@
       "emailNotifications": "Email Notifications",
       "emailDescription": "Receive updates via email",
       "dailyReminder": "Daily Verse Reminder",
-      "reminderDescription": "Get reminded to read your daily verse"
+      "reminderDescription": "Get reminded to read your daily verse",
+      "pushNotifications": "Push Notifications",
+      "pushDesc": "Get a daily notification when the verse is ready.",
+      "pushActiveDesc": "You'll receive a reminder at your chosen time.",
+      "pushDenied": "Notifications are blocked. Allow them in your browser settings, then try again.",
+      "pushUnsupported": "Not supported on this browser. Use Chrome on Android or Safari on iPhone.",
+      "pushReminderLabel": "Remind me at",
+      "pushTimeSaved": "Reminder time updated to {{time}}"
     },
     "language": {
       "title": "Language",
@@ -833,5 +840,32 @@
     "subtitle": "Missed a day? Protect your streak with a Grace Day.",
     "cta": "Got it!",
     "reopenHint": "Tap ? in the Grace Days panel to see this again."
+  },
+  "pwa": {
+    "install": {
+      "label": "Install app prompt",
+      "title": "Add to Home Screen",
+      "subtitle": "Open instantly, even offline.",
+      "cta": "Install"
+    },
+    "settings": {
+      "sectionTitle": "Install App",
+      "installed": "Already on your home screen",
+      "installedDesc": "You're using the installed app.",
+      "androidTitle": "Add to Home Screen",
+      "androidDesc": "Instant access, even offline.",
+      "androidCta": "Install",
+      "iosTitle": "Add to Home Screen",
+      "iosDesc": "Open instantly from your home screen.",
+      "iosStep1": "Tap the",
+      "iosStep1Share": "Share",
+      "iosStep1After": "button at the bottom of Safari",
+      "iosStep2": "Scroll down and tap",
+      "iosStep2AddToHome": "\"Add to Home Screen\"",
+      "iosStep3": "Tap",
+      "iosStep3Add": "\"Add\"",
+      "iosStep3After": "in the top-right corner",
+      "genericHint": "Open this app in Chrome on Android or Safari on iPhone to add it to your home screen."
+    }
   }
 }

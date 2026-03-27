@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { SoundService } from "../../services/SoundService";
 import { useSearchParams } from "react-router-dom";
 import { useVerse } from "../../hooks/useVerse";
@@ -111,6 +112,7 @@ export const DailyVerse: React.FC = () => {
   const [isFetchingDate, setIsFetchingDate] = useState(false);
   const [fetchDateError, setFetchDateError] = useState(false);
 
+  const queryClient = useQueryClient();
   const { verse, blessingsCredited, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
   const { history } = useHistory(!isGuest);
   const [searchParams, setSearchParams] = useSearchParams();
@@ -148,18 +150,18 @@ export const DailyVerse: React.FC = () => {
     return map;
   }, [history, todayStr]);
 
-  // Fetch premium status once for authenticated users
+  // Fetch premium status once when auth state changes — language is irrelevant to subscription.
   useEffect(() => {
     if (isGuest) return;
     let cancelled = false;
     api
-      .get<{ user_is_premium: boolean }>(`/api/translations?lang=${encodeURIComponent(i18n.language)}`)
+      .get<{ user_is_premium: boolean }>('/api/translations')
       .then((res) => {
         if (!cancelled) setIsPremium(res.data.user_is_premium);
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [isGuest, i18n.language]);
+  }, [isGuest]);
 
   // Fire streak-confirm sound once per session when today's verse loads
   const streakSoundFiredRef = useRef(false);
@@ -181,6 +183,21 @@ export const DailyVerse: React.FC = () => {
     refreshStreak().catch(() => {});
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verse, blessingsCredited]);
+
+  // Track the previous language so we can detect actual language *changes*
+  // (as opposed to initial mount, where we must not nuke the prefetched verse).
+  const prevLangRef = useRef(i18n.language);
+
+  // Invalidate cached verses when the language changes so a fresh fetch runs.
+  // Guards against stale cache entries keyed to the old language (e.g. a Spanish
+  // verse that was seeded under the 'en' key by the index.html prefetch while
+  // the preferred_bible_version language-mismatch bug was still present).
+  useEffect(() => {
+    if (prevLangRef.current !== i18n.language) {
+      queryClient.invalidateQueries({ queryKey: ['dailyVerse'] });
+      prevLangRef.current = i18n.language;
+    }
+  }, [i18n.language, queryClient]);
 
   // Reset index + session version when language changes
   useEffect(() => {

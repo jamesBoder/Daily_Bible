@@ -351,7 +351,14 @@
       "emailNotifications": "Notifikasyon pa Imèl",
       "emailDescription": "Resevwa mizajou pa imèl",
       "dailyReminder": "Rapèl Vèsè Chak Jou",
-      "reminderDescription": "Resevwa yon rapèl pou li vèsè chak jou ou"
+      "reminderDescription": "Resevwa yon rapèl pou li vèsè chak jou ou",
+      "pushNotifications": "Notifikasyon Push",
+      "pushDesc": "Resevwa yon notifikasyon chak jou lè vèsè a prèt.",
+      "pushActiveDesc": "Ou pral resevwa yon rapèl nan lè ou chwazi.",
+      "pushDenied": "Notifikasyon yo bloke. Pèmèt yo nan paramèt navigatè ou, epi eseye ankò.",
+      "pushUnsupported": "Pa sipòte sou navigatè sa a. Itilize Chrome sou Android oswa Safari sou iPhone.",
+      "pushReminderLabel": "Raple mwen a",
+      "pushTimeSaved": "Lè rapèl mete ajou: {{time}}"
     },
     "language": {
       "title": "Lang",
@@ -785,5 +792,32 @@
     "subtitle": "Rate yon jou? Pwoteje seri ou ak yon Jou Gras.",
     "cta": "Konprann!",
     "reopenHint": "Tape ? nan panèl Jou Gras pou wè sa ankò."
+  },
+  "pwa": {
+    "install": {
+      "label": "Install app prompt",
+      "title": "Ajoute nan Ekran Akèy",
+      "subtitle": "Ouvri imedyatman, menm san koneksyon.",
+      "cta": "Enstale"
+    },
+    "settings": {
+      "sectionTitle": "Enstale App",
+      "installed": "Deja sou ekran akèy ou",
+      "installedDesc": "Ou ap itilize app ki enstale a.",
+      "androidTitle": "Ajoute nan Ekran Akèy",
+      "androidDesc": "Aksè imedya, menm san entènèt.",
+      "androidCta": "Enstale",
+      "iosTitle": "Ajoute nan Ekran Akèy",
+      "iosDesc": "Ouvri rapid depi ekran akèy ou.",
+      "iosStep1": "Tape bouton",
+      "iosStep1Share": "Pataje",
+      "iosStep1After": "anba Safari a",
+      "iosStep2": "Defle epi tape",
+      "iosStep2AddToHome": "« Ajoute nan Ekran Akèy »",
+      "iosStep3": "Tape",
+      "iosStep3Add": "« Ajoute »",
+      "iosStep3After": "nan kwen anwo adwat",
+      "genericHint": "Ouvri app sa a nan Chrome (Android) oswa Safari (iPhone) pou ajoute l nan ekran akèy ou."
+    }
   }
 }

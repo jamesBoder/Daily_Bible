@@ -8,8 +8,25 @@ import "./i18n"; // Initialize i18n
 import "./index.css";
 import App from "./App";
 
-// Optimize initial render by using requestIdleCallback if available
-const renderApp = () => {
+const renderApp = async () => {
+  // If an early verse prefetch was kicked off in index.html, await it now and
+  // seed the React Query cache before the first render. By the time this runs
+  // (after the JS bundle has downloaded and parsed) the fetch has been in-flight
+  // for that entire duration, so the await is usually instant.
+  const prefetch = (window as any).__VERSE_PREFETCH__;
+  if (prefetch) {
+    try {
+      const data = await prefetch;
+      if (data?.verse) {
+        const today = new Date().toISOString().split('T')[0];
+        // Seed with the same query key used by useVerse('en', undefined)
+        queryClient.setQueryData(['dailyVerse', today, 'en', ''], data);
+      }
+    } catch {
+      // Prefetch failed — React Query will fetch normally on mount
+    }
+  }
+
   const root = ReactDOM.createRoot(
     document.getElementById("root") as HTMLElement
   );
@@ -25,13 +42,7 @@ const renderApp = () => {
   );
 };
 
-// Use requestIdleCallback to avoid forced reflows during initial render
-if ('requestIdleCallback' in window) {
-  (window as any).requestIdleCallback(renderApp);
-} else {
-  // Fallback for browsers that don't support requestIdleCallback
-  setTimeout(renderApp, 1);
-}
+renderApp();
 
 reportWebVitals(console.log);
 

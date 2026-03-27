@@ -91,6 +91,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     localStorage.removeItem("user_data");
     localStorage.removeItem("auth_token_expiry");
     guestStorage.set();
+    queryClient.clear();
     setUser(GUEST_USER);
   };
 
@@ -121,15 +122,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     // Guest logout: skip API call, just clear guest state
     if (user?.is_guest) {
       guestStorage.clear();
+      queryClient.clear();
       setUser(null);
       return;
     }
     try {
       await authService.logout();
-      setUser(null);
     } catch (error) {
       console.error("Logout failed:", error);
-      // Clear user anyway
+    } finally {
+      queryClient.clear();
       setUser(null);
     }
   };

@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"net/http"
 
 	"dailybible/internal/config"
@@ -66,6 +67,7 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
         DailyVerseReminder   *bool   `json:"daily_verse_reminder"`
         ActiveTheme          *string `json:"active_theme"`
         MilestonePostsOptIn  *bool   `json:"milestone_posts_opt_in"`
+        PushReminderTime     *string `json:"push_reminder_time"`
     }
     
     if err := c.ShouldBindJSON(&updateRequest); err != nil {
@@ -90,6 +92,14 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
         }
         
         updates["preferred_language"] = *updateRequest.PreferredLanguage
+        // When the UI language changes and no explicit bible version is being
+        // set in this same request, reset preferred_bible_version to the new
+        // language's default.  This prevents a user who was on Spanish (with
+        // "rvr1960" saved) from silently getting a mismatched version after
+        // switching to English.
+        if updateRequest.PreferredBibleVersion == nil {
+            updates["preferred_bible_version"] = config.GetDefaultFreeVersion(*updateRequest.PreferredLanguage)
+        }
     }
     
     if updateRequest.PreferredBibleVersion != nil {
@@ -127,6 +137,16 @@ func (h *SettingsHandler) UpdateSettings(c *gin.Context) {
 
     if updateRequest.MilestonePostsOptIn != nil {
         updates["milestone_posts_opt_in"] = *updateRequest.MilestonePostsOptIn
+    }
+
+    if updateRequest.PushReminderTime != nil {
+        // Validate format: must be "HH:00" where HH is 00-23
+        var h, m int
+        if _, err := fmt.Sscanf(*updateRequest.PushReminderTime, "%d:%d", &h, &m); err != nil || h < 0 || h > 23 || m != 0 {
+            c.JSON(http.StatusBadRequest, gin.H{"error": "push_reminder_time must be HH:00 (e.g. 08:00, 20:00)"})
+            return
+        }
+        updates["push_reminder_time"] = fmt.Sprintf("%02d:00", h)
     }
 
     if len(updates) == 0 {

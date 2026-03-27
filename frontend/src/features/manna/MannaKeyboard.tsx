@@ -18,7 +18,7 @@ const ROWS = [
   ['ENTER','Z','X','C','V','B','N','M','⌫'],
 ];
 
-export const MannaKeyboard: React.FC<MannaKeyboardProps> = ({ keyStates, onKey, disabled, loading }) => {
+export const MannaKeyboard: React.FC<MannaKeyboardProps> = React.memo(({ keyStates, onKey, disabled, loading }) => {
   const { t } = useTranslation();
 
   const stateClass = (key: string): string => {
@@ -58,4 +58,4 @@ export const MannaKeyboard: React.FC<MannaKeyboardProps> = ({ keyStates, onKey, 
       ))}
     </div>
   );
-};
+});

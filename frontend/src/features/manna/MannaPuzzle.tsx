@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import toast from 'react-hot-toast';
@@ -453,6 +453,11 @@ export const MannaPuzzle: React.FC = () => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [handleKey]);
 
+  // useMemo must come before ALL conditional returns — Rules of Hooks require that
+  // hook call count never varies between renders.  game is null while loading, so
+  // guard with `game ?` to avoid accessing .guesses on null.
+  const keyStates = useMemo(() => (game ? buildKeyStates(game.guesses) : {}), [game?.guesses]);
+
   // ─── Derived state ────────────────────────────────────────────────────────
   if (loading) {
     return (
@@ -478,8 +483,6 @@ export const MannaPuzzle: React.FC = () => {
   }
 
   if (!game) return null;
-
-  const keyStates = buildKeyStates(game.guesses);
   const isOver = game.status !== 'in_progress';
   const isSolved = game.status === 'solved';
   const isFreePlay = game.is_free_play ?? false;

@@ -2,8 +2,8 @@ package config
 
 import (
     "os"
+    "strconv"
     "github.com/joho/godotenv"
-	
 )
 
 type Config struct {
@@ -30,6 +30,13 @@ type Config struct {
     ResendAPIKey string
     FromEmail    string
     FrontendURL  string
+
+    // Web Push (VAPID)
+    VAPIDPublicKey  string
+    VAPIDPrivateKey string
+    VAPIDSubscriber string // e.g. "mailto:admin@wordsofpraise.app"
+    // Hour of day (UTC, 0-23) to dispatch daily verse push reminders.
+    PushReminderHour int
 }
 
 func Load() (*Config, error) {
@@ -57,7 +64,20 @@ func Load() (*Config, error) {
         ResendAPIKey:    os.Getenv("RESEND_API_KEY"),
         FromEmail:       getEnvOrDefault("FROM_EMAIL", "noreply@wordsofpraise.app"),
         FrontendURL:     getEnvOrDefault("FRONTEND_URL", "http://localhost:3000"),
+        VAPIDPublicKey:  os.Getenv("VAPID_PUBLIC_KEY"),
+        VAPIDPrivateKey: os.Getenv("VAPID_PRIVATE_KEY"),
+        VAPIDSubscriber: getEnvOrDefault("VAPID_SUBSCRIBER", "mailto:admin@wordsofpraise.app"),
+        PushReminderHour: parsePushHour(getEnvOrDefault("PUSH_REMINDER_HOUR", "8")),
     }, nil
+}
+
+// parsePushHour parses the PUSH_REMINDER_HOUR env var, defaulting to 8.
+func parsePushHour(s string) int {
+    h, err := strconv.Atoi(s)
+    if err != nil || h < 0 || h > 23 {
+        return 8
+    }
+    return h
 }
 
 func getEnvOrDefault(key, defaultValue string) string {

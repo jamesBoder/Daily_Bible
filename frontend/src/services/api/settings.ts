@@ -10,6 +10,7 @@ export interface UserSettings {
   daily_verse_reminder: boolean;
   dark_mode: boolean;
   active_theme: string;
+  push_reminder_time: string; // "HH:00" in user's preferred timezone, e.g. "08:00"
   created_at: string;
   updated_at: string;
 }
@@ -20,6 +21,7 @@ export interface UpdateSettingsRequest {
   email_notifications?: boolean;
   daily_verse_reminder?: boolean;
   active_theme?: string;
+  push_reminder_time?: string;
 }
 
 class SettingsService {

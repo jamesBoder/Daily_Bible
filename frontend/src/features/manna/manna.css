@@ -497,6 +497,7 @@
 .manna-confetti-piece {
   position: absolute;
   border-radius: 3px;
+  will-change: transform, opacity;
   animation: confettiFall var(--duration, 1.2s) ease-in var(--delay, 0s) both;
 }
 

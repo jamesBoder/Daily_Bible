@@ -15,6 +15,7 @@ import { CommunitySection } from "../settings/CommunitySection";
 import { MannaSettings } from "../settings/MannaSettings";
 import { AboutContent } from "../about/About";
 import { TutorialsSection } from "../settings/TutorialsSection";
+import InstallAppSection from "../settings/InstallAppSection";
 
 import { settingsService } from "../../services/api/settings";
 import type { ThemeId } from "../../contexts/ThemeContext";
@@ -28,6 +29,7 @@ export const Settings: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('settings');
   const [notifEmail, setNotifEmail] = useState<boolean | undefined>(undefined);
   const [notifReminder, setNotifReminder] = useState<boolean | undefined>(undefined);
+  const [pushReminderTime, setPushReminderTime] = useState<string | undefined>(undefined);
 
   // Single settings load: syncs theme silently + passes notification values down
   useEffect(() => {
@@ -36,6 +38,7 @@ export const Settings: React.FC = () => {
       if (s.active_theme) initTheme(s.active_theme as ThemeId);
       setNotifEmail(s.email_notifications);
       setNotifReminder(s.daily_verse_reminder);
+      setPushReminderTime(s.push_reminder_time ?? '08:00');
     }).catch(() => {});
   }, [isGuest, initTheme]);
 
@@ -79,7 +82,7 @@ export const Settings: React.FC = () => {
             <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
               {t('settings.sections.devotion', 'Devotion & Notifications')}
             </h2>
-            <NotificationSettings initialEmail={notifEmail} initialReminder={notifReminder} />
+            <NotificationSettings initialEmail={notifEmail} initialReminder={notifReminder} initialPushReminderTime={pushReminderTime} />
             <div className="mt-2">
               <LanguageSettings />
             </div>
@@ -114,6 +117,14 @@ export const Settings: React.FC = () => {
               <CommunitySection />
             </Card>
           )}
+
+          {/* Install App */}
+          <Card>
+            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+              {t('pwa.settings.sectionTitle', 'Install App')}
+            </h2>
+            <InstallAppSection />
+          </Card>
 
           {/* Help & Tutorials */}
           <Card>

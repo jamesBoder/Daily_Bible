@@ -44,7 +44,7 @@ function prayerDaysLeft(expiresAt: string): number {
   return Math.ceil((new Date(expiresAt).getTime() - Date.now()) / 86400000);
 }
 
-export const CommunityPostCard: React.FC<Props> = ({
+export const CommunityPostCard: React.FC<Props> = React.memo(({
   post,
   index = 0,
   onAddReaction,
@@ -336,4 +336,4 @@ export const CommunityPostCard: React.FC<Props> = ({
       </div>
     </div>
   );
-};
+});

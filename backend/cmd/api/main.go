@@ -166,6 +166,19 @@ func main() {
     // Initialize Phase 10 services
     mannaService := services.NewMannaService(db, blessingsService)
 
+    // Push notification service — no-op when VAPID keys aren't configured
+    pushService := services.NewPushService(
+        db,
+        cfg.VAPIDPublicKey,
+        cfg.VAPIDPrivateKey,
+        cfg.VAPIDSubscriber,
+    )
+    if pushService.IsEnabled() {
+        log.Println("Push notifications: VAPID configured, daily reminders enabled")
+    } else {
+        log.Println("Push notifications: VAPID keys not set — push disabled (set VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY to enable)")
+    }
+
     // create validator instance
     validate := validator.New()
     _ = validate // currently not used, but can be integrated into services or handlers later
@@ -305,6 +318,9 @@ func main() {
     // Phase 10 handlers
     mannaHandler := handlers.NewMannaHandler(mannaService, subscriptionChecker, streakService, settingsService, adminIDs)
 
+    // Push handler
+    pushHandler := handlers.NewPushHandler(pushService)
+
     // Phase 10: seed word bank on every start — idempotent (ON CONFLICT DO NOTHING).
     // Running unconditionally means new words added to the SQL file are picked up
     // on the next deploy without manual intervention.
@@ -378,7 +394,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
@@ -390,6 +406,20 @@ func main() {
     // add test error endpoint
     router.GET("/test-panic", errorHandler)
 
+
+   // Start hourly push reminder scheduler. On each hour boundary it calls
+   // SendRemindersForHour(), which checks each subscription's preferred time
+   // against the current UTC time converted to the user's timezone — so every
+   // user gets a notification at their chosen local hour regardless of timezone.
+   go func() {
+       for {
+           now := time.Now().UTC()
+           // Sleep until the top of the next hour.
+           nextHour := time.Date(now.Year(), now.Month(), now.Day(), now.Hour()+1, 0, 5, 0, time.UTC)
+           time.Sleep(nextHour.Sub(now))
+           pushService.SendRemindersForHour()
+       }
+   }()
 
    // create http.Server with router
    c := &http.Server{

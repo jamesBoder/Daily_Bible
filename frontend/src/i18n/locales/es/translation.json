@@ -356,7 +356,14 @@
       "emailNotifications": "Notificaciones por Correo",
       "emailDescription": "Recibir actualizaciones por correo electrónico",
       "dailyReminder": "Recordatorio del Versículo Diario",
-      "reminderDescription": "Recibe un recordatorio para leer tu versículo diario"
+      "reminderDescription": "Recibe un recordatorio para leer tu versículo diario",
+      "pushNotifications": "Notificaciones Push",
+      "pushDesc": "Recibe una notificación diaria cuando el versículo esté listo.",
+      "pushActiveDesc": "Recibirás un recordatorio a la hora que elijas.",
+      "pushDenied": "Las notificaciones están bloqueadas. Permítelas en la configuración del navegador e inténtalo de nuevo.",
+      "pushUnsupported": "No compatible con este navegador. Usa Chrome en Android o Safari en iPhone.",
+      "pushReminderLabel": "Recordarme a las",
+      "pushTimeSaved": "Hora de recordatorio actualizada a {{time}}"
     },
     "language": {
       "title": "Idioma",
@@ -833,5 +840,32 @@
     "subtitle": "¿Perdiste un día? Protege tu racha con un Día de Gracia.",
     "cta": "¡Entendido!",
     "reopenHint": "Toca ? en el panel de Días de Gracia para ver esto de nuevo."
+  },
+  "pwa": {
+    "install": {
+      "label": "Install app prompt",
+      "title": "Agregar a pantalla de inicio",
+      "subtitle": "Accede al instante, incluso sin conexión.",
+      "cta": "Instalar"
+    },
+    "settings": {
+      "sectionTitle": "Instalar app",
+      "installed": "Ya está en tu pantalla de inicio",
+      "installedDesc": "Estás usando la app instalada.",
+      "androidTitle": "Agregar a pantalla de inicio",
+      "androidDesc": "Acceso instantáneo, incluso sin conexión.",
+      "androidCta": "Instalar",
+      "iosTitle": "Agregar a pantalla de inicio",
+      "iosDesc": "Ábrela al instante desde tu pantalla de inicio.",
+      "iosStep1": "Toca el botón",
+      "iosStep1Share": "Compartir",
+      "iosStep1After": "en la parte inferior de Safari",
+      "iosStep2": "Desplázate hacia abajo y toca",
+      "iosStep2AddToHome": "«Agregar a pantalla de inicio»",
+      "iosStep3": "Toca",
+      "iosStep3Add": "«Agregar»",
+      "iosStep3After": "en la esquina superior derecha",
+      "genericHint": "Abre esta app en Chrome (Android) o Safari (iPhone) para agregarla a tu pantalla de inicio."
+    }
   }
 }

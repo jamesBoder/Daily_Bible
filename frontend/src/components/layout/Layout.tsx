@@ -6,6 +6,7 @@ import BottomNav from "./BottomNav";
 import { OfflineBanner } from "../common/OfflineBanner";
 import MilestoneCelebrationModal from "../../features/streak/MilestoneCelebrationModal";
 import { CheckoutOverlay } from "../common/CheckoutOverlay";
+import { InstallPrompt } from "../InstallPrompt";
 import { useStreak } from "../../contexts/StreakContext";
 
 
@@ -30,6 +31,7 @@ export const Layout: React.FC = () => {
         <Footer />
       </div>
       <BottomNav />
+      <InstallPrompt />
       <MilestoneCelebrationModal />
       {/* §8.18.4: Full-screen checkout overlay — position:fixed, survives re-renders */}
       <CheckoutOverlay visible={checkoutOverlayVisible} onCancel={cancelCheckout} />
