@@ -10,9 +10,21 @@ var profanityDetector *goaway.ProfanityDetector
 // completely normal in a faith-community context.
 var faithFalsePositives = []string{"damn", "hell", "ass", "bastard"}
 
-func buildDetector(extraProfanities []string) *goaway.ProfanityDetector {
-	// Merge the default word list with any custom additions.
+// extraProfanities are leet-speak and symbol-substitution variants that
+// go-away's default list does not reliably catch (e.g. sh1t, f**king).
+var extraProfanities = []string{
+	// shit variants
+	"sh1t", "sh!t", "s.h.i.t", "sht",
+	// fuck variants
+	"f**k", "f**king", "f**ked", "fck", "fuk", "fuq",
+	// combined
+	"f**king", "f***ing",
+}
+
+func buildDetector(additionalProfanities []string) *goaway.ProfanityDetector {
+	// Merge the default word list with leet-speak extras and any runtime additions.
 	profanities := append(goaway.DefaultProfanities, extraProfanities...)
+	profanities = append(profanities, additionalProfanities...)
 	// Merge faith-safe exceptions into the default false-positive list.
 	falsePositives := append(goaway.DefaultFalsePositives, faithFalsePositives...)
 	return goaway.NewProfanityDetector().WithCustomDictionary(

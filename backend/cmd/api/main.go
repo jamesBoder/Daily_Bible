@@ -316,6 +316,9 @@ func main() {
     if err := database.SeedCommunityPosts(db); err != nil {
         log.Printf("WARNING: Community posts seed failed: %v", err)
     }
+    if err := database.CleanCommunityPosts(db); err != nil {
+        log.Printf("WARNING: Community cleanup failed: %v", err)
+    }
 
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
