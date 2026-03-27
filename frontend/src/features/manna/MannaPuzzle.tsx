@@ -214,11 +214,13 @@ export const MannaPuzzle: React.FC = () => {
       setCurrentWord('');
       // Blessings were spent — refresh chip balance immediately
       refreshStreak().catch(() => {});
+      const ref = gameRef.current?.scripture_reference;
+      const refSuffix = ref ? ` · ${ref}` : '';
       toast.success(
         `${t('manna.hintRevealed', 'Position {{n}}: {{letter}}', {
           n: result.position + 1,
           letter: result.letter,
-        })}\n−15 ${t('blessings.label', 'Blessings')} · ${result.blessings_remaining} ${t('manna.hintBlessingsLeft', 'remaining')}`,
+        })}${refSuffix}\n−15 ${t('blessings.label', 'Blessings')} · ${result.blessings_remaining} ${t('manna.hintBlessingsLeft', 'remaining')}`,
         { icon: '💡' }
       );
     } catch (err: any) {
@@ -791,6 +793,23 @@ export const MannaPuzzle: React.FC = () => {
             </blockquote>
           )}
 
+          {!isFreePlay && game.connection_note && (
+            <div
+              className="w-full mt-2 px-3 py-2.5 rounded-xl text-left"
+              style={{
+                background: 'color-mix(in srgb, var(--candle-amber) 10%, transparent)',
+                border: '1px solid color-mix(in srgb, var(--candle-amber) 30%, transparent)',
+              }}
+            >
+              <p className="text-xs font-semibold mb-0.5" style={{ color: 'var(--candle-amber)' }}>
+                💡 {t('manna.connectionTitle', 'Why this word?')}
+              </p>
+              <p className="text-xs leading-relaxed" style={{ color: 'var(--foreground)', opacity: 0.85 }}>
+                {game.connection_note}
+              </p>
+            </div>
+          )}
+
           {isFreePlay && (
             <div className="flex flex-col items-center gap-2 mt-2">
               <p className="manna-muted text-xs text-center">
@@ -806,7 +825,14 @@ export const MannaPuzzle: React.FC = () => {
             </div>
           )}
 
-          <ShareResult guesses={game.guesses} solved={isSolved} maxGuesses={game.max_guesses} t={t} />
+          <ShareResult
+            guesses={game.guesses}
+            solved={isSolved}
+            maxGuesses={game.max_guesses}
+            answer={game.answer}
+            scriptureReference={game.scripture_reference}
+            t={t}
+          />
 
           {/* M-13: Manna streak — appears once stats have loaded (premium only) */}
           {!isFreePlay && postGameStreak !== null && postGameStreak > 0 && (
@@ -1093,24 +1119,28 @@ export const WheatIcon: React.FC<{ size?: number }> = ({ size = 40 }) => (
 // ─── Share result helper ──────────────────────────────────────────────────────
 
 const EMOJI: Record<string, string> = {
-  correct: '🟨',
-  present: '🟧',
-  absent: '⬜',
+  correct: '🟨', // gold — matches the game's blessing-gold correct tile
+  present: '🟦', // teal/blue — matches the challenge-accent present tile
+  absent: '⬛',  // dark — matches the dimmed absent tile
 };
 
 interface ShareResultProps {
   guesses: GuessEntry[];
   solved: boolean;
   maxGuesses: number;
+  answer?: string | null;
+  scriptureReference?: string;
   t: TFunction;
 }
 
-const ShareResult: React.FC<ShareResultProps> = ({ guesses, solved, maxGuesses, t }) => {
+const ShareResult: React.FC<ShareResultProps> = ({ guesses, solved, maxGuesses, answer, scriptureReference, t }) => {
   const handleShare = () => {
     const grid = guesses
-      .map(g => g.result.map(r => EMOJI[r] ?? '⬜').join(''))
+      .map(g => g.result.map(r => EMOJI[r] ?? '⬛').join(''))
       .join('\n');
-    const text = `Manna — Words of Praise\n${solved ? guesses.length : 'X'}/${maxGuesses}\n\n${grid}`;
+    const answerLine = answer ? `\nWord: ${answer}` : '';
+    const refLine = scriptureReference ? `\n📖 ${scriptureReference}` : '';
+    const text = `Manna — Words of Praise\n${solved ? guesses.length : 'X'}/${maxGuesses}${answerLine}${refLine}\n\n${grid}`;
 
     if (navigator.share) {
       navigator.share({ text }).catch(() => {});

@@ -29,6 +29,7 @@ export interface MannaGameResponse {
   // Revealed only on solved/failed:
   answer?: string;
   scripture_text?: string;
+  connection_note?: string;
 }
 
 export interface MannaLockedResponse {

@@ -93,8 +93,12 @@ type MannaGameResponse struct {
 	HintLetters []HintLetter `json:"hint_letters,omitempty"`
 
 	// Revealed only on solved/failed:
-	Answer        *string `json:"answer,omitempty"`
-	ScriptureText *string `json:"scripture_text,omitempty"`
+	Answer         *string `json:"answer,omitempty"`
+	ScriptureText  *string `json:"scripture_text,omitempty"`
+	// ConnectionNote explains how the answer word connects to the scripture when
+	// the relationship is not obvious (e.g. the word is the author or book name).
+	// Only populated when a note exists; omitted otherwise.
+	ConnectionNote *string `json:"connection_note,omitempty"`
 }
 
 // GuessResult is what POST /api/manna/guess returns.
@@ -253,9 +257,12 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time, isPre
 
 	if game.Status == "solved" || game.Status == "failed" {
 		resp.Answer = &word.Word
-		// Full scripture text is premium-only — do not send to free-game responses.
+		// Full scripture text and connection note are premium-only.
 		if !isFreeGame {
 			resp.ScriptureText = &word.ScriptureText
+			if word.ConnectionNote != "" {
+				resp.ConnectionNote = &word.ConnectionNote
+			}
 		}
 	}
 

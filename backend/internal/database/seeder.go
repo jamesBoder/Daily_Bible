@@ -9,17 +9,23 @@ import (
 //go:embed seeds/manna_words.sql
 var mannaSeedSQL string
 
+//go:embed seeds/manna_connection_notes.sql
+var mannaConnectionNotesSQL string
+
 //go:embed seeds/community_posts.sql
 var communityPostsSeedSQL string
 
 //go:embed seeds/community_cleanup.sql
 var communityCleanupSQL string
 
-// SeedMannaWords inserts the bundled word bank into manna_words.
-// The SQL is idempotent (ON CONFLICT (word) DO NOTHING), so it is
-// safe to call on every startup; existing rows are never overwritten.
+// SeedMannaWords inserts the bundled word bank into manna_words and then
+// applies connection notes for words whose link to their scripture is not
+// immediately obvious. Both operations are idempotent and safe on every startup.
 func SeedMannaWords(db *gorm.DB) error {
-	return db.Exec(mannaSeedSQL).Error
+	if err := db.Exec(mannaSeedSQL).Error; err != nil {
+		return err
+	}
+	return db.Exec(mannaConnectionNotesSQL).Error
 }
 
 // SeedCommunityPosts deletes stale test admin posts and inserts the three
