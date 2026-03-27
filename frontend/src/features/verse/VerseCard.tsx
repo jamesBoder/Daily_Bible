@@ -38,6 +38,10 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   const [isCopied, setIsCopied]           = useState(false);
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const [favoriteError, setFavoriteError] = useState<string | null>(null);
+  const [justFavorited, setJustFavorited] = useState(false);
+  const [heartbeatKey, setHeartbeatKey] = useState(0);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressOrigin = useRef<{ x: number; y: number } | null>(null);
 
   const handleCommentSaved = async () => {
     // Pitfall 13: guard — CommentSection is hidden for guests, but safety net
@@ -71,6 +75,9 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       } else {
         // Add to favorites
         await addFavorite(verse.id);
+        setHeartbeatKey(k => k + 1);
+        setJustFavorited(true);
+        setTimeout(() => setJustFavorited(false), 600);
       }
     } catch (err: any) {
       setFavoriteError(err.message);
@@ -156,6 +163,39 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
   const isVerseAlreadyFavorited = isFavorited(verse.id);
 
+  // Long-press on the verse card to copy text (500ms, cancelled if pointer moves >10px)
+  const handleLongPressStart = (e: React.PointerEvent) => {
+    longPressOrigin.current = { x: e.clientX, y: e.clientY };
+    longPressTimer.current = setTimeout(async () => {
+      longPressOrigin.current = null;
+      try {
+        await navigator.clipboard.writeText(buildShareText(verse));
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+        if (navigator.vibrate) navigator.vibrate(40);
+      } catch {
+        // Silently ignore clipboard errors
+      }
+    }, 500);
+  };
+
+  const handleLongPressMove = (e: React.PointerEvent) => {
+    if (!longPressOrigin.current || !longPressTimer.current) return;
+    const dx = e.clientX - longPressOrigin.current.x;
+    const dy = e.clientY - longPressOrigin.current.y;
+    if (Math.hypot(dx, dy) > 10) {
+      handleLongPressEnd();
+    }
+  };
+
+  const handleLongPressEnd = () => {
+    longPressOrigin.current = null;
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
+
   // Fade in effect when verse changes
   useEffect(() => {
     // Fade out
@@ -178,7 +218,14 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   ]);
 
   return (
-    <Card className={`relative transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+    <Card
+      className={`relative transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      onPointerDown={handleLongPressStart}
+      onPointerMove={handleLongPressMove}
+      onPointerUp={handleLongPressEnd}
+      onPointerLeave={handleLongPressEnd}
+      onPointerCancel={handleLongPressEnd}
+    >
       {/* Decorative quote mark */}
       <div className="absolute top-4 left-4 text-6xl text-primary-100 dark:text-primary-900 font-serif">
         "
@@ -186,7 +233,10 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
       {/* Verse text */}
       <div className="relative z-10 mb-6">
-        <p className="text-xl md:text-2xl text-gray-800 dark:text-gray-100 font-serif leading-relaxed text-center px-8 py-4">
+        <p
+          className="text-gray-800 dark:text-gray-100 font-serif leading-relaxed text-center px-8 py-4"
+          style={{ fontSize: 'var(--verse-font-size, 1.25rem)' }}
+        >
           {verse.text}
         </p>
       </div>
@@ -234,7 +284,8 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
           aria-pressed={isVerseAlreadyFavorited}
         >
           <svg
-            className={`w-5 h-5 ${isVerseAlreadyFavorited ? "fill-red-500" : "fill-none"}`}
+            key={justFavorited ? heartbeatKey : 0}
+            className={`w-5 h-5 ${isVerseAlreadyFavorited ? "fill-red-500" : "fill-none"} ${justFavorited ? "animate-heartbeat" : ""}`}
             stroke="currentColor"
             viewBox="0 0 24 24"
           >

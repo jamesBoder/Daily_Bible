@@ -492,6 +492,19 @@
     animation: blessingsFlash 0.7s ease-out forwards;
   }
 
+  @keyframes heartbeat {
+    0%   { transform: scale(1); }
+    20%  { transform: scale(1.35); }
+    40%  { transform: scale(1.1); }
+    60%  { transform: scale(1.25); }
+    80%  { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .animate-heartbeat {
+    animation: heartbeat 0.55s ease-in-out forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
     .animate-fade-in {
       animation: none;
@@ -686,12 +699,20 @@
 
   .milestone-badge--earned {
     background: radial-gradient(circle at 35% 35%, #fde68a, #f59e0b);
-    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.35);
+    box-shadow:
+      0 2px 8px rgba(245, 158, 11, 0.45),
+      0 0 0 2px rgba(253, 230, 138, 0.6),
+      0 0 14px 2px rgba(245, 158, 11, 0.25);
+    filter: brightness(1.05);
   }
 
   .milestone-badge--earned:hover {
     transform: scale(1.12) rotate(-2deg);
-    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.55);
+    box-shadow:
+      0 6px 20px rgba(245, 158, 11, 0.65),
+      0 0 0 3px rgba(253, 230, 138, 0.8),
+      0 0 24px 4px rgba(245, 158, 11, 0.4);
+    filter: brightness(1.12);
   }
 
   .milestone-badge--locked {
@@ -711,7 +732,11 @@
 
   .milestone-badge--premium-earned {
     background: radial-gradient(circle at 35% 35%, #e9d5ff, #a855f7);
-    box-shadow: 0 2px 8px rgba(168, 85, 247, 0.35);
+    box-shadow:
+      0 2px 8px rgba(168, 85, 247, 0.45),
+      0 0 0 2px rgba(233, 213, 255, 0.6),
+      0 0 14px 2px rgba(168, 85, 247, 0.25);
+    filter: brightness(1.05);
   }
 
   /* ── Phase 2: Milestone wall mobile scroll ──────────────────────────── */

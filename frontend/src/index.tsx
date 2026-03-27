@@ -8,6 +8,12 @@ import "./i18n"; // Initialize i18n
 import "./index.css";
 import App from "./App";
 
+// Apply stored verse font-size preference before first paint to avoid flicker
+const VERSE_FONT_SIZES = ['1rem', '1.125rem', '1.25rem', '1.5rem', '1.875rem'];
+const storedSize = Number(localStorage.getItem('verseFontSize') ?? 3);
+const clampedSize = Math.min(5, Math.max(1, storedSize));
+document.documentElement.style.setProperty('--verse-font-size', VERSE_FONT_SIZES[clampedSize - 1]);
+
 const renderApp = async () => {
   // If an early verse prefetch was kicked off in index.html, await it now and
   // seed the React Query cache before the first render. By the time this runs

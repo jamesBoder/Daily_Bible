@@ -511,7 +511,7 @@ export const FavoritesList: React.FC = () => {
                 >
                   {/* Verse content — always visible */}
                   <div className="mb-3">
-                    <p className="text-lg text-gray-800 dark:text-gray-200 font-serif leading-relaxed mb-3">
+                    <p className="text-gray-800 dark:text-gray-200 font-serif leading-relaxed mb-3" style={{ fontSize: 'var(--verse-font-size, 1.25rem)' }}>
                       {favorite.verse?.text}
                     </p>
                     <p className="text-lg font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
