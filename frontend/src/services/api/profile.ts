@@ -27,8 +27,7 @@ export const profileService = {
         }
     },
 
-    // Remove userId parameter - use JWT token
-    updateProfile: async (profileData: Partial<UserProfile>): Promise<UserProfile> => {
+    updateProfile: async (profileData: Partial<UserProfile> & { current_password?: string }): Promise<UserProfile> => {
         try {
             const response = await apiClient.put<UserProfile>(
                 API_ENDPOINTS.PROFILE,
@@ -37,8 +36,12 @@ export const profileService = {
             showToast.success('Profile updated successfully!');
             return response.data;
         } catch (error: any) {
-            if (error.response?.status === 400) {
-                showToast.error('Invalid profile data');
+            if (error.response?.status === 429) {
+                showToast.error('Too many requests — please wait a moment');
+            } else if (error.response?.status === 401) {
+                showToast.error('Incorrect password');
+            } else if (error.response?.status === 400) {
+                showToast.error(error.response?.data?.error || 'Invalid profile data');
             } else if (error.response?.status === 409) {
                 showToast.error('Username or email already taken');
             } else {

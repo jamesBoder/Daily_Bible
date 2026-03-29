@@ -37,6 +37,7 @@ interface ReadingStats {
 interface ProfileData {
   username: string;
   email: string;
+  pending_email?: string;
   member_since: string;
   avatar_initials: string;
   avatar_color: string;
@@ -140,6 +141,8 @@ export const Profile: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
   const [editUsername, setEditUsername] = useState('');
   const [editEmail, setEditEmail] = useState('');
+  const [editEmailConfirm, setEditEmailConfirm] = useState('');
+  const [editCurrentPassword, setEditCurrentPassword] = useState('');
   const [editSaving, setEditSaving] = useState(false);
   const [editError, setEditError] = useState<string | null>(null);
 
@@ -169,6 +172,8 @@ export const Profile: React.FC = () => {
     if (!data) return;
     setEditUsername(data.username);
     setEditEmail(data.email);
+    setEditEmailConfirm('');
+    setEditCurrentPassword('');
     setEditError(null);
     setUsernameStatus('idle');
     setEmailStatus('idle');
@@ -180,6 +185,8 @@ export const Profile: React.FC = () => {
     clearTimeout(emailTimerRef.current);
     setEditMode(false);
     setEditError(null);
+    setEditEmailConfirm('');
+    setEditCurrentPassword('');
     setUsernameStatus('idle');
     setEmailStatus('idle');
   };
@@ -228,14 +235,31 @@ export const Profile: React.FC = () => {
     }, 600);
   };
 
+  const emailChanging = data ? editEmail !== data.email : false;
+  const emailConfirmMismatch = emailChanging && editEmailConfirm !== editEmail;
+
   const handleEditSave = async () => {
     if (!data) return;
     if (usernameStatus === 'taken' || emailStatus === 'taken') return;
+    if (emailConfirmMismatch) return;
     setEditSaving(true);
     setEditError(null);
     try {
-      await profileService.updateProfile({ username: editUsername, email: editEmail });
-      setData(prev => prev ? { ...prev, username: editUsername, email: editEmail } : prev);
+      const payload: Record<string, string> = { username: editUsername, email: editEmail };
+      if (editCurrentPassword) payload.current_password = editCurrentPassword;
+      const result = await profileService.updateProfile(payload);
+      // If an email change is pending, keep the old email displayed; update username only
+      setData(prev => {
+        if (!prev) return prev;
+        return {
+          ...prev,
+          username: editUsername,
+          // email stays unchanged until verified
+          pending_email: emailChanging ? editEmail : (result as any).pending_email,
+        };
+      });
+      setEditCurrentPassword('');
+      setEditEmailConfirm('');
       setEditMode(false);
     } catch (err: any) {
       const msg = err.response?.data?.error || t('profile.edit_error', 'Failed to update profile');
@@ -294,7 +318,7 @@ export const Profile: React.FC = () => {
           />
           <div className="flex-1 min-w-0">
             {!editMode ? (
-              <>
+              <div key="display" className="animate-fade-in">
                 <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-all">
                   {data.username}
                 </h1>
@@ -309,9 +333,9 @@ export const Profile: React.FC = () => {
                 <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
                   {t('profile.member_since', 'Member since')} {memberSince}
                 </p>
-              </>
+              </div>
             ) : (
-              <div className="space-y-2 w-full">
+              <div key="edit" className="space-y-2 w-full animate-fade-in">
                 {/* Username field */}
                 <div className="relative">
                   <input
@@ -360,6 +384,52 @@ export const Profile: React.FC = () => {
                   </p>
                 )}
 
+                {/* Confirm new email — shown when email is being changed */}
+                {emailChanging && (
+                  <div className="space-y-1">
+                    <input
+                      type="email"
+                      value={editEmailConfirm}
+                      onChange={e => setEditEmailConfirm(e.target.value)}
+                      placeholder={t('profile.confirm_email_placeholder', 'Confirm new email')}
+                      className={[
+                        'w-full text-sm px-3 py-1.5 rounded-lg border bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                        emailConfirmMismatch && editEmailConfirm
+                          ? 'border-red-400 focus:ring-red-300'
+                          : editEmailConfirm && !emailConfirmMismatch
+                          ? 'border-green-400 focus:ring-green-300'
+                          : 'border-gray-300 dark:border-gray-600 focus:ring-primary-400',
+                      ].join(' ')}
+                      autoComplete="off"
+                    />
+                    {emailConfirmMismatch && editEmailConfirm && (
+                      <p className="text-xs text-red-500 dark:text-red-400">
+                        {t('profile.email_confirm_mismatch', 'Email addresses do not match')}
+                      </p>
+                    )}
+                    <p className="text-xs text-blue-600 dark:text-blue-400">
+                      {t('profile.pending_email_info', 'Your current email stays active until you click the confirmation link we send to the new address.')}
+                    </p>
+                  </div>
+                )}
+
+                {/* Current password — required when changing email on password-based accounts */}
+                {emailChanging && (
+                  <div className="space-y-1">
+                    <input
+                      type="password"
+                      value={editCurrentPassword}
+                      onChange={e => setEditCurrentPassword(e.target.value)}
+                      placeholder={t('profile.current_password_placeholder', 'Current password to confirm')}
+                      className="w-full text-sm px-3 py-1.5 rounded-lg border border-amber-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      autoComplete="current-password"
+                    />
+                    <p className="text-xs text-amber-600 dark:text-amber-400">
+                      {t('profile.password_required_for_email', 'Password required to change your email address')}
+                    </p>
+                  </div>
+                )}
+
                 {editError && (
                   <p className="text-xs text-red-500 dark:text-red-400">{editError}</p>
                 )}
@@ -382,7 +452,7 @@ export const Profile: React.FC = () => {
             <div className="flex flex-col gap-1 flex-shrink-0">
               <button
                 onClick={handleEditSave}
-                disabled={editSaving || usernameStatus === 'taken' || emailStatus === 'taken' || usernameStatus === 'checking' || emailStatus === 'checking'}
+                disabled={editSaving || usernameStatus === 'taken' || emailStatus === 'taken' || usernameStatus === 'checking' || emailStatus === 'checking' || emailConfirmMismatch}
                 className="text-xs px-3 py-1.5 rounded-lg bg-primary-600 text-white font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors min-h-[32px]"
               >
                 {editSaving ? t('common.saving', 'Saving…') : t('common.save', 'Save')}
@@ -397,6 +467,18 @@ export const Profile: React.FC = () => {
           )}
         </div>
       </div>
+
+      {/* Pending email change banner */}
+      {data.pending_email && (
+        <div className="rounded-2xl px-4 py-3 flex items-start gap-3 bg-amber-50 dark:bg-amber-900/20 ring-1 ring-amber-300 dark:ring-amber-700/60">
+          <svg className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" d="M12 9v4m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+          </svg>
+          <p className="text-xs text-amber-800 dark:text-amber-300 leading-relaxed">
+            {t('profile.pending_email_banner', 'Email change pending — check {{email}} for a confirmation link. Your current email remains active until you verify the new one.', { email: data.pending_email })}
+          </p>
+        </div>
+      )}
 
       {/* My Journey */}
       <Section title={t('profile.my_journey', 'My Journey')}>

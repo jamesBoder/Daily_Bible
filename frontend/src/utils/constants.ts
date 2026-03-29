@@ -10,6 +10,7 @@ export const API_ENDPOINTS = {
 
   // Email verification & password reset
   VERIFY_EMAIL: '/api/auth/verify-email',
+  VERIFY_PENDING_EMAIL: '/api/auth/verify-pending-email',
   RESEND_VERIFICATION: '/api/auth/resend-verification',
   FORGOT_PASSWORD: '/api/auth/forgot-password',
   RESET_PASSWORD: '/api/auth/reset-password',

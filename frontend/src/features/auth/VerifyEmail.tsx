@@ -24,20 +24,27 @@ export const VerifyEmail: React.FC = () => {
       setErrorMessage("No verification token found in the link.");
       return;
     }
-    verifyToken(token);
+    const isPending = searchParams.get("type") === "pending";
+    verifyToken(token, isPending);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const verifyToken = async (token: string) => {
+  const verifyToken = async (token: string, isPending: boolean) => {
     try {
+      const endpoint = isPending
+        ? API_ENDPOINTS.VERIFY_PENDING_EMAIL
+        : API_ENDPOINTS.VERIFY_EMAIL;
       const response = await apiClient.post<{ message: string; token: string }>(
-        API_ENDPOINTS.VERIFY_EMAIL,
+        endpoint,
         { token }
       );
-      // Auto-login with the returned JWT
       await loginWithToken(response.data.token);
       setStatus("success");
-      showToast.success("Email verified! Welcome to Words of Praise 🎉");
+      showToast.success(
+        isPending
+          ? "New email confirmed! Your email address has been updated."
+          : "Email verified! Welcome to Words of Praise 🎉"
+      );
       setTimeout(() => navigate("/"), 2000);
     } catch (err: any) {
       const msg =
@@ -78,10 +85,12 @@ export const VerifyEmail: React.FC = () => {
             <div className="text-center space-y-4">
               <div className="text-6xl">✅</div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Email Verified!
+                {searchParams.get("type") === "pending" ? "Email Updated!" : "Email Verified!"}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Your account is now active. Redirecting you to the app...
+                {searchParams.get("type") === "pending"
+                  ? "Your email address has been changed successfully. Redirecting..."
+                  : "Your account is now active. Redirecting you to the app..."}
               </p>
             </div>
           </Card>

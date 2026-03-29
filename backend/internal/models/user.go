@@ -34,6 +34,14 @@ type User struct {
     VerificationToken          *string    `gorm:"size:128" json:"-"`
     VerificationTokenExpiresAt *time.Time `json:"-"`
 
+    // Pending email change (new address is not applied until the user clicks the link)
+    PendingEmail               *string    `gorm:"size:255" json:"pending_email,omitempty"`
+    PendingEmailToken          *string    `gorm:"size:128" json:"-"`
+    PendingEmailTokenExpiresAt *time.Time `json:"-"`
+
+    // Username change cooldown
+    UsernameChangedAt *time.Time `json:"-"`
+
     // Password reset
     ResetToken          *string    `gorm:"size:128" json:"-"`
     ResetTokenExpiresAt *time.Time `json:"-"`

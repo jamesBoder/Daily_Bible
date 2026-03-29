@@ -127,6 +127,50 @@ func (s *EmailService) SendDailyReminder(
 	return err
 }
 
+// SendPendingEmailVerification sends a confirmation link to the new address the user wants to switch to.
+// The link must be clicked before the change takes effect.
+func (s *EmailService) SendPendingEmailVerification(pendingEmail, username, token string) error {
+	url := fmt.Sprintf("%s/verify-email?token=%s&type=pending", s.frontendURL, token)
+	html := fmt.Sprintf(`<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+  <h2 style="color:#1a56db;">Confirm Your New Email — Words of Praise</h2>
+  <p>Hi <strong>%s</strong>,</p>
+  <p>You requested to change the email address on your Words of Praise account to <strong>%s</strong>.</p>
+  <p>Click the button below to confirm this change. <strong>Your current email remains active until you do.</strong></p>
+  <a href="%s" style="display:inline-block;background:#1a56db;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;margin:16px 0;">Confirm New Email</a>
+  <p style="color:#6b7280;font-size:14px;">This link expires in <strong>24 hours</strong>. If you did not request this change, you can safely ignore this email — nothing will change.</p>
+  <p style="color:#6b7280;font-size:12px;">If the button doesn't work, copy and paste this link into your browser:<br>%s</p>
+</div>`, username, pendingEmail, url, url)
+
+	_, err := s.client.Emails.Send(&resend.SendEmailRequest{
+		From:    s.fromEmail,
+		To:      []string{pendingEmail},
+		Subject: "Confirm your new email address — Words of Praise",
+		Html:    html,
+	})
+	return err
+}
+
+// SendEmailChangeNotification alerts the old email address that the account email was changed.
+// This lets the real owner detect unauthorized changes and contact support.
+func (s *EmailService) SendEmailChangeNotification(oldEmail, username, newEmail string) error {
+	html := fmt.Sprintf(`<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+  <h2 style="color:#dc2626;">Security Notice — Email Address Changed</h2>
+  <p>Hi <strong>%s</strong>,</p>
+  <p>The email address for your Words of Praise account was just changed to <strong>%s</strong>.</p>
+  <p>If you made this change, no action is needed.</p>
+  <p style="color:#dc2626;font-weight:bold;">If you did NOT make this change, your account may be compromised. Please contact our support team immediately.</p>
+  <p style="color:#6b7280;font-size:12px;">This notification was sent to your previous email address as a security measure.</p>
+</div>`, username, newEmail)
+
+	_, err := s.client.Emails.Send(&resend.SendEmailRequest{
+		From:    s.fromEmail,
+		To:      []string{oldEmail},
+		Subject: "Security notice: your email address was changed — Words of Praise",
+		Html:    html,
+	})
+	return err
+}
+
 // SendPasswordResetEmail sends a password reset link to the user
 func (s *EmailService) SendPasswordResetEmail(toEmail, username, token string) error {
 	url := fmt.Sprintf("%s/reset-password?token=%s", s.frontendURL, token)

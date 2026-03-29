@@ -51,6 +51,7 @@ func SetupRoutes(
 			auth.GET("/me", middleware.AuthMiddleware(tokenService, subscriptionChecker), authHandler.GetMe)
 			// Email verification & password reset (public)
 			auth.POST("/verify-email", authHandler.VerifyEmail)
+			auth.POST("/verify-pending-email", authHandler.VerifyPendingEmail)
 			auth.POST("/resend-verification", authHandler.ResendVerification)
 			auth.POST("/forgot-password", authHandler.ForgotPassword)
 			auth.POST("/reset-password", authHandler.ResetPassword)

@@ -3,8 +3,10 @@ package handlers
 // imports
 
 import (
+	"fmt"
 	"log"
 	"net/http"
+	"regexp"
 	"strings"
 	"sync"
 	"time"
@@ -19,6 +21,39 @@ import (
 	"github.com/go-playground/validator/v10"
 	"gorm.io/gorm"
 )
+
+// usernameRegex allows letters, digits, underscores, and hyphens (3–30 chars).
+var usernameRegex = regexp.MustCompile(`^[a-zA-Z0-9_\-]{3,30}$`)
+
+// rateBucket is a per-user sliding-window counter used by checkRateLimit.
+type rateBucket struct {
+	mu    sync.Mutex
+	times []time.Time
+}
+
+// checkRateLimit returns true if the request is within the allowed rate.
+// It prunes timestamps outside the window and records the new request.
+func checkRateLimit(m *sync.Map, key uint, max int, window time.Duration) bool {
+	actual, _ := m.LoadOrStore(key, &rateBucket{})
+	b := actual.(*rateBucket)
+	b.mu.Lock()
+	defer b.mu.Unlock()
+
+	now := time.Now()
+	cutoff := now.Add(-window)
+	valid := b.times[:0]
+	for _, t := range b.times {
+		if t.After(cutoff) {
+			valid = append(valid, t)
+		}
+	}
+	b.times = valid
+	if len(b.times) >= max {
+		return false
+	}
+	b.times = append(b.times, now)
+	return true
+}
 
 // ProfileHandler struct
 
@@ -35,6 +70,9 @@ type ProfileHandler struct {
 	blessingsService    *services.BlessingsService
 	settingsService     *services.SettingsService
 	db                  *gorm.DB
+	// per-user rate limiters (sliding window, in-memory)
+	updateLimiter sync.Map // 5 req / 60 s — profile update
+	availLimiter  sync.Map // 20 req / 60 s — availability check
 }
 
 // constructor init handler with dependencies
@@ -79,6 +117,11 @@ func (h *ProfileHandler) CheckAvailability(c *gin.Context) {
 		return
 	}
 
+	if !checkRateLimit(&h.availLimiter, userID.(uint), 20, time.Minute) {
+		c.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many requests — please slow down"})
+		return
+	}
+
 	if username := c.Query("username"); username != "" {
 		existing, _ := h.userRepo.GetByUsername(username)
 		available := existing == nil || existing.ID == userID.(uint)
@@ -116,8 +159,7 @@ func (h *ProfileHandler) GetProfile(c *gin.Context) {
 		return
 	}
 
-	// respond with user profile data
-	c.JSON(http.StatusOK, gin.H{
+	resp := gin.H{
 		"id":               user.ID,
 		"username":         user.Username,
 		"email":            user.Email,
@@ -127,7 +169,11 @@ func (h *ProfileHandler) GetProfile(c *gin.Context) {
 		"google_email":     getStringValue(user.GoogleEmail),
 		"google_picture":   getStringValue(user.GooglePicture),
 		"is_google_linked": user.IsGoogleLinked,
-	})
+	}
+	if user.PendingEmail != nil && *user.PendingEmail != "" {
+		resp["pending_email"] = *user.PendingEmail
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetProfileAggregate returns aggregated profile data for the profile page
@@ -334,7 +380,7 @@ func (h *ProfileHandler) GetProfileAggregate(c *gin.Context) {
 	}
 
 	// respond with aggregated profile data (single round trip — no waterfall)
-	c.JSON(http.StatusOK, gin.H{
+	aggregateResp := gin.H{
 		"username":        user.Username,
 		"email":           user.Email,
 		"member_since":    user.CreatedAt,
@@ -344,41 +390,54 @@ func (h *ProfileHandler) GetProfileAggregate(c *gin.Context) {
 		"streak":          streakData,
 		"milestones":      milestoneList,
 		"reading_stats":   readingStats,
-	})
+	}
+	if user.PendingEmail != nil && *user.PendingEmail != "" {
+		aggregateResp["pending_email"] = *user.PendingEmail
+	}
+	c.JSON(http.StatusOK, aggregateResp)
 }
 
 // UpdateProfile handler
 func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
-	// extract userID from context (set by auth middleware)
-	userID, exists := c.Get("userID") 
+	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
 	}
 
-	// parse request body
+	// Rate limit: 5 profile updates per minute per user
+	if !checkRateLimit(&h.updateLimiter, userID.(uint), 5, time.Minute) {
+		c.JSON(http.StatusTooManyRequests, gin.H{"error": "Too many update requests — please wait a moment"})
+		return
+	}
+
 	var req struct {
-		Username string `json:"username" validate:"required,min=3,max=50"`
-		Email    string `json:"email" validate:"required,email"`
+		Username        string `json:"username" validate:"required,min=3,max=30"`
+		Email           string `json:"email" validate:"required,email"`
+		CurrentPassword string `json:"current_password"`
 	}
 	if err := c.ShouldBindJSON(&req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request body"})
 		return
 	}
-
-	// validate input
 	if err := h.validator.Struct(req); err != nil {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": err.Error()})
 		return
 	}
 
-	// validate email (check for disposable domains and typos)
+	// Username format: letters, digits, underscores, hyphens only
+	if !usernameRegex.MatchString(req.Username) {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "Username may only contain letters, numbers, underscores, and hyphens",
+			"field": "username",
+		})
+		return
+	}
+
+	// Validate email (disposable domains, typos)
 	isValid, suggestion, errMsg := h.emailValidator.ValidateEmail(req.Email)
 	if !isValid {
-		response := gin.H{
-			"error": errMsg,
-			"field": "email",
-		}
+		response := gin.H{"error": errMsg, "field": "email"}
 		if suggestion != "" {
 			response["suggestion"] = suggestion
 		}
@@ -386,8 +445,7 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	// check if user exists
-	user, err := h.userRepo.GetByID(userID.(uint)) 
+	user, err := h.userRepo.GetByID(userID.(uint))
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch user"})
 		return
@@ -397,16 +455,51 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 		return
 	}
 
-	// Check if email is being changed and if it's already taken by another user
-	if req.Email != user.Email {
+	emailChanging := req.Email != user.Email
+	// Also consider a pending change already in place
+	pendingEmailChanging := emailChanging || (user.PendingEmail != nil && *user.PendingEmail != req.Email)
+	_ = pendingEmailChanging // used below
+
+	// Require current password to confirm an email change (password-based accounts only)
+	if emailChanging && user.Password != "" {
+		if req.CurrentPassword == "" {
+			c.JSON(http.StatusBadRequest, gin.H{
+				"error": "Current password is required to change your email address",
+				"field": "current_password",
+			})
+			return
+		}
+		if !user.CheckPassword(req.CurrentPassword) {
+			c.JSON(http.StatusUnauthorized, gin.H{
+				"error": "Incorrect password",
+				"field": "current_password",
+			})
+			return
+		}
+	}
+
+	// Username change cooldown: once every 30 days
+	const usernameCooldown = 30 * 24 * time.Hour
+	if req.Username != user.Username && user.UsernameChangedAt != nil {
+		elapsed := time.Since(*user.UsernameChangedAt)
+		if elapsed < usernameCooldown {
+			daysLeft := int((usernameCooldown-elapsed).Hours()/24) + 1
+			c.JSON(http.StatusTooManyRequests, gin.H{
+				"error": fmt.Sprintf("Username can only be changed once every 30 days. Try again in %d day(s).", daysLeft),
+				"field": "username",
+			})
+			return
+		}
+	}
+
+	// Uniqueness checks
+	if emailChanging {
 		existingUser, _ := h.userRepo.GetByEmail(req.Email)
 		if existingUser != nil && existingUser.ID != user.ID {
 			c.JSON(http.StatusConflict, gin.H{"error": "Email already in use"})
 			return
 		}
 	}
-
-	// Check if username is being changed and if it's already taken by another user
 	if req.Username != user.Username {
 		existingUser, _ := h.userRepo.GetByUsername(req.Username)
 		if existingUser != nil && existingUser.ID != user.ID {
@@ -415,50 +508,67 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 		}
 	}
 
-	// Detect email change before updating
-	emailChanged := req.Email != user.Email
-
-	// update user via userRepo.Update()
-	user.Username = req.Username
-	user.Email = req.Email
-
-	if err := h.userRepo.Update(user); err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update user"})
-		return
+	// Apply username change (with cooldown timestamp)
+	if req.Username != user.Username {
+		now := time.Now()
+		user.UsernameChangedAt = &now
+		user.Username = req.Username
 	}
 
-	// If email changed, reset verification and send new verification email
-	if emailChanged {
+	// For email changes: store as pending — the live email is not updated until the user
+	// clicks the confirmation link sent to the new address.
+	if emailChanging {
+		// Notify old email that a change was requested
+		if err := h.emailService.SendEmailChangeNotification(user.Email, user.Username, req.Email); err != nil {
+			log.Printf("Failed to send email-change notification to old address %s for user %d: %v", user.Email, user.ID, err)
+		}
+
 		token, err := services.GenerateToken()
 		if err != nil {
-			log.Printf("Failed to generate verification token after email change for user %d: %v", user.ID, err)
-		} else {
-			if err := h.userRepo.UpdateVerificationToken(user.ID, token, time.Now().Add(24*time.Hour)); err != nil {
-				log.Printf("Failed to store verification token after email change for user %d: %v", user.ID, err)
-			} else {
-				if err := h.emailService.SendVerificationEmail(user.Email, user.Username, token); err != nil {
-					log.Printf("Failed to send verification email to %s: %v", user.Email, err)
-				}
-			}
+			log.Printf("Failed to generate pending-email token for user %d: %v", user.ID, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initiate email change"})
+			return
+		}
+
+		if err := h.userRepo.Update(user); err != nil {
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile"})
+			return
+		}
+		if err := h.userRepo.SetPendingEmail(user.ID, req.Email, token, time.Now().Add(24*time.Hour)); err != nil {
+			log.Printf("Failed to set pending email for user %d: %v", user.ID, err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to initiate email change"})
+			return
+		}
+		if err := h.emailService.SendPendingEmailVerification(req.Email, user.Username, token); err != nil {
+			log.Printf("Failed to send pending-email verification to %s: %v", req.Email, err)
 		}
 
 		c.JSON(http.StatusOK, gin.H{
 			"id":               user.ID,
 			"username":         user.Username,
 			"email":            user.Email,
+			"pending_email":    req.Email,
 			"created_at":       user.CreatedAt,
-			"email_verified":   false,
+			"email_verified":   user.EmailVerified,
 			"google_id":        getStringValue(user.GoogleID),
 			"google_email":     getStringValue(user.GoogleEmail),
 			"google_picture":   getStringValue(user.GooglePicture),
 			"is_google_linked": user.IsGoogleLinked,
-			"message":          "Profile updated. A verification email has been sent to your new address.",
+			"message":          fmt.Sprintf("A confirmation link has been sent to %s. Your current email stays active until you verify the new one.", req.Email),
 		})
 		return
 	}
 
-	// respond with updated profile data (no email change)
-	c.JSON(http.StatusOK, gin.H{
+	if err := h.userRepo.Update(user); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update profile"})
+		return
+	}
+
+	pendingEmail := ""
+	if user.PendingEmail != nil {
+		pendingEmail = *user.PendingEmail
+	}
+	resp := gin.H{
 		"id":               user.ID,
 		"username":         user.Username,
 		"email":            user.Email,
@@ -468,7 +578,11 @@ func (h *ProfileHandler) UpdateProfile(c *gin.Context) {
 		"google_email":     getStringValue(user.GoogleEmail),
 		"google_picture":   getStringValue(user.GooglePicture),
 		"is_google_linked": user.IsGoogleLinked,
-	})
+	}
+	if pendingEmail != "" {
+		resp["pending_email"] = pendingEmail
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetStats handler
