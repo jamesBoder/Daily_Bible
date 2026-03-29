@@ -66,7 +66,7 @@ const BottomNav: React.FC = () => {
   };
 
   const tabBase =
-    'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[11px] font-medium transition-colors select-none focus:outline-none min-w-0 overflow-hidden';
+    'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[11px] font-medium transition-all duration-150 active:scale-90 select-none focus:outline-none min-w-0 overflow-hidden';
   const tabActive = 'text-amber-700 dark:text-amber-400';
   const tabInactive = 'text-gray-500 dark:text-gray-400';
 
@@ -164,7 +164,7 @@ const BottomNav: React.FC = () => {
                   {isGuest ? (
                     <LockBadge />
                   ) : isPastDue ? (
-                    <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500" />
+                    <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   ) : null}
                 </span>
                 <span className="truncate w-full text-center">{t('nav.shop', 'Shop')}</span>
@@ -183,7 +183,7 @@ const BottomNav: React.FC = () => {
             <span className="relative">
               <List size={22} weight={sheetOpen ? 'fill' : 'regular'} />
               {isGuest ? <LockBadge /> : showInstallNudge && (
-                <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500" aria-hidden="true" />
+                <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500 animate-pulse" aria-hidden="true" />
               )}
             </span>
             <span className="truncate w-full text-center">{t('nav.more', 'More')}</span>
@@ -315,7 +315,7 @@ const BottomNav: React.FC = () => {
                   >
                     <DeviceMobile size={20} weight="duotone" />
                     <span className="flex-1">{t('pwa.settings.androidTitle', 'Add to Home Screen')}</span>
-                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" aria-hidden="true" />
+                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 animate-pulse" aria-hidden="true" />
                   </button>
                 ) : (
                   <NavLink
@@ -325,7 +325,7 @@ const BottomNav: React.FC = () => {
                   >
                     <DeviceMobile size={20} weight="duotone" />
                     <span className="flex-1">{t('pwa.settings.iosTitle', 'Add to Home Screen')}</span>
-                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0" aria-hidden="true" />
+                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 animate-pulse" aria-hidden="true" />
                   </NavLink>
                 )
               )}

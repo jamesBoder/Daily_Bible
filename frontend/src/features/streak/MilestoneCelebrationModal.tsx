@@ -149,7 +149,7 @@ const MilestoneCelebrationModal: React.FC = () => {
     <>
       {/* Backdrop */}
       <div
-        className="fixed inset-0 bg-black/60 z-50 animate-fade-in"
+        className={`fixed inset-0 bg-black/60 z-50 ${prefersReducedMotion ? '' : 'animate-fade-in'}`}
         aria-hidden="true"
       />
 
@@ -161,7 +161,7 @@ const MilestoneCelebrationModal: React.FC = () => {
         aria-labelledby="milestone-title"
         ref={modalRef}
       >
-        <div className="relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border border-amber-200/50 dark:border-amber-700/30 animate-slide-from-top">
+        <div className={`relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border border-amber-200/50 dark:border-amber-700/30 ${prefersReducedMotion ? 'animate-fade-in' : 'animate-slide-from-top'}`}>
 
           {/* Badge area */}
           <div className="relative flex items-center justify-center mb-6">
@@ -188,7 +188,7 @@ const MilestoneCelebrationModal: React.FC = () => {
               style={{
                 filter: `brightness(${badgeBrightness})`,
                 boxShadow: badgeGlow,
-                transition: 'filter 0.6s ease, box-shadow 0.6s ease',
+                transition: prefersReducedMotion ? 'none' : 'filter 0.6s ease, box-shadow 0.6s ease',
               }}
             >
               {getBadgeEmoji(milestone.key)}

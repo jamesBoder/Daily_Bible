@@ -22,6 +22,14 @@ import { PaymentAlert } from "./components/common/PaymentAlert";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import "./App.css";
 
+// Wraps each lazy page so that when Suspense resolves (skeleton → real content)
+// the content fades in rather than snapping. The opacity-only fade avoids
+// compounding with the Y-translate already on the parent <main>.
+const PageSuspense: React.FC<{ children: React.ReactNode }> = ({ children }) => (
+  <Suspense fallback={<VerseCardSkeleton />}>
+    <div className="animate-content-fade-in">{children}</div>
+  </Suspense>
+);
 
 // Lazy-load auth pages — authenticated users never visit these
 const Login = lazy(() =>
@@ -123,36 +131,36 @@ const router = createBrowserRouter([
   // Public-only routes — redirect authenticated users to home
   {
     path: "/login",
-    element: <PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Login /></Suspense></PublicOnlyRoute>,
+    element: <PublicOnlyRoute><PageSuspense><Login /></PageSuspense></PublicOnlyRoute>,
   },
   {
     path: "/signup",
-    element: <PublicOnlyRoute><Suspense fallback={<VerseCardSkeleton />}><Signup /></Suspense></PublicOnlyRoute>,
+    element: <PublicOnlyRoute><PageSuspense><Signup /></PageSuspense></PublicOnlyRoute>,
   },
   // Email verification & password reset — public routes
   {
     path: "/verify-email-pending",
-    element: <Suspense fallback={<VerseCardSkeleton />}><VerifyEmailPending /></Suspense>,
+    element: <PageSuspense><VerifyEmailPending /></PageSuspense>,
   },
   {
     path: "/verify-email",
-    element: <Suspense fallback={<VerseCardSkeleton />}><VerifyEmail /></Suspense>,
+    element: <PageSuspense><VerifyEmail /></PageSuspense>,
   },
   {
     path: "/forgot-password",
-    element: <Suspense fallback={<VerseCardSkeleton />}><ForgotPassword /></Suspense>,
+    element: <PageSuspense><ForgotPassword /></PageSuspense>,
   },
   {
     path: "/reset-password",
-    element: <Suspense fallback={<VerseCardSkeleton />}><ResetPassword /></Suspense>,
+    element: <PageSuspense><ResetPassword /></PageSuspense>,
   },
   {
     path: "/about",
-    element: <Suspense fallback={<VerseCardSkeleton />}><About /></Suspense>,
+    element: <PageSuspense><About /></PageSuspense>,
   },
   {
     path: "/auth/google/callback",
-    element: <Suspense fallback={<VerseCardSkeleton />}><GoogleCallback /></Suspense>,
+    element: <PageSuspense><GoogleCallback /></PageSuspense>,
   },
   // Protected routes with layout
   {
@@ -166,38 +174,38 @@ const router = createBrowserRouter([
         // a client-side <Navigate> produces zero output during the transition
         // which causes a blank screen in some browsers.
         index: true,
-        element: <Suspense fallback={<VerseCardSkeleton />}><DailyVerse /></Suspense>,
+        element: <PageSuspense><DailyVerse /></PageSuspense>,
       },
       {
         path: "daily",
-        element: <Suspense fallback={<VerseCardSkeleton />}><DailyVerse /></Suspense>,
+        element: <PageSuspense><DailyVerse /></PageSuspense>,
       },
       {
         path: "favorites",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><FavoritesList /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><FavoritesList /></PageSuspense></GuestBlockedRoute>,
       },
       {
         path: "profile",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><Profile /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><Profile /></PageSuspense></GuestBlockedRoute>,
       },
       {
         path: "settings",
-        element: <Suspense fallback={<VerseCardSkeleton />}><Settings /></Suspense>,
+        element: <PageSuspense><Settings /></PageSuspense>,
       },
       // Search route (Phase 5) — authenticated users only
       {
         path: "search",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><SearchResultsPage /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><SearchResultsPage /></PageSuspense></GuestBlockedRoute>,
       },
       // Rewards Shop (Phase 6) — authenticated users only
       {
         path: "shop",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><RewardsShop /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><RewardsShop /></PageSuspense></GuestBlockedRoute>,
       },
       // Phase 9: Community Board — authenticated users only (guests redirected to /login)
       {
         path: "community",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><CommunityView /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><CommunityView /></PageSuspense></GuestBlockedRoute>,
       },
       // Phase 10: Manna puzzle — authenticated users only
       // M-23: ErrorBoundary catches runtime errors (e.g. malformed API response) so the page doesn't crash
@@ -220,7 +228,7 @@ const router = createBrowserRouter([
                 </button>
               </div>
             }>
-              <Suspense fallback={<VerseCardSkeleton />}><MannaPuzzle /></Suspense>
+              <PageSuspense><MannaPuzzle /></PageSuspense>
             </ErrorBoundary>
           </GuestBlockedRoute>
         ),
@@ -228,15 +236,15 @@ const router = createBrowserRouter([
       // Journal routes (Phase 3)
       {
         path: "journal",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><JournalList /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><JournalList /></PageSuspense></GuestBlockedRoute>,
       },
       {
         path: "journal/new",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><JournalEditor /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><JournalEditor /></PageSuspense></GuestBlockedRoute>,
       },
       {
         path: "journal/:id",
-        element: <GuestBlockedRoute><Suspense fallback={<VerseCardSkeleton />}><JournalEditor /></Suspense></GuestBlockedRoute>,
+        element: <GuestBlockedRoute><PageSuspense><JournalEditor /></PageSuspense></GuestBlockedRoute>,
       },
       // Nested catch-all: any unmatched path inside the Layout (e.g. /daily/foo) → /daily
       {

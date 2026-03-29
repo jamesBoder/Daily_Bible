@@ -40,6 +40,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   const [favoriteError, setFavoriteError] = useState<string | null>(null);
   const [justFavorited, setJustFavorited] = useState(false);
   const [heartbeatKey, setHeartbeatKey] = useState(0);
+  const [isLongPressing, setIsLongPressing] = useState(false);
   const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const longPressOrigin = useRef<{ x: number; y: number } | null>(null);
 
@@ -166,8 +167,10 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   // Long-press on the verse card to copy text (500ms, cancelled if pointer moves >10px)
   const handleLongPressStart = (e: React.PointerEvent) => {
     longPressOrigin.current = { x: e.clientX, y: e.clientY };
+    setIsLongPressing(true);
     longPressTimer.current = setTimeout(async () => {
       longPressOrigin.current = null;
+      setIsLongPressing(false);
       try {
         await navigator.clipboard.writeText(buildShareText(verse));
         setIsCopied(true);
@@ -190,6 +193,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
   const handleLongPressEnd = () => {
     longPressOrigin.current = null;
+    setIsLongPressing(false);
     if (longPressTimer.current) {
       clearTimeout(longPressTimer.current);
       longPressTimer.current = null;
@@ -226,6 +230,15 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       onPointerLeave={handleLongPressEnd}
       onPointerCancel={handleLongPressEnd}
     >
+      {/* Long-press copy indicator */}
+      {isLongPressing && (
+        <div className="absolute inset-0 rounded-2xl bg-primary-500/10 dark:bg-primary-400/10 ring-2 ring-primary-400/50 dark:ring-primary-500/50 pointer-events-none transition-opacity duration-150 z-20 flex items-center justify-center">
+          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-white/80 dark:bg-gray-900/80 px-3 py-1 rounded-full shadow-sm">
+            Hold to copy…
+          </span>
+        </div>
+      )}
+
       {/* Decorative quote mark */}
       <div className="absolute top-4 left-4 text-6xl text-primary-100 dark:text-primary-900 font-serif">
         "
@@ -243,7 +256,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
       {/* Reference */}
       <div className="text-center mb-6">
-        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] hover:brightness-125 hover:drop-shadow-[0_0_10px_rgba(79,70,229,0.4)] dark:drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)] dark:hover:drop-shadow-[0_0_10px_rgba(129,140,248,0.4)] cursor-default">
+        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
           {verse.reference}
         </p>
         {/* Translation badge — authenticated users only */}

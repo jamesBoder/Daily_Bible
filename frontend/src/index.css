@@ -109,6 +109,14 @@
 }
 
 @layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Phase 1 Color Tokens */
   :root {
     --blessing-gold: #fbbf24;
@@ -286,6 +294,27 @@
     animation: fade-in 0.5s ease-out forwards;
   }
 
+  /* Opacity-only fade — used when content replaces a skeleton (no Y shift to avoid
+     compounding with the parent <main> slide-up) */
+  @keyframes content-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .animate-content-fade-in {
+    animation: content-fade-in 0.25s ease-out forwards;
+  }
+
+  /* Fast fade for tab/page transitions — snappy without being instant */
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-page-enter {
+    animation: page-enter 0.18s ease-out forwards;
+  }
+
   /* Candle flicker animation */
   @keyframes flicker {
     0%, 100% {
@@ -320,6 +349,21 @@
 
   .animate-slide-in-right {
     animation: slideInRight 0.3s ease-out;
+  }
+
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(110%);
+      opacity: 0;
+    }
+  }
+
+  .animate-slide-out-right {
+    animation: slideOutRight 0.25s ease-in forwards;
   }
 
   /* Slide down animation for Grace Day banner */
@@ -506,7 +550,8 @@
   }
 
   @media (prefers-reduced-motion: reduce) {
-    .animate-fade-in {
+    .animate-fade-in,
+    .animate-content-fade-in {
       animation: none;
       opacity: 1;
       transform: none;
@@ -587,6 +632,7 @@
   .card {
     @apply rounded-2xl p-6;
     position: relative;
+    scroll-margin-top: 5rem;
     /* Theme-aware surface — warm cream (parchment), warm brown (midnight), etc. */
     background-color: var(--theme-surface);
     /* Amber-tinted border visible in light mode, on-brand with the premium card */
@@ -1048,6 +1094,11 @@
     z-index: 9000;
     backdrop-filter: blur(3px);
     -webkit-backdrop-filter: blur(3px);
+    animation: pricing-overlay-enter 0.22s ease-out forwards;
+  }
+
+  .pricing-modal-overlay--closing {
+    animation: pricing-overlay-exit 0.2s ease-in forwards;
   }
 
   @media (min-width: 640px) {
@@ -1069,6 +1120,11 @@
     flex-direction: column;
     gap: 1rem;
     -webkit-overflow-scrolling: touch;
+    animation: pricing-panel-enter 0.3s cubic-bezier(0.34, 1.1, 0.64, 1) forwards;
+  }
+
+  .pricing-modal--closing {
+    animation: pricing-panel-exit 0.2s ease-in forwards;
   }
 
   .dark .pricing-modal {
@@ -1078,6 +1134,11 @@
   @media (min-width: 640px) {
     .pricing-modal {
       border-radius: 1.5rem;
+      animation: pricing-panel-enter-desktop 0.28s ease-out forwards;
+    }
+
+    .pricing-modal--closing {
+      animation: pricing-panel-exit-desktop 0.2s ease-in forwards;
     }
   }
 
@@ -1565,5 +1626,72 @@
     0%   { filter: drop-shadow(0 0 0px var(--blessing-gold)); }
     40%  { filter: drop-shadow(0 0 12px var(--blessing-gold)); }
     100% { filter: drop-shadow(0 0 4px var(--blessing-gold)); }
+  }
+
+  /* ── Pricing modal enter / exit keyframes ─────────────────────────────── */
+
+  @keyframes pricing-overlay-enter {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes pricing-overlay-exit {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  /* Mobile: slide up from bottom */
+  @keyframes pricing-panel-enter {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  @keyframes pricing-panel-exit {
+    from { transform: translateY(0);    opacity: 1; }
+    to   { transform: translateY(100%); opacity: 0; }
+  }
+
+  /* Desktop: subtle scale + fade */
+  @keyframes pricing-panel-enter-desktop {
+    from { transform: translateY(12px) scale(0.96); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
+  }
+
+  @keyframes pricing-panel-exit-desktop {
+    from { transform: translateY(0)    scale(1);    opacity: 1; }
+    to   { transform: translateY(12px) scale(0.96); opacity: 0; }
+  }
+
+  /* Tab content fade-in when switching between Plans / Add-ons */
+  .pricing-modal__tab-content {
+    animation: content-fade-in 0.18s ease-out forwards;
+  }
+
+  /* Disable all pricing-modal motion when reduced-motion is preferred */
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-modal-overlay,
+    .pricing-modal-overlay--closing {
+      animation: none !important;
+      opacity: 1;
+    }
+
+    .pricing-modal-overlay--closing {
+      opacity: 0;
+    }
+
+    .pricing-modal,
+    .pricing-modal--closing {
+      animation: none !important;
+      transform: none;
+      opacity: 1;
+    }
+
+    .pricing-modal--closing {
+      opacity: 0;
+    }
+
+    .pricing-modal__tab-content {
+      animation: none;
+    }
   }
 }

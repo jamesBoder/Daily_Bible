@@ -83,8 +83,15 @@ export const CommunityView: React.FC = () => {
       }
     };
 
+    // Poll on a regular interval and also immediately when the tab regains focus
+    // so users don't wait up to 90s to see the new-posts banner after switching back.
+    const onVisibility = () => { if (!document.hidden) poll(); };
+    document.addEventListener('visibilitychange', onVisibility);
     const interval = setInterval(poll, NEW_POSTS_POLL_INTERVAL_MS);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
   // ── Derived data ─────────────────────────────────────────────────────────

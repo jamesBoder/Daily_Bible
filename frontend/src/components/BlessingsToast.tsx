@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 interface BlessingsToastItem {
@@ -47,16 +47,29 @@ export const showBlessingsToast = (amount: number, reason: string) => {
   }
 };
 
+const EXIT_DURATION = 260; // ms — matches animate-slide-out-right
+
 const BlessingsToast: React.FC<BlessingsToastProps> = () => {
   const { t } = useTranslation();
   const [toasts, setToasts] = useState<BlessingsToastItem[]>([]);
+  const [exitingIds, setExitingIds] = useState<Set<string>>(new Set());
+  const exitTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
 
   const removeToast = useCallback((id: string) => {
-    setToasts((prev) => prev.filter((toast) => toast.id !== id));
-    toastQueue = toastQueue.filter((toast) => toast.id !== id);
+    // Start exit animation
+    setExitingIds((prev) => new Set(prev).add(id));
+    // Remove from DOM after animation completes
+    const timer = setTimeout(() => {
+      setToasts((prev) => prev.filter((t) => t.id !== id));
+      setExitingIds((prev) => { const s = new Set(prev); s.delete(id); return s; });
+      toastQueue = toastQueue.filter((t) => t.id !== id);
+      exitTimers.current.delete(id);
+    }, EXIT_DURATION);
+    exitTimers.current.set(id, timer);
   }, []);
 
   useEffect(() => {
+    const timers = exitTimers.current;
     // Register callback for adding toasts
     addToastCallback = (toast: BlessingsToastItem) => {
       setToasts((prev) => [...prev, toast]);
@@ -69,6 +82,7 @@ const BlessingsToast: React.FC<BlessingsToastProps> = () => {
 
     return () => {
       addToastCallback = null;
+      timers.forEach((t) => clearTimeout(t));
     };
   }, [removeToast]);
 
@@ -109,14 +123,14 @@ const BlessingsToast: React.FC<BlessingsToastProps> = () => {
       {toasts.map((toast) => (
         <div
           key={toast.id}
-          className="animate-slide-in-right bg-gradient-to-r from-yellow-50 to-amber-50 
-                     dark:from-yellow-900/20 dark:to-amber-900/20 
-                     border border-yellow-300 dark:border-yellow-700
-                     rounded-lg shadow-lg p-4 flex items-center space-x-3
-                     transform transition-all duration-300 hover:scale-105"
-          style={{
-            animation: 'slideInRight 0.3s ease-out',
-          }}
+          className={[
+            exitingIds.has(toast.id) ? 'animate-slide-out-right' : 'animate-slide-in-right',
+            'bg-gradient-to-r from-yellow-50 to-amber-50',
+            'dark:from-yellow-900/20 dark:to-amber-900/20',
+            'border border-yellow-300 dark:border-yellow-700',
+            'rounded-lg shadow-lg p-4 flex items-center space-x-3',
+            'hover:scale-105 transition-transform duration-150',
+          ].join(' ')}
         >
           {/* Blessing icon */}
           <div className="flex-shrink-0">

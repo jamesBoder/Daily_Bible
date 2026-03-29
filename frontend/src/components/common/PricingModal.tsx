@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Crown, Star, BookOpen, Palette, Calendar, Scroll } from '@phosphor-icons/react';
 import { usePricingModal } from '../../hooks/usePricingModal';
@@ -40,15 +40,33 @@ const OTP_MODAL_ITEMS = [
   { key: 'support_developer',   titleKey: 'otp.support_developer.title',   priceKey: 'otp.support_developer.price' },
 ];
 
+// Duration must match the CSS exit animations (pricing-panel-exit / pricing-overlay-exit).
+const CLOSE_ANIMATION_MS = 200;
+
 export const PricingModal: React.FC = () => {
   const { t } = useTranslation();
   const { isOpen, initialView, closeModal } = usePricingModal();
   const { startCheckout, subscriptionLoading, startOneTimePurchase, subscription } = useStreak();
   const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
   const [view, setView] = useState<'plans' | 'otp'>(initialView);
+  const [isClosing, setIsClosing] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
   // §8.18.1: prevent double-tap before overlay appears
   const checkoutInFlight = useRef(false);
+
+  // Animated close: play exit animation then remove from DOM.
+  const handleClose = useCallback(() => {
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (reduced) {
+      closeModal();
+      return;
+    }
+    setIsClosing(true);
+    setTimeout(() => {
+      closeModal();
+      setIsClosing(false);
+    }, CLOSE_ANIMATION_MS);
+  }, [closeModal]);
 
   // Sync view when the modal is re-opened with a different initialView
   useEffect(() => {
@@ -59,11 +77,11 @@ export const PricingModal: React.FC = () => {
   useEffect(() => {
     if (!isOpen) return;
     const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') closeModal();
+      if (e.key === 'Escape') handleClose();
     };
     window.addEventListener('keydown', handler);
     return () => window.removeEventListener('keydown', handler);
-  }, [isOpen, closeModal]);
+  }, [isOpen, handleClose]);
 
   // Prevent body scroll while modal is open
   useEffect(() => {
@@ -75,7 +93,7 @@ export const PricingModal: React.FC = () => {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
-  if (!isOpen) return null;
+  if (!isOpen && !isClosing) return null;
 
   const handleCheckout = async () => {
     if (checkoutInFlight.current) return;
@@ -90,15 +108,15 @@ export const PricingModal: React.FC = () => {
   };
 
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === overlayRef.current) closeModal();
+    if (e.target === overlayRef.current) handleClose();
   };
 
   // Swipe down on the modal panel closes it on mobile
-  const swipeHandlers = useSwipe({ onSwipeDown: closeModal });
+  const swipeHandlers = useSwipe({ onSwipeDown: handleClose });
 
   return (
     <div
-      className="pricing-modal-overlay"
+      className={`pricing-modal-overlay${isClosing ? ' pricing-modal-overlay--closing' : ''}`}
       ref={overlayRef}
       onClick={handleOverlayClick}
       role="dialog"
@@ -106,13 +124,13 @@ export const PricingModal: React.FC = () => {
       aria-label={t('subscription.modal_label', 'Premium subscription')}
     >
       <FocusTrap active={true}>
-        <div className="pricing-modal" {...swipeHandlers}>
+        <div className={`pricing-modal${isClosing ? ' pricing-modal--closing' : ''}`} {...swipeHandlers}>
           {/* Mobile bottom-sheet drag handle */}
           <div className="pricing-modal__drag-handle" aria-hidden="true" />
 
           <button
             className="pricing-modal__close"
-            onClick={closeModal}
+            onClick={handleClose}
             aria-label={t('common.close', 'Close')}
           >
             <X size={20} weight="bold" />
@@ -148,7 +166,7 @@ export const PricingModal: React.FC = () => {
           </div>
 
           {view === 'plans' && (
-            <>
+            <div className="pricing-modal__tab-content">
               <ul className="pricing-modal__features">
                 {PLAN_FEATURES.map((key, i) => (
                   <li key={key} className="pricing-modal__feature">
@@ -199,11 +217,11 @@ export const PricingModal: React.FC = () => {
               <p className="pricing-modal__legal">
                 {t('subscription.modal_legal', 'Cancel anytime. No hidden fees.')}
               </p>
-            </>
+            </div>
           )}
 
           {view === 'otp' && (
-            <div className="pricing-modal__otp-list">
+            <div className="pricing-modal__tab-content pricing-modal__otp-list">
               {OTP_MODAL_ITEMS.map(item => {
                 const isOwned = (subscription?.owned_purchase_keys ?? []).includes(item.key);
                 return (

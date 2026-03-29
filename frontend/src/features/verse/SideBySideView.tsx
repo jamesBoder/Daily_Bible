@@ -22,15 +22,22 @@ interface SideBySideViewProps {
   onClose: () => void;
 }
 
+// Module-level cache so re-opening the panel for the same verse+lang is instant.
+const translationCache = new Map<string, TranslationColumn[]>();
+
 // Premium-only inline comparison panel rendered below the verse card.
 // Fetches the same verse in up to 3 free translations simultaneously and displays
 // them side by side. Mobile: horizontal scroll. Hidden entirely for free users.
 export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang, onClose }) => {
   const { t } = useTranslation();
-  const [columns, setColumns] = useState<TranslationColumn[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const cacheKey = `${reference}::${lang}`;
+  const cached = translationCache.get(cacheKey);
+  const [columns, setColumns] = useState<TranslationColumn[]>(cached ?? []);
+  const [isLoading, setIsLoading] = useState(!cached);
 
   useEffect(() => {
+    if (translationCache.has(cacheKey)) return;
+
     let cancelled = false;
 
     const fetchAll = async () => {
@@ -62,20 +69,20 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
 
       if (cancelled) return;
 
-      setColumns(
-        freeVersions.map((v, i) => ({
-          abbreviation: v.abbreviation,
-          name: v.name,
-          text: results[i].status === "fulfilled" ? (results[i] as PromiseFulfilledResult<string>).value : null,
-          error: results[i].status === "rejected",
-        }))
-      );
+      const resolved = freeVersions.map((v, i) => ({
+        abbreviation: v.abbreviation,
+        name: v.name,
+        text: results[i].status === "fulfilled" ? (results[i] as PromiseFulfilledResult<string>).value : null,
+        error: results[i].status === "rejected",
+      }));
+      translationCache.set(cacheKey, resolved);
+      setColumns(resolved);
       setIsLoading(false);
     };
 
     fetchAll();
     return () => { cancelled = true; };
-  }, [reference, lang]);
+  }, [cacheKey, reference, lang]);
 
   return (
     <div

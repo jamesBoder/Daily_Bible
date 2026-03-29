@@ -50,6 +50,7 @@ const NavArrow: React.FC<NavArrowProps> = ({ direction, onClick, size = "md" }) 
         hover:bg-primary-50 dark:hover:bg-primary-900/30
         hover:border-primary-300 dark:hover:border-primary-600
         hover:text-primary-600 dark:hover:text-primary-400
+        active:scale-95 transition-all duration-150
         flex items-center justify-center
         nav-arrow-glow
       `}

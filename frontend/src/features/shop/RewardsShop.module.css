@@ -186,8 +186,9 @@
   border: 2px solid rgba(180, 130, 30, 0.25);
   background: rgba(255, 255, 255, 0.45);
   cursor: pointer;
-  transition: border-color 0.18s, background 0.18s, box-shadow 0.18s;
+  transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
   position: relative;
+  transform: scale(1);
 }
 
 :global(.dark) .planOption {
@@ -208,11 +209,13 @@
   border-color: var(--candle-amber);
   background: rgba(255, 255, 255, 0.75);
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18), 0 4px 12px rgba(245, 158, 11, 0.18);
+  transform: scale(1.03);
 }
 
 :global(.dark) .planOptionActive {
   background: rgba(245, 158, 11, 0.14);
   box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.22);
+  transform: scale(1.03);
 }
 
 .planNameRow {
