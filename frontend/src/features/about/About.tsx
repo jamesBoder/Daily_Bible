@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { FAQ } from './FAQ';
 
 /** Shareable inner content — used by both the /about route and the Settings "About" tab */
 export const AboutContent: React.FC = () => {
@@ -125,6 +126,9 @@ export const AboutContent: React.FC = () => {
           </div>
         </div>
       </section>
+
+      {/* ── FAQ ──────────────────────────────────────────────────────────── */}
+      <FAQ />
 
       {/* ── Contact ───────────────────────────────────────────────────────── */}
       <section id="contact" className="max-w-4xl mx-auto py-16 px-4 sm:px-6">

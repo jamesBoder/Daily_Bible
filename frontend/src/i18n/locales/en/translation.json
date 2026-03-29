@@ -443,7 +443,27 @@
     "followInstagram": "Follow us on Instagram:",
     "instagramUpdate": "📱 Stay updated with daily inspiration and app updates",
     "inLovingMemory": "In Loving Memory",
-    "devotedChild": "A devoted child of God"
+    "devotedChild": "A devoted child of God",
+    "faqTitle": "Frequently Asked Questions",
+    "faqSubtitle": "Quick answers to the most common questions.",
+    "faq": {
+      "q1": "Why did my streak break?",
+      "a1": "Your streak counts the number of consecutive days you've opened the daily verse. If you miss a day without using a Grace Day, your streak resets to zero. To protect your streak after a missed day, tap \"Use a Grace Day\" — you get 2 Grace Days per month that refill automatically on the 1st.",
+      "q2": "How do Grace Days work?",
+      "a2": "Grace Days let you retroactively count a missed day as read, so your streak stays intact. You receive 2 Grace Days each calendar month. They do not carry over — unused Grace Days expire at the end of the month. You can also purchase a Grace Day Pack (3 extra days for $0.99) in the Shop.",
+      "q3": "Why am I not receiving push notifications?",
+      "a3": "Browser push is supported on Chrome for Android and Safari on iPhone. Make sure you've allowed notifications when prompted — if you accidentally denied them, go to your browser settings and re-enable them for this site. Email reminders are available to all users regardless of browser as an alternative.",
+      "q4": "Why can I only make 4 guesses in Manna?",
+      "a4": "Free accounts are limited to 4 guesses per Manna puzzle. A premium membership increases this to 6 guesses and also unlocks the full scripture clue from the start, hints (which reveal a letter for 15 Blessings), and detailed solve statistics.",
+      "q5": "How do I unlock modern translations like NIV or ESV?",
+      "a5": "Modern translations (NIV, ESV, NLT, and more) are premium. You can unlock them either with a Words of Praise subscription ($1.99/mo or $17.99/yr) or a one-time \"Modern Translations\" purchase for $3.99 in the Shop.",
+      "q6": "What are Blessings and what can I do with them?",
+      "a6": "Blessings (✦) are the app's in-app currency, earned by reading the daily verse, writing reflections, journaling, playing Manna, and reaching streak milestones. Premium members earn 1.5× Blessings on every action. Spend them in the Shop to unlock themes. They never expire.",
+      "q7": "Can I post on the Community Board?",
+      "a7": "The Community Board requires a premium (\"Devoted Member\") subscription to post. The Prayer Wall is open to all members — free and premium — including anonymous prayer requests. Challenges are visible to everyone.",
+      "q8": "My subscription shows \"Past Due\" — what do I do?",
+      "a8": "A past-due status means your last payment failed. Open the Account section in Settings and tap \"Manage Subscription\" to update your payment method in the Stripe portal. Your premium access is paused until payment is resolved."
+    }
   },
   "account": {
     "setPassword": "Set Password",
