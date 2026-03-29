@@ -22,6 +22,12 @@ import type { ThemeId } from "../../contexts/ThemeContext";
 
 type Tab = 'settings' | 'about';
 
+type SectionId = 'journey' | 'devotion' | 'appearance' | 'manna' | 'community' | 'install' | 'help' | 'account';
+
+const scrollToSection = (id: SectionId) => {
+  document.getElementById(`settings-section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+
 export const Settings: React.FC = () => {
   const { isGuest } = useAuth();
   const { t } = useTranslation();
@@ -65,86 +71,122 @@ export const Settings: React.FC = () => {
       {activeTab === 'about' ? (
         <AboutContent />
       ) : (
-        <div className="space-y-6">
-          {/* My Journey — authenticated users only */}
-          {!isGuest && (
-            <Card>
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+        <>
+          {/* Section quick-jump nav */}
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
+            {(!isGuest) && (
+              <button onClick={() => scrollToSection('journey')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                 {t('settings.sections.myJourney', 'My Journey')}
-              </h2>
-              <Profile />
-              <GraceDaySettings />
-            </Card>
-          )}
-
-          {/* Devotion & Notifications */}
-          <Card>
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              {t('settings.sections.devotion', 'Devotion & Notifications')}
-            </h2>
-            <NotificationSettings initialEmail={notifEmail} initialReminder={notifReminder} initialPushReminderTime={pushReminderTime} />
-            <div className="mt-2">
-              <LanguageSettings />
-            </div>
-            {!isGuest && (
-              <div className="mt-2">
-                <TranslationPicker />
-              </div>
+              </button>
             )}
-          </Card>
-
-          {/* Appearance */}
-          <Card>
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            <button onClick={() => scrollToSection('devotion')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.sections.devotion', 'Devotion')}
+            </button>
+            <button onClick={() => scrollToSection('appearance')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.sections.appearance', 'Appearance')}
-            </h2>
-            <AppearanceSettings />
-          </Card>
-
-          {/* Manna — authenticated users only (Phase 10) */}
-          {!isGuest && (
-            <Card>
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-                {t('settings.sections.manna', 'Manna Puzzle')}
-              </h2>
-              <MannaSettings />
-            </Card>
-          )}
-
-          {/* Community — authenticated users only (Phase 9) */}
-          {!isGuest && (
-            <Card>
-              <CommunitySection />
-            </Card>
-          )}
-
-          {/* Install App */}
-          <Card>
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+            </button>
+            {!isGuest && (
+              <button onClick={() => scrollToSection('manna')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+                {t('settings.sections.manna', 'Manna')}
+              </button>
+            )}
+            {!isGuest && (
+              <button onClick={() => scrollToSection('community')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+                {t('nav.community', 'Community')}
+              </button>
+            )}
+            <button onClick={() => scrollToSection('install')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('pwa.settings.sectionTitle', 'Install App')}
-            </h2>
-            <InstallAppSection />
-          </Card>
+            </button>
+            <button onClick={() => scrollToSection('help')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.sections.help', 'Help')}
+            </button>
+            <button onClick={() => scrollToSection('account')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.tabs.account', 'Account')}
+            </button>
+          </div>
 
-          {/* Help & Tutorials */}
-          <Card>
-            <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
-              {t('settings.sections.help', 'Help & Tutorials')}
-            </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
-              {t('settings.sections.helpDesc', 'Tap any feature to view its guide again.')}
-            </p>
-            <TutorialsSection />
-          </Card>
+          <div className="space-y-6">
+            {/* My Journey — authenticated users only */}
+            {!isGuest && (
+              <Card id="settings-section-journey">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  {t('settings.sections.myJourney', 'My Journey')}
+                </h2>
+                <Profile />
+                <GraceDaySettings />
+              </Card>
+            )}
 
-          {/* Account */}
-          <Card>
-            <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
-              {t('settings.tabs.account')}
-            </h2>
-            {isGuest ? <GuestAccountManagement /> : <AccountManagement />}
-          </Card>
-        </div>
+            {/* Devotion & Notifications */}
+            <Card id="settings-section-devotion">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.devotion', 'Devotion & Notifications')}
+              </h2>
+              <NotificationSettings initialEmail={notifEmail} initialReminder={notifReminder} initialPushReminderTime={pushReminderTime} />
+              <div className="mt-2">
+                <LanguageSettings />
+              </div>
+              {!isGuest && (
+                <div className="mt-2">
+                  <TranslationPicker />
+                </div>
+              )}
+            </Card>
+
+            {/* Appearance */}
+            <Card id="settings-section-appearance">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.appearance', 'Appearance')}
+              </h2>
+              <AppearanceSettings />
+            </Card>
+
+            {/* Manna — authenticated users only (Phase 10) */}
+            {!isGuest && (
+              <Card id="settings-section-manna">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  {t('settings.sections.manna', 'Manna Puzzle')}
+                </h2>
+                <MannaSettings />
+              </Card>
+            )}
+
+            {/* Community — authenticated users only (Phase 9) */}
+            {!isGuest && (
+              <Card id="settings-section-community">
+                <CommunitySection />
+              </Card>
+            )}
+
+            {/* Install App */}
+            <Card id="settings-section-install">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('pwa.settings.sectionTitle', 'Install App')}
+              </h2>
+              <InstallAppSection />
+            </Card>
+
+            {/* Help & Tutorials */}
+            <Card id="settings-section-help">
+              <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.help', 'Help & Tutorials')}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                {t('settings.sections.helpDesc', 'Tap any feature to view its guide again.')}
+              </p>
+              <TutorialsSection />
+            </Card>
+
+            {/* Account */}
+            <Card id="settings-section-account">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('settings.tabs.account')}
+              </h2>
+              {isGuest ? <GuestAccountManagement /> : <AccountManagement />}
+            </Card>
+          </div>
+        </>
       )}
     </div>
   );
