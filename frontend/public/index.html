@@ -93,14 +93,25 @@
     <!-- Early verse prefetch: starts the API call immediately while the JS bundle
          downloads and parses. By the time React mounts, the response is ready to
          be read from window.__VERSE_PREFETCH__ and seeded into the React Query cache,
-         eliminating the verse API round-trip from the LCP critical path. -->
+         eliminating the verse API round-trip from the LCP critical path.
+         The auth token is read from localStorage so the request is authenticated —
+         an unauthenticated prefetch causes the backend to skip RecordDailyEngagement,
+         meaning streak updates and blessings are never credited on a normal page load
+         (only on explicit pull-to-refresh or language change). -->
     <script>
-      // cache:'no-store' bypasses the browser HTTP cache so a stale response
-      // (e.g. a verse in the wrong language from a previous backend version)
-      // is never served here — the network is always consulted.
-      window.__VERSE_PREFETCH__ = fetch('/api/verses/daily?lang=en', { cache: 'no-store' })
-        .then(function(r) { return r.ok ? r.json() : null; })
-        .catch(function() { return null; });
+      window.__VERSE_PREFETCH__ = (function() {
+        // cache:'no-store' bypasses the browser HTTP cache so a stale response
+        // (e.g. a verse in the wrong language from a previous backend version)
+        // is never served here — the network is always consulted.
+        var headers = {};
+        try {
+          var token = localStorage.getItem('auth_token');
+          if (token) headers['Authorization'] = 'Bearer ' + token;
+        } catch(e) { /* localStorage unavailable in some private-browsing contexts */ }
+        return fetch('/api/verses/daily?lang=en', { cache: 'no-store', headers: headers })
+          .then(function(r) { return r.ok ? r.json() : null; })
+          .catch(function() { return null; });
+      })();
     </script>
   </body>
 </html>

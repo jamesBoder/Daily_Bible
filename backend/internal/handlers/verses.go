@@ -231,7 +231,10 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 				blessingsMultiplier = 1.5
 			}
 			// Blessings credit is gated on wasNew to prevent double-credit on page refresh.
-			if credited, err := h.blessingsService.Credit(userID.(uint), 5, "daily_view", blessingsMultiplier); err != nil {
+			// CreditWithDailyCap(1) is a secondary guard: even if wasNew somehow returns true
+			// twice in the same day (race condition with FirstOrCreate), the UTC daily cap
+			// ensures only one credit lands in the database.
+			if credited, err := h.blessingsService.CreditWithDailyCap(userID.(uint), 5, "daily_view", blessingsMultiplier, 1); err != nil {
 				log.Printf("Blessings credit failed: %v", err)
 				// Do NOT add blessing_credited: true to the response if the write failed.
 			} else {

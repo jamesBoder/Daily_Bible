@@ -62,19 +62,61 @@ func (s *BlessingsService) Credit(userID uint, baseAmount int, reason string, mu
 // CreditWithDailyCap credits blessings only if the user has earned this reason fewer than
 // maxPerDay times today (UTC day boundary). Re-login does not bypass this — the check
 // reads the DB, not the session.
+//
+// The count check, balance upsert, and transaction log write are all performed inside a
+// single database transaction. This closes the race window where two concurrent requests
+// (e.g. two tabs opening simultaneously) could both read a count of 0, both pass the cap
+// check, and both credit blessings before either log entry was committed.
 func (s *BlessingsService) CreditWithDailyCap(userID uint, baseAmount int, reason string, multiplier float64, maxPerDay int) (int, error) {
-    startOfDay := time.Now().UTC().Truncate(24 * time.Hour)
-
-    var count int64
-    s.db.Model(&models.BlessingsTransaction{}).
-        Where("user_id = ? AND reason = ? AND created_at >= ? AND amount > 0", userID, reason, startOfDay).
-        Count(&count)
-
-    if int(count) >= maxPerDay {
-        return 0, nil // daily cap reached
+    actual := int(math.Round(float64(baseAmount) * multiplier))
+    if actual <= 0 {
+        return 0, nil
     }
 
-    return s.Credit(userID, baseAmount, reason, multiplier)
+    startOfDay := time.Now().UTC().Truncate(24 * time.Hour)
+
+    var credited int
+    err := s.db.Transaction(func(tx *gorm.DB) error {
+        var count int64
+        if err := tx.Model(&models.BlessingsTransaction{}).
+            Where("user_id = ? AND reason = ? AND created_at >= ? AND amount > 0", userID, reason, startOfDay).
+            Count(&count).Error; err != nil {
+            return err
+        }
+        if int(count) >= maxPerDay {
+            return nil // daily cap reached
+        }
+
+        // Upsert balance — same logic as Credit.
+        if err := tx.Clauses(clause.OnConflict{
+            Columns: []clause.Column{{Name: "user_id"}},
+            DoUpdates: clause.Assignments(map[string]interface{}{
+                "balance":         gorm.Expr("user_blessings.balance + ?", actual),
+                "lifetime_earned": gorm.Expr("user_blessings.lifetime_earned + ?", actual),
+                "updated_at":      time.Now(),
+            }),
+        }).Create(&models.UserBlessings{
+            UserID:         userID,
+            Balance:        actual,
+            LifetimeEarned: actual,
+        }).Error; err != nil {
+            return err
+        }
+
+        // Write the transaction log inside the same transaction so the count check
+        // and log entry are atomic. If this write fails the balance upsert rolls back.
+        if err := tx.Create(&models.BlessingsTransaction{
+            UserID: userID,
+            Amount: actual,
+            Reason: reason,
+        }).Error; err != nil {
+            return err
+        }
+
+        credited = actual
+        return nil
+    })
+    return credited, err
 }
 
 // Debit is used for Rewards Shop purchases (Phase 6+). Not called in Phase 1.
