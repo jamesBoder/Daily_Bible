@@ -9,6 +9,10 @@ import (
 type VerseRepository interface {
     Create(verse *models.Verse) error
     Update(verse *models.Verse) error
+    // UpdateDailyDate sets only the daily_date column for the given verse ID.
+    // Use this instead of Update when you only want to claim a date — it avoids
+    // overwriting other fields and respects the unique index on daily_date.
+    UpdateDailyDate(id uint, date string) error
     GetByID(id uint) (*models.Verse, error)
     GetByReference(reference string) (*models.Verse, error)
     Search(query string) ([]models.Verse, error)
@@ -33,9 +37,16 @@ func (r *verseRepository) Create(verse *models.Verse) error {
     return r.db.Create(verse).Error
 }
 
-// Update verse
+// Update verse (full save — use UpdateDailyDate for targeted date assignment)
 func (r *verseRepository) Update(verse *models.Verse) error {
     return r.db.Save(verse).Error
+}
+
+// UpdateDailyDate sets only the daily_date column for a verse.
+// A targeted column update avoids race-condition overwrites of other fields
+// and is safe against the uniqueIndex constraint on daily_date.
+func (r *verseRepository) UpdateDailyDate(id uint, date string) error {
+    return r.db.Model(&models.Verse{}).Where("id = ?", id).Update("daily_date", date).Error
 }
 
 // Find by ID

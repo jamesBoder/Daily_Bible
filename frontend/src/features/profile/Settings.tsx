@@ -1,371 +1,192 @@
-import React, { useState, useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { Card } from "../../components/common/Card";
-import { Button } from "../../components/common/Button";
+import { Profile } from "./Profile";
 import { AccountManagement } from "./AccountManagement";
 import { GuestAccountManagement } from "./GuestAccountManagement";
-import { StatsCard } from "./StatsCard";
-import { ProfileEditForm } from "./ProfileEditForm";
-import { profileService } from "../../services/api/profile";
-import { UserProfile } from "../../types/profile";
-import { useTheme } from "../../contexts/ThemeContext";
+import { TranslationPicker } from "./TranslationPicker";
+import { GraceDaySettings } from "../settings/GraceDaySettings";
+import { NotificationSettings } from "../settings/NotificationSettings";
+import { LanguageSettings } from "../settings/LanguageSettings";
+import { AppearanceSettings } from "../settings/AppearanceSettings";
 import { useAuth } from "../../hooks/useAuth";
-import { useLanguage } from "../../contexts/LanguageContext";
-import { useTranslation } from "react-i18next";
+import { useTheme } from "../../contexts/ThemeContext";
+import { CommunitySection } from "../settings/CommunitySection";
+import { MannaSettings } from "../settings/MannaSettings";
+import { AboutContent } from "../about/About";
+import { TutorialsSection } from "../settings/TutorialsSection";
+import InstallAppSection from "../settings/InstallAppSection";
+
 import { settingsService } from "../../services/api/settings";
-import { showToast } from "../../utils/toast";
+import type { ThemeId } from "../../contexts/ThemeContext";
 
-interface SettingsState {
-  emailNotifications: boolean;
-  dailyVerseReminder: boolean;
-  language: string;
-}
+type Tab = 'settings' | 'about';
 
-type TabType = "profile" | "preferences" | "account";
+type SectionId = 'journey' | 'devotion' | 'appearance' | 'manna' | 'community' | 'install' | 'help' | 'account';
+
+const scrollToSection = (id: SectionId) => {
+  document.getElementById(`settings-section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 export const Settings: React.FC = () => {
   const { isGuest } = useAuth();
-  const { t, i18n } = useTranslation();
-  const { currentLanguage, changeLanguage, supportedLanguages } = useLanguage();
-  
-  // Pitfall 6/12: lazy initializer — guests skip "profile" tab (no API call)
-  const [activeTab, setActiveTab] = useState<TabType>(() =>
-    isGuest ? "preferences" : "profile"
-  );
-  const [profile, setProfile] = useState<UserProfile | null>(null);
-  // Guests never fetch profile data, so start as false; non-guests start as true (fetch runs on mount)
-  const [isLoadingProfile, setIsLoadingProfile] = useState<boolean>(!isGuest);
-  const [profileError, setProfileError] = useState<string | null>(null);
-  const [isEditingProfile, setIsEditingProfile] = useState(false);
-  const [settings, setSettings] = useState<SettingsState>({
-    emailNotifications: true,
-    dailyVerseReminder: true,
-    language: currentLanguage,
-  });
+  const { t } = useTranslation();
+  const { initTheme } = useTheme();
+  const [activeTab, setActiveTab] = useState<Tab>('settings');
+  const [notifEmail, setNotifEmail] = useState<boolean | undefined>(undefined);
+  const [notifReminder, setNotifReminder] = useState<boolean | undefined>(undefined);
+  const [pushReminderTime, setPushReminderTime] = useState<string | undefined>(undefined);
 
-  const [isSaving, setIsSaving] = useState(false);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
-  const { isDarkMode, toggleTheme } = useTheme();
-
-  // Fetch profile data — skip entirely for guests (Pitfall 3)
+  // Single settings load: syncs theme silently + passes notification values down
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        setIsLoadingProfile(true);
-        const data = await profileService.getProfile();
-        setProfile(data);
-      } catch (err: any) {
-        setProfileError(err.message || "Failed to load profile");
-      } finally {
-        setIsLoadingProfile(false);
-      }
-    };
-
-    if (activeTab === "profile" && !isGuest) {
-      fetchProfile();
-    }
-  }, [activeTab, isGuest]);
-  
-  // Load user settings when component mounts
-  useEffect(() => {
-    const loadSettings = async () => {
-      if (!isGuest) {
-        try {
-          const userSettings = await settingsService.getSettings();
-          setSettings({
-            emailNotifications: userSettings.email_notifications,
-            dailyVerseReminder: userSettings.daily_verse_reminder,
-            language: userSettings.preferred_language,
-          });
-        } catch (error) {
-          console.error("Failed to load settings:", error);
-        }
-      }
-    };
-    
-    loadSettings();
-  }, [isGuest]);
-
-  // Keep the language select in sync with the LanguageContext.
-  // currentLanguage is set asynchronously (from API or localStorage) after mount,
-  // so the initial useState value can be stale. This effect corrects it.
-  useEffect(() => {
-    setSettings(prev => ({
-      ...prev,
-      language: currentLanguage,
-    }));
-  }, [currentLanguage]);
-
-  const handleToggle = (key: keyof SettingsState) => {
-    setSettings((prev) => ({
-      ...prev,
-      [key]: !prev[key],
-    }));
-  };
-
-  const handleLanguageChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newLanguage = e.target.value;
-    setSettings((prev) => ({
-      ...prev,
-      language: newLanguage,
-    }));
-    
-    // Change the language immediately
-    await changeLanguage(newLanguage);
-  };
-
-  const handleProfileUpdate = (updatedProfile: UserProfile) => {
-    setProfile(updatedProfile);
-    setIsEditingProfile(false);
-  };
-
-  const handleSave = async () => {
-    setIsSaving(true);
-    try {
-      if (!isGuest) {
-        // Language is already saved immediately on change via changeLanguage()
-        await settingsService.updateSettings({
-          email_notifications: settings.emailNotifications,
-          daily_verse_reminder: settings.dailyVerseReminder,
-        });
-      }
-      setSuccessMessage(t('settings.saved'));
-      setTimeout(() => setSuccessMessage(null), 3000);
-    } catch (error) {
-      console.error("Failed to save settings:", error);
-      showToast.error(t('settings.saveFailed'));
-    } finally {
-      setIsSaving(false);
-    }
-  };
+    if (isGuest) return;
+    settingsService.getSettings().then(s => {
+      if (s.active_theme) initTheme(s.active_theme as ThemeId);
+      setNotifEmail(s.email_notifications);
+      setNotifReminder(s.daily_verse_reminder);
+      setPushReminderTime(s.push_reminder_time ?? '08:00');
+    }).catch(() => {});
+  }, [isGuest, initTheme]);
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
-      <h1 className="text-3xl font-display font-bold text-primary-600 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">{t('settings.title')}</h1>
-
-      {/* Tab Navigation */}
-      <div className="border-b border-gray-200 dark:border-gray-700 mb-6">
-        <nav className="-mb-px flex space-x-8">
-          {/* Profile tab hidden for guests — they have no real profile */}
-          {!isGuest && (
-            <button
-              onClick={() => setActiveTab("profile")}
-              className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-                activeTab === "profile"
-                  ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                  : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
-              }`}
-            >
-              {t('settings.tabs.profile')}
-            </button>
-          )}
+    <div className="max-w-4xl mx-auto px-4 py-8">
+      {/* Tab bar */}
+      <div className="flex gap-1 mb-6 border-b border-gray-200 dark:border-gray-700">
+        {(['settings', 'about'] as Tab[]).map(tab => (
           <button
-            onClick={() => setActiveTab("preferences")}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "preferences"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
-            }`}
+            key={tab}
+            onClick={() => setActiveTab(tab)}
+            className={[
+              'px-5 py-2.5 text-sm font-semibold rounded-t-lg transition-colors',
+              activeTab === tab
+                ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400 bg-white/30 dark:bg-white/5'
+                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200',
+            ].join(' ')}
           >
-            {t('settings.tabs.preferences')}
+            {tab === 'settings' ? t('settings.title', 'Settings') : t('nav.about', 'About')}
           </button>
-          <button
-            onClick={() => setActiveTab("account")}
-            className={`py-4 px-1 border-b-2 font-medium text-sm transition-colors ${
-              activeTab === "account"
-                ? "border-blue-500 text-blue-600 dark:text-blue-400"
-                : "border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:text-gray-300 dark:hover:text-gray-300 hover:border-gray-300 dark:border-gray-600 dark:hover:border-gray-600"
-            }`}
-          >
-            {t('settings.tabs.account')}
-          </button>
-        </nav>
+        ))}
       </div>
 
-      {successMessage && (
-        <div className="bg-green-100 dark:bg-green-900/20 border border-green-400 text-green-700 px-4 py-3 rounded">
-          {successMessage}
-        </div>
-      )}
-
-      {/* Tab Content */}
-      {activeTab === "profile" ? (
+      {activeTab === 'about' ? (
+        <AboutContent />
+      ) : (
         <>
-          {/* Profile Content */}
-          {isLoadingProfile ? (
-            <div className="flex justify-center items-center py-12">
-              <div className="text-gray-600">{t('common.loading')}</div>
-            </div>
-          ) : profileError ? (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
-              Error: {profileError}
-            </div>
-          ) : profile ? (
-            <div className="space-y-6">
-              {/* Profile Information Card */}
-              <Card>
-                <div className="flex justify-between items-center mb-4">
-                  <h2 className="text-2xl font-semibold text-gray-600 dark:text-gray-300">{t('profile.information')}</h2>
-                  <Button onClick={() => setIsEditingProfile(!isEditingProfile)} variant="secondary">
-                    {isEditingProfile ? t('common.cancel') : t('profile.editProfile')}
-                  </Button>
-                </div>
+          {/* Section quick-jump nav */}
+          <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
+            {(!isGuest) && (
+              <button onClick={() => scrollToSection('journey')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+                {t('settings.sections.myJourney', 'My Journey')}
+              </button>
+            )}
+            <button onClick={() => scrollToSection('devotion')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.sections.devotion', 'Devotion')}
+            </button>
+            <button onClick={() => scrollToSection('appearance')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.sections.appearance', 'Appearance')}
+            </button>
+            {!isGuest && (
+              <button onClick={() => scrollToSection('manna')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+                {t('settings.sections.manna', 'Manna')}
+              </button>
+            )}
+            {!isGuest && (
+              <button onClick={() => scrollToSection('community')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+                {t('nav.community', 'Community')}
+              </button>
+            )}
+            <button onClick={() => scrollToSection('install')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('pwa.settings.sectionTitle', 'Install App')}
+            </button>
+            <button onClick={() => scrollToSection('help')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.sections.help', 'Help')}
+            </button>
+            <button onClick={() => scrollToSection('account')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.tabs.account', 'Account')}
+            </button>
+          </div>
 
-                {isEditingProfile ? (
-                  <ProfileEditForm initialProfile={profile} onUpdate={handleProfileUpdate} />
-                ) : (
-                  <div className="space-y-4">
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                        {t('profile.username')}
-                      </label>
-                      <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
-                        {profile.username}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                        {t('profile.email')}
-                      </label>
-                      <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
-                        {profile.email}
-                      </p>
-                    </div>
-                    <div>
-                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 text-center">
-                        {t('profile.memberSince')}
-                      </label>
-                      <p className="mt-1 text-lg text-gray-900 dark:text-gray-100 text-center">
-                        {new Date(profile.created_at).toLocaleDateString(
-                          i18n.language,
-                          {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          },
-                        )}
-                      </p>
-                    </div>
-                  </div>
-                )}
+          <div className="space-y-6">
+            {/* My Journey — authenticated users only */}
+            {!isGuest && (
+              <Card id="settings-section-journey">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  {t('settings.sections.myJourney', 'My Journey')}
+                </h2>
+                <Profile />
+                <GraceDaySettings />
               </Card>
+            )}
 
-              {/* Statistics Card */}
-              <StatsCard />
-            </div>
-          ) : (
-            <div className="text-gray-600 text-center">{t('profile.noData')}</div>
-          )}
-        </>
-      ) : activeTab === "preferences" ? (
-        <>
-          {/* Preferences Content */}
-
-          {/* Appearance Settings */}
-          <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.appearance.title')}</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">{t('settings.appearance.darkMode')}</h3>
-                  <p className="text-sm text-gray-600">
-                    {t('settings.appearance.darkModeDescription')}
-                  </p>
-                </div>
-                <button
-                  onClick={() => toggleTheme()}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${isDarkMode ? "bg-blue-600" : "bg-gray-300"}`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${isDarkMode ? "translate-x-6" : "translate-x-1"}`}
-                  />
-                </button>
+            {/* Devotion & Notifications */}
+            <Card id="settings-section-devotion">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.devotion', 'Devotion & Notifications')}
+              </h2>
+              <NotificationSettings initialEmail={notifEmail} initialReminder={notifReminder} initialPushReminderTime={pushReminderTime} />
+              <div className="mt-2">
+                <LanguageSettings />
               </div>
-            </div>
-          </Card>
-
-          {/* Notification Settings */}
-          <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.notifications.title')}</h2>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">{t('settings.notifications.emailNotifications')}</h3>
-                  <p className="text-sm text-gray-600">
-                    {t('settings.notifications.emailDescription')}
-                  </p>
+              {!isGuest && (
+                <div className="mt-2">
+                  <TranslationPicker />
                 </div>
-                <button
-                  onClick={() => handleToggle("emailNotifications")}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    settings.emailNotifications ? "bg-blue-600" : "bg-gray-300"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.emailNotifications
-                        ? "translate-x-6"
-                        : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
+              )}
+            </Card>
 
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold">{t('settings.notifications.dailyReminder')}</h3>
-                  <p className="text-sm text-gray-600">
-                    {t('settings.notifications.reminderDescription')}
-                  </p>
-                </div>
-                <button
-                  onClick={() => handleToggle("dailyVerseReminder")}
-                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors ${
-                    settings.dailyVerseReminder ? "bg-blue-600" : "bg-gray-300"
-                  }`}
-                >
-                  <span
-                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                      settings.dailyVerseReminder
-                        ? "translate-x-6"
-                        : "translate-x-1"
-                    }`}
-                  />
-                </button>
-              </div>
-            </div>
-          </Card>
+            {/* Appearance */}
+            <Card id="settings-section-appearance">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.appearance', 'Appearance')}
+              </h2>
+              <AppearanceSettings />
+            </Card>
 
-          {/* Language Settings */}
-          <Card>
-            <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">{t('settings.language.title')}</h2>
-            <div>
-              <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
-                {t('settings.language.preferredLanguage')}
-              </label>
-              <select
-                value={settings.language}
-                onChange={handleLanguageChange}
-                className="block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
-              >
-                {supportedLanguages.map((lang) => (
-                  <option key={lang.code} value={lang.code}>
-                    {t(`settings.language.languages.${lang.code}`)}
-                  </option>
-                ))}
-              </select>
-            </div>
-          </Card>
+            {/* Manna — authenticated users only (Phase 10) */}
+            {!isGuest && (
+              <Card id="settings-section-manna">
+                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                  {t('settings.sections.manna', 'Manna Puzzle')}
+                </h2>
+                <MannaSettings />
+              </Card>
+            )}
 
-          {/* Save Button */}
-          <div className="flex justify-end">
-            <Button onClick={handleSave} disabled={isSaving}>
-              {isSaving ? t('settings.saving') : t('settings.save')}
-            </Button>
+            {/* Community — authenticated users only (Phase 9) */}
+            {!isGuest && (
+              <Card id="settings-section-community">
+                <CommunitySection />
+              </Card>
+            )}
+
+            {/* Install App */}
+            <Card id="settings-section-install">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('pwa.settings.sectionTitle', 'Install App')}
+              </h2>
+              <InstallAppSection />
+            </Card>
+
+            {/* Help & Tutorials */}
+            <Card id="settings-section-help">
+              <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.help', 'Help & Tutorials')}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                {t('settings.sections.helpDesc', 'Tap any feature to view its guide again.')}
+              </p>
+              <TutorialsSection />
+            </Card>
+
+            {/* Account */}
+            <Card id="settings-section-account">
+              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                {t('settings.tabs.account')}
+              </h2>
+              {isGuest ? <GuestAccountManagement /> : <AccountManagement />}
+            </Card>
           </div>
         </>
-      ) : (
-        /* Account Management Content — GuestAccountManagement for guests */
-        isGuest ? <GuestAccountManagement /> : <AccountManagement />
       )}
     </div>
   );

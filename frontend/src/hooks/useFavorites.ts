@@ -2,11 +2,14 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { favoriteService } from '../services/api/favorite';
 import { useAuth } from './useAuth';
+import { useStreak } from '../contexts/StreakContext';
+import { showBlessingsToast } from '../components/BlessingsToast';
 
 export const useFavorites = () => {
   const { isGuest } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
+  const { refreshStreak } = useStreak();
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['favorites', lang],
@@ -23,8 +26,14 @@ export const useFavorites = () => {
       if (isGuest) return Promise.resolve(null as any);
       return favoriteService.addFavorite(verseId);
     },
-    onSuccess: () => {
-      if (!isGuest) queryClient.invalidateQueries({ queryKey: ['favorites'] });
+    onSuccess: (data) => {
+      if (!isGuest) {
+        queryClient.invalidateQueries({ queryKey: ['favorites'] });
+        if (data?.blessings_credited && data.blessings_credited > 0) {
+          showBlessingsToast(data.blessings_credited, 'verse_favorited');
+          refreshStreak().catch(() => {});
+        }
+      }
     },
   });
 

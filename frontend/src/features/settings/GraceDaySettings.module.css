@@ -1,0 +1,119 @@
+/* Grace Day banner — prominent, warm-amber treatment */
+.banner {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.25rem 1rem;
+  border-radius: 12px;
+  border: 1.5px solid var(--candle-amber, #f59e0b);
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.10) 0%,
+    rgba(251, 191, 36, 0.06) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  gap: 0.875rem;
+}
+
+.dark .banner,
+:global(.dark) .banner {
+  background: linear-gradient(
+    135deg,
+    rgba(245, 158, 11, 0.14) 0%,
+    rgba(251, 191, 36, 0.08) 100%
+  );
+}
+
+.bannerHeader {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+}
+
+.bannerIcon {
+  color: var(--candle-amber, #f59e0b);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.bannerTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  margin: 0 0 0.2rem;
+  color: var(--candle-amber, #f59e0b);
+}
+
+.bannerDesc {
+  font-size: 0.875rem;
+  margin: 0;
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
+/* Pip row — visual indicator of remaining grace days */
+.pipsRow {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.pip {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.pipActive {
+  background: var(--candle-amber, #f59e0b);
+  box-shadow: 0 0 6px rgba(245, 158, 11, 0.55);
+}
+
+.pipUsed {
+  background: transparent;
+  border: 2px solid rgba(245, 158, 11, 0.35);
+}
+
+.pipsLabel {
+  font-size: 0.82rem;
+  opacity: 0.7;
+  margin-left: 0.25rem;
+}
+
+.exhausted {
+  font-size: 0.875rem;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.graceButton {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.55rem 1.1rem;
+  border-radius: 8px;
+  border: 1.5px solid var(--candle-amber, #f59e0b);
+  background: transparent;
+  color: var(--candle-amber, #f59e0b);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease, color 0.15s ease, transform 0.1s ease;
+}
+
+.graceButton:hover {
+  background: var(--candle-amber, #f59e0b);
+  color: #1a1208;
+  transform: translateY(-1px);
+}
+
+.graceButton.confirming {
+  background: var(--candle-amber, #f59e0b);
+  color: #1a1208;
+}
+
+.graceButton:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+  transform: none;
+}

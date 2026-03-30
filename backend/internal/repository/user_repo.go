@@ -26,6 +26,12 @@ type UserRepository interface {
     GetByVerificationToken(token string) (*models.User, error)
     ClearVerificationToken(userID uint) error
 
+    // Pending email change
+    SetPendingEmail(userID uint, pendingEmail, token string, expiresAt time.Time) error
+    GetByPendingEmailToken(token string) (*models.User, error)
+    ApplyPendingEmail(userID uint) error
+    CancelPendingEmail(userID uint) error
+
     // Password reset
     UpdateResetToken(userID uint, token string, expiresAt time.Time) error
     GetByResetToken(token string) (*models.User, error)
@@ -157,6 +163,47 @@ func (r *userRepository) ClearVerificationToken(userID uint) error {
         "verification_token":            nil,
         "verification_token_expires_at": nil,
         "email_verified":                true,
+    }).Error
+}
+
+// SetPendingEmail stores a pending email change with a verification token.
+// The user's current email is unchanged until ApplyPendingEmail is called.
+func (r *userRepository) SetPendingEmail(userID uint, pendingEmail, token string, expiresAt time.Time) error {
+    return r.db.Model(&models.User{}).Where("id = ?", userID).UpdateColumns(map[string]interface{}{
+        "pending_email":                pendingEmail,
+        "pending_email_token":          token,
+        "pending_email_token_expires_at": expiresAt,
+    }).Error
+}
+
+// GetByPendingEmailToken retrieves a user by their pending-email verification token.
+func (r *userRepository) GetByPendingEmailToken(token string) (*models.User, error) {
+    var user models.User
+    err := r.db.Where("pending_email_token = ?", token).First(&user).Error
+    if errors.Is(err, gorm.ErrRecordNotFound) {
+        return nil, nil
+    }
+    if err != nil {
+        return nil, err
+    }
+    return &user, nil
+}
+
+// ApplyPendingEmail promotes pending_email to the live email field and marks the address verified.
+func (r *userRepository) ApplyPendingEmail(userID uint) error {
+    return r.db.Exec(
+        `UPDATE users SET email = pending_email, email_verified = true,
+         pending_email = NULL, pending_email_token = NULL, pending_email_token_expires_at = NULL
+         WHERE id = ?`, userID,
+    ).Error
+}
+
+// CancelPendingEmail clears a pending email change without applying it.
+func (r *userRepository) CancelPendingEmail(userID uint) error {
+    return r.db.Model(&models.User{}).Where("id = ?", userID).UpdateColumns(map[string]interface{}{
+        "pending_email":                  nil,
+        "pending_email_token":            nil,
+        "pending_email_token_expires_at": nil,
     }).Error
 }
 

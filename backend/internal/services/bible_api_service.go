@@ -74,8 +74,11 @@ func referenceToPassageID(reference string) (string, error) {
 type BibleAPIService interface {
 	GetVerse(reference string) (*BibleAPIVerse, error)
 	GetVerseWithLanguage(reference string, languageCode string) (*BibleAPIVerse, error)
-    SearchVerses(query string, limit int) ([]BibleAPIVerse, error)
-    SearchVersesWithLanguage(query string, limit int, languageCode string) ([]BibleAPIVerse, error)
+	// GetVerseWithVersionID fetches a verse using a specific API.Bible version ID directly.
+	// Use this when the caller has already resolved the version (Phase 4+).
+	GetVerseWithVersionID(reference string, versionID string) (*BibleAPIVerse, error)
+	SearchVerses(query string, limit int) ([]BibleAPIVerse, error)
+	SearchVersesWithLanguage(query string, limit int, languageCode string) ([]BibleAPIVerse, error)
 }
 
 type translationCacheEntry struct {
@@ -194,20 +197,34 @@ type BibleAPISearchResponse struct {
 }
 
 
-// GetVerse fetches a verse by reference using the default version
+// GetVerse fetches a verse by reference using the default KJV version.
 func (s *bibleApiService) GetVerse(reference string) (*BibleAPIVerse, error) {
 	return s.GetVerseWithLanguage(reference, "en")
 }
 
-// GetVerseWithLanguage fetches a verse by reference in a specific language
-// Uses the passages endpoint: GET /v1/bibles/{bibleId}/passages/{passageId}?content-type=text
+// GetVerseWithLanguage fetches a verse using the default free translation for the
+// given language code. Useful for the app-language translation overlay.
 func (s *bibleApiService) GetVerseWithLanguage(reference string, languageCode string) (*BibleAPIVerse, error) {
+	versionKey := config.GetDefaultFreeVersion(languageCode)
+	version, ok := config.BibleVersions[versionKey]
+	if !ok {
+		version = config.BibleVersions["kjv"]
+	}
+	return s.GetVerseWithVersionID(reference, version.ID)
+}
+
+// GetVerseWithVersionID fetches a verse using a specific API.Bible version ID.
+// This is the primary method used by Phase 4 verse handlers after version resolution.
+func (s *bibleApiService) GetVerseWithVersionID(reference string, versionID string) (*BibleAPIVerse, error) {
 	if reference == "" {
 		return nil, fmt.Errorf("reference cannot be empty")
 	}
+	if versionID == "" {
+		return nil, fmt.Errorf("versionID cannot be empty — check that the translation license has been applied")
+	}
 
-	// Check in-memory translation cache (keyed by "reference:lang")
-	cacheKey := reference + ":" + languageCode
+	// Cache keyed by "reference:versionID" to support multiple translations
+	cacheKey := reference + ":" + versionID
 	s.translationCacheMu.RLock()
 	if entry, ok := s.translationCache[cacheKey]; ok {
 		s.translationCacheMu.RUnlock()
@@ -215,16 +232,11 @@ func (s *bibleApiService) GetVerseWithLanguage(reference string, languageCode st
 	}
 	s.translationCacheMu.RUnlock()
 
-	// Convert English reference (e.g. "John 3:16") to passage ID (e.g. "JHN.3.16")
 	passageID, err := referenceToPassageID(reference)
 	if err != nil {
 		return nil, fmt.Errorf("failed to convert reference: %w", err)
 	}
 
-	// Get the appropriate Bible version ID for the language
-	versionID := config.GetBibleVersionID(languageCode)
-
-	// Use the passages endpoint with plain-text content type
 	url := fmt.Sprintf(
 		"%s/bibles/%s/passages/%s?content-type=text&include-notes=false&include-titles=false&include-chapter-numbers=false&include-verse-numbers=false",
 		s.baseURL, versionID, passageID,
@@ -234,7 +246,6 @@ func (s *bibleApiService) GetVerseWithLanguage(reference string, languageCode st
 	if err != nil {
 		return nil, err
 	}
-
 	req.Header.Set("api-key", s.apiKey)
 	req.Header.Set("Accept", "application/json")
 
@@ -258,26 +269,22 @@ func (s *bibleApiService) GetVerseWithLanguage(reference string, languageCode st
 	if err := json.NewDecoder(resp.Body).Decode(&apiResp); err != nil {
 		return nil, err
 	}
-
 	if apiResp.Data.Content == "" {
 		return nil, fmt.Errorf("no content found for passage: %s", passageID)
 	}
 
 	verseText := stripHTML(apiResp.Data.Content)
 
-	// Store in cache so subsequent requests for this reference+language skip the API call
 	s.translationCacheMu.Lock()
 	s.translationCache[cacheKey] = translationCacheEntry{text: verseText, cachedAt: time.Now()}
 	s.translationCacheMu.Unlock()
 
-	verse := &BibleAPIVerse{
+	return &BibleAPIVerse{
 		ID:        apiResp.Data.ID,
 		Reference: apiResp.Data.Reference,
 		Content:   apiResp.Data.Content,
 		Text:      verseText,
-	}
-
-	return verse, nil
+	}, nil
 }
 
 
@@ -288,8 +295,12 @@ func (s *bibleApiService) SearchVerses(query string, limit int) ([]BibleAPIVerse
 
 // SearchVersesWithLanguage searches for verses in a specific language
 func (s *bibleApiService) SearchVersesWithLanguage(query string, limit int, languageCode string) ([]BibleAPIVerse, error) {
-	// Get the appropriate Bible version ID for the language
-	versionID := config.GetBibleVersionID(languageCode)
+	versionKey := config.GetDefaultFreeVersion(languageCode)
+	version, ok := config.BibleVersions[versionKey]
+	if !ok {
+		version = config.BibleVersions["kjv"]
+	}
+	versionID := version.ID
 	
 	url := fmt.Sprintf("%s/bibles/%s/search?query=%s&limit=%d", s.baseURL, versionID, query, limit)
 	if query == "" {

@@ -1,20 +1,24 @@
 import { useQuery } from '@tanstack/react-query';
 import { verseService } from '../services/api/verse';
+import { msUntilDailyReset } from '../lib/queryClient';
 
-export const useVerse = (language: string = 'en') => {
-  // Include today's date and language in the query key so cache invalidates daily and per language
-  // This ensures when the verse updates or language changes, React Query fetches the new one
+export const useVerse = (language: string = 'en', version?: string) => {
+  // Include today's date, language, and version in the query key.
+  // When language or version changes, React Query fetches the new one.
   const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
-  
+
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['dailyVerse', today, language],
-    queryFn: () => verseService.getDailyVerse(language),
-    staleTime: 60 * 60 * 1000, // 1 hour - verse won't change within a day
-    gcTime: 24 * 60 * 60 * 1000, // 24 hours - keep yesterday's verse in cache
+    queryKey: ['dailyVerse', today, language, version ?? ''],
+    queryFn: () => verseService.getDailyVerse(language, version),
+    staleTime: msUntilDailyReset, // fresh until the verse actually changes
+    gcTime: 24 * 60 * 60 * 1000, // keep in memory for 24 hours
   });
 
   return {
-    verse: data ?? null,
+    verse: data?.verse ?? null,
+    // blessings_credited > 0 only on the first fetch of the day (wasNew on backend).
+    // Callers must guard against showing the toast more than once per session.
+    blessingsCredited: data?.blessings_credited ?? 0,
     isLoading,
     error: error?.message ?? null,
     refetch,

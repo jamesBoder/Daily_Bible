@@ -3,15 +3,24 @@
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    /* Mobile: lock html/body to viewport height so the body never scrolls.
+       Body scroll causes iOS Safari's address bar to hide/show, which changes
+       the viewport height and makes position:fixed elements (BottomNav) bounce.
+       Scrolling is handed off to <main> instead (internal scroll container). */
+    height: 100%;
+  }
+
   body {
     @apply text-gray-900;
     font-size: 16px;
-    /* Subtle gradient background for better contrast with white verse card */
+    /* Deeper gradient background for stronger contrast with white verse card */
     background: linear-gradient(
       to bottom,
-      #f8fafc 0%,
-      #e2e8f0 50%,
-      #cbd5e1 100%
+      #d1dce8 0%,
+      #b8c8d8 50%,
+      #9fb4c8 100%
     );
     min-height: 100vh;
     background-attachment: fixed;
@@ -19,9 +28,35 @@
 
     /* Safe area insets for devices with notches */
     padding-top: env(safe-area-inset-top);
-    padding-bottom: env(safe-area-inset-bottom);
+    /* Bottom padding handled by BottomNav on mobile — not on body */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+
+    /* Mobile: prevent body from scrolling so iOS chrome stays put */
+    @media (max-width: 767px) {
+      height: 100%;
+      overflow: hidden;
+    }
+  }
+
+  /* iOS auto-zoom prevention: Safari zooms the page when an input
+     has font-size < 16px. Enforce the minimum only on touch screens
+     so desktop small-text inputs are unaffected. */
+  @media (max-width: 767px) {
+    input,
+    textarea,
+    select {
+      font-size: max(1rem, 16px) !important;
+    }
+  }
+
+  /* Minimum tap target: 44×44px (Apple HIG / WCAG 2.5.8).
+     Use .tap-target on any visually small button to expand the hit area
+     with padding without changing the element's visual size.
+     Example: <button className="tap-target"><SomeIcon /></button> */
+  .tap-target {
+    position: relative;
+    padding: 0.75rem; /* 12px — expands most 20-24px icons to 44-48px hit area */
   }
 
   /* Dark mode gradient */
@@ -32,10 +67,16 @@
       #0f172a 50%,
       #1e293b 100%
     );
+    background-attachment: fixed;
+    color: var(--foreground);
   }
 
   #root {
     min-height: 100vh;
+    /* Mobile: fill viewport so the layout wrapper can use height: 100% */
+    @media (max-width: 767px) {
+      height: 100%;
+    }
   }
 
   /* Color contrast fixes for WCAG AA compliance */
@@ -68,6 +109,176 @@
 }
 
 @layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Phase 1 Color Tokens */
+  :root {
+    --blessing-gold: #fbbf24;
+    --candle-amber: #f59e0b;
+    --grace-lavender: #9b8fc4;
+    --grace-lavender-bg: rgba(155, 143, 196, 0.12);
+    --milestone-glow: #fde047;
+    --challenge-accent: #3a9b8c;
+    --parchment: #faf8f3;
+
+    /* Phase 3 — Journal tokens (light mode) */
+    --journal-surface:        #fffcf4;
+    --journal-surface-alt:    #fdf4e2;
+    --journal-line:           rgba(190, 150, 80, 0.18);
+    --journal-margin:         rgba(190, 150, 80, 0.25);
+    --journal-text:           #2D1F0A;
+    --journal-text-muted:     #7A6040;
+    --journal-border:         rgba(190, 150, 80, 0.30);
+    --journal-accent-light:   rgba(245, 158, 11, 0.10);
+    --journal-accent-border:  rgba(245, 158, 11, 0.35);
+    --journal-caret:          var(--candle-amber);
+
+    /* Phase 6 — base theme surface tokens (Parchment) */
+    --foreground: #1a1208;
+    --theme-surface: #f0ece0;
+    --theme-border: rgba(245, 158, 11, 0.38);
+    --theme-accent: #b45309;
+
+    /* Header background — parchment-tinted frosted glass */
+    --header-bg: rgba(250, 248, 243, 0.88);
+  }
+
+  /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
+
+  /* Sanctuary — forest green chapel */
+  [data-theme="sanctuary"] {
+    --parchment: #1a2620;
+    --foreground: #e8e0d0;
+    --candle-amber: #c8a84b;
+    --blessing-gold: #d4af37;
+    --grace-lavender: #8fa68a;
+    --challenge-accent: #5ec6b8;
+    --milestone-glow: #a8c97f;
+    --theme-surface: #1f2e28;
+    --theme-border: rgba(200, 168, 75, 0.20);
+    --theme-accent: #4a7c59;
+    --header-bg: rgba(26, 38, 32, 0.88);
+    /* Journal / Manna tiles must match the dark green background */
+    --journal-surface:     #1c2c24;
+    --journal-surface-alt: #1a2a22;
+    --journal-line:        rgba(200, 168, 75, 0.14);
+    --journal-border:      rgba(200, 168, 75, 0.22);
+    --journal-text:        #d8d0bc;
+    --journal-text-muted:  #8a9e88;
+  }
+
+  /* Desert Sand — warm solitude */
+  [data-theme="desert-sand"] {
+    --parchment: #f5ede0;
+    --foreground: #3d2b1a;
+    --candle-amber: #c97c2b;
+    --blessing-gold: #d4882a;
+    --grace-lavender: #9b8a7a;
+    --milestone-glow: #e8c070;
+    --theme-surface: #ede0d0;
+    --theme-border: rgba(201, 124, 43, 0.38);
+    --theme-accent: #8b4513;
+    --header-bg: rgba(245, 237, 224, 0.88);
+    /* Journal / Manna tiles — slightly warmer than root default */
+    --journal-surface:     #f7efe3;
+    --journal-surface-alt: #f2e8d6;
+    --journal-line:        rgba(201, 124, 43, 0.16);
+    --journal-border:      rgba(201, 124, 43, 0.28);
+    --journal-text:        #2e1e0e;
+    --journal-text-muted:  #7a5a3a;
+  }
+
+  /* Celestial — indigo night sky */
+  [data-theme="celestial"] {
+    --parchment: #0e1330;
+    --foreground: #e8eaf8;
+    --candle-amber: #8899dd;
+    --blessing-gold: #c0c8f0;
+    --grace-lavender: #7788cc;
+    --milestone-glow: #aabbee;
+    --challenge-accent: #5ec6b8;
+    --theme-surface: #121840;
+    --theme-border: rgba(136, 153, 221, 0.20);
+    --theme-accent: #4455aa;
+    --header-bg: rgba(14, 19, 48, 0.88);
+    /* Journal / Manna tiles must match the dark indigo background */
+    --journal-surface:     #101538;
+    --journal-surface-alt: #0d1232;
+    --journal-line:        rgba(136, 153, 221, 0.14);
+    --journal-border:      rgba(136, 153, 221, 0.22);
+    --journal-text:        #d8daf4;
+    --journal-text-muted:  #6677aa;
+  }
+
+  /* Scarlet Grace — illuminated manuscript */
+  [data-theme="scarlet-grace"] {
+    --parchment: #1a0505;
+    --foreground: #f5e8d8;
+    --candle-amber: #c8862a;
+    --blessing-gold: #d4af37;
+    --grace-lavender: #c08080;
+    --milestone-glow: #e8c060;
+    --challenge-accent: #5ec6b8;
+    --theme-surface: #220808;
+    --theme-border: rgba(200, 134, 42, 0.22);
+    --theme-accent: #8b0000;
+    --header-bg: rgba(26, 5, 5, 0.88);
+    /* Journal / Manna tiles must match the dark crimson background */
+    --journal-surface:     #1e0606;
+    --journal-surface-alt: #1b0505;
+    --journal-line:        rgba(200, 134, 42, 0.14);
+    --journal-border:      rgba(200, 134, 42, 0.22);
+    --journal-text:        #eedcc8;
+    --journal-text-muted:  #9a6a4a;
+  }
+
+  /* Theme transition — smooth crossfade for all CSS variable consumers */
+  :root {
+    transition:
+      background-color 0.4s ease,
+      color 0.4s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :root {
+      transition: none;
+    }
+  }
+
+  /* Midnight (dark mode) overrides — [data-theme="dark"] kept for any legacy consumers */
+  [data-theme="midnight"], [data-theme="dark"], .dark {
+    --parchment: #2C2519;
+    --foreground: #e8d5b0;
+    /* Amber is lightened for dark-mode readability — #f59e0b is marginal contrast
+       on dark surfaces; #f5b942 adds ~0.5 contrast ratio for body/label text */
+    --candle-amber: #f5b942;
+    --blessing-gold: #fcd34d;
+    --grace-lavender-bg: rgba(155, 143, 196, 0.18);
+
+    /* Phase 6 — Midnight theme surface tokens */
+    --theme-surface: #3a3020;
+    --theme-border: rgba(251, 191, 36, 0.20);
+    --theme-accent: #fbbf24;
+    --header-bg: rgba(44, 37, 25, 0.88);
+
+    /* Phase 3 — Journal tokens (dark mode: warm candlelight, noticeably brighter) */
+    --journal-surface:        #3E2E18;
+    --journal-surface-alt:    #352616;
+    --journal-line:           rgba(245, 200, 100, 0.18);
+    --journal-margin:         rgba(245, 158, 11, 0.28);
+    --journal-text:           #FFF3DC;
+    --journal-text-muted:     #C9A870;
+    --journal-border:         rgba(245, 158, 11, 0.32);
+    --journal-accent-light:   rgba(245, 158, 11, 0.14);
+    --journal-accent-border:  rgba(245, 158, 11, 0.45);
+  }
+
   @keyframes fade-in {
     from {
       opacity: 0;
@@ -83,6 +294,141 @@
     animation: fade-in 0.5s ease-out forwards;
   }
 
+  /* Opacity-only fade — used when content replaces a skeleton (no Y shift to avoid
+     compounding with the parent <main> slide-up) */
+  @keyframes content-fade-in {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  .animate-content-fade-in {
+    animation: content-fade-in 0.25s ease-out forwards;
+  }
+
+  /* Fast fade for tab/page transitions — snappy without being instant */
+  @keyframes page-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .animate-page-enter {
+    animation: page-enter 0.18s ease-out forwards;
+  }
+
+  /* Candle flicker animation */
+  @keyframes flicker {
+    0%, 100% {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+    25% {
+      opacity: 0.9;
+      transform: scale(0.98) translateY(-0.5px);
+    }
+    50% {
+      opacity: 0.95;
+      transform: scale(1.02) translateY(-1px);
+    }
+    75% {
+      opacity: 0.85;
+      transform: scale(0.97) translateY(-0.5px);
+    }
+  }
+
+  /* Slide in animation for toasts */
+  @keyframes slideInRight {
+    from {
+      transform: translateX(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateX(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+  }
+
+  @keyframes slideOutRight {
+    from {
+      transform: translateX(0);
+      opacity: 1;
+    }
+    to {
+      transform: translateX(110%);
+      opacity: 0;
+    }
+  }
+
+  .animate-slide-out-right {
+    animation: slideOutRight 0.25s ease-in forwards;
+  }
+
+  /* Slide down animation for Grace Day banner */
+  @keyframes slideDown {
+    from {
+      transform: translateY(-100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-down {
+    animation: slideDown 0.3s ease-out;
+  }
+
+  /* Slide up animation for onboarding card */
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.4s ease-out;
+  }
+
+  /* Slide from top animation for modal popup */
+  @keyframes slideFromTop {
+    from {
+      transform: translateY(-60px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  .animate-slide-from-top {
+    animation: slideFromTop 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  /* Flashing text animation for streak reset message */
+  @keyframes flashText {
+    0%, 100% { opacity: 1; }
+    45%       { opacity: 1; }
+    50%       { opacity: 0.25; }
+    55%       { opacity: 1; }
+    75%       { opacity: 1; }
+    80%       { opacity: 0.25; }
+    85%       { opacity: 1; }
+  }
+
+  .animate-flash-text {
+    animation: flashText 2s ease-in-out 3;
+  }
+
   @keyframes float {
     0%, 100% { transform: translateY(0px); }
     50%       { transform: translateY(-10px); }
@@ -92,11 +438,127 @@
     animation: float 3s ease-in-out infinite;
   }
 
+  /* ── Phase 2: Calendar cell animations ─────────────────────────────── */
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes fadeInScale {
+    from { opacity: 0; transform: scale(0.7); }
+    to   { opacity: 1; transform: scale(1);   }
+  }
+
+  /* ── Phase 2: Milestone ember particle drift ────────────────────────── */
+
+  @keyframes particleDrift {
+    0%   { opacity: 0.9; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0;   transform: translate(var(--particle-x), var(--particle-y)) scale(0.4); }
+  }
+
+  /* ── Phase 2: AvatarRing full-year rotating ring ────────────────────── */
+
+  @keyframes ringRotate {
+    from { transform: rotate(0deg);   }
+    to   { transform: rotate(360deg); }
+  }
+
+  .avatar-ring--full-year circle:last-child {
+    transform-origin: 50% 50%;
+    animation: ringRotate 12s linear infinite;
+  }
+
+  /* ── Phase 2: Skeleton shimmer ──────────────────────────────────────── */
+
+  @keyframes shimmer {
+    0%   { background-position: -200% center; }
+    100% { background-position:  200% center; }
+  }
+
+  .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(0, 0, 0, 0.06) 25%,
+      rgba(0, 0, 0, 0.12) 50%,
+      rgba(0, 0, 0, 0.06) 75%
+    );
+    background-size: 200% 100%;
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  .dark .skeleton-shimmer {
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.04) 25%,
+      rgba(255, 255, 255, 0.09) 50%,
+      rgba(255, 255, 255, 0.04) 75%
+    );
+    background-size: 200% 100%;
+  }
+
+  /* Phase 3 — Journal animations */
+  @keyframes entrySlideIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes pageOpen {
+    from { opacity: 0; transform: translateX(16px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  @keyframes savedFade {
+    0%   { opacity: 0; transform: translateY(-4px); }
+    15%  { opacity: 1; transform: translateY(0); }
+    75%  { opacity: 1; }
+    100% { opacity: 0; }
+  }
+
+  @keyframes quillWrite {
+    0%, 100% { transform: rotate(-8deg) translateY(0px); }
+    50%       { transform: rotate(4deg) translateY(-3px); }
+  }
+
+  @keyframes lockedPulse {
+    0%, 100% { opacity: 0.18; }
+    50%       { opacity: 0.28; }
+  }
+
+  @keyframes blessingsFlash {
+    0%   { box-shadow: 0 0 0 0 rgba(251,191,36,0.0); transform: scale(1); }
+    25%  { box-shadow: 0 0 0 6px rgba(251,191,36,0.45); transform: scale(1.12); }
+    60%  { box-shadow: 0 0 0 10px rgba(251,191,36,0.0); transform: scale(1.05); }
+    100% { box-shadow: 0 0 0 0 rgba(251,191,36,0.0); transform: scale(1); }
+  }
+
+  .animate-blessings-flash {
+    animation: blessingsFlash 0.7s ease-out forwards;
+  }
+
+  @keyframes heartbeat {
+    0%   { transform: scale(1); }
+    20%  { transform: scale(1.35); }
+    40%  { transform: scale(1.1); }
+    60%  { transform: scale(1.25); }
+    80%  { transform: scale(1.05); }
+    100% { transform: scale(1); }
+  }
+
+  .animate-heartbeat {
+    animation: heartbeat 0.55s ease-in-out forwards;
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .animate-fade-in {
+    .animate-fade-in,
+    .animate-content-fade-in {
       animation: none;
       opacity: 1;
       transform: none;
+    }
+
+    .avatar-ring--full-year circle:last-child {
+      animation: none;
     }
 
     *,
@@ -110,28 +572,117 @@
 }
 
 @layer components {
+  /* Base button — shared across btn-primary / btn-ghost / btn-sm */
+  .btn {
+    @apply inline-flex items-center justify-center gap-1.5
+           px-4 py-2 rounded-xl font-medium
+           transition-all duration-150
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-amber-400/60
+           disabled:opacity-50 disabled:cursor-not-allowed
+           select-none;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn:not(:disabled):active {
+    transform: scale(0.96);
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-sm rounded-lg;
+  }
+
+  .btn-ghost {
+    @apply bg-transparent text-current;
+    border: 1.5px solid var(--theme-border, rgba(180, 130, 40, 0.28));
+  }
+
+  .btn-ghost:not(:disabled):hover {
+    background: rgba(245, 158, 11, 0.08);
+  }
+
   .btn-primary {
-    @apply bg-primary-600 text-white px-4 py-2 rounded-lg 
+    @apply bg-primary-600 text-white px-4 py-2 rounded-xl
            hover:bg-primary-700 transition-colors
            dark:bg-primary-500 dark:hover:bg-primary-600;
   }
 
+  .btn-primary:not(:disabled):active {
+    transform: scale(0.96);
+  }
+
   .btn-secondary {
-    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg 
+    @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-xl
            hover:bg-gray-300 transition-colors
            dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
   }
 
+  .btn-secondary:not(:disabled):active {
+    transform: scale(0.96);
+  }
+
   .input-field {
-    @apply w-full px-4 py-2 border border-gray-300 rounded-lg 
+    @apply w-full px-4 py-2 border border-gray-300 rounded-xl
            focus:ring-2 focus:ring-primary-500 focus:border-transparent
            dark:bg-gray-800 dark:border-gray-600 dark:text-gray-100
            dark:focus:ring-primary-400;
+    font-size: 1rem; /* Explicit 16px — prevents iOS Safari auto-zoom on focus */
   }
 
   .card {
-    @apply bg-white rounded-lg shadow-lg p-6
-           dark:bg-gray-800 dark:shadow-xl;
+    @apply rounded-2xl p-6;
+    position: relative;
+    scroll-margin-top: 5rem;
+    /* Theme-aware surface — warm cream (parchment), warm brown (midnight), etc. */
+    background-color: var(--theme-surface);
+    /* Amber-tinted border visible in light mode, on-brand with the premium card */
+    border: 1.5px solid rgba(180, 130, 40, 0.30);
+    transition: box-shadow 0.25s ease, transform 0.2s ease;
+    box-shadow:
+      /* [1] Inset top-edge highlight — subtle embossed paper ridge */
+      inset 0 1px 0 rgba(255, 255, 255, 0.55),
+      /* [2] Ambient accent glow — warm golden halo */
+      0 0 60px -20px rgba(245, 158, 11, 0.18),
+      /* Structural depth shadows */
+      0 2px 4px -1px rgba(0, 0, 0, 0.08),
+      0 8px 24px -4px rgba(0, 0, 0, 0.12),
+      0 16px 48px -8px rgba(0, 0, 0, 0.07);
+  }
+
+  /* [4] Left accent bar — illuminated manuscript margin line */
+  .card::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 1rem;
+    bottom: 1rem;
+    width: 3px;
+    border-radius: 0 3px 3px 0;
+    background: linear-gradient(
+      to bottom,
+      var(--candle-amber) 0%,
+      rgba(245, 158, 11, 0.35) 50%,
+      transparent 100%
+    );
+    pointer-events: none;
+  }
+
+  /* Card hover lift — subtle elevation increase on hover/focus-within */
+  .card:hover {
+    transform: translateY(-2px);
+  }
+
+  .dark .card {
+    border-color: rgba(245, 158, 11, 0.18);
+    box-shadow:
+      /* [1] Inset top-edge highlight — softer on dark surfaces */
+      inset 0 1px 0 rgba(255, 255, 255, 0.10),
+      /* [2] Ambient accent glow — stronger on dark to feel candlelit */
+      0 0 60px -16px rgba(245, 158, 11, 0.28),
+      /* Structural depth shadows */
+      0 4px 6px -1px rgba(0, 0, 0, 0.4),
+      0 10px 30px -5px rgba(0, 0, 0, 0.5),
+      0 20px 60px -10px rgba(0, 0, 0, 0.4);
   }
 
   /* Selected card glow — matches the title/header glow aesthetic */
@@ -185,6 +736,70 @@
     transform: scale(0.95);
   }
 
+  /* ── Phase 2: Milestone badges ─────────────────────────────────────── */
+
+  .milestone-badge {
+    @apply w-16 h-16 rounded-full flex items-center justify-center text-2xl flex-shrink-0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .milestone-badge--earned {
+    background: radial-gradient(circle at 35% 35%, #fde68a, #f59e0b);
+    box-shadow:
+      0 2px 8px rgba(245, 158, 11, 0.45),
+      0 0 0 2px rgba(253, 230, 138, 0.6),
+      0 0 14px 2px rgba(245, 158, 11, 0.25);
+    filter: brightness(1.05);
+  }
+
+  .milestone-badge--earned:hover {
+    transform: scale(1.12) rotate(-2deg);
+    box-shadow:
+      0 6px 20px rgba(245, 158, 11, 0.65),
+      0 0 0 3px rgba(253, 230, 138, 0.8),
+      0 0 24px 4px rgba(245, 158, 11, 0.4);
+    filter: brightness(1.12);
+  }
+
+  .milestone-badge--locked {
+    background: rgba(0, 0, 0, 0.07);
+    filter: grayscale(1);
+    opacity: 0.55;
+  }
+
+  .milestone-badge--locked:hover {
+    transform: scale(1.06);
+    opacity: 0.75;
+  }
+
+  .dark .milestone-badge--locked {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .milestone-badge--premium-earned {
+    background: radial-gradient(circle at 35% 35%, #e9d5ff, #a855f7);
+    box-shadow:
+      0 2px 8px rgba(168, 85, 247, 0.45),
+      0 0 0 2px rgba(233, 213, 255, 0.6),
+      0 0 14px 2px rgba(168, 85, 247, 0.25);
+    filter: brightness(1.05);
+  }
+
+  /* ── Phase 2: Milestone wall mobile scroll ──────────────────────────── */
+
+  .milestone-wall--mobile {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
+  }
+
+  .milestone-wall--mobile::-webkit-scrollbar {
+    display: none;
+  }
+
   /* Logo/Brand Text Styling */
   .font-display {
     letter-spacing: 0.02em;
@@ -194,5 +809,889 @@
 
   .dark .font-display {
     text-shadow: 0 2px 8px rgba(2, 132, 199, 0.25);
+  }
+
+  /* ── Phase 8: Settings section blocks ──────────────────────────────── */
+
+  .settings-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+  }
+
+  .settings-section__title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: inherit;
+    margin: 0;
+  }
+
+  .settings-section__description {
+    font-size: 0.875rem;
+    opacity: 0.82;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* ── Phase 8: OTP product cards ─────────────────────────────────────── */
+
+  .otp-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+  }
+
+  .otp-card {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr auto;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.875rem 1rem;
+    border-radius: 0.875rem;
+    border: 1.5px solid rgba(180, 130, 40, 0.28);
+    background: rgba(255, 255, 255, 0.82);
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+  }
+
+  .dark .otp-card {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.10);
+  }
+
+  .otp-card:hover {
+    border-color: rgba(245, 158, 11, 0.4);
+    box-shadow: 0 2px 10px rgba(245, 158, 11, 0.12);
+  }
+
+  .otp-card--owned {
+    border-color: rgba(34, 197, 94, 0.35);
+    background: rgba(34, 197, 94, 0.06);
+  }
+
+  .dark .otp-card--owned {
+    border-color: rgba(74, 222, 128, 0.3);
+    background: rgba(74, 222, 128, 0.06);
+  }
+
+  .otp-card__icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.625rem;
+    background: rgba(245, 158, 11, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--candle-amber);
+    flex-shrink: 0;
+  }
+
+  .dark .otp-card__icon {
+    background: rgba(245, 158, 11, 0.15);
+  }
+
+  .otp-card__body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .otp-card__title {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: inherit;
+    margin: 0;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .otp-card__desc {
+    font-size: 0.75rem;
+    opacity: 0.75;
+    margin: 0;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .otp-card__buy-btn {
+    padding: 0.4rem 0.875rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: opacity 0.15s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 2px 8px rgba(245, 158, 11, 0.30);
+  }
+
+  .otp-card__buy-btn:hover:not(:disabled) {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.42);
+  }
+
+  .otp-card__buy-btn:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  .otp-card__buy-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .otp-card__owned-badge {
+    padding: 0.3rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(34, 197, 94, 0.15);
+    color: #16a34a;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    flex-shrink: 0;
+  }
+
+  .dark .otp-card__owned-badge {
+    background: rgba(74, 222, 128, 0.12);
+    color: #4ade80;
+    border-color: rgba(74, 222, 128, 0.25);
+  }
+
+  /* ── Phase 8: Subscription CTA buttons ──────────────────────────────── */
+
+  .subscription-cta-btn {
+    width: 100%;
+    padding: 0.75rem 1.25rem;
+    border-radius: 0.875rem;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    border: none;
+    transition: opacity 0.15s, transform 0.15s, box-shadow 0.2s;
+    text-decoration: none;
+  }
+
+  .subscription-cta-btn + .subscription-cta-btn {
+    margin-top: 0.5rem;
+  }
+
+  .subscription-cta-btn--primary {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.38);
+  }
+
+  .subscription-cta-btn--primary:hover:not(:disabled) {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.48);
+  }
+
+  .subscription-cta-btn--primary:active:not(:disabled) {
+    transform: translateY(0) scale(0.97);
+  }
+
+  .subscription-cta-btn--secondary {
+    background: rgba(0, 0, 0, 0.06);
+    color: inherit;
+    border: 1.5px solid rgba(0, 0, 0, 0.10);
+  }
+
+  .dark .subscription-cta-btn--secondary {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .subscription-cta-btn--secondary:hover:not(:disabled) {
+    background: rgba(0, 0, 0, 0.10);
+  }
+
+  .dark .subscription-cta-btn--secondary:hover:not(:disabled) {
+    background: rgba(255, 255, 255, 0.11);
+  }
+
+  .subscription-cta-btn:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  /* ── Phase 8: Plan selector (settings context) ───────────────────────── */
+
+  .subscription-plan-selector {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .subscription-plan-option {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem 0.875rem;
+    border-radius: 0.875rem;
+    border: 2px solid rgba(0, 0, 0, 0.10);
+    background: transparent;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+    text-align: left;
+  }
+
+  .dark .subscription-plan-option {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .subscription-plan-option--selected {
+    border-color: var(--candle-amber);
+    background: rgba(245, 158, 11, 0.08);
+  }
+
+  .dark .subscription-plan-option--selected {
+    background: rgba(245, 158, 11, 0.12);
+  }
+
+  .subscription-plan-option__name {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: inherit;
+  }
+
+  .subscription-plan-option__badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--candle-amber);
+    background: rgba(245, 158, 11, 0.14);
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    margin-top: 0.1rem;
+    width: fit-content;
+  }
+
+  /* ── Phase 8: Pricing modal ──────────────────────────────────────────── */
+
+  .pricing-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.52);
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    z-index: 9000;
+    backdrop-filter: blur(3px);
+    -webkit-backdrop-filter: blur(3px);
+    animation: pricing-overlay-enter 0.22s ease-out forwards;
+  }
+
+  .pricing-modal-overlay--closing {
+    animation: pricing-overlay-exit 0.2s ease-in forwards;
+  }
+
+  @media (min-width: 640px) {
+    .pricing-modal-overlay {
+      align-items: center;
+    }
+  }
+
+  .pricing-modal {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: #fff;
+    border-radius: 1.5rem 1.5rem 0 0;
+    padding: 1.25rem 1.5rem 2rem;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    -webkit-overflow-scrolling: touch;
+    animation: pricing-panel-enter 0.3s cubic-bezier(0.34, 1.1, 0.64, 1) forwards;
+  }
+
+  .pricing-modal--closing {
+    animation: pricing-panel-exit 0.2s ease-in forwards;
+  }
+
+  .dark .pricing-modal {
+    background: #1e1a14;
+  }
+
+  @media (min-width: 640px) {
+    .pricing-modal {
+      border-radius: 1.5rem;
+      animation: pricing-panel-enter-desktop 0.28s ease-out forwards;
+    }
+
+    .pricing-modal--closing {
+      animation: pricing-panel-exit-desktop 0.2s ease-in forwards;
+    }
+  }
+
+  /* Landscape phones / short viewports: reduce padding so CTA stays reachable */
+  @media (max-height: 500px) {
+    .pricing-modal {
+      max-height: 88vh;
+      padding: 0.875rem 1.25rem 1.25rem;
+      gap: 0.625rem;
+    }
+  }
+
+  .pricing-modal__drag-handle {
+    width: 2.5rem;
+    height: 4px;
+    background: rgba(0, 0, 0, 0.18);
+    border-radius: 999px;
+    margin: 0 auto 0.25rem;
+    flex-shrink: 0;
+  }
+
+  .dark .pricing-modal__drag-handle {
+    background: rgba(255, 255, 255, 0.18);
+  }
+
+  @media (min-width: 640px) {
+    .pricing-modal__drag-handle {
+      display: none;
+    }
+  }
+
+  .pricing-modal__close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    width: 2.75rem;  /* 44px — minimum tap target */
+    height: 2.75rem;
+    border-radius: 50%;
+    border: none;
+    background: rgba(0, 0, 0, 0.08);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: inherit;
+    transition: background 0.15s;
+    flex-shrink: 0;
+  }
+
+  .dark .pricing-modal__close {
+    background: rgba(255, 255, 255, 0.10);
+  }
+
+  .pricing-modal__close:hover {
+    background: rgba(0, 0, 0, 0.14);
+  }
+
+  .dark .pricing-modal__close:hover {
+    background: rgba(255, 255, 255, 0.16);
+  }
+
+  .pricing-modal__header {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.35rem;
+    padding-top: 0.5rem;
+  }
+
+  .pricing-modal__title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0;
+    text-align: center;
+  }
+
+  .pricing-modal__tabs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.25rem;
+    background: rgba(0, 0, 0, 0.06);
+    border-radius: 0.75rem;
+    padding: 0.25rem;
+  }
+
+  .dark .pricing-modal__tabs {
+    background: rgba(255, 255, 255, 0.07);
+  }
+
+  .pricing-modal__tab {
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    border: none;
+    background: transparent;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: inherit;
+    opacity: 0.6;
+    transition: background 0.15s, opacity 0.15s;
+  }
+
+  .pricing-modal__tab--active {
+    background: #fff;
+    opacity: 1;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+  }
+
+  .dark .pricing-modal__tab--active {
+    background: rgba(255, 255, 255, 0.12);
+  }
+
+  .pricing-modal__features {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pricing-modal__feature {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    font-size: 0.875rem;
+  }
+
+  .pricing-modal__feature-icon {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-radius: 50%;
+    background: rgba(245, 158, 11, 0.12);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--candle-amber);
+    flex-shrink: 0;
+  }
+
+  .pricing-modal__plans {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.5rem;
+  }
+
+  .pricing-modal__plan {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    padding: 0.75rem;
+    border-radius: 0.875rem;
+    border: 2px solid rgba(0, 0, 0, 0.10);
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+    position: relative;
+  }
+
+  .dark .pricing-modal__plan {
+    border-color: rgba(255, 255, 255, 0.12);
+  }
+
+  .pricing-modal__plan--selected {
+    border-color: var(--candle-amber);
+    background: rgba(245, 158, 11, 0.08);
+  }
+
+  .pricing-modal__plan-name {
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .pricing-modal__plan-price {
+    font-size: 0.8125rem;
+    opacity: 0.7;
+  }
+
+  .pricing-modal__plan-badge {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--candle-amber);
+    background: rgba(245, 158, 11, 0.14);
+    padding: 0.1rem 0.4rem;
+    border-radius: 999px;
+    width: fit-content;
+  }
+
+  .pricing-modal__cta {
+    padding: 0.875rem 1.25rem;
+    border-radius: 0.875rem;
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+    color: #fff;
+    font-size: 1rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 14px rgba(245, 158, 11, 0.38);
+    transition: opacity 0.15s, transform 0.15s, box-shadow 0.2s;
+  }
+
+  .pricing-modal__cta:hover:not(:disabled) {
+    opacity: 0.92;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(245, 158, 11, 0.50);
+  }
+
+  .pricing-modal__cta:active:not(:disabled) {
+    transform: translateY(0) scale(0.97);
+  }
+
+  .pricing-modal__cta:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  .pricing-modal__legal {
+    text-align: center;
+    font-size: 0.75rem;
+    opacity: 0.55;
+    margin: 0;
+  }
+
+  .pricing-modal__otp-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .pricing-modal__otp-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+    border-radius: 0.75rem;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    background: rgba(0, 0, 0, 0.02);
+  }
+
+  .dark .pricing-modal__otp-item {
+    border-color: rgba(255, 255, 255, 0.08);
+    background: rgba(255, 255, 255, 0.03);
+  }
+
+  .pricing-modal__otp-item--owned {
+    border-color: rgba(34, 197, 94, 0.3);
+    background: rgba(34, 197, 94, 0.05);
+  }
+
+  .pricing-modal__otp-item-name {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .pricing-modal__otp-buy {
+    padding: 0.5rem 0.85rem;
+    min-height: 2rem;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #f59e0b, #d97706);
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    white-space: nowrap;
+    flex-shrink: 0;
+    transition: opacity 0.15s;
+  }
+
+  .pricing-modal__otp-buy:hover {
+    opacity: 0.88;
+  }
+
+  /* ── Phase 8: Support thank-you overlay ──────────────────────────────── */
+
+  .otp-thankyou-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9100;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+  }
+
+  .otp-thankyou-overlay__content {
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.875rem;
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+  }
+
+  .dark .otp-thankyou-overlay__content {
+    background: #1e1a14;
+  }
+
+  .otp-thankyou-overlay__content h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .otp-thankyou-overlay__content p {
+    font-size: 0.9375rem;
+    opacity: 0.75;
+    margin: 0;
+  }
+
+  /* ── Scroll containment — prevent rubber-band scroll-chaining out of modals/sheets ── */
+
+  /* Bottom sheet panels (Manna tutorial/stats, PricingModal, BottomNav More sheet) */
+  [role="dialog"],
+  .pricing-modal,
+  .manna-tutorial-panel {
+    overscroll-behavior: contain;
+  }
+
+  /* Horizontal scroll carousels — stop the page from bouncing vertically */
+  .milestone-wall--mobile {
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: none;
+  }
+
+  /* §8.18.4 — Checkout overlay (full-screen, blocks interaction during redirect) */
+  .checkout-overlay {
+    position: fixed;
+    inset: 0;
+    padding: env(safe-area-inset-top) env(safe-area-inset-right)
+             env(safe-area-inset-bottom) env(safe-area-inset-left);
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .checkout-overlay__card {
+    background: #fff;
+    border-radius: 1.5rem;
+    padding: 2.5rem 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    max-width: 300px;
+    width: 90%;
+    text-align: center;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.3);
+  }
+
+  .dark .checkout-overlay__card {
+    background: #1e1a14;
+  }
+
+  .checkout-overlay__brand {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--blessing-gold);
+    margin: 0;
+  }
+
+  .checkout-overlay__spinner {
+    width: 2rem;
+    height: 2rem;
+    border: 3px solid rgba(0, 0, 0, 0.1);
+    border-top-color: var(--blessing-gold);
+    border-radius: 50%;
+    animation: checkout-spin 0.8s linear infinite;
+  }
+
+  .dark .checkout-overlay__spinner {
+    border-color: rgba(255, 255, 255, 0.1);
+    border-top-color: var(--blessing-gold);
+  }
+
+  @keyframes checkout-spin {
+    to { transform: rotate(360deg); }
+  }
+
+  .checkout-overlay__message {
+    font-size: 0.9375rem;
+    color: #4b5563;
+    margin: 0;
+  }
+
+  .dark .checkout-overlay__message {
+    color: #d1d5db;
+  }
+
+  .checkout-overlay__cancel {
+    font-size: 0.8125rem;
+    color: #9ca3af;
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem 0.5rem;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+
+  .checkout-overlay__cancel:hover {
+    color: #6b7280;
+  }
+
+  /* §8.18.4 — PaymentAlert banner */
+  .payment-alert {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    background: #fef3c7;
+    border-bottom: 1px solid #fcd34d;
+    padding: 0.625rem 1rem;
+    font-size: 0.875rem;
+    color: #92400e;
+  }
+
+  .dark .payment-alert {
+    background: #451a03;
+    border-color: #92400e;
+    color: #fde68a;
+  }
+
+  .payment-alert__icon {
+    flex-shrink: 0;
+    color: #d97706;
+  }
+
+  .payment-alert__text {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .payment-alert__fix-btn {
+    flex-shrink: 0;
+    background: #d97706;
+    color: #fff;
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+  }
+
+  .payment-alert__fix-btn:hover {
+    background: #b45309;
+  }
+
+  .payment-alert__close {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #92400e;
+    /* Increased to 0.5rem for minimum ~32px touch target */
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+  }
+
+  .dark .payment-alert__close {
+    color: #fde68a;
+  }
+
+  /* §8.18.4 — AvatarRing premium glow animation */
+  .avatar-ring--premium-glow {
+    animation: premiumGlowIn 2s ease-out forwards;
+  }
+
+  @keyframes premiumGlowIn {
+    0%   { filter: drop-shadow(0 0 0px var(--blessing-gold)); }
+    40%  { filter: drop-shadow(0 0 12px var(--blessing-gold)); }
+    100% { filter: drop-shadow(0 0 4px var(--blessing-gold)); }
+  }
+
+  /* ── Pricing modal enter / exit keyframes ─────────────────────────────── */
+
+  @keyframes pricing-overlay-enter {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+
+  @keyframes pricing-overlay-exit {
+    from { opacity: 1; }
+    to   { opacity: 0; }
+  }
+
+  /* Mobile: slide up from bottom */
+  @keyframes pricing-panel-enter {
+    from { transform: translateY(100%); opacity: 0; }
+    to   { transform: translateY(0);    opacity: 1; }
+  }
+
+  @keyframes pricing-panel-exit {
+    from { transform: translateY(0);    opacity: 1; }
+    to   { transform: translateY(100%); opacity: 0; }
+  }
+
+  /* Desktop: subtle scale + fade */
+  @keyframes pricing-panel-enter-desktop {
+    from { transform: translateY(12px) scale(0.96); opacity: 0; }
+    to   { transform: translateY(0)    scale(1);    opacity: 1; }
+  }
+
+  @keyframes pricing-panel-exit-desktop {
+    from { transform: translateY(0)    scale(1);    opacity: 1; }
+    to   { transform: translateY(12px) scale(0.96); opacity: 0; }
+  }
+
+  /* Tab content fade-in when switching between Plans / Add-ons */
+  .pricing-modal__tab-content {
+    animation: content-fade-in 0.18s ease-out forwards;
+  }
+
+  /* Disable all pricing-modal motion when reduced-motion is preferred */
+  @media (prefers-reduced-motion: reduce) {
+    .pricing-modal-overlay,
+    .pricing-modal-overlay--closing {
+      animation: none !important;
+      opacity: 1;
+    }
+
+    .pricing-modal-overlay--closing {
+      opacity: 0;
+    }
+
+    .pricing-modal,
+    .pricing-modal--closing {
+      animation: none !important;
+      transform: none;
+      opacity: 1;
+    }
+
+    .pricing-modal--closing {
+      opacity: 0;
+    }
+
+    .pricing-modal__tab-content {
+      animation: none;
+    }
   }
 }

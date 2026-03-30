@@ -300,6 +300,54 @@ func (h *AuthHandler) VerifyEmail(c *gin.Context) {
 	})
 }
 
+// ── VerifyPendingEmail ────────────────────────────────────────────────────────
+
+// VerifyPendingEmail applies a pending email change when the user clicks the
+// confirmation link sent to the new address. Only after this call is the live
+// email field updated — the old address remains active until then.
+func (h *AuthHandler) VerifyPendingEmail(c *gin.Context) {
+	var req VerifyEmailRequest // reuses {Token string}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid request"})
+		return
+	}
+
+	user, err := h.userRepo.GetByPendingEmailToken(req.Token)
+	if err != nil || user == nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid or expired confirmation link."})
+		return
+	}
+
+	if user.PendingEmailTokenExpiresAt == nil || time.Now().After(*user.PendingEmailTokenExpiresAt) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Confirmation link has expired. Please request a new email change."})
+		return
+	}
+
+	if err := h.userRepo.ApplyPendingEmail(user.ID); err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to apply email change"})
+		return
+	}
+
+	// Reload to get the updated email for JWT generation
+	updated, err := h.userRepo.GetByID(user.ID)
+	if err != nil || updated == nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load updated user"})
+		return
+	}
+
+	jwtToken, err := h.tokenService.GenerateToken(updated.ID, updated.Email)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to generate token"})
+		return
+	}
+
+	c.JSON(http.StatusOK, gin.H{
+		"message": "Email address updated successfully!",
+		"token":   jwtToken,
+		"user":    buildUserResponse(updated),
+	})
+}
+
 // ── ResendVerification ────────────────────────────────────────────────────────
 
 type ResendVerificationRequest struct {

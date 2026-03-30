@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Verse } from "../../types/verse";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
@@ -8,6 +8,11 @@ import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { useAuth } from "../../hooks/useAuth";
 import { showToast } from "../../utils/toast";
 import { useTranslation } from "react-i18next";
+import { TranslationBadge } from "./TranslationBadge";
+import { TranslationSwitcherPopover } from "./TranslationSwitcherPopover";
+import { verseService } from "../../services/api/verse";
+import { showBlessingsToast } from "../../components/BlessingsToast";
+import { useStreak } from "../../contexts/StreakContext";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
 const buildShareText = (verse: Verse): string => {
@@ -18,17 +23,26 @@ const buildShareText = (verse: Verse): string => {
 
 interface VerseCardProps {
   verse: Verse;
+  lang?: string;
+  onVersionSelect?: (key: string, abbreviation: string) => void;
 }
 
-export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
+export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVersionSelect }) => {
   const { isGuest } = useAuth();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const badgeRef = useRef<HTMLDivElement>(null);
   const { isFavorited, getFavoriteId, addFavorite, removeFavorite } =
     useFavorites();
   const [isCopied, setIsCopied]           = useState(false);
   const [isFavoriteLoading, setIsFavoriteLoading] = useState(false);
   const [favoriteError, setFavoriteError] = useState<string | null>(null);
+  const [justFavorited, setJustFavorited] = useState(false);
+  const [heartbeatKey, setHeartbeatKey] = useState(0);
+  const [isLongPressing, setIsLongPressing] = useState(false);
+  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const longPressOrigin = useRef<{ x: number; y: number } | null>(null);
 
   const handleCommentSaved = async () => {
     // Pitfall 13: guard — CommentSection is hidden for guests, but safety net
@@ -62,6 +76,9 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       } else {
         // Add to favorites
         await addFavorite(verse.id);
+        setHeartbeatKey(k => k + 1);
+        setJustFavorited(true);
+        setTimeout(() => setJustFavorited(false), 600);
       }
     } catch (err: any) {
       setFavoriteError(err.message);
@@ -71,6 +88,19 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
     }
   };
 
+  // ── Share helpers ─────────────────────────────────────────────────────────
+  // Called once after any share action succeeds. Fire-and-forget — never blocks UI.
+  const { refreshStreak } = useStreak();
+  const creditShareBlessings = () => {
+    if (isGuest) return;
+    verseService.recordShare().then((credited) => {
+      if (credited > 0) {
+        showBlessingsToast(credited, 'verse_shared');
+        refreshStreak().catch(() => {});
+      }
+    });
+  };
+
   // ── Share handlers ────────────────────────────────────────────────────────
   const handleCopy = async (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -78,6 +108,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       await navigator.clipboard.writeText(buildShareText(verse));
       setIsCopied(true);
       setTimeout(() => setIsCopied(false), 2000);
+      creditShareBlessings();
     } catch {
       showToast.error('Could not copy to clipboard');
     }
@@ -87,18 +118,21 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
     e.stopPropagation();
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleWhatsAppShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleFacebookShare = (e: React.MouseEvent) => {
     e.stopPropagation();
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://www.facebook.com/sharer/sharer.php?quote=${text}`, "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleInstagramShare = async (e: React.MouseEvent) => {
@@ -111,12 +145,14 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       showToast.error('Could not copy to clipboard');
     }
     window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
+    creditShareBlessings();
   };
 
   const handleNativeShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
       await navigator.share({ title: "Bible Verse", text: buildShareText(verse) });
+      creditShareBlessings();
     } catch (err: any) {
       // AbortError = user cancelled the share sheet — ignore it
       if (err?.name !== 'AbortError') {
@@ -127,6 +163,42 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
 
 
   const isVerseAlreadyFavorited = isFavorited(verse.id);
+
+  // Long-press on the verse card to copy text (500ms, cancelled if pointer moves >10px)
+  const handleLongPressStart = (e: React.PointerEvent) => {
+    longPressOrigin.current = { x: e.clientX, y: e.clientY };
+    setIsLongPressing(true);
+    longPressTimer.current = setTimeout(async () => {
+      longPressOrigin.current = null;
+      setIsLongPressing(false);
+      try {
+        await navigator.clipboard.writeText(buildShareText(verse));
+        setIsCopied(true);
+        setTimeout(() => setIsCopied(false), 2000);
+        if (navigator.vibrate) navigator.vibrate(40);
+      } catch {
+        // Silently ignore clipboard errors
+      }
+    }, 500);
+  };
+
+  const handleLongPressMove = (e: React.PointerEvent) => {
+    if (!longPressOrigin.current || !longPressTimer.current) return;
+    const dx = e.clientX - longPressOrigin.current.x;
+    const dy = e.clientY - longPressOrigin.current.y;
+    if (Math.hypot(dx, dy) > 10) {
+      handleLongPressEnd();
+    }
+  };
+
+  const handleLongPressEnd = () => {
+    longPressOrigin.current = null;
+    setIsLongPressing(false);
+    if (longPressTimer.current) {
+      clearTimeout(longPressTimer.current);
+      longPressTimer.current = null;
+    }
+  };
 
   // Fade in effect when verse changes
   useEffect(() => {
@@ -150,7 +222,23 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
   ]);
 
   return (
-    <Card className={`relative transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}>
+    <Card
+      className={`relative transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
+      onPointerDown={handleLongPressStart}
+      onPointerMove={handleLongPressMove}
+      onPointerUp={handleLongPressEnd}
+      onPointerLeave={handleLongPressEnd}
+      onPointerCancel={handleLongPressEnd}
+    >
+      {/* Long-press copy indicator */}
+      {isLongPressing && (
+        <div className="absolute inset-0 rounded-2xl bg-primary-500/10 dark:bg-primary-400/10 ring-2 ring-primary-400/50 dark:ring-primary-500/50 pointer-events-none transition-opacity duration-150 z-20 flex items-center justify-center">
+          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-white/80 dark:bg-gray-900/80 px-3 py-1 rounded-full shadow-sm">
+            Hold to copy…
+          </span>
+        </div>
+      )}
+
       {/* Decorative quote mark */}
       <div className="absolute top-4 left-4 text-6xl text-primary-100 dark:text-primary-900 font-serif">
         "
@@ -158,20 +246,36 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
 
       {/* Verse text */}
       <div className="relative z-10 mb-6">
-        <p className="text-xl md:text-2xl text-gray-800 dark:text-gray-100 font-serif leading-relaxed text-center px-8 py-4">
+        <p
+          className="text-gray-800 dark:text-gray-100 font-serif leading-relaxed text-center px-8 py-4"
+          style={{ fontSize: 'var(--verse-font-size, 1.25rem)' }}
+        >
           {verse.text}
         </p>
       </div>
 
       {/* Reference */}
       <div className="text-center mb-6">
-        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
           {verse.reference}
         </p>
-        {verse.version && (
-          <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-            {verse.version}
-          </p>
+        {/* Translation badge — authenticated users only */}
+        {!isGuest && verse.version && onVersionSelect && (
+          <div ref={badgeRef} className="relative inline-block mt-1.5">
+            <TranslationBadge
+              version={verse.version}
+              onClick={() => setPopoverOpen((o) => !o)}
+            />
+            {popoverOpen && (
+              <TranslationSwitcherPopover
+                lang={lang || i18n.language}
+                currentVersion={verse.version}
+                onVersionSelect={onVersionSelect}
+                onClose={() => setPopoverOpen(false)}
+                anchorRef={badgeRef}
+              />
+            )}
+          </div>
         )}
       </div>
 
@@ -193,7 +297,8 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
           aria-pressed={isVerseAlreadyFavorited}
         >
           <svg
-            className={`w-5 h-5 ${isVerseAlreadyFavorited ? "fill-red-500" : "fill-none"}`}
+            key={justFavorited ? heartbeatKey : 0}
+            className={`w-5 h-5 ${isVerseAlreadyFavorited ? "fill-red-500" : "fill-none"} ${justFavorited ? "animate-heartbeat" : ""}`}
             stroke="currentColor"
             viewBox="0 0 24 24"
           >
@@ -209,7 +314,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse }) => {
       </div>
 
       {/* Share panel — always visible on Daily Verse page */}
-      <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+      <div className="border-t border-gray-300 dark:border-gray-600 pt-4">
         <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 text-center">
           {t('verse.share')}
         </p>

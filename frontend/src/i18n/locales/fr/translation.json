@@ -12,7 +12,148 @@
     "settings": "Paramètres",
     "login": "Connexion",
     "signup": "S'inscrire",
-    "logout": "Déconnexion"
+    "logout": "Déconnexion",
+    "search": "Rechercher",
+    "shop": "Boutique",
+    "journal": "Journal",
+    "leaderboard": "Communauté",
+    "manna": "Manne"
+  },
+  "manna": {
+    "title": "Manne",
+    "subtitle": "Un puzzle biblique quotidien",
+    "keyboard": "Clavier",
+    "grid": "Grille du puzzle",
+    "delete": "Effacer",
+    "enter": "Entrer",
+    "yesterdaysWord": "Le mot d'hier",
+    "yesterdaySection": "Le mot d'hier",
+    "unlockCta": "Débloquez avec un abonnement Words of Praise",
+    "socialProof": "{{n}} fidèles résolvent le mot d'aujourd'hui",
+    "unlockScripture": "Débloquer le texte complet",
+    "solvedTitle": "Vous avez trouvé la Manne du jour !",
+    "failedTitle": "Le mot du jour était :",
+    "comeback": "Revenez demain pour un nouveau mot.",
+    "share": "Partager le résultat",
+    "copied": "Résultat copié !",
+    "copyFailed": "Impossible de copier.",
+    "solved": "+{{n}} Bénédictions !",
+    "notEnoughLetters": "Pas assez de lettres",
+    "errorLoading": "Impossible de charger le puzzle du jour.",
+    "errorLength": "Les réponses doivent comporter exactement 5 lettres.",
+    "errorComplete": "Cette partie est déjà terminée.",
+    "errorChars": "Les réponses ne doivent contenir que les lettres A–Z.",
+    "notAWord": "Mot biblique non reconnu",
+    "errorSubmit": "Échec de l'envoi. Réessayez.",
+    "noHints": "Plus d'indices",
+    "howToPlay": "Comment jouer",
+    "howToPlayTitle": "Comment jouer",
+    "tutorialHelpBtn": "Comment jouer",
+    "tutorialIntro": "Devinez le mot biblique de 5 lettres en 6 essais.",
+    "tutorialSub": "Chaque tentative doit être un mot biblique reconnu.",
+    "tutorialColorKeyTitle": "Après chaque essai, les tuiles révèlent votre proximité :",
+    "tutorialCorrectLabel": "Bonne lettre,\nbonne position",
+    "tutorialPresentLabel": "Bonne lettre,\nmauvaise position",
+    "tutorialAbsentLabel": "Absente\ndu mot",
+    "tutorialClue": "Chaque puzzle montre un verset biblique — trouvez le mot manquant.",
+    "tutorialHints": "Les indices révèlent une position de lettre (coûte 15 Bénédictions ✦). 3 par puzzle maximum.",
+    "tutorialBegin": "Commencer à jouer",
+    "tutorialReopenHint": "Appuyez sur ? à tout moment pour revoir ces règles.",
+    "statsModalLabel": "Stats & Historique",
+    "statsTitle": "Stats Manne",
+    "statsTab": "Stats",
+    "historyTab": "Historique",
+    "statPlayed": "Joués",
+    "statWinRate": "Victoires",
+    "statStreak": "Série",
+    "statMaxStreak": "Record",
+    "statAvgGuesses": "Essais moyens (victoires) : {{n}}",
+    "statDistribution": "Distribution des essais",
+    "statGuesses": "essais",
+    "statsEmpty": "Aucune partie jouée. Revenez après votre premier puzzle !",
+    "statsError": "Impossible de charger les stats. Réessayez plus tard.",
+    "historyEmpty": "Pas encore de parties passées. L'historique apparaîtra après votre premier puzzle.",
+    "historyError": "Impossible de charger l'historique. Réessayez plus tard.",
+    "historyFailed": "X/6",
+    "nextPuzzle": "Prochain mot dans",
+    "ariaCorrect": "correct",
+    "ariaPresent": "présent",
+    "ariaAbsent": "absent",
+    "ariaSolved": "Résolu ! Le mot était {{word}}.",
+    "ariaFailed": "Fin de partie. Le mot était {{word}}.",
+    "streak": "Série Manne de {{n}} jours",
+    "clueIntro": "Trouvez le mot manquant :",
+    "hintAriaLabel": "Utiliser un indice ({{n}} restant(s), coûte 15 Bénédictions)",
+    "hintError": "Impossible d’obtenir l’indice. Réessayez.",
+    "hintMax": "Aucun indice restant.",
+    "hintNoBlessings": "Pas assez de Bénédictions pour un indice.",
+    "hintRevealed": "Position {{n}} : {{letter}}",
+    "hintsRevealed": "Révélées :",
+    "archive": "Archive",
+    "archiveSubtitle": "Play any past day's word puzzle.",
+    "archiveNotPlayed": "Not played",
+    "archiveSolved": "Solved in {{n}}",
+    "archiveFailed": "Failed",
+    "freeBanner": "Free Play",
+    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
+    "freeUpgradeCta": "Upgrade to Premium",
+    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
+    "archiveLabel": "Archive",
+    "backToToday": "← Today",
+    "backToArchive": "← Archive",
+    "archiveInProgress": "In progress",
+    "archiveError": "Could not load history. Tap a date to play anyway.",
+    "archivePlay": "Play",
+    "solvedArchiveTitle": "You solved it!",
+    "failedArchiveTitle": "The word was:",
+    "streakBonus": "+{{bonus}} bonus de série ! (série de {{streak}} jours 🔥)"
+  },
+  "journal": {
+    "title": "Mon Journal",
+    "subtitle": "Un espace privé pour la prière, la réflexion et la croissance.",
+    "newEntry": "Nouvelle Entrée",
+    "todayIs": "Aujourd'hui, {{date}}",
+    "whatOnYourHeart": "Qu'avez-vous sur le cœur ?",
+    "beginWriting": "Commencer à Écrire →",
+    "emptyTitle": "Votre parcours dévotionnel commence ici.",
+    "emptyBody": "Écrivez votre première entrée — une réflexion, une prière, ou simplement ce qui est sur votre cœur.",
+    "writeFirstEntry": "Écrire votre première entrée →",
+    "lockedEntries": "{{count}} entrées plus anciennes sont stockées en toute sécurité. Débloquez l'historique complet avec un abonnement Paroles de Louange.",
+    "unlockHistory": "Débloquer l'Historique Complet",
+    "errorLoading": "Échec du chargement des entrées du journal. Veuillez réessayer.",
+    "backToJournal": "Retour au Journal",
+    "deleteEntry": "Supprimer l'Entrée",
+    "confirmDelete": "Supprimer cette entrée ? Cette action est irréversible.",
+    "unsavedChanges": "Vous avez des modifications non enregistrées. Quitter sans enregistrer ?",
+    "saving": "Enregistrement…",
+    "saved": "Enregistré",
+    "thisWeeksPrompt": "Réflexion de Cette Semaine",
+    "hidePrompt": "Masquer la réflexion",
+    "hide": "Masquer",
+    "linkAVerse": "Lier un verset",
+    "removeVerse": "Supprimer le verset lié",
+    "verseInputPlaceholder": "ex. Romains 8:28",
+    "link": "Lier",
+    "placeholder": "Commencez à écrire — une réflexion, une prière, ou simplement ce qui est sur votre cœur…",
+    "editorLabel": "Entrée du journal",
+    "characters": "caractères",
+    "shareTitle": "Entrée du Journal",
+    "copied": "Copié dans le presse-papiers",
+    "copyFailed": "Impossible de copier dans le presse-papiers",
+    "tutorial": {
+      "step1Title": "Écrivez des réflexions quotidiennes",
+      "step1Body": "Appuyez sur «Nouvelle Entrée» pour commencer à écrire. Chaque entrée peut inclure une réflexion, une prière ou ce qui est sur votre cœur.",
+      "step2Title": "Liez à un verset",
+      "step2Body": "Les entrées peuvent être connectées au verset du jour ou à tout passage des Écritures pour un contexte plus profond.",
+      "step3Title": "Modifier et revisiter",
+      "step3Body": "Appuyez sur n'importe quelle entrée pour l'ouvrir et la modifier. Votre journal grandit avec vous jour après jour.",
+      "step4Title": "Privé et sécurisé",
+      "step4Body": "Vos entrées ne sont visibles que par vous. Les membres premium peuvent stocker un nombre illimité d'entrées.",
+      "title": "Mon Journal",
+      "subtitle": "Un espace privé pour la prière, la réflexion et la croissance spirituelle.",
+      "cta": "Commencer à Écrire",
+      "reopenHint": "Appuyez sur ? à tout moment pour revoir ce guide."
+    }
   },
   "dailyVerse": {
     "title": "Verset du Jour",
@@ -116,6 +257,7 @@
     "username": "Nom d'utilisateur",
     "email": "Email",
     "memberSince": "Membre Depuis",
+    "member_since": "Membre depuis",
     "noData": "Aucune donnée de profil disponible.",
     "statistics": "Statistiques",
     "totalFavorites": "Total des Favoris",
@@ -130,7 +272,33 @@
     "daysActive": "Jours Actifs",
     "noStats": "Aucune statistique disponible.",
     "editProfile": "Modifier le Profil",
-    "failedToLoad": "Échec du chargement du profil"
+    "failedToLoad": "Échec du chargement du profil",
+    "devoted_member": "Membre Dévoué",
+    "account_settings": "Paramètres du Compte",
+    "my_journey": "Mon Parcours",
+    "milestones": "Jalons",
+    "this_month": "Ce Mois",
+    "your_reading": "Votre Lecture",
+    "account": "Compte",
+    "begin_journey": "Commencez Votre Parcours",
+    "begin_desc": "Ouvrez le verset d'aujourd'hui pour commencer votre série. Votre fidélité sera honorée ici.",
+    "read_today": "Lire le Verset d'Aujourd'hui →",
+    "grace_loading": "Utilisation du Jour de Grâce…",
+    "use_grace_day": "Utiliser un Jour de Grâce",
+    "section_error": "Impossible de charger cette section. Réessayez.",
+    "calendar_error": "Calendrier temporairement indisponible.",
+    "calendar_empty": "Aucune activité enregistrée pour le moment.",
+    "day_streak": "Série du Jour",
+    "longest_streak": "La Plus Longue",
+    "blessings": "Bénédictions",
+    "all_milestones_complete": "Vous avez marché avec la Parole pendant une année complète.",
+    "next_milestone": "Suivant",
+    "days_label": "jours",
+    "days_remaining": "jours restants",
+    "days_to": "jours pour",
+    "verses_read": "Versets Lus",
+    "reflections": "Réflexions",
+    "days_active": "Jours Actifs"
   },
   "settings": {
     "title": "Paramètres",
@@ -142,14 +310,55 @@
     "appearance": {
       "title": "Apparence",
       "darkMode": "Mode Sombre",
-      "darkModeDescription": "Utiliser le thème sombre dans toute l'application"
+      "darkModeDescription": "Utiliser le thème sombre dans toute l'application",
+      "blessingsAvailable": "{{count}} Bénédictions disponibles",
+      "loadingThemes": "Chargement des thèmes…",
+      "tapToConfirm": "Appuyer pour confirmer",
+      "signInToUnlock": "Connectez-vous pour débloquer",
+      "signIn": "Se connecter",
+      "guestNote": "Connectez-vous pour débloquer des thèmes premium avec des Bénédictions.",
+      "purchaseErrorInsufficient": "Pas assez de Bénédictions pour débloquer ce thème.",
+      "purchaseErrorGeneric": "Impossible de finaliser l'achat. Veuillez réessayer.",
+      "celebrationAnim": "Animations de célébration",
+      "celebrationAnimDesc": "Afficher des effets de particules lorsque vous atteignez un jalon.",
+      "soundEffects": "Effets sonores",
+      "soundEffectsDesc": "Jouer des tons doux lors de l'enregistrement d'entrées de journal ou de la continuation de votre série."
+    },
+    "sections": {
+      "myJourney": "Mon Chemin",
+      "devotion": "Dévotion et Notifications",
+      "appearance": "Apparence",
+      "manna": "Puzzle Manne"
+    },
+    "manna": {
+      "hardMode": "Mode Difficile",
+      "hardModeDesc": "Les lettres confirmées doivent être réutilisées dans chaque supposition suivante.",
+      "physicalKeySound": "Sons du clavier physique",
+      "physicalKeySoundDesc": "Joue un son lorsque vous tapez sur votre clavier physique."
+    },
+    "graceDays": {
+      "title": "Jours de Grâce",
+      "description": "Manqué un jour ? Utilisez un Jour de Grâce pour protéger votre série.",
+      "remaining": "Jours de grâce restants :",
+      "of2": "sur 2",
+      "available": "disponibles",
+      "exhausted": "Vos jours de grâce ont été utilisés ce période.",
+      "use": "Utiliser un Jour de Grâce",
+      "confirm": "Confirmer — utiliser un Jour de Grâce ?"
     },
     "notifications": {
       "title": "Notifications",
       "emailNotifications": "Notifications par Email",
       "emailDescription": "Recevoir des mises à jour par email",
       "dailyReminder": "Rappel du Verset Quotidien",
-      "reminderDescription": "Recevez un rappel pour lire votre verset quotidien"
+      "reminderDescription": "Recevez un rappel pour lire votre verset quotidien",
+      "pushNotifications": "Notifications Push",
+      "pushDesc": "Recevez une notification quotidienne quand le verset est prêt.",
+      "pushActiveDesc": "Vous recevrez un rappel à l'heure choisie.",
+      "pushDenied": "Les notifications sont bloquées. Autorisez-les dans les paramètres du navigateur, puis réessayez.",
+      "pushUnsupported": "Non pris en charge sur ce navigateur. Utilisez Chrome sur Android ou Safari sur iPhone.",
+      "pushReminderLabel": "Me rappeler à",
+      "pushTimeSaved": "Heure de rappel mise à jour : {{time}}"
     },
     "language": {
       "title": "Langue",
@@ -175,45 +384,48 @@
     "save": "Enregistrer les Paramètres",
     "saving": "Enregistrement...",
     "saved": "Paramètres enregistrés avec succès !",
-    "saveFailed": "Échec de l'enregistrement des paramètres"
+    "saveFailed": "Échec de l'enregistrement des paramètres",
+    "community": {
+      "title": "Communauté",
+      "milestone_posts": "Célébrations d'étapes",
+      "milestone_posts_description": "Partagez vos étapes de série avec la communauté.",
+      "milestone_locked": "Abonnez-vous pour partager vos étapes avec la communauté."
+    }
   },
   "about": {
     "title": "À Propos de Paroles de Louange",
     "dedication": "Dédié à Clairemena Jean-Pierre",
-    "description": "Une application web moderne pour les versets bibliques quotidiens avec favoris, commentaires et suivi de l'historique.",
     "mission": "Notre Mission",
-    "missionText": "Fournir une inspiration spirituelle quotidienne à travers la Parole de Dieu, la rendant accessible et significative pour tous.",
-    "features": "Fonctionnalités",
-    "feature1": "Versets bibliques inspirants quotidiens",
-    "feature2": "Enregistrez vos versets préférés",
-    "feature3": "Ajoutez des notes et réflexions personnelles",
-    "feature4": "Suivez votre historique de lecture",
-    "feature5": "Expérience de lecture belle et sans distraction",
+    "missionText": "Paroles de Louange est un compagnon spirituel quotidien — un lieu pour rencontrer la Parole de Dieu, cultiver la fidélité et se connecter à une communauté de croyants. Chaque fonctionnalité est construite dans un seul but : faire en sorte que votre pratique quotidienne se sente vue, honorée et digne d'être poursuivie.",
+    "features": "Tout dans l'Application",
     "back": "Retour",
-    "subtitle": "Inspiration Quotidienne par la Parole de Dieu",
+    "subtitle": "Votre Compagnon Quotidien dans la Parole de Dieu",
     "feature1Title": "Verset du Jour",
-    "feature1Desc": "Recevez un nouveau verset biblique inspirant chaque jour à minuit",
-    "feature2Title": "Favoris",
-    "feature2Desc": "Enregistrez et organisez vos versets préférés pour y accéder facilement",
-    "feature3Title": "Historique",
-    "feature3Desc": "Parcourez les versets quotidiens passés avec les flèches de navigation sur la page principale. Connectez-vous pour accéder à 30 jours d'historique.",
-    "feature4Title": "Réflexions Personnelles",
-    "feature4Desc": "Ajoutez vos propres réflexions et pensées à n'importe quel verset",
-    "feature5Title": "Mode Sombre",
-    "feature5Desc": "Expérience de lecture confortable jour et nuit",
-    "feature6Title": "Compatible Mobile",
-    "feature6Desc": "Beau et réactif sur tous les appareils",
-    "ctaTitle": "Débloquez l'Expérience Complète",
-    "ctaDesc": "Créez un compte gratuit pour enregistrer vos versets préférés, parcourir vos versets quotidiens passés, ajouter des réflexions personnelles, et plus encore. L'inscription prend moins d'une minute !",
+    "feature1Desc": "Un nouveau verset biblique chaque jour. Balayez pour revoir les versets passés et ajoutez votre propre réflexion.",
+    "feature2Title": "Journal et Réflexions",
+    "feature2Desc": "Écrivez des entrées de journal personnelles et attachez des réflexions à n'importe quel verset. Vos pensées, préservées.",
+    "feature3Title": "Puzzle Manna",
+    "feature3Desc": "Un puzzle de mots biblique quotidien — trouvez le mot du jour, tiré des Écritures.",
+    "feature4Title": "Parcours de Fidélité",
+    "feature4Desc": "Suivez votre série, gagnez des Bénédictions et atteignez des jalons qui honorent votre constance dans la Parole.",
+    "feature5Title": "Tableau Communautaire",
+    "feature5Desc": "Partagez des réflexions, lisez ce que d'autres prient et ressentez la présence d'une communauté mondiale.",
+    "feature6Title": "Traductions Bibliques",
+    "feature6Desc": "Traductions du domaine public incluses gratuitement. Premium débloque Segond 21, NEG et plus.",
+    "feature7Title": "Thèmes et Boutique",
+    "feature7Desc": "Personnalisez votre expérience avec de beaux thèmes. Gagnez ou achetez des apparences premium.",
+    "feature8Title": "4 Langues",
+    "feature8Desc": "Support complet pour l'English, l'Español, le Français et le Kreyòl Ayisyen.",
+    "ctaTitle": "Commencez Votre Voyage",
+    "ctaDesc": "Créez un compte gratuit pour sauvegarder vos versets préférés, démarrer votre série, écrire des réflexions et rejoindre la communauté. L'inscription prend moins d'une minute.",
     "createAccount": "Créer un Compte Gratuit",
     "alreadyHaveAccount": "Vous avez déjà un compte ? Se Connecter",
-    "comingSoon": "Bientôt Disponible",
-    "comingSoon1": "Commentaires Disqus",
-    "comingSoon2": "Séries de Lecture Quotidienne",
-    "comingSoon3": "Traductions Multiples",
-    "comingSoon4": "Et Plus...",
+    "comingSoon": "Ce Qui Vient",
+    "comingSoon1": "Notifications push et rappels quotidiens personnalisés",
+    "comingSoon2": "Plus de traductions bibliques dans toutes les langues",
+    "comingSoon3": "Nouvelles fonctionnalités pour approfondir votre pratique quotidienne",
     "getInTouch": "Contactez-Nous",
-    "contactDesc": "Nous serions ravis de vous entendre ! Que vous ayez trouvé un bug, une suggestion, ou que vous souhaitiez simplement partager vos pensées, n'hésitez pas à nous contacter.",
+    "contactDesc": "Nous serions ravis de vous entendre — rapports de bugs, suggestions, encouragements ou demandes de prière.",
     "emailUs": "Envoyez-nous un email à :",
     "responseTime": "⏱️ Nous répondons généralement dans les 24-48 heures",
     "followInstagram": "Suivez-nous sur Instagram :",
@@ -276,6 +488,12 @@
     "saveFailed": "Échec de l'enregistrement du commentaire",
     "deleteFailed": "Échec de la suppression du commentaire"
   },
+  "search": {
+    "title": "Rechercher les Écritures",
+    "placeholder": "Rechercher… ex. \"Jean 3\" ou \"grâce\"",
+    "verseFound": "verset trouvé",
+    "versesFound": "versets trouvés"
+  },
   "common": {
     "loading": "Chargement...",
     "error": "Une erreur s'est produite",
@@ -291,6 +509,315 @@
     "search": "Rechercher",
     "noResults": "Aucun résultat trouvé",
     "contact": "Contact",
-    "comment": "Ajouter une réflexion"
+    "comment": "Ajouter une réflexion",
+    "help": "Aide"
+  },
+  "milestone": {
+    "achieved_label": "Jalon Atteint",
+    "blessings_label": "Bénédictions",
+    "continue": "Continuer",
+    "first_steps": {
+      "name": "Premiers Pas"
+    },
+    "week_in_word": {
+      "name": "Une Semaine dans la Parole"
+    },
+    "rooted": {
+      "name": "Enraciné"
+    },
+    "month_of_grace": {
+      "name": "Mois de Grâce"
+    },
+    "steadfast": {
+      "name": "Ferme"
+    },
+    "three_month": {
+      "name": "Trois Mois Solides"
+    },
+    "half_year": {
+      "name": "Demi-Année"
+    },
+    "nine_months": {
+      "name": "Neuf Mois"
+    },
+    "full_year": {
+      "name": "Une Année Complète"
+    }
+  },
+  "shop": {
+    "title": "Dons de Fidélité",
+    "subtitle": "Dépensez vos Bénédictions pour débloquer de nouvelles apparences pour votre parcours dévotionnel.",
+    "themes_title": "Thèmes"
+  },
+  "subscription": {
+    "title": "Premium",
+    "free_description": "Débloquez toutes les fonctionnalités premium avec un abonnement.",
+    "choose_plan": "Choisir un plan",
+    "plan": {
+      "monthly": "Mensuel",
+      "monthly_price": "$1.99 / mois",
+      "annual": "Annuel",
+      "annual_price": "$17.99 / an",
+      "annual_save": "Économisez 25%"
+    },
+    "upgrade_cta": "Passer à Premium",
+    "view_addons": "Voir les modules",
+    "active_title": "Membre Premium",
+    "active_plan": "Plan :",
+    "renews": "Renouvellement",
+    "manage": "Gérer l'abonnement",
+    "trial_title": "Essai gratuit",
+    "trial_ends": "Essai se termine le {{date}}",
+    "canceled_title": "Abonnement annulé",
+    "access_until": "Accès jusqu'au {{date}}",
+    "reactivate": "Réactiver",
+    "past_due_title": "Paiement échoué",
+    "past_due_description": "Veuillez mettre à jour votre moyen de paiement pour conserver l'accès premium.",
+    "past_due_banner": "Votre dernier paiement a échoué. Mettez à jour votre moyen de paiement.",
+    "update_payment": "Mettre à jour le paiement",
+    "refresh": "Actualiser le statut",
+    "loading": "Chargement…",
+    "modal_label": "Abonnement premium",
+    "modal_title": "Passer Premium",
+    "modal_subtitle": "Approfondissez votre pratique quotidienne",
+    "modal_legal": "Annulez à tout moment. Aucun frais caché.",
+    "success_toast": "Bienvenue dans Premium !",
+    "nav_badge_tooltip": "Vous êtes membre Premium",
+    "feature": {
+      "all_themes": "Tous les thèmes premium",
+      "journal": "Entrées de journal illimitées",
+      "prompts": "Invites de réflexion hebdomadaires",
+      "translations": "Traductions bibliques modernes",
+      "streak_calendar": "Calendrier de série complet",
+      "blessings_multiplier": "Bénédictions ×1,5 à chaque action",
+      "reflection_archive": "Archive complète des réflexions"
+    }
+  },
+  "otp": {
+    "section_title": "Modules et achats uniques",
+    "section_description": "Débloquez des fonctionnalités individuelles pour toujours — sans abonnement.",
+    "owned": "Acquis",
+    "loading": "…",
+    "success_toast": "Achat effectué !",
+    "journal_unlock": {
+      "title": "Journal déverrouillé",
+      "desc": "Entrées illimitées et édition enrichie, pour toujours.",
+      "price": "$2.99"
+    },
+    "reflection_archive": {
+      "title": "Archive de réflexions",
+      "desc": "Accédez à toutes vos réflexions passées.",
+      "price": "$2.99"
+    },
+    "modern_translations": {
+      "title": "Traductions modernes",
+      "desc": "NIV, ESV, NLT et plus — déverrouillés en permanence.",
+      "price": "$3.99"
+    },
+    "grace_day_pack": {
+      "title": "Pack de jours de grâce",
+      "desc": "3 jours de grâce supplémentaires.",
+      "price": "$0.99"
+    },
+    "theme_sanctuary": {
+      "title": "Thème Sanctuaire",
+      "desc": "Une esthétique chaleureuse et sacrée.",
+      "price": "$1.99"
+    },
+    "theme_desert_sand": {
+      "title": "Thème Sable du désert",
+      "desc": "Tons terreux inspirés du désert ancien.",
+      "price": "$1.99"
+    },
+    "theme_celestial": {
+      "title": "Thème Céleste",
+      "desc": "Une palette profonde et étoilée.",
+      "price": "$1.99"
+    },
+    "full_theme_library": {
+      "title": "Bibliothèque complète de thèmes",
+      "desc": "Tous les thèmes premium, passés et futurs.",
+      "price": "$3.99"
+    },
+    "support_developer": {
+      "title": "Soutenir le développeur",
+      "desc": "Offrez-moi un café ☕ — très apprécié.",
+      "price": "$1.99",
+      "thankyou_label": "Merci",
+      "thankyou_title": "Merci !",
+      "thankyou_body": "Votre soutien compte beaucoup."
+    }
+  },
+  "avatar": {
+    "ring": {
+      "tooltip": {
+        "premium": "Membre Premium",
+        "milestone": "Jalon {{milestone}}",
+        "none": "Pas encore de jalon"
+      }
+    }
+  },
+  "checkout": {
+    "overlay": {
+      "title": "Redirection vers le paiement…",
+      "subtitle": "Vous serez redirigé vers Stripe pour finaliser votre paiement."
+    }
+  },
+  "community": {
+    "section": {
+      "title": "Communauté"
+    },
+    "walking_today": "{{count}} personnes ont lu la Parole aujourd'hui",
+    "tab": {
+      "board": "Tableau",
+      "prayer": "Mur de prière",
+      "challenges": "Défis"
+    },
+    "post_type": {
+      "announcement": "Annonce",
+      "milestone": "Étape",
+      "prayer": "Demande de prière",
+      "challenge": "Défi"
+    },
+    "admin_author": "Words of Praise",
+    "anonymous_author": "Anonyme",
+    "reaction": {
+      "amen": "Amen",
+      "pray": "Prier",
+      "heart": "❤",
+      "join": "Rejoindre"
+    },
+    "composer": {
+      "placeholder": "Partagez une réflexion...",
+      "post_btn": "Publier",
+      "char_limit": "{{count}} caractères restants",
+      "locked": "Abonnez-vous pour partager des réflexions avec la communauté."
+    },
+    "prayer": {
+      "placeholder": "Soumettre une demande de prière...",
+      "anonymous_label": "Publier anonymement",
+      "submit_btn": "Envoyer",
+      "expire_notice": "Les demandes de prière expirent après 7 jours.",
+      "open_to_all": "Les demandes de prière sont ouvertes à tous les membres."
+    },
+    "challenge": {
+      "joined_count": "{{count}} personnes ont rejoint",
+      "join_btn": "Rejoindre le défi",
+      "joined_btn": "Rejoint ✓"
+    },
+    "empty": {
+      "board": "Aucune réflexion encore — soyez le premier à partager.",
+      "prayer": "Aucune demande de prière en ce moment.",
+      "challenge": "Aucun défi actif cette semaine."
+    },
+    "delete": {
+      "confirm": "Supprimer ce post ?",
+      "btn": "Supprimer"
+    },
+    "error": {
+      "post_failed": "Impossible de publier. Veuillez réessayer.",
+      "react_failed": "Impossible de sauvegarder votre réaction.",
+      "rate_limit": "Trop de publications — veuillez attendre quelques minutes."
+    },
+    "admin": {
+      "panel_title": "Admin — Nouveau post",
+      "body_placeholder": "Rédigez une annonce ou un défi...",
+      "pin_label": "Épingler en haut",
+      "expires_label": "Expire le :",
+      "publish_btn": "Publier",
+      "publishing": "Publication...",
+      "error": "Échec de la publication."
+    },
+    "expiry": {
+      "expires_in_days": "Expire dans {{count}} jour",
+      "expiring_soon": "Expire bientôt"
+    },
+    "time": {
+      "just_now": "à l'instant",
+      "mins_ago": "il y a {{count}}min",
+      "hours_ago": "il y a {{count}}h",
+      "days_ago": "il y a {{count}}j"
+    },
+    "new_posts_banner": "Nouveaux posts — appuyez pour actualiser"
+  },
+  "leaderboard": {
+    "title": "Communauté",
+    "this_weeks_challenge": "Le défi de cette semaine"
+  },
+  "streak": {
+    "share_button": "Partager ma série",
+    "share_generating": "Génération…",
+    "share_subtitle": "jours dans la Parole",
+    "share_locked": "Passez à Premium pour partager votre parcours de série avec les autres."
+  },
+  "premium": {
+    "go_premium": "Passer Premium"
+  },
+  "tutorial": {
+    "howItWorks": "Comment ça fonctionne",
+    "gotIt": "Compris !",
+    "newBadge": "Nouveau"
+  },
+  "blessings": {
+    "label": "Bénédictions",
+    "balance": "Solde de bénédictions",
+    "popover": {
+      "title": "Bénédictions",
+      "description": "Gagnez des Bénédictions en interagissant avec les versets quotidiens, en ajoutant des réflexions et en maintenant votre série.",
+      "balance": "Solde actuel : {{count}}"
+    },
+    "earned": {
+      "daily_view": "Verset quotidien consulté",
+      "reflection": "Réflexion ajoutée",
+      "favorite": "Verset mis en favori",
+      "shared": "Verset partagé",
+      "journal": "Entrée de journal écrite",
+      "milestone": "Jalon atteint",
+      "manna_solved": "Puzzle Manna résolu",
+      "manna_played": "Puzzle Manna joué",
+      "manna_streak_bonus": "Bonus de série Manna",
+      "generic": "Bénédictions gagnées"
+    }
+  },
+  "graceDayTutorial": {
+    "step1Title": "Votre série compte",
+    "step1Body": "Lisez le verset quotidien chaque jour pour construire votre série. Les séries débloquent des jalons et vous font gagner des Bénédictions ✦.",
+    "step2Title": "Les Jours de Grâce protègent votre série",
+    "step2Body": "Si vous manquez un jour, utilisez un Jour de Grâce pour garder votre série en vie. Vous obtenez 2 Jours de Grâce par période.",
+    "step3Title": "Comment en utiliser un",
+    "step3Body": "Appuyez sur «Utiliser un Jour de Grâce» ci-dessous et confirmez. Cela compte hier comme jour de lecture, gardant votre série en vie.",
+    "step4Title": "Les Jours de Grâce se rechargent automatiquement",
+    "step4Body": "Vos 2 Jours de Grâce se rechargent chaque mois civil. Utilisez-les judicieusement — une fois utilisés, ils disparaissent jusqu'à la prochaine réinitialisation.",
+    "title": "Jours de Grâce",
+    "subtitle": "Manqué un jour ? Protégez votre série avec un Jour de Grâce.",
+    "cta": "Compris !",
+    "reopenHint": "Appuyez sur ? dans le panneau Jours de Grâce pour revoir ceci."
+  },
+  "pwa": {
+    "install": {
+      "label": "Install app prompt",
+      "title": "Ajouter à l'écran d'accueil",
+      "subtitle": "Accès instantané, même hors ligne.",
+      "cta": "Installer"
+    },
+    "settings": {
+      "sectionTitle": "Installer l'app",
+      "installed": "Déjà sur votre écran d'accueil",
+      "installedDesc": "Vous utilisez l'app installée.",
+      "androidTitle": "Ajouter à l'écran d'accueil",
+      "androidDesc": "Accès instantané, même hors ligne.",
+      "androidCta": "Installer",
+      "iosTitle": "Ajouter à l'écran d'accueil",
+      "iosDesc": "Ouvrez-la instantanément depuis votre écran d'accueil.",
+      "iosStep1": "Appuyez sur le bouton",
+      "iosStep1Share": "Partager",
+      "iosStep1After": "en bas de Safari",
+      "iosStep2": "Faites défiler et appuyez sur",
+      "iosStep2AddToHome": "« Ajouter à l'écran d'accueil »",
+      "iosStep3": "Appuyez sur",
+      "iosStep3Add": "« Ajouter »",
+      "iosStep3After": "en haut à droite",
+      "genericHint": "Ouvrez cette app dans Chrome (Android) ou Safari (iPhone) pour l'ajouter à votre écran d'accueil."
+    }
   }
 }

@@ -6,7 +6,7 @@ import (
 )
 
 func RunMigrations(db *gorm.DB) error {
-    return db.AutoMigrate(
+    if err := db.AutoMigrate(
         &models.User{},
         &models.Verse{},
         &models.Favorite{},
@@ -14,7 +14,74 @@ func RunMigrations(db *gorm.DB) error {
         &models.Comment{},
         &models.PasswordHistory{},
         &models.UserSettings{},
-    )
+        // Phase 1
+        &models.UserStreak{},
+        &models.UserBlessings{},
+        &models.BlessingsTransaction{},
+        &models.UserMilestone{},
+        &models.UserUnlock{},
+        &models.UserActivityLog{},
+        // Phase 3
+        &models.JournalEntry{},
+        &models.JournalPrompt{},
+        // Phase 8
+        &models.UserSubscription{},
+        // Phase 9
+        &models.CommunityPost{},
+        &models.CommunityReaction{},
+        // Phase 10
+        &models.MannaWord{},
+        &models.MannaGame{},
+        &models.MannaGuess{},
+        // Push notifications
+        &models.PushSubscription{},
+        // Email reminders
+        &models.EmailReminderLog{},
+    ); err != nil {
+        return err
+    }
+
+    // Partial unique index — must be created explicitly
+    if err := db.Exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_daily_engagement
+        ON user_activity_logs (user_id, date_local)
+        WHERE action_type = 'daily_engagement'
+    `).Error; err != nil {
+        return err
+    }
+
+    // Phase 6: unique constraint on (user_id, unlock_key) to prevent duplicate purchases
+    if err := db.Exec(`
+        CREATE UNIQUE INDEX IF NOT EXISTS idx_unique_user_unlock_key
+        ON user_unlocks (user_id, unlock_key)
+    `).Error; err != nil {
+        return err
+    }
+
+    // Phase 7 backfill: users who had dark_mode = true should get 'midnight' as
+    // their active_theme so they don't revert to Parchment on next login.
+    // Idempotent — rows already set to a non-parchment theme are untouched.
+    if err := db.Exec(`
+        UPDATE user_settings
+        SET active_theme = 'midnight'
+        WHERE dark_mode = true AND (active_theme = '' OR active_theme = 'parchment')
+    `).Error; err != nil {
+        return err
+    }
+
+    // Phase 4 backfill: for any user_settings row where preferred_bible_version
+    // is empty, infer a sensible free-tier default from preferred_language.
+    // Idempotent — rows that already have a value are untouched.
+    return db.Exec(`
+        UPDATE user_settings
+        SET preferred_bible_version = CASE preferred_language
+            WHEN 'es' THEN 'rvr1960'
+            WHEN 'fr' THEN 'jnd'
+            WHEN 'ht' THEN 'hatbsa'
+            ELSE 'kjv'
+        END
+        WHERE preferred_bible_version = '' OR preferred_bible_version IS NULL
+    `).Error
 }
 
 // BackfillDailyDates fills in daily_date for pre-migration verse rows that have

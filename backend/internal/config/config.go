@@ -2,8 +2,8 @@ package config
 
 import (
     "os"
+    "strconv"
     "github.com/joho/godotenv"
-	
 )
 
 type Config struct {
@@ -12,18 +12,36 @@ type Config struct {
     DBUser          string
     DBPassword      string
     DBName          string
-    DBSSLMode      string
-    Port             string
-    JWTSecret        string
-    BibleAPIKey      string
-    BibleVersionID    string
-    BibleAPIBaseURL  string
+    DBSSLMode       string
+    // DBLogLevel controls GORM SQL verbosity.
+    // "info"  — log every SQL statement (useful for debugging)
+    // "warn"  — log only slow queries and warnings (default)
+    // "error" — log only errors
+    // "silent"— no DB logging
+    DBLogLevel      string
+    Port            string
+    JWTSecret       string
+    BibleAPIKey     string
+    BibleVersionID  string
+    BibleAPIBaseURL string
     ServerAddress   string
 
     // Email service
     ResendAPIKey string
     FromEmail    string
     FrontendURL  string
+
+    // Web Push (VAPID)
+    VAPIDPublicKey  string
+    VAPIDPrivateKey string
+    VAPIDSubscriber string // e.g. "mailto:admin@wordsofpraise.app"
+    // Hour of day (UTC, 0-23) to dispatch daily verse push reminders.
+    PushReminderHour int
+
+    // Email reminder scheduler
+    ReminderEnabled   bool
+    ReminderSendHour  int
+    ReminderBatchSize int
 }
 
 func Load() (*Config, error) {
@@ -41,6 +59,7 @@ func Load() (*Config, error) {
         DBPassword:      os.Getenv("DB_PASSWORD"),
         DBName:          os.Getenv("DB_NAME"),
         DBSSLMode:      os.Getenv("DB_SSLMODE"),
+        DBLogLevel:     getEnvOrDefault("DB_LOG_LEVEL", "warn"),
         Port:            getEnvOrDefault("PORT", "8888"),
         JWTSecret:       os.Getenv("JWT_SECRET"),
         BibleAPIKey:     os.Getenv("BIBLE_API_KEY"),
@@ -50,7 +69,32 @@ func Load() (*Config, error) {
         ResendAPIKey:    os.Getenv("RESEND_API_KEY"),
         FromEmail:       getEnvOrDefault("FROM_EMAIL", "noreply@wordsofpraise.app"),
         FrontendURL:     getEnvOrDefault("FRONTEND_URL", "http://localhost:3000"),
+        VAPIDPublicKey:  os.Getenv("VAPID_PUBLIC_KEY"),
+        VAPIDPrivateKey: os.Getenv("VAPID_PRIVATE_KEY"),
+        VAPIDSubscriber: getEnvOrDefault("VAPID_SUBSCRIBER", "mailto:admin@wordsofpraise.app"),
+        PushReminderHour:  parsePushHour(getEnvOrDefault("PUSH_REMINDER_HOUR", "8")),
+        ReminderEnabled:   getEnvOrDefault("REMINDER_ENABLED", "true") == "true",
+        ReminderSendHour:  parseIntOrDefault("REMINDER_SEND_HOUR", 8),
+        ReminderBatchSize: parseIntOrDefault("REMINDER_BATCH_SIZE", 100),
     }, nil
+}
+
+// parsePushHour parses the PUSH_REMINDER_HOUR env var, defaulting to 8.
+func parsePushHour(s string) int {
+    h, err := strconv.Atoi(s)
+    if err != nil || h < 0 || h > 23 {
+        return 8
+    }
+    return h
+}
+
+func parseIntOrDefault(key string, def int) int {
+    if v := os.Getenv(key); v != "" {
+        if n, err := strconv.Atoi(v); err == nil {
+            return n
+        }
+    }
+    return def
 }
 
 func getEnvOrDefault(key, defaultValue string) string {

@@ -4,19 +4,29 @@ import (
     "crypto/md5"
     "encoding/hex"
     "fmt"
+    "sync"
     "time"
 	"strconv"
     "strings"
     "dailybible/internal/models"
     "dailybible/internal/repository"
-	
-	
 )
+
+// dailyVerseCache holds the in-process cached verse for the current effective day.
+// This avoids a DB round-trip for every request to GET /api/verses/daily when the
+// verse is already known for today. The effective day uses UTC-10 (same logic as
+// GetDailyVerse) so the cache invalidates at the same moment the verse changes.
+type dailyVerseCache struct {
+    mu           sync.RWMutex
+    verse        *models.Verse
+    effectiveDay string // "YYYY-MM-DD" at UTC-10
+}
 
 type DailyVerseService struct {
     bibleAPI     BibleAPIService
     verseRepo    repository.VerseRepository
     curatedList  []string
+    cache        dailyVerseCache
 }
 
 func NewDailyVerseService(
@@ -30,31 +40,124 @@ func NewDailyVerseService(
     }
 }
 
-// GetDailyVerse returns the verse of the day
-// Uses UTC-10 timezone (Hawaii) to ensure the verse updates early in the morning for users
-// worldwide. When it's midnight in Hawaii (UTC-10), it's 10 AM UTC, which is:
-// - 5-6 AM Eastern Time
-// - 2-3 AM Pacific Time
-// - Early morning for most users globally
-// This prevents the verse from updating in the evening (7 PM Eastern).
+// GetDailyVerseForDate returns the verse assigned to a specific calendar date.
+// Unlike GetDailyVerse, this never records engagement or streak credit.
+//
+// Lookup order:
+//  1. DB hit by date  — fast path, verse was already assigned on that day.
+//  2. DB hit by ref   — verse exists but may have a different DailyDate:
+//     a. No DailyDate yet → claim the date with a targeted column update.
+//     b. Different DailyDate → return a copy with the requested date set
+//        (the unique index prevents reassigning the column).
+//  3. Bible API fetch — verse never stored; create it and handle race conditions.
+func (s *DailyVerseService) GetDailyVerseForDate(date string) (*models.Verse, error) {
+	// 1. Fast path: verse already in DB for this date.
+	if cached, err := s.verseRepo.GetByDate(date); err == nil && cached != nil {
+		return cached, nil
+	}
+
+	// Reconstruct which verse was (or would have been) shown on this date.
+	reference := s.selectVerseForDate(date)
+
+	// 2. Verse exists in DB by reference.
+	if existing, err := s.verseRepo.GetByReference(reference); err == nil && existing != nil {
+		if existing.DailyDate == nil {
+			// 2a. No date assigned yet — claim it with a targeted update so we
+			//     don't overwrite any other field (avoids full-Save side effects).
+			if updateErr := s.verseRepo.UpdateDailyDate(existing.ID, date); updateErr != nil {
+				// A concurrent request won the race. Re-fetch by date to get
+				// whichever record was committed, or fall through to a copy.
+				if winner, fetchErr := s.verseRepo.GetByDate(date); fetchErr == nil && winner != nil {
+					return winner, nil
+				}
+				// Still nothing — return an in-memory copy; the date won't be
+				// persisted but the verse text is correct for display.
+				copy := *existing
+				dateCopy := date
+				copy.DailyDate = &dateCopy
+				return &copy, nil
+			}
+			existing.DailyDate = &date
+			return existing, nil
+		}
+		// 2b. Verse already has a different DailyDate. The unique index on
+		//     daily_date means we cannot reassign it without a schema change.
+		//     Return a copy with the requested date for display purposes only.
+		copy := *existing
+		dateCopy := date
+		copy.DailyDate = &dateCopy
+		return &copy, nil
+	}
+
+	// 3. Verse not in DB at all — fetch from the Bible API and persist.
+	apiVerse, err := s.bibleAPI.GetVerse(reference)
+	if err != nil {
+		return nil, fmt.Errorf("GetDailyVerseForDate(%q): bible API fetch failed: %w", date, err)
+	}
+
+	dateCopy := date
+	verse := &models.Verse{
+		Reference:   apiVerse.Reference,
+		Text:        apiVerse.Text,
+		Book:        extractBook(apiVerse.Reference),
+		Chapter:     extractChapter(apiVerse.Reference),
+		VerseNumber: extractVerse(apiVerse.Reference),
+		Version:     "KJV",
+		Translation: "KJV",
+		DailyDate:   &dateCopy,
+	}
+
+	if createErr := s.verseRepo.Create(verse); createErr != nil {
+		// Concurrent request created the verse or claimed the date first.
+		// Try both lookup paths to return whichever record won.
+		if winner, fetchErr := s.verseRepo.GetByDate(date); fetchErr == nil && winner != nil {
+			return winner, nil
+		}
+		if winner, fetchErr := s.verseRepo.GetByReference(reference); fetchErr == nil && winner != nil {
+			return winner, nil
+		}
+		return nil, fmt.Errorf("GetDailyVerseForDate(%q): failed to save verse: %w", date, createErr)
+	}
+
+	return verse, nil
+}
+
+// GetDailyVerse returns the verse of the day.
+// Uses UTC-10 (Hawaii) so the verse rolls over at 10 AM UTC — early morning
+// for users worldwide rather than mid-evening Eastern time.
+//
+// Two-level cache:
+//  1. In-process memory cache (this struct) — zero DB cost for repeat calls
+//     within the same effective day. Invalidates automatically when the date changes.
+//  2. DB row cache (verseRepo.GetByDate) — fast path when the in-process cache
+//     is cold (e.g., after a server restart).
 func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
-    // Get current UTC time
-    now := time.Now().UTC()
-    
-    // Subtract 10 hours to get the "effective date"
-    // When it's 10 AM UTC (5-6 AM Eastern), this becomes midnight (new day)
-    effectiveTime := now.Add(-10 * time.Hour)
-    today := effectiveTime.Format("2006-01-02")
-    
-    // Check cache first - see if we already have a verse for today
+    today := time.Now().UTC().Add(-10 * time.Hour).Format("2006-01-02")
+
+    // Level 1: in-process cache hit.
+    // Return a struct copy, not the pointer, so callers cannot mutate the cache.
+    s.cache.mu.RLock()
+    if s.cache.effectiveDay == today && s.cache.verse != nil {
+        v := *s.cache.verse // defensive copy
+        s.cache.mu.RUnlock()
+        return &v, nil
+    }
+    s.cache.mu.RUnlock()
+
+    // Level 2: DB cache — verse already resolved for today.
     cached, err := s.verseRepo.GetByDate(today)
     if err == nil && cached != nil {
-        return cached, nil
+        s.cache.mu.Lock()
+        s.cache.verse = cached
+        s.cache.effectiveDay = today
+        s.cache.mu.Unlock()
+        copy := *cached // defensive copy before returning
+        return &copy, nil
     }
     
     // Select verse for today
     reference := s.selectVerseForDate(today)
-    
+
     // Check if verse already exists by reference
     existingVerse, err := s.verseRepo.GetByReference(reference)
     if err == nil && existingVerse != nil {
@@ -63,15 +166,20 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         if err := s.verseRepo.Update(existingVerse); err != nil {
             return nil, fmt.Errorf("failed to update verse daily date: %w", err)
         }
-        return existingVerse, nil
+        s.cache.mu.Lock()
+        s.cache.verse = existingVerse
+        s.cache.effectiveDay = today
+        s.cache.mu.Unlock()
+        copy := *existingVerse // defensive copy before returning
+        return &copy, nil
     }
-    
-    // Fetch from Bible API
+
+    // Fetch from Bible API (cold path — only happens once per day per server instance)
     apiVerse, err := s.bibleAPI.GetVerse(reference)
     if err != nil {
         return nil, fmt.Errorf("failed to fetch verse from API: %w", err)
     }
-    
+
     // Convert and save new verse
     verse := &models.Verse{
         Reference: apiVerse.Reference,
@@ -79,16 +187,22 @@ func (s *DailyVerseService) GetDailyVerse() (*models.Verse, error) {
         Book:      extractBook(apiVerse.Reference),
         Chapter:   extractChapter(apiVerse.Reference),
         VerseNumber: extractVerse(apiVerse.Reference),
-        Version: "KJV", // Default
-        Translation: "KJV", // Default
+        Version: "KJV",
+        Translation: "KJV",
         DailyDate: &today,
     }
-    
+
     if err := s.verseRepo.Create(verse); err != nil {
         return nil, fmt.Errorf("failed to save verse: %w", err)
     }
-    
-    return verse, nil
+
+    s.cache.mu.Lock()
+    s.cache.verse = verse
+    s.cache.effectiveDay = today
+    s.cache.mu.Unlock()
+
+    copy := *verse // defensive copy before returning
+    return &copy, nil
 }
 
 // selectVerseForDate selects a verse based on the date

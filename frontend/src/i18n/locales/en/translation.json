@@ -8,11 +8,152 @@
     "favorites": "Favorites",
     "history": "History",
     "about": "About",
+    "journal": "Journal",
     "profile": "Profile",
     "settings": "Settings",
     "login": "Login",
     "signup": "Sign Up",
-    "logout": "Logout"
+    "logout": "Logout",
+    "search": "Search",
+    "shop": "Shop",
+    "leaderboard": "Community",
+    "manna": "Manna"
+  },
+  "manna": {
+    "title": "Manna",
+    "subtitle": "A daily Biblical word puzzle",
+    "keyboard": "Keyboard",
+    "grid": "Puzzle grid",
+    "delete": "Delete",
+    "enter": "Enter",
+    "yesterdaysWord": "Yesterday's word",
+    "yesterdaySection": "Yesterday's word",
+    "unlockCta": "Unlock with a Words of Praise membership",
+    "socialProof": "{{n}} devotees are solving today's word",
+    "unlockScripture": "Unlock full text",
+    "solvedTitle": "You solved today's Manna!",
+    "failedTitle": "Today's word was:",
+    "comeback": "Come back tomorrow for a new word.",
+    "share": "Share result",
+    "copied": "Result copied!",
+    "copyFailed": "Could not copy.",
+    "solved": "+{{n}} Blessings!",
+    "notEnoughLetters": "Not enough letters",
+    "errorLoading": "Failed to load today's puzzle.",
+    "errorLength": "Guesses must be exactly 5 letters.",
+    "errorComplete": "This game is already complete.",
+    "errorChars": "Guesses must contain only letters A–Z.",
+    "notAWord": "Not a recognized biblical word",
+    "errorSubmit": "Failed to submit guess. Try again.",
+    "noHints": "No hints",
+    "clueIntro": "Find the missing word:",
+    "hintAriaLabel": "Use a hint ({{n}} left, costs 15 Blessings)",
+    "hintMax": "No hints remaining.",
+    "hintNoBlessings": "Not enough Blessings for a hint.",
+    "hintError": "Could not get hint. Try again.",
+    "hintRevealed": "Position {{n}}: {{letter}}",
+    "hintsRevealed": "Revealed:",
+    "howToPlay": "How to Play",
+    "howToPlayTitle": "How to Play",
+    "tutorialHelpBtn": "How to play",
+    "tutorialIntro": "Guess the 5-letter Biblical word in 6 tries.",
+    "tutorialSub": "Each guess must be a recognized Biblical word.",
+    "tutorialColorKeyTitle": "After each guess, tiles reveal how close you were:",
+    "tutorialCorrectLabel": "Right letter,\nright position",
+    "tutorialPresentLabel": "Right letter,\nwrong position",
+    "tutorialAbsentLabel": "Not in\nthe word",
+    "tutorialClue": "Each puzzle shows a Bible verse — find the missing word that fills the blank.",
+    "tutorialHints": "Hints reveal a letter position (costs 15 Blessings ✦). Up to 3 per puzzle.",
+    "tutorialBegin": "Begin Playing",
+    "tutorialReopenHint": "Tap ? anytime to review these rules.",
+    "statsModalLabel": "Stats & History",
+    "statsTitle": "Manna Stats",
+    "statsTab": "Stats",
+    "historyTab": "History",
+    "statPlayed": "Played",
+    "statWinRate": "Win %",
+    "statStreak": "Streak",
+    "statMaxStreak": "Best",
+    "statAvgGuesses": "Average guesses (wins): {{n}}",
+    "statDistribution": "Guess Distribution",
+    "statGuesses": "guesses",
+    "statsEmpty": "No games played yet. Come back after your first puzzle!",
+    "statsError": "Could not load stats. Try again later.",
+    "historyEmpty": "No past games yet. Your history will appear here after your first puzzle.",
+    "historyError": "Could not load history. Try again later.",
+    "historyFailed": "X/6",
+    "nextPuzzle": "Next word in",
+    "ariaCorrect": "correct",
+    "ariaPresent": "present",
+    "ariaAbsent": "absent",
+    "ariaSolved": "Solved! The word was {{word}}.",
+    "ariaFailed": "Game over. The word was {{word}}.",
+    "streak": "{{n}}-day Manna streak",
+    "archive": "Archive",
+    "archiveSubtitle": "Play any past day's word puzzle.",
+    "archiveNotPlayed": "Not played",
+    "archiveSolved": "Solved in {{n}}",
+    "archiveFailed": "Failed",
+    "freeBanner": "Free Play",
+    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
+    "freeUpgradeCta": "Upgrade to Premium",
+    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
+    "archiveLabel": "Archive",
+    "backToToday": "← Today",
+    "backToArchive": "← Archive",
+    "archiveInProgress": "In progress",
+    "archiveError": "Could not load history. Tap a date to play anyway.",
+    "archivePlay": "Play",
+    "solvedArchiveTitle": "You solved it!",
+    "failedArchiveTitle": "The word was:",
+    "streakBonus": "+{{bonus}} streak bonus! ({{streak}}-day solve streak 🔥)"
+  },
+  "journal": {
+    "title": "My Journal",
+    "subtitle": "A private space for prayer, reflection, and growth.",
+    "newEntry": "New Entry",
+    "todayIs": "Today, {{date}}",
+    "whatOnYourHeart": "What is on your heart?",
+    "beginWriting": "Begin Writing →",
+    "emptyTitle": "Your devotional journey begins here.",
+    "emptyBody": "Write your first entry — a reflection, a prayer, or simply what's on your heart.",
+    "writeFirstEntry": "Write your first entry →",
+    "lockedEntries": "{{count}} older entries are safely stored. Unlock full history with a Words of Praise membership.",
+    "unlockHistory": "Unlock Full History",
+    "errorLoading": "Failed to load journal entries. Please try again.",
+    "backToJournal": "Back to Journal",
+    "deleteEntry": "Delete Entry",
+    "confirmDelete": "Delete this entry? This cannot be undone.",
+    "unsavedChanges": "You have unsaved changes. Leave without saving?",
+    "saving": "Saving…",
+    "saved": "Saved",
+    "thisWeeksPrompt": "This Week's Prompt",
+    "hidePrompt": "Hide prompt",
+    "hide": "Hide",
+    "linkAVerse": "Link a verse",
+    "removeVerse": "Remove linked verse",
+    "verseInputPlaceholder": "e.g. Romans 8:28",
+    "link": "Link",
+    "placeholder": "Begin writing — a reflection, a prayer, or simply what's on your heart…",
+    "editorLabel": "Journal entry",
+    "characters": "characters",
+    "shareTitle": "Journal Entry",
+    "copied": "Copied to clipboard",
+    "copyFailed": "Could not copy to clipboard",
+    "tutorial": {
+      "step1Title": "Write daily reflections",
+      "step1Body": "Tap \"New Entry\" to start writing. Each entry can include a reflection, prayer, or whatever is on your heart.",
+      "step2Title": "Link to a verse",
+      "step2Body": "Entries can be connected to the daily verse or any scripture passage for deeper context.",
+      "step3Title": "Edit & revisit",
+      "step3Body": "Tap any entry to open and edit it. Your journal grows with you day by day.",
+      "step4Title": "Private & secure",
+      "step4Body": "Your entries are only visible to you. Premium members can store unlimited entries.",
+      "title": "My Journal",
+      "subtitle": "A private space for prayer, reflection, and spiritual growth.",
+      "cta": "Start Writing",
+      "reopenHint": "Tap ? anytime to see this guide again."
+    }
   },
   "dailyVerse": {
     "title": "Today's Verse",
@@ -26,7 +167,12 @@
     "share": "Share",
     "copied": "Verse copied to clipboard!",
     "comment": "Add a note",
-    "commentPlaceholder": "Add your personal reflection..."
+    "commentPlaceholder": "Add your personal reflection...",
+    "compareTranslations": "Compare Translations",
+    "switchTranslation": "Switch Translation",
+    "sessionOnly": "Session only — won't change your settings",
+    "premiumTranslation": "Available with a Words of Praise membership",
+    "translationUnavailable": "Translation unavailable"
   },
   "auth": {
     "browsingAsGuest": "Browsing as Guest",
@@ -116,6 +262,7 @@
     "username": "Username",
     "email": "Email",
     "memberSince": "Member Since",
+    "member_since": "Member since",
     "noData": "No profile data available.",
     "statistics": "Statistics",
     "totalFavorites": "Total Favorites",
@@ -130,7 +277,33 @@
     "daysActive": "Days Active",
     "noStats": "No statistics available.",
     "editProfile": "Edit Profile",
-    "failedToLoad": "Failed to load profile"
+    "failedToLoad": "Failed to load profile",
+    "devoted_member": "Devoted Member",
+    "account_settings": "Account Settings",
+    "my_journey": "My Journey",
+    "milestones": "Milestones",
+    "this_month": "This Month",
+    "your_reading": "Your Reading",
+    "account": "Account",
+    "begin_journey": "Begin Your Journey",
+    "begin_desc": "Open today's verse to begin your streak. Your faithfulness will be honored here.",
+    "read_today": "Read Today's Verse →",
+    "grace_loading": "Using Grace Day…",
+    "use_grace_day": "Use a Grace Day",
+    "section_error": "Could not load this section. Pull to refresh.",
+    "calendar_error": "Calendar temporarily unavailable.",
+    "calendar_empty": "No activity recorded yet.",
+    "day_streak": "Day Streak",
+    "longest_streak": "Longest",
+    "blessings": "Blessings",
+    "all_milestones_complete": "You've walked with the Word for a full year.",
+    "next_milestone": "Next",
+    "days_label": "days",
+    "days_remaining": "days remaining",
+    "days_to": "days to",
+    "verses_read": "Verses Read",
+    "reflections": "Reflections",
+    "days_active": "Days Active"
   },
   "settings": {
     "title": "Settings",
@@ -142,14 +315,55 @@
     "appearance": {
       "title": "Appearance",
       "darkMode": "Dark Mode",
-      "darkModeDescription": "Use dark theme throughout the app"
+      "darkModeDescription": "Use dark theme throughout the app",
+      "blessingsAvailable": "{{count}} Blessings available",
+      "loadingThemes": "Loading themes…",
+      "tapToConfirm": "Tap to confirm",
+      "signInToUnlock": "Sign in to unlock",
+      "signIn": "Sign in",
+      "guestNote": "Sign in to unlock premium themes with Blessings.",
+      "purchaseErrorInsufficient": "Not enough Blessings to unlock this theme.",
+      "purchaseErrorGeneric": "Could not complete the purchase. Please try again.",
+      "celebrationAnim": "Celebration Animations",
+      "celebrationAnimDesc": "Show particle effects when you reach a milestone.",
+      "soundEffects": "Sound Effects",
+      "soundEffectsDesc": "Play soft tones when saving journal entries or continuing your streak."
+    },
+    "sections": {
+      "myJourney": "My Journey",
+      "devotion": "Devotion & Notifications",
+      "appearance": "Appearance",
+      "manna": "Manna Puzzle"
+    },
+    "manna": {
+      "hardMode": "Hard Mode",
+      "hardModeDesc": "Confirmed letters must be reused in every subsequent guess.",
+      "physicalKeySound": "Physical Keyboard Sounds",
+      "physicalKeySoundDesc": "Play a sound when typing with your physical keyboard."
+    },
+    "graceDays": {
+      "title": "Grace Days",
+      "description": "Missed a day? Use a Grace Day to protect your streak.",
+      "remaining": "Grace Days remaining:",
+      "of2": "of 2",
+      "available": "available",
+      "exhausted": "Your grace days have been used this period.",
+      "use": "Use a Grace Day",
+      "confirm": "Confirm — use a Grace Day?"
     },
     "notifications": {
       "title": "Notifications",
       "emailNotifications": "Email Notifications",
       "emailDescription": "Receive updates via email",
       "dailyReminder": "Daily Verse Reminder",
-      "reminderDescription": "Get reminded to read your daily verse"
+      "reminderDescription": "Get reminded to read your daily verse",
+      "pushNotifications": "Push Notifications",
+      "pushDesc": "Get a daily notification when the verse is ready.",
+      "pushActiveDesc": "You'll receive a reminder at your chosen time.",
+      "pushDenied": "Notifications are blocked. Allow them in your browser settings, then try again.",
+      "pushUnsupported": "Not supported on this browser. Use Chrome on Android or Safari on iPhone.",
+      "pushReminderLabel": "Remind me at",
+      "pushTimeSaved": "Reminder time updated to {{time}}"
     },
     "language": {
       "title": "Language",
@@ -160,6 +374,13 @@
         "fr": "French (Français)",
         "ht": "Haitian Creole (Kreyòl Ayisyen)"
       }
+    },
+    "translation": {
+      "title": "Bible Translation",
+      "label": "Preferred Bible Version",
+      "saved": "Translation saved",
+      "saveFailed": "Could not save translation",
+      "premiumNote": "🔒 Locked translations are available with a Words of Praise membership."
     },
     "account": {
       "changePassword": "Change Password",
@@ -175,51 +396,74 @@
     "save": "Save Settings",
     "saving": "Saving...",
     "saved": "Settings saved successfully!",
-    "saveFailed": "Failed to save settings"
+    "saveFailed": "Failed to save settings",
+    "community": {
+      "title": "Community",
+      "milestone_posts": "Milestone Celebrations",
+      "milestone_posts_description": "Share your streak milestones with the community.",
+      "milestone_locked": "Upgrade to share milestones with the community."
+    }
   },
   "about": {
     "title": "About Words of Praise",
     "dedication": "Dedicated to Clairemena Jean-Pierre",
-    "description": "A modern web application for daily Bible verses with favorites, comments, and history tracking.",
     "mission": "Our Mission",
-    "missionText": "To provide daily spiritual inspiration through God's Word, making it accessible and meaningful for everyone.",
-    "features": "Features",
-    "feature1": "Daily inspirational Bible verses",
-    "feature2": "Save your favorite verses",
-    "feature3": "Add personal notes and reflections",
-    "feature4": "Track your reading history",
-    "feature5": "Beautiful, distraction-free reading experience",
+    "missionText": "Words of Praise is a daily spiritual companion — a place to encounter God's Word, cultivate faithfulness, and connect with a community of believers. Every feature is built with one purpose: to make your daily practice feel seen, honored, and worth returning to.",
+    "features": "Everything in the App",
     "back": "Back",
-    "subtitle": "Daily Inspiration Through God's Word",
+    "subtitle": "Your Daily Companion in God's Word",
     "feature1Title": "Daily Verse",
-    "feature1Desc": "Receive a new inspirational Bible verse every day at midnight",
-    "feature2Title": "Favorites",
-    "feature2Desc": "Save and organize your favorite verses for easy access",
-    "feature3Title": "History",
-    "feature3Desc": "Browse past daily verses using back and forward arrows right on the home screen. Sign in to access up to 30 days of verse history.",
-    "feature4Title": "Personal Reflections",
-    "feature4Desc": "Add your own reflections and thoughts to any verse",
-    "feature5Title": "Dark Mode",
-    "feature5Desc": "Comfortable reading experience day or night",
-    "feature6Title": "Mobile Friendly",
-    "feature6Desc": "Beautiful and responsive on all devices",
-    "ctaTitle": "Unlock the Full Experience",
-    "ctaDesc": "Create a free account to save your favorite verses, browse past daily verses, add personal reflections, and more. Sign up takes less than a minute!",
+    "feature1Desc": "A fresh Bible verse every day. Swipe back to revisit past verses and add your own reflection to any of them.",
+    "feature2Title": "Journal & Reflections",
+    "feature2Desc": "Write personal journal entries and attach reflections to any verse. Your thoughts, preserved.",
+    "feature3Title": "Manna Puzzle",
+    "feature3Desc": "A daily biblical word puzzle — find the hidden word of the day, drawn from Scripture.",
+    "feature4Title": "Faithfulness Journey",
+    "feature4Desc": "Track your streak, earn Blessings, and reach milestones that honor your consistency in the Word.",
+    "feature5Title": "Community Board",
+    "feature5Desc": "Share reflections, read what others are praying, and feel the presence of a global community.",
+    "feature6Title": "Bible Translations",
+    "feature6Desc": "Free public-domain translations included. Premium unlocks NIV, ESV, NLT, and more.",
+    "feature7Title": "Themes & Shop",
+    "feature7Desc": "Personalize your experience with beautiful themes. Earn or purchase premium looks and add-ons.",
+    "feature8Title": "4 Languages",
+    "feature8Desc": "Full support for English, Español, Français, and Kreyòl Ayisyen.",
+    "ctaTitle": "Begin Your Journey",
+    "ctaDesc": "Create a free account to save your favorite verses, start your streak, write reflections, and join the community. Sign up takes less than a minute.",
     "createAccount": "Create Free Account",
     "alreadyHaveAccount": "Already have an account? Sign In",
-    "comingSoon": "Coming Soon",
-    "comingSoon1": "Disqus Comments",
-    "comingSoon2": "Daily Reading Streaks",
-    "comingSoon3": "Multiple Translations",
-    "comingSoon4": "And More...",
+    "comingSoon": "What's Coming Next",
+    "comingSoon1": "Push notifications & personalized daily reminders",
+    "comingSoon2": "More Bible translations across all languages",
+    "comingSoon3": "New features to deepen your daily practice",
     "getInTouch": "Get in Touch",
-    "contactDesc": "We'd love to hear from you! Whether you've found a bug, have a suggestion, or just want to share your thoughts, please reach out.",
+    "contactDesc": "We'd love to hear from you — bug reports, suggestions, encouragement, or prayer requests.",
     "emailUs": "Email us at:",
     "responseTime": "⏱️ We typically respond within 24-48 hours",
     "followInstagram": "Follow us on Instagram:",
     "instagramUpdate": "📱 Stay updated with daily inspiration and app updates",
     "inLovingMemory": "In Loving Memory",
-    "devotedChild": "A devoted child of God"
+    "devotedChild": "A devoted child of God",
+    "faqTitle": "Frequently Asked Questions",
+    "faqSubtitle": "Quick answers to the most common questions.",
+    "faq": {
+      "q1": "Why did my streak break?",
+      "a1": "Your streak counts the number of consecutive days you've opened the daily verse. If you miss a day without using a Grace Day, your streak resets to zero. To protect your streak after a missed day, tap \"Use a Grace Day\" — you get 2 Grace Days per month that refill automatically on the 1st.",
+      "q2": "How do Grace Days work?",
+      "a2": "Grace Days let you retroactively count a missed day as read, so your streak stays intact. You receive 2 Grace Days each calendar month. They do not carry over — unused Grace Days expire at the end of the month. You can also purchase a Grace Day Pack (3 extra days for $0.99) in the Shop.",
+      "q3": "Why am I not receiving push notifications?",
+      "a3": "Browser push is supported on Chrome for Android and Safari on iPhone. Make sure you've allowed notifications when prompted — if you accidentally denied them, go to your browser settings and re-enable them for this site. Email reminders are available to all users regardless of browser as an alternative.",
+      "q4": "Why can I only make 4 guesses in Manna?",
+      "a4": "Free accounts are limited to 4 guesses per Manna puzzle. A premium membership increases this to 6 guesses and also unlocks the full scripture clue from the start, hints (which reveal a letter for 15 Blessings), and detailed solve statistics.",
+      "q5": "How do I unlock modern translations like NIV or ESV?",
+      "a5": "Modern translations (NIV, ESV, NLT, and more) are premium. You can unlock them either with a Words of Praise subscription ($1.99/mo or $17.99/yr) or a one-time \"Modern Translations\" purchase for $3.99 in the Shop.",
+      "q6": "What are Blessings and what can I do with them?",
+      "a6": "Blessings (✦) are the app's in-app currency, earned by reading the daily verse, writing reflections, journaling, playing Manna, and reaching streak milestones. Premium members earn 1.5× Blessings on every action. Spend them in the Shop to unlock themes. They never expire.",
+      "q7": "Can I post on the Community Board?",
+      "a7": "The Community Board requires a premium (\"Devoted Member\") subscription to post. The Prayer Wall is open to all members — free and premium — including anonymous prayer requests. Challenges are visible to everyone.",
+      "q8": "My subscription shows \"Past Due\" — what do I do?",
+      "a8": "A past-due status means your last payment failed. Open the Account section in Settings and tap \"Manage Subscription\" to update your payment method in the Stripe portal. Your premium access is paused until payment is resolved."
+    }
   },
   "account": {
     "setPassword": "Set Password",
@@ -276,6 +520,12 @@
     "saveFailed": "Failed to save comment",
     "deleteFailed": "Failed to delete comment"
   },
+  "search": {
+    "title": "Search Scripture",
+    "placeholder": "Search scriptures… e.g. \"John 3\" or \"grace\"",
+    "verseFound": "verse found",
+    "versesFound": "verses found"
+  },
   "common": {
     "loading": "Loading...",
     "error": "An error occurred",
@@ -291,6 +541,351 @@
     "search": "Search",
     "noResults": "No results found",
     "contact": "Contact",
-    "comment": "Add a reflection"
+    "comment": "Add a reflection",
+    "help": "Help"
+  },
+  "streak": {
+    "tooltip": "Day {{count}} streak",
+    "label": "Streak",
+    "days": "days",
+    "graceDays": "Grace Days",
+    "recoverable": "Streak can be recovered",
+    "useGraceDay": "Use Grace Day",
+    "reset": "Your streak has been reset",
+    "resetMessage": "Don't worry! Start fresh today and build a new streak.",
+    "firstEngagement": "Welcome to your faith journey!",
+    "firstEngagementMessage": "You've started your daily reading streak. Keep coming back each day to grow your faithfulness.",
+    "share_button": "Share my streak",
+    "share_generating": "Generating…",
+    "share_subtitle": "days in the Word",
+    "share_locked": "Upgrade to Premium to share your streak journey with others."
+  },
+  "blessings": {
+    "label": "Blessings",
+    "balance": "Blessings balance",
+    "popover": {
+      "title": "Blessings",
+      "description": "Earn Blessings by engaging with daily verses, adding reflections, and maintaining your streak. Visit the Rewards Shop to unlock themes and other gifts of faithfulness.",
+      "balance": "Current balance: {{count}}"
+    },
+    "earned": {
+      "daily_view": "Daily verse viewed",
+      "reflection": "Reflection added",
+      "favorite": "Verse favorited",
+      "shared": "Verse shared",
+      "journal": "Journal entry written",
+      "milestone": "Milestone achieved",
+      "manna_solved": "Manna puzzle solved",
+      "manna_played": "Manna puzzle played",
+      "manna_streak_bonus": "Manna streak bonus",
+      "generic": "Blessings earned"
+    }
+  },
+  "graceDay": {
+    "errors": {
+      "NO_GRACE_DAYS": "You have no grace days remaining",
+      "STREAK_NOT_BROKEN": "Your streak is not broken",
+      "GRACE_PERIOD_EXPIRED": "The grace period has expired",
+      "ALREADY_USED_TODAY": "You have already used a grace day today"
+    },
+    "success": "Grace Day used — your streak is preserved.",
+    "banner": {
+      "message": "You missed yesterday. Use a Grace Day to preserve your {{current_streak}}-day streak?",
+      "useGraceDay": "Use Grace Day",
+      "notNow": "Not now",
+      "processing": "Processing...",
+      "remaining": "{{count}} remaining"
+    }
+  },
+  "onboarding": {
+    "title": "Your journey begins",
+    "line1": "Each day you open the Word, your streak grows.",
+    "line2": "Miss a day? Grace Days can preserve your streak.",
+    "line3": "Your faithfulness is worth honoring.",
+    "feature1": "Earn Blessings by reading daily verses and adding reflections",
+    "feature2": "Achieve milestones as your streak grows",
+    "feature3": "Track your spiritual journey in your profile",
+    "begin": "Begin"
+  },
+  "milestone": {
+    "achieved_label": "Milestone Achieved",
+    "blessings_label": "Blessings",
+    "continue": "Continue",
+    "first_steps": {
+      "name": "First Steps"
+    },
+    "week_in_word": {
+      "name": "Week in the Word"
+    },
+    "rooted": {
+      "name": "Rooted"
+    },
+    "month_of_grace": {
+      "name": "Month of Grace"
+    },
+    "steadfast": {
+      "name": "Steadfast"
+    },
+    "three_month": {
+      "name": "Three Months Strong"
+    },
+    "half_year": {
+      "name": "Half Year"
+    },
+    "nine_months": {
+      "name": "Nine Months"
+    },
+    "full_year": {
+      "name": "Full Year"
+    }
+  },
+  "shop": {
+    "title": "Gifts of Faithfulness",
+    "subtitle": "Spend your Blessings to unlock new appearances for your devotional journey.",
+    "themes_title": "Themes"
+  },
+  "subscription": {
+    "title": "Premium",
+    "free_description": "Unlock all premium features with a subscription.",
+    "choose_plan": "Choose plan",
+    "plan": {
+      "monthly": "Monthly",
+      "monthly_price": "$1.99 / mo",
+      "annual": "Annual",
+      "annual_price": "$17.99 / yr",
+      "annual_save": "Save 25%"
+    },
+    "upgrade_cta": "Upgrade to Premium",
+    "view_addons": "View Add-ons",
+    "active_title": "Premium Member",
+    "active_plan": "Plan:",
+    "renews": "Renews",
+    "manage": "Manage Subscription",
+    "trial_title": "Free Trial",
+    "trial_ends": "Trial ends {{date}}",
+    "canceled_title": "Subscription Canceled",
+    "access_until": "Access until {{date}}",
+    "reactivate": "Reactivate",
+    "past_due_title": "Payment Failed",
+    "past_due_description": "Please update your payment method to keep your premium access.",
+    "past_due_banner": "Your last payment failed. Please update your payment method to keep premium access.",
+    "update_payment": "Update Payment Method",
+    "refresh": "Refresh Status",
+    "loading": "Loading…",
+    "modal_label": "Premium subscription",
+    "modal_title": "Go Premium",
+    "modal_subtitle": "Deepen your daily practice",
+    "modal_legal": "Cancel anytime. No hidden fees.",
+    "success_toast": "Welcome to Premium!",
+    "nav_badge_tooltip": "You are a Premium member",
+    "feature": {
+      "all_themes": "All premium themes",
+      "journal": "Unlimited journal entries",
+      "prompts": "Weekly reflection prompts",
+      "translations": "Modern Bible translations",
+      "streak_calendar": "Full streak calendar",
+      "blessings_multiplier": "1.5× Blessings on every action",
+      "reflection_archive": "Full reflection archive"
+    }
+  },
+  "otp": {
+    "section_title": "Add-ons & One-Time Purchases",
+    "section_description": "Unlock individual features forever — no subscription required.",
+    "owned": "Owned",
+    "loading": "…",
+    "success_toast": "Purchase complete!",
+    "journal_unlock": {
+      "title": "Journal Unlock",
+      "desc": "Unlimited journal entries and rich text editing, forever.",
+      "price": "$2.99"
+    },
+    "reflection_archive": {
+      "title": "Reflection Archive",
+      "desc": "Access all your past reflections without a subscription.",
+      "price": "$2.99"
+    },
+    "modern_translations": {
+      "title": "Modern Translations",
+      "desc": "NIV, ESV, NLT and more — unlocked permanently.",
+      "price": "$3.99"
+    },
+    "grace_day_pack": {
+      "title": "Grace Day Pack",
+      "desc": "3 extra grace days added to your account.",
+      "price": "$0.99"
+    },
+    "theme_sanctuary": {
+      "title": "Sanctuary Theme",
+      "desc": "A warm, sacred aesthetic for your devotional space.",
+      "price": "$1.99"
+    },
+    "theme_desert_sand": {
+      "title": "Desert Sand Theme",
+      "desc": "Earthy tones inspired by the ancient wilderness.",
+      "price": "$1.99"
+    },
+    "theme_celestial": {
+      "title": "Celestial Theme",
+      "desc": "A deep, starlit palette for night-time reading.",
+      "price": "$1.99"
+    },
+    "full_theme_library": {
+      "title": "Full Theme Library",
+      "desc": "Every premium theme, past and future.",
+      "price": "$3.99"
+    },
+    "support_developer": {
+      "title": "Support the Developer",
+      "desc": "Buy me a coffee ☕ — deeply appreciated.",
+      "price": "$1.99",
+      "thankyou_label": "Thank you",
+      "thankyou_title": "Thank You!",
+      "thankyou_body": "Your support means the world."
+    }
+  },
+  "avatar": {
+    "ring": {
+      "tooltip": {
+        "premium": "Premium member",
+        "milestone": "{{milestone}} milestone",
+        "none": "No milestone yet"
+      }
+    }
+  },
+  "checkout": {
+    "overlay": {
+      "title": "Redirecting to checkout…",
+      "subtitle": "You'll be taken to Stripe to complete your payment."
+    }
+  },
+  "community": {
+    "section": {
+      "title": "Community"
+    },
+    "walking_today": "{{count}} people read the Word today",
+    "tab": {
+      "board": "Board",
+      "prayer": "Prayer Wall",
+      "challenges": "Challenges"
+    },
+    "post_type": {
+      "announcement": "Announcement",
+      "milestone": "Milestone",
+      "prayer": "Prayer Request",
+      "challenge": "Challenge"
+    },
+    "admin_author": "Words of Praise",
+    "anonymous_author": "Anonymous",
+    "reaction": {
+      "amen": "Amen",
+      "pray": "Pray",
+      "heart": "❤",
+      "join": "Join"
+    },
+    "composer": {
+      "placeholder": "Share a reflection...",
+      "post_btn": "Post",
+      "char_limit": "{{count}} characters remaining",
+      "locked": "Upgrade to Devoted Member to share reflections with the community."
+    },
+    "prayer": {
+      "placeholder": "Submit a prayer request...",
+      "anonymous_label": "Post anonymously",
+      "submit_btn": "Submit",
+      "expire_notice": "Prayer requests expire after 7 days.",
+      "open_to_all": "Prayer requests are open to all members."
+    },
+    "challenge": {
+      "joined_count": "{{count}} people joined",
+      "join_btn": "Join Challenge",
+      "joined_btn": "Joined ✓"
+    },
+    "empty": {
+      "board": "No reflections yet — be the first to share.",
+      "prayer": "No prayer requests right now.",
+      "challenge": "No active challenge this week."
+    },
+    "delete": {
+      "confirm": "Delete this post?",
+      "btn": "Delete"
+    },
+    "error": {
+      "post_failed": "Could not post. Please try again.",
+      "react_failed": "Could not save your reaction.",
+      "rate_limit": "Too many posts — please wait a few minutes."
+    },
+    "admin": {
+      "panel_title": "Admin — New Post",
+      "body_placeholder": "Write an announcement or challenge...",
+      "pin_label": "Pin to top",
+      "expires_label": "Expires:",
+      "publish_btn": "Publish",
+      "publishing": "Publishing...",
+      "error": "Failed to publish post."
+    },
+    "expiry": {
+      "expires_in_days": "Expires in {{count}} day",
+      "expiring_soon": "Expiring soon"
+    },
+    "time": {
+      "just_now": "just now",
+      "mins_ago": "{{count}}m ago",
+      "hours_ago": "{{count}}h ago",
+      "days_ago": "{{count}}d ago"
+    },
+    "new_posts_banner": "New posts — tap to refresh"
+  },
+  "leaderboard": {
+    "title": "Community",
+    "this_weeks_challenge": "This Week's Challenge"
+  },
+  "premium": {
+    "go_premium": "Go Premium"
+  },
+  "tutorial": {
+    "howItWorks": "How it works",
+    "gotIt": "Got it!",
+    "newBadge": "New"
+  },
+  "graceDayTutorial": {
+    "step1Title": "Your streak matters",
+    "step1Body": "Read the daily verse every day to build your streak. Streaks unlock milestones and earn you Blessings ✦.",
+    "step2Title": "Grace Days protect your streak",
+    "step2Body": "If you miss a day, use a Grace Day to keep your streak alive. You get 2 Grace Days per period.",
+    "step3Title": "How to use one",
+    "step3Body": "Tap \"Use a Grace Day\" below and confirm. It counts yesterday as a reading day, keeping your streak alive.",
+    "step4Title": "Grace Days refill automatically",
+    "step4Body": "Your 2 Grace Days refill each calendar month. Use them wisely — once used they're gone until the next reset.",
+    "title": "Grace Days",
+    "subtitle": "Missed a day? Protect your streak with a Grace Day.",
+    "cta": "Got it!",
+    "reopenHint": "Tap ? in the Grace Days panel to see this again."
+  },
+  "pwa": {
+    "install": {
+      "label": "Install app prompt",
+      "title": "Add to Home Screen",
+      "subtitle": "Open instantly, even offline.",
+      "cta": "Install"
+    },
+    "settings": {
+      "sectionTitle": "Install App",
+      "installed": "Already on your home screen",
+      "installedDesc": "You're using the installed app.",
+      "androidTitle": "Add to Home Screen",
+      "androidDesc": "Instant access, even offline.",
+      "androidCta": "Install",
+      "iosTitle": "Add to Home Screen",
+      "iosDesc": "Open instantly from your home screen.",
+      "iosStep1": "Tap the",
+      "iosStep1Share": "Share",
+      "iosStep1After": "button at the bottom of Safari",
+      "iosStep2": "Scroll down and tap",
+      "iosStep2AddToHome": "\"Add to Home Screen\"",
+      "iosStep3": "Tap",
+      "iosStep3Add": "\"Add\"",
+      "iosStep3After": "in the top-right corner",
+      "genericHint": "Open this app in Chrome on Android or Safari on iPhone to add it to your home screen."
+    }
   }
 }

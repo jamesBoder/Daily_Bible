@@ -5,6 +5,8 @@ import (
     "net/http"
     "os"
     "os/signal"
+    "strconv"
+    "strings"
     "time"
 
 
@@ -17,13 +19,12 @@ import (
     "dailybible/internal/middleware"
     "dailybible/internal/routes"
     "dailybible/internal/handlers"
-    
 
     "github.com/gin-gonic/gin"
     "github.com/gin-contrib/cors"
     "github.com/gin-contrib/gzip"
     "github.com/go-playground/validator/v10"
-    
+    stripe "github.com/stripe/stripe-go/v80"
 )
 
 // healthHandler is a simple health check endpoint
@@ -41,6 +42,10 @@ func errorHandler(c *gin.Context) {
 }
 
 func main() {
+    // Top-level context used to signal background goroutines (scheduler) to stop.
+    ctx, cancel := context.WithCancel(context.Background())
+    defer cancel()
+
     // 1. Load config
     cfg, err := config.Load()
     if err != nil {
@@ -77,6 +82,18 @@ func main() {
         log.Printf("Grandfathering: %d pre-existing users marked as email_verified", result.RowsAffected)
     }
     
+    // 3c. Phase 8: Validate and configure Stripe at startup.
+    // Server refuses to start if either key is missing — a missing webhook secret
+    // would silently accept unsigned webhooks (security hole), not just a crash.
+    stripeKey := os.Getenv("STRIPE_SECRET_KEY")
+    if stripeKey == "" {
+        log.Fatal("STRIPE_SECRET_KEY is required")
+    }
+    if os.Getenv("STRIPE_WEBHOOK_SECRET") == "" {
+        log.Fatal("STRIPE_WEBHOOK_SECRET is required")
+    }
+    stripe.Key = stripeKey
+
     // 4. Initialize repositories
     userRepo := repository.NewUserRepository(db)
     verseRepo := repository.NewVerseRepository(db)
@@ -113,6 +130,68 @@ func main() {
 
     commentService := services.NewCommentService(commentRepo)
     settingsService := services.NewSettingsService(db)
+    
+    // Initialize Phase 1 services
+    // Phase 8: real Stripe-backed checker, wrapped with a 5-minute in-memory cache.
+    // The cache eliminates a DB round-trip on every premium-gated request.
+    // The Stripe webhook handler calls cachedChecker.Invalidate(userID) on status
+    // changes so cancels and upgrades take effect within seconds, not 5 minutes.
+    stripeChecker := services.NewStripeSubscriptionChecker(db)
+    cachedChecker := services.NewCachedSubscriptionChecker(stripeChecker, 0) // 0 = default 5 min TTL
+    subscriptionChecker := services.SubscriptionChecker(cachedChecker)
+    streakService := services.NewStreakService(db, subscriptionChecker)
+    blessingsService := services.NewBlessingsService(db)
+
+    // Initialize Phase 2 services
+    rewardsService := services.NewRewardsService(db, blessingsService)
+
+    // Initialize Phase 3 services
+    journalService := services.NewJournalService(db, blessingsService)
+
+    // Initialize Phase 6 services
+    unlockService := services.NewUnlockService(db, blessingsService)
+
+    // Initialize Phase 8 services
+    subscriptionService := services.NewSubscriptionService(db, rewardsService, streakService)
+
+    // Phase 9: parse ADMIN_USER_IDS env var (same pattern as DEV_PREMIUM_USER_IDS).
+    adminIDs := map[uint]bool{}
+    if raw := os.Getenv("ADMIN_USER_IDS"); raw != "" {
+        for _, part := range strings.Split(raw, ",") {
+            if id, err := strconv.ParseUint(strings.TrimSpace(part), 10, 64); err == nil {
+                adminIDs[uint(id)] = true
+            }
+        }
+    }
+
+    // Initialize Phase 9 services
+    communityService := services.NewCommunityService(db, subscriptionChecker)
+
+    // Initialize Phase 10 services
+    mannaService := services.NewMannaService(db, blessingsService)
+
+    // Push notification service — no-op when VAPID keys aren't configured
+    pushService := services.NewPushService(
+        db,
+        cfg.VAPIDPublicKey,
+        cfg.VAPIDPrivateKey,
+        cfg.VAPIDSubscriber,
+    )
+    if pushService.IsEnabled() {
+        log.Println("Push notifications: VAPID configured, daily reminders enabled")
+    } else {
+        log.Println("Push notifications: VAPID keys not set — push disabled (set VAPID_PUBLIC_KEY + VAPID_PRIVATE_KEY to enable)")
+    }
+
+    // Email reminder scheduler
+    reminderScheduler := services.NewReminderScheduler(
+        db, emailService, dailyVerseService, tokenService, cfg,
+    )
+    if cfg.ReminderEnabled {
+        go reminderScheduler.RunHourly(ctx)
+        log.Printf("ReminderScheduler: started (send_hour=%d, batch=%d)",
+            cfg.ReminderSendHour, cfg.ReminderBatchSize)
+    }
 
     // create validator instance
     validate := validator.New()
@@ -143,13 +222,18 @@ func main() {
         dailyVerseService,
         bibleAPIService,
         historyService,
-
+        streakService,
+        blessingsService,
+        settingsService,
+        rewardsService,
+        subscriptionChecker,
     )
 
     // init favoriteHandler variable
     favoriteHandler := handlers.NewFavoriteHandler(
         favoriteService,
         bibleAPIService,
+        blessingsService,
     )
 
     // init historyHandler variable
@@ -158,9 +242,11 @@ func main() {
         bibleAPIService,
     )
 
-    // init commentService variable
+    // init commentHandler variable
     commentHandler := handlers.NewCommentHandler(
         commentService,
+        blessingsService,
+        subscriptionChecker,
     )
 
     // init profileHandler variable
@@ -173,6 +259,10 @@ func main() {
         emailService,
         emailValidationService,
         validate,
+        streakService,
+        blessingsService,
+        settingsService,
+        db,
     )
 
     // init oauthHandler variable
@@ -183,11 +273,87 @@ func main() {
     // init settingsHandler variable
     settingsHandler := handlers.NewSettingsHandler(
         settingsService,
+        tokenService,
     )
     
+    // init streakHandler variable
+    streakHandler := handlers.NewStreakHandler(
+        streakService,
+        blessingsService,
+        settingsService,
+        db,
+    )
+
+    // init milestonesHandler variable
+    milestonesHandler := handlers.NewMilestonesHandler(db)
+    
+    // init blessingsHandler variable
+    blessingsHandler := handlers.NewBlessingsHandler(
+        blessingsService,
+    )
+
+    // init journalHandler variable
+    journalHandler := handlers.NewJournalHandler(
+        journalService,
+        subscriptionChecker,
+    )
+
+    // init translationsHandler variable (Phase 4)
+    translationsHandler := handlers.NewTranslationsHandler(
+        settingsService,
+        subscriptionChecker,
+    )
+
+    // init unlocksHandler variable (Phase 6)
+    unlocksHandler := handlers.NewUnlocksHandler(
+        unlockService,
+        blessingsService,
+    )
+
+    // Phase 8: wire subscriptionService into journalHandler for HasOneTimePurchase("journal_unlock").
+    journalHandler.SetSubscriptionService(subscriptionService)
+    // Phase 8: wire subscriptionService into translationsHandler for HasOneTimePurchase("modern_translations").
+    translationsHandler.SetSubscriptionService(subscriptionService)
+    // Phase 8: wire subscriptionService into commentHandler for HasOneTimePurchase("reflection_archive").
+    commentHandler.SetSubscriptionService(subscriptionService)
+
+    // init subscriptionHandler variable (Phase 8)
+    subscriptionHandler := handlers.NewSubscriptionHandler(
+        subscriptionService,
+        subscriptionChecker,
+        cachedChecker,
+        userRepo,
+    )
+
+    // Phase 9 handlers
+    communityHandler := handlers.NewCommunityHandler(communityService, subscriptionChecker, adminIDs)
+    // Wire community service into verseHandler for milestone auto-posts.
+    verseHandler.SetCommunityService(communityService)
+
+    // Phase 10 handlers
+    mannaHandler := handlers.NewMannaHandler(mannaService, subscriptionChecker, streakService, settingsService, adminIDs)
+
+    // Push handler
+    pushHandler := handlers.NewPushHandler(pushService)
+
+    // Phase 10: seed word bank on every start — idempotent (ON CONFLICT DO NOTHING).
+    // Running unconditionally means new words added to the SQL file are picked up
+    // on the next deploy without manual intervention.
+    if err := database.SeedMannaWords(db); err != nil {
+        log.Printf("WARNING: Manna seed failed: %v", err)
+    } else {
+        log.Printf("Manna word bank: %d words loaded", mannaService.SeedWordCount())
+    }
+    if err := database.SeedCommunityPosts(db); err != nil {
+        log.Printf("WARNING: Community posts seed failed: %v", err)
+    }
+    if err := database.CleanCommunityPosts(db); err != nil {
+        log.Printf("WARNING: Community cleanup failed: %v", err)
+    }
+
     // 7. Setup router and start server
     log.Println("Database connected and migrations completed successfully!")
-    log.Println("Backend is ready. TODO: Add HTTP server and routes")
+    log.Println("Backend is ready. Setting up routes...")
 
     
     // init gin router
@@ -222,6 +388,14 @@ func main() {
         "https://wordsofpraise-backend.fly.dev",       // Backend (for health checks)
     }
     
+    // Add production URLs if they're set in environment
+    if prodFrontend := os.Getenv("PRODUCTION_FRONTEND_URL"); prodFrontend != "" {
+        allowedOrigins = append(allowedOrigins, prodFrontend)
+    }
+    if prodBackend := os.Getenv("PRODUCTION_BACKEND_URL"); prodBackend != "" {
+        allowedOrigins = append(allowedOrigins, prodBackend)
+    }
+    
     log.Printf("CORS allowed origins: %v", allowedOrigins)
     
     // In production, you might want to use AllowOriginFunc for more flexible origin checking
@@ -235,7 +409,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
@@ -247,6 +421,20 @@ func main() {
     // add test error endpoint
     router.GET("/test-panic", errorHandler)
 
+
+   // Start hourly push reminder scheduler. On each hour boundary it calls
+   // SendRemindersForHour(), which checks each subscription's preferred time
+   // against the current UTC time converted to the user's timezone — so every
+   // user gets a notification at their chosen local hour regardless of timezone.
+   go func() {
+       for {
+           now := time.Now().UTC()
+           // Sleep until the top of the next hour.
+           nextHour := time.Date(now.Year(), now.Month(), now.Day(), now.Hour()+1, 0, 5, 0, time.UTC)
+           time.Sleep(nextHour.Sub(now))
+           pushService.SendRemindersForHour()
+       }
+   }()
 
    // create http.Server with router
    c := &http.Server{
@@ -274,10 +462,12 @@ func main() {
     <-quit
     log.Println("Shutting down server...")
 
-    // wait for signal
-    ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
-    defer cancel()
-    if err := c.Shutdown(ctx); err != nil {
+    // Signal background goroutines (reminder scheduler) to stop.
+    cancel()
+
+    shutdownCtx, shutdownCancel := context.WithTimeout(context.Background(), 5*time.Second)
+    defer shutdownCancel()
+    if err := c.Shutdown(shutdownCtx); err != nil {
         log.Fatal("Server forced to shutdown:", err)
     }
 

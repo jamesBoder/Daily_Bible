@@ -1,0 +1,76 @@
+.searchBar {
+  display: flex;
+  align-items: center;
+  gap: 0.125rem;
+  border-radius: 9999px;
+  overflow: hidden;
+  transition: width 0.3s ease, background-color 0.25s ease, border-color 0.25s ease;
+  width: 2.25rem;
+  border: 1px solid transparent;
+}
+
+.searchBar.expanded {
+  width: 13rem;
+  background-color: var(--parchment);
+  border-color: var(--candle-amber);
+}
+
+.input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.875rem;
+  color: inherit;
+  padding: 0.375rem 0.25rem;
+  opacity: 0;
+  width: 0;
+  min-width: 0;
+  transition: opacity 0.2s ease 0.1s;
+  /* Remove browser default search cancel button */
+  -webkit-appearance: none;
+}
+
+.input::-webkit-search-cancel-button {
+  display: none;
+}
+
+.expanded .input {
+  opacity: 1;
+  width: auto;
+}
+
+.iconButton,
+.clearButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  flex-shrink: 0;
+  color: inherit;
+  border-radius: 9999px;
+  transition: opacity 0.15s ease;
+}
+
+.iconButton:hover,
+.clearButton:hover {
+  opacity: 0.7;
+}
+
+@media (max-width: 767px) {
+  .searchBar.expanded {
+    width: 10rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .searchBar,
+  .input,
+  .iconButton,
+  .clearButton {
+    transition: none;
+  }
+}

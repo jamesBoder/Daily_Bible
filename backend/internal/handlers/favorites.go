@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -13,15 +14,17 @@ import (
 
 // init FavoriteHandler struct 
 type FavoriteHandler struct {
-	favoriteService *services.FavoriteService
-	bibleAPIService services.BibleAPIService
+	favoriteService  *services.FavoriteService
+	bibleAPIService  services.BibleAPIService
+	blessingsService *services.BlessingsService
 }
 
 // Constructor
-func NewFavoriteHandler(favoriteService *services.FavoriteService, bibleAPIService services.BibleAPIService) *FavoriteHandler {
+func NewFavoriteHandler(favoriteService *services.FavoriteService, bibleAPIService services.BibleAPIService, blessingsService *services.BlessingsService) *FavoriteHandler {
 	return &FavoriteHandler{
-		favoriteService: favoriteService,
-		bibleAPIService: bibleAPIService,
+		favoriteService:  favoriteService,
+		bibleAPIService:  bibleAPIService,
+		blessingsService: blessingsService,
 	}
 }
 
@@ -109,8 +112,27 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 		return
 	}
 
+	// Phase 8: use real premium multiplier from Gin context.
+	blessingsMultiplier := 1.0
+	if c.GetBool("isPremium") {
+		blessingsMultiplier = 1.5
+	}
+	// Credit blessings for favoriting — capped at 3 unique favorites per day.
+	// This prevents users from mass-favoriting dozens of verses in one session to
+	// farm Blessings. The cap is per-reason per-day (UTC boundary), checked in DB.
+	var blessingsCredited int
+	if credited, err := h.blessingsService.CreditWithDailyCap(userIDStr.(uint), 3, "verse_favorited", blessingsMultiplier, 3); err == nil && credited > 0 {
+		blessingsCredited = credited
+	} else if err != nil {
+		log.Printf("Failed to credit blessings for favorite: %v", err)
+	}
 
-	c.JSON(http.StatusOK, gin.H{"message": "Favorite added successfully"})
+	response := gin.H{"message": "Favorite added successfully"}
+	if blessingsCredited > 0 {
+		response["blessings_credited"] = blessingsCredited
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // RemoveFavorite handler removes a verse from user's favorites
@@ -134,6 +156,15 @@ func (h *FavoriteHandler) RemoveFavorite(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove favorite"})
 		return
 	}
+
+	// Debit blessings when a favorite is removed — this prevents users from
+	// gaming the system by repeatedly adding and removing verses to earn Blessings.
+	// Non-blocking: if the user has insufficient balance we skip silently.
+	go func() {
+		if err := h.blessingsService.Debit(userIDStr.(uint), 3, "verse_unfavorited"); err != nil {
+			log.Printf("Could not debit blessings for unfavorite (balance may be too low): %v", err)
+		}
+	}()
 
 	c.JSON(http.StatusOK, gin.H{"message": "Favorite removed successfully"})
 }

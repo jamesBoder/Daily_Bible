@@ -1,12 +1,27 @@
-import React, { useState, useEffect, useCallback, useMemo } from "react";
+import React, { useState, useEffect, useCallback, useMemo, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
+import { SoundService } from "../../services/SoundService";
+import { useSearchParams } from "react-router-dom";
 import { useVerse } from "../../hooks/useVerse";
 import { useHistory } from "../../hooks/useHistory";
 import { useAuth } from "../../hooks/useAuth";
+import { useStreak } from "../../contexts/StreakContext";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
+import { useSwipe } from "../../hooks/useSwipe";
+import { usePullToRefresh } from "../../hooks/usePullToRefresh";
+import PullRefreshIndicator from "../../components/common/PullRefreshIndicator";
 import { VerseCard } from "./VerseCard";
+import { SideBySideView } from "./SideBySideView";
 import { Button } from "../../components/common/Button";
 import { VerseCardSkeleton } from "../../components/common/Skeleton";
 import { useTranslation } from "react-i18next";
+import GraceDayBanner from "../../components/GraceDayBanner";
+import StreakResetAcknowledgment from "../../components/StreakResetAcknowledgment";
+import FirstEngagementOnboarding from "../../components/FirstEngagementOnboarding";
+import { showBlessingsToast } from "../../components/BlessingsToast";
+import api from "../../services/api/api";
+import { Verse } from "../../types/verse";
+import { HistoryEntry } from "../../types/history";
 
 
 // NavArrow button component
@@ -35,6 +50,7 @@ const NavArrow: React.FC<NavArrowProps> = ({ direction, onClick, size = "md" }) 
         hover:bg-primary-50 dark:hover:bg-primary-900/30
         hover:border-primary-300 dark:hover:border-primary-600
         hover:text-primary-600 dark:hover:text-primary-400
+        active:scale-95 transition-all duration-150
         flex items-center justify-center
         nav-arrow-glow
       `}
@@ -75,41 +91,211 @@ const TodayButton: React.FC<{ onClick: () => void }> = ({ onClick }) => (
   </button>
 );
 
+// Max number of days users can navigate back
+const MAX_DAYS_BACK = 30;
+
 export const DailyVerse: React.FC = () => {
   const { t, i18n } = useTranslation();
   const { isGuest } = useAuth();
-  const { verse, isLoading, error, refetch } = useVerse(i18n.language);
-  const { history, isLoading: historyLoading } = useHistory(!isGuest);
+  const { refreshStreak } = useStreak();
+
+  // Per-session version override (key like "kjv", "web"). Empty = use server preference.
+  const [sessionVersion, setSessionVersion] = useState<string | undefined>(undefined);
+  // Premium status — fetched once for authenticated users to gate Compare button
+  const [isPremium, setIsPremium] = useState(false);
+  const [showComparison, setShowComparison] = useState(false);
+  // When a premium user switches translation while browsing a past day, we fetch
+  // the verse reference in the new version and display it here.
+  const [historyOverrideVerse, setHistoryOverrideVerse] = useState<Verse | null>(null);
+  const [historyVersionLoading, setHistoryVersionLoading] = useState(false);
+  // Verses fetched by date for days the user did not originally view
+  const [fetchedVerses, setFetchedVerses] = useState<Record<string, Verse>>({});
+  const [isFetchingDate, setIsFetchingDate] = useState(false);
+  const [fetchDateError, setFetchDateError] = useState(false);
+
+  const queryClient = useQueryClient();
+  const { verse, blessingsCredited, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
+  const { history } = useHistory(!isGuest);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const [historyIndex, setHistoryIndex] = useState(0);
 
-  // Reset index when language changes so we don't show a stale past-verse
+  // Build today's date string in UTC (YYYY-MM-DD) to match the backend's daily cap reset boundary.
+  const now = new Date();
+  const todayStr = now.toISOString().split('T')[0];
+
+  // Virtual list of past dates (yesterday, day-before, …) in local timezone.
+  // Every user can navigate back up to MAX_DAYS_BACK days regardless of whether
+  // they viewed the verse on those days.
+  const pastDates = useMemo<string[]>(() => {
+    const dates: string[] = [];
+    for (let i = 1; i <= MAX_DAYS_BACK; i++) {
+      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      dates.push(
+        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+      );
+    }
+    return dates;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [todayStr]);
+
+  // Map date string → history entry for quick look-up (skips today's entry)
+  const historyByDate = useMemo<Record<string, HistoryEntry>>(() => {
+    const map: Record<string, HistoryEntry> = {};
+    for (const entry of history) {
+      const date = entry.verse?.daily_date?.slice(0, 10);
+      if (date && date !== todayStr) {
+        map[date] = entry;
+      }
+    }
+    return map;
+  }, [history, todayStr]);
+
+  // Fetch premium status once when auth state changes — language is irrelevant to subscription.
+  useEffect(() => {
+    if (isGuest) return;
+    let cancelled = false;
+    api
+      .get<{ user_is_premium: boolean }>('/api/translations')
+      .then((res) => {
+        if (!cancelled) setIsPremium(res.data.user_is_premium);
+      })
+      .catch(() => {});
+    return () => { cancelled = true; };
+  }, [isGuest]);
+
+  // Fire streak-confirm sound once per session when today's verse loads
+  const streakSoundFiredRef = useRef(false);
+  useEffect(() => {
+    if (verse && historyIndex === 0 && !streakSoundFiredRef.current) {
+      SoundService.play('streak-confirm');
+      streakSoundFiredRef.current = true;
+    }
+  }, [verse, historyIndex]);
+
+  // Show blessings toast once per calendar day when the daily verse credits blessings.
+  // Guarded by sessionStorage so it doesn't re-fire on every component mount.
+  useEffect(() => {
+    if (isGuest || !verse || historyIndex !== 0 || blessingsCredited <= 0) return;
+    const sessionKey = `blessings-daily-toasted-${todayStr}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+    sessionStorage.setItem(sessionKey, '1');
+    showBlessingsToast(blessingsCredited, 'daily_view');
+    refreshStreak().catch(() => {});
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verse, blessingsCredited]);
+
+  // Track the previous language so we can detect actual language *changes*
+  // (as opposed to initial mount, where we must not nuke the prefetched verse).
+  const prevLangRef = useRef(i18n.language);
+
+  // Invalidate cached verses when the language changes so a fresh fetch runs.
+  // Guards against stale cache entries keyed to the old language (e.g. a Spanish
+  // verse that was seeded under the 'en' key by the index.html prefetch while
+  // the preferred_bible_version language-mismatch bug was still present).
+  useEffect(() => {
+    if (prevLangRef.current !== i18n.language) {
+      queryClient.invalidateQueries({ queryKey: ['dailyVerse'] });
+      prevLangRef.current = i18n.language;
+    }
+  }, [i18n.language, queryClient]);
+
+  // Reset index + session version when language changes
   useEffect(() => {
     setHistoryIndex(0);
+    setSessionVersion(undefined);
+    setShowComparison(false);
+    setFetchedVerses({});
   }, [i18n.language]);
 
-  // Skip history[0] if it matches today (local tz) to avoid duplicating today's verse.
-  // Use verse.daily_date (plain YYYY-MM-DD, timezone-safe) as the canonical date source.
-  // Build YYYY-MM-DD for today in local timezone without relying on toLocaleDateString
-  // locale behavior (which can vary across browsers and environments).
-  const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, "0")}-${String(now.getDate()).padStart(2, "0")}`;
-  // daily_date comes back as a full ISO timestamp from PostgreSQL (e.g. "2026-03-07T00:00:00Z")
-  // so we slice to the date portion before comparing.
-  const firstEntryDate = history.length > 0 ? history[0].verse?.daily_date?.slice(0, 10) : undefined;
-  const offset = firstEntryDate === todayStr ? 1 : 0;
-  const effectiveHistory = history.slice(offset);
+  // Derive the target date and its verse when browsing past days
+  const targetDate = historyIndex > 0 ? (pastDates[historyIndex - 1] ?? null) : null;
+  const historyEntryForDate = targetDate ? (historyByDate[targetDate] ?? null) : null;
+  const fetchedVerse = targetDate ? (fetchedVerses[targetDate] ?? null) : null;
+  // The "active" past verse: from history if the user viewed it, otherwise from the API fetch
+  const activeVerse = historyEntryForDate?.verse ?? fetchedVerse;
 
-  // Derive display state
-  const currentEntry = historyIndex > 0 ? effectiveHistory[historyIndex - 1] : null;
-  const displayVerse = historyIndex === 0 ? verse : (currentEntry?.verse ?? null);
+  // Clear fetch error when navigating to a different day
+  useEffect(() => {
+    setFetchDateError(false);
+  }, [historyIndex]);
+
+  // Fetch verse for the target date when it's not in the user's view history
+  useEffect(() => {
+    if (!targetDate || historyEntryForDate || fetchedVerses[targetDate]) return;
+    let cancelled = false;
+    setIsFetchingDate(true);
+    setFetchDateError(false);
+    api
+      .get<{ verse: Verse }>("/api/verses/daily", {
+        params: { date: targetDate, lang: i18n.language },
+      })
+      .then((res) => {
+        if (!cancelled) {
+          setFetchedVerses((prev) => ({ ...prev, [targetDate]: res.data.verse }));
+        }
+      })
+      .catch(() => {
+        if (!cancelled) setFetchDateError(true);
+      })
+      .finally(() => {
+        if (!cancelled) setIsFetchingDate(false);
+      });
+    return () => { cancelled = true; };
+  }, [targetDate, historyEntryForDate, fetchedVerses, i18n.language]);
+
+  // If the calendar linked to a specific date, jump there once pastDates is ready
+  const dateParam = searchParams.get("date");
+  useEffect(() => {
+    if (!dateParam) return;
+    const idx = pastDates.findIndex((d) => d === dateParam);
+    if (idx !== -1) {
+      setHistoryIndex(idx + 1);
+    }
+    setSearchParams({}, { replace: true });
+  }, [dateParam, pastDates, setSearchParams]);
+
+  const displayVerse = historyIndex === 0 ? verse : (activeVerse ?? null);
   const showForward = historyIndex > 0;
-  const showBack = !isGuest && !historyLoading && historyIndex < effectiveHistory.length;
+  const showBack = !isGuest && historyIndex < MAX_DAYS_BACK;
+
+  const handleVersionSelect = useCallback((key: string) => {
+    setSessionVersion(key);
+    setShowComparison(false);
+  }, []);
+
+  // Fetch a past day's verse in a different translation (premium users only)
+  const handleHistoryVersionSelect = useCallback(async (key: string, abbreviation: string) => {
+    if (!activeVerse) return;
+    setHistoryVersionLoading(true);
+    try {
+      const encoded = encodeURIComponent(activeVerse.reference);
+      const res = await api.get<{ verse: { text: string } }>(
+        `/api/verses/${encoded}`,
+        { params: { version: key, lang: i18n.language } }
+      );
+      setHistoryOverrideVerse({
+        ...activeVerse,
+        text: res.data.verse.text,
+        version: abbreviation,
+      });
+    } catch {
+      // Silently fall back to the stored verse if the fetch fails
+    } finally {
+      setHistoryVersionLoading(false);
+    }
+  }, [activeVerse, i18n.language]);
+
+  // Clear override whenever user moves to a different day
+  useEffect(() => {
+    setHistoryOverrideVerse(null);
+    setShowComparison(false);
+  }, [historyIndex]);
 
   // Stable callback refs so useKeyboardShortcuts' effect doesn't thrash
   const goBack = useCallback(() => {
-    if (historyIndex < effectiveHistory.length) setHistoryIndex((i) => i + 1);
-  }, [historyIndex, effectiveHistory.length]);
+    if (historyIndex < MAX_DAYS_BACK) setHistoryIndex((i) => i + 1);
+  }, [historyIndex]);
 
   const goForward = useCallback(() => {
     if (historyIndex > 0) setHistoryIndex((i) => i - 1);
@@ -123,6 +309,12 @@ export const DailyVerse: React.FC = () => {
     [goBack, goForward]
   );
   useKeyboardShortcuts(shortcuts);
+
+  // Swipe left/right to cycle through history
+  const swipeHandlers = useSwipe({ onSwipeLeft: goBack, onSwipeRight: goForward });
+
+  // Pull down to re-fetch today's verse (handy when returning to app)
+  const ptr = usePullToRefresh({ onRefresh: () => { refetch(); } });
 
   if (isLoading) {
     return <VerseCardSkeleton />;
@@ -151,41 +343,12 @@ export const DailyVerse: React.FC = () => {
     );
   }
 
-  // Clamp historyIndex in case effectiveHistory shrank (e.g. after a history clear).
-  const safeIndex = Math.min(historyIndex, effectiveHistory.length);
-
-  // Build the display date from verse.daily_date with layered guards:
-  //   1. Slice to YYYY-MM-DD and validate the format before constructing Date
-  //      (PostgreSQL returns "2026-03-07T00:00:00Z"; appending T12:00:00 to the
-  //       raw value produces an invalid string → "Invalid Date")
-  //   2. Check isNaN after construction — corrupt or missing data triggers fallback
-  const rawDailyDate = currentEntry?.verse.daily_date;
-  const datePart = rawDailyDate?.slice(0, 10);
-  const isValidDateStr = typeof datePart === "string" && /^\d{4}-\d{2}-\d{2}$/.test(datePart);
-  const parsedHistoryDate = isValidDateStr ? new Date(datePart + "T12:00:00") : null;
-  const isValidHistoryDate = parsedHistoryDate !== null && !isNaN(parsedHistoryDate.getTime());
-
-  // For pre-migration rows where daily_date is NULL, derive the date from viewed_at
-  // using the same UTC-10 offset the backend uses to assign verse dates. Using UTC
-  // getters on the offset-adjusted timestamp avoids any local-timezone conversion.
-  let viewedAtFallback: Date | null = null;
-  if (safeIndex > 0 && !isValidHistoryDate && currentEntry?.viewed_at) {
-    const effectiveMs = new Date(currentEntry.viewed_at).getTime() - 10 * 60 * 60 * 1000;
-    const d = new Date(effectiveMs);
-    const ymd =
-      `${d.getUTCFullYear()}-` +
-      `${String(d.getUTCMonth() + 1).padStart(2, "0")}-` +
-      `${String(d.getUTCDate()).padStart(2, "0")}`;
-    const candidate = new Date(ymd + "T12:00:00");
-    if (!isNaN(candidate.getTime())) viewedAtFallback = candidate;
-  }
-
+  // Date display: use targetDate directly for past days (it's already YYYY-MM-DD)
   const displayDate: Date =
-    safeIndex > 0 && isValidHistoryDate ? parsedHistoryDate! :
-    viewedAtFallback !== null ? viewedAtFallback :
-    new Date();
+    historyIndex > 0 && targetDate
+      ? new Date(targetDate + "T12:00:00")
+      : new Date();
 
-  // Guard toLocaleDateString: a bad locale tag can throw in some environments.
   const formattedDate = (() => {
     try {
       return displayDate.toLocaleDateString(i18n.language, {
@@ -204,11 +367,37 @@ export const DailyVerse: React.FC = () => {
     }
   })();
 
+  // Whether the verse area is loading (skeleton)
+  const verseAreaLoading =
+    ((historyIndex > 0 && activeVerse === null) || isFetchingDate || historyVersionLoading) &&
+    !fetchDateError;
+
+  // The verse to render (with override for premium translation switching)
+  const renderedVerse =
+    historyIndex > 0
+      ? (historyOverrideVerse ?? displayVerse ?? verse)
+      : (displayVerse ?? verse);
+
   return (
-    <div className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8">
+    <div
+      className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8"
+      onTouchStart={(e) => { swipeHandlers.onTouchStart(e); ptr.onTouchStart(e); }}
+      onTouchMove={ptr.onTouchMove}
+      onTouchEnd={(e) => { swipeHandlers.onTouchEnd(e); ptr.onTouchEnd(); }}
+    >
+      <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
+      {/* Streak-related banners and notifications */}
+      {!isGuest && (
+        <>
+          <GraceDayBanner />
+          <StreakResetAcknowledgment />
+          <FirstEngagementOnboarding />
+        </>
+      )}
+
       {/* Mobile control row — sits between nav header and h1, hidden on desktop */}
       {!isGuest && (
-        <div className="flex items-center justify-between px-4 py-2 md:hidden mb-8">
+        <div className="flex items-center justify-between px-4 py-1 md:hidden mb-2">
           {/* Left zone — fixed width so center stays centered */}
           <div className="w-11 flex justify-start">
             {showBack && (
@@ -235,7 +424,6 @@ export const DailyVerse: React.FC = () => {
         <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
           {t("dailyVerse.title")}
         </h1>
-        {/* Date line: key changes on every new date, triggering the fade-in animation */}
         <p key={formattedDate} className="text-gray-600 dark:text-gray-400 animate-fade-in">
           {formattedDate}
         </p>
@@ -265,10 +453,41 @@ export const DailyVerse: React.FC = () => {
 
         {/* Card — expands to fill remaining space */}
         <div className="flex-1 min-w-0">
-          {historyIndex > 0 && displayVerse === null ? (
+          {verseAreaLoading ? (
             <VerseCardSkeleton />
+          ) : fetchDateError ? (
+            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+              <p className="text-red-700 dark:text-red-400 text-sm">{t("dailyVerse.error")}</p>
+            </div>
           ) : (
-            <VerseCard verse={displayVerse ?? verse} />
+            <VerseCard
+              verse={renderedVerse}
+              lang={i18n.language}
+              onVersionSelect={
+                historyIndex === 0 && !isGuest
+                  ? handleVersionSelect
+                  : (historyIndex > 0 && isPremium ? handleHistoryVersionSelect : undefined)
+              }
+            />
+          )}
+          {/* Compare Translations — premium users, today's and history verses */}
+          {isPremium && (displayVerse ?? verse) && (
+            <div className="mt-3 flex justify-center">
+              {showComparison ? (
+                <SideBySideView
+                  reference={renderedVerse.reference}
+                  lang={i18n.language}
+                  onClose={() => setShowComparison(false)}
+                />
+              ) : (
+                <button
+                  onClick={() => setShowComparison(true)}
+                  className="text-sm font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors px-2 py-1"
+                >
+                  {t("verse.compareTranslations", "Compare Translations")}
+                </button>
+              )}
+            </div>
           )}
         </div>
 
@@ -280,10 +499,41 @@ export const DailyVerse: React.FC = () => {
 
       {/* Mobile: single-column card */}
       <div className="md:hidden">
-        {historyIndex > 0 && displayVerse === null ? (
+        {verseAreaLoading ? (
           <VerseCardSkeleton />
+        ) : fetchDateError ? (
+          <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
+            <p className="text-red-700 dark:text-red-400 text-sm">{t("dailyVerse.error")}</p>
+          </div>
         ) : (
-          <VerseCard verse={displayVerse ?? verse} />
+          <VerseCard
+            verse={renderedVerse}
+            lang={i18n.language}
+            onVersionSelect={
+              historyIndex === 0 && !isGuest
+                ? handleVersionSelect
+                : (historyIndex > 0 && isPremium ? handleHistoryVersionSelect : undefined)
+            }
+          />
+        )}
+        {/* Compare Translations — premium users, today's and history verses */}
+        {isPremium && (displayVerse ?? verse) && (
+          <div className="mt-3 flex justify-center">
+            {showComparison ? (
+              <SideBySideView
+                reference={renderedVerse.reference}
+                lang={i18n.language}
+                onClose={() => setShowComparison(false)}
+              />
+            ) : (
+              <button
+                onClick={() => setShowComparison(true)}
+                className="text-sm font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors px-2 py-1"
+              >
+                {t("verse.compareTranslations", "Compare Translations")}
+              </button>
+            )}
+          </div>
         )}
       </div>
     </div>

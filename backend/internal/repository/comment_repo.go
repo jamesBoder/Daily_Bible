@@ -2,6 +2,8 @@ package repository
 
 import (
     "dailybible/internal/models"
+    "time"
+
     "gorm.io/gorm"
 )
 
@@ -45,6 +47,23 @@ func (r *CommentRepository) GetByUser(userID uint) ([]models.Comment, error) {
     var comments []models.Comment
     err := r.db.Where("user_id = ?", userID).Order("created_at DESC").Find(&comments).Error
     return comments, err
+}
+
+// GetByUserSince returns all comments by the user created on or after `since`.
+// Used for the free-tier 7-day limit on the reflection archive.
+func (r *CommentRepository) GetByUserSince(userID uint, since time.Time) ([]models.Comment, error) {
+    var comments []models.Comment
+    err := r.db.Where("user_id = ? AND created_at >= ?", userID, since).
+        Order("created_at DESC").Find(&comments).Error
+    return comments, err
+}
+
+// CountByUser returns the total number of reflections stored for the user (no date limit).
+// Used to show the upgrade prompt when free-tier results are capped.
+func (r *CommentRepository) CountByUser(userID uint) (int64, error) {
+    var count int64
+    err := r.db.Model(&models.Comment{}).Where("user_id = ?", userID).Count(&count).Error
+    return count, err
 }
 
 // GetCountByUserID returns the total number of comments made by a user

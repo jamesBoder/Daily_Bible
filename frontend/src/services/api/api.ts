@@ -34,7 +34,7 @@ apiClient.interceptors.response.use(
   (error: AxiosError) => {
     if (error.response?.status === 401) {
       // Safety net: do NOT redirect guests — they have no token to clear
-      const isGuestSession = sessionStorage.getItem('is_guest') === 'true';
+      const isGuestSession = localStorage.getItem('is_guest') === 'true';
       if (!isGuestSession) {
         // Unauthorized - clear token and redirect to login
         localStorage.removeItem(TOKEN_KEY);
