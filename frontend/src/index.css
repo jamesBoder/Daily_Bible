@@ -5,9 +5,11 @@
 @layer base {
   html {
     scroll-behavior: smooth;
-    /* Use dvh so the layout adapts when the mobile browser chrome shows/hides.
-       dvh = dynamic viewport height (excludes browser UI when hidden). */
-    height: 100%;
+    /* 100dvh = dynamic viewport height: shrinks/grows as the mobile browser
+       chrome shows/hides, so the layout always fills exactly the visible area.
+       Scrolling is handed off to <main>; body never scrolls. */
+    height: 100dvh;
+    height: 100%; /* fallback for browsers without dvh support */
   }
 
   body {
@@ -21,7 +23,6 @@
       #9fb4c8 100%
     );
     min-height: 100vh;
-    min-height: 100dvh; /* adapts as browser chrome shows/hides */
     background-attachment: fixed;
     transition: background 0.3s ease, color 0.3s ease;
 
@@ -31,11 +32,12 @@
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
 
-    /* Mobile: allow natural scroll so the browser chrome can auto-hide
-       when the user scrolls within <main>. BottomNav uses position:fixed
-       and handles the chrome show/hide movement gracefully. */
+    /* Mobile: lock body to viewport so <main> handles all scrolling.
+       Using 100dvh on html means the lock adapts when browser chrome
+       shows/hides — giving more visible area without body-scroll bouncing. */
     @media (max-width: 767px) {
-      min-height: 100dvh;
+      height: 100%;
+      overflow: hidden;
     }
   }
 
@@ -73,7 +75,10 @@
 
   #root {
     min-height: 100vh;
-    min-height: 100dvh;
+    /* Mobile: fill the dvh-locked body so the layout wrapper can use height: 100% */
+    @media (max-width: 767px) {
+      height: 100%;
+    }
   }
 
   /* Color contrast fixes for WCAG AA compliance */

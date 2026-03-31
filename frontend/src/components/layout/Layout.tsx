@@ -13,10 +13,13 @@ import { useStreak } from "../../contexts/StreakContext";
 export const Layout: React.FC = () => {
   const location = useLocation();
   const { checkoutOverlayVisible, cancelCheckout } = useStreak();
-  // min-h-screen ensures the layout fills the viewport on desktop.
-  // On mobile the browser chrome can auto-hide; <main> handles internal scroll.
+  // On mobile: h-full locks the wrapper to the dvh-sized viewport so body
+  // never scrolls and <main> handles all scrolling internally. The html
+  // element is sized to 100dvh so the container grows when the browser
+  // chrome hides, giving more visible area automatically.
+  // On desktop (md+): normal min-h-screen block flow.
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="md:min-h-screen h-full flex flex-col">
       <Header />
       <OfflineBanner />
       {/* pb-20 on mobile clears the fixed bottom nav bar (56px + safe area) */}
