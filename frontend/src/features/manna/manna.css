@@ -91,83 +91,16 @@
   50%       { opacity: 1.00; transform: scale(1.06); }
 }
 
-/* Correct tile: gold bloom pulse — var(--blessing-gold) shifts per theme */
-@keyframes bloomPulse {
-  0%, 100% {
-    box-shadow:
-      0 0  6px 2px  color-mix(in srgb, var(--blessing-gold) 55%, transparent),
-      0 0 18px 6px  color-mix(in srgb, var(--blessing-gold) 28%, transparent),
-      0 0 36px 12px color-mix(in srgb, var(--blessing-gold) 10%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0 10px 4px  color-mix(in srgb, var(--blessing-gold) 75%, transparent),
-      0 0 28px 10px color-mix(in srgb, var(--blessing-gold) 38%, transparent),
-      0 0 52px 18px color-mix(in srgb, var(--blessing-gold) 16%, transparent);
-  }
-}
-
-/* Present tile: candle-amber halo — kept for active border shimmer */
-@keyframes amberPulse {
-  0%, 100% {
-    box-shadow:
-      0 0  5px 1px  color-mix(in srgb, var(--candle-amber) 50%, transparent),
-      0 0 14px 4px  color-mix(in srgb, var(--candle-amber) 22%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0  8px 3px  color-mix(in srgb, var(--candle-amber) 65%, transparent),
-      0 0 22px 8px  color-mix(in srgb, var(--candle-amber) 30%, transparent);
-  }
-}
-
-/* Present tile: teal pulse — clearly distinct from gold correct tiles */
-@keyframes presentPulse {
-  0%, 100% {
-    box-shadow:
-      0 0  5px 1px  color-mix(in srgb, var(--challenge-accent) 55%, transparent),
-      0 0 14px 4px  color-mix(in srgb, var(--challenge-accent) 24%, transparent);
-  }
-  50% {
-    box-shadow:
-      0 0  9px 3px  color-mix(in srgb, var(--challenge-accent) 70%, transparent),
-      0 0 22px 8px  color-mix(in srgb, var(--challenge-accent) 32%, transparent);
-  }
-}
-
-/* Active tile: shimmer border while typing */
+/* Active tile: shimmer border — compositor-only opacity pulse */
 @keyframes borderShimmer {
-  0%   {
-    box-shadow:
-      0 0  4px 1px color-mix(in srgb, var(--candle-amber) 30%, transparent),
-      inset 0 0  8px color-mix(in srgb, var(--candle-amber) 06%, transparent);
-  }
-  50%  {
-    box-shadow:
-      0 0 10px 3px color-mix(in srgb, var(--candle-amber) 55%, transparent),
-      inset 0 0 14px color-mix(in srgb, var(--candle-amber) 12%, transparent);
-  }
-  100% {
-    box-shadow:
-      0 0  4px 1px color-mix(in srgb, var(--candle-amber) 30%, transparent),
-      inset 0 0  8px color-mix(in srgb, var(--candle-amber) 06%, transparent);
-  }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.7; }
 }
 
-/* Title text glow — tracks blessing-gold per theme */
+/* Title text glow — compositor-only opacity pulse on static text-shadow */
 @keyframes titleGlow {
-  0%, 100% {
-    text-shadow:
-      0 0 12px color-mix(in srgb, var(--blessing-gold) 55%, transparent),
-      0 0 28px color-mix(in srgb, var(--blessing-gold) 30%, transparent),
-      0 0 50px color-mix(in srgb, var(--blessing-gold) 12%, transparent);
-  }
-  50% {
-    text-shadow:
-      0 0 18px color-mix(in srgb, var(--blessing-gold) 75%, transparent),
-      0 0 40px color-mix(in srgb, var(--blessing-gold) 42%, transparent),
-      0 0 70px color-mix(in srgb, var(--blessing-gold) 18%, transparent);
-  }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.75; }
 }
 
 /* Floating mote particles — drift upward and fade */
@@ -178,10 +111,10 @@
   100% { transform: translateY(-120px) scale(0.6); opacity: 0; }
 }
 
-/* Cursor blink — pulses on the tile where the next letter will go */
+/* Cursor blink — compositor-only opacity pulse */
 @keyframes cursorBlink {
-  0%, 100% { border-color: var(--candle-amber); opacity: 1; }
-  50%       { border-color: color-mix(in srgb, var(--candle-amber) 30%, transparent); opacity: 0.65; }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.5; }
 }
 
 /* Post-game result panel fade+rise entrance */
@@ -268,6 +201,10 @@
 /* ── Title glow ──────────────────────────────────────────────────────────── */
 
 .manna-title-glow {
+  text-shadow:
+    0 0 14px color-mix(in srgb, var(--blessing-gold) 65%, transparent),
+    0 0 32px color-mix(in srgb, var(--blessing-gold) 35%, transparent),
+    0 0 56px color-mix(in srgb, var(--blessing-gold) 14%, transparent);
   animation: titleGlow 5s ease-in-out infinite;
 }
 
@@ -318,6 +255,9 @@
 /* Active tile: shimmer glow while typing — tracks candle-amber */
 .manna-tile--active {
   border-color: var(--candle-amber);
+  box-shadow:
+    0 0  8px 2px color-mix(in srgb, var(--candle-amber) 45%, transparent),
+    inset 0 0 10px color-mix(in srgb, var(--candle-amber) 10%, transparent);
   animation: borderShimmer 2s ease-in-out infinite;
 }
 
@@ -330,8 +270,9 @@
   text-shadow: 0 1px 4px color-mix(in srgb, var(--foreground) 30%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #fff 22%, transparent),
-    0 2px 6px color-mix(in srgb, var(--blessing-gold) 55%, transparent);
-  animation: bloomPulse 3.5s ease-in-out infinite;
+    0 2px 6px color-mix(in srgb, var(--blessing-gold) 55%, transparent),
+    0 0  6px 2px  color-mix(in srgb, var(--blessing-gold) 55%, transparent),
+    0 0 18px 6px  color-mix(in srgb, var(--blessing-gold) 28%, transparent);
 }
 
 /* Present: teal — clearly distinct from the gold correct tile */
@@ -343,8 +284,9 @@
   text-shadow: 0 1px 4px color-mix(in srgb, var(--foreground) 25%, transparent);
   box-shadow:
     inset 0 1px 0 color-mix(in srgb, #fff 18%, transparent),
-    0 2px 5px color-mix(in srgb, var(--challenge-accent) 45%, transparent);
-  animation: presentPulse 3.5s ease-in-out infinite;
+    0 2px 5px color-mix(in srgb, var(--challenge-accent) 45%, transparent),
+    0 0  5px 1px  color-mix(in srgb, var(--challenge-accent) 55%, transparent),
+    0 0 14px 4px  color-mix(in srgb, var(--challenge-accent) 24%, transparent);
 }
 
 /* Absent: clearly dead — dark, no glow, receded */
@@ -412,16 +354,14 @@
 }
 
 .manna-row--win .manna-tile--correct {
-  animation: tileBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both, bloomPulse 3.5s ease-in-out 0.7s infinite !important;
-  animation-delay: calc(var(--tile-index, 0) * 90ms + 600ms), calc(var(--tile-index, 0) * 90ms + 1.3s) !important;
+  animation: tileBounce 0.6s cubic-bezier(0.34, 1.56, 0.64, 1) both !important;
+  animation-delay: calc(var(--tile-index, 0) * 90ms + 600ms) !important;
 }
 
 /* ── Grid card backdrop ───────────────────────────────────────────────────── */
 
 .manna-grid-wrap {
-  background: color-mix(in srgb, var(--journal-surface) 82%, transparent);
-  backdrop-filter: blur(4px);
-  -webkit-backdrop-filter: blur(4px);
+  background: color-mix(in srgb, var(--journal-surface) 95%, transparent);
   border: 1px solid color-mix(in srgb, var(--blessing-gold) 30%, transparent);
   border-radius: 18px;
   padding: 1.1rem 0.9rem 1rem;
@@ -611,9 +551,7 @@
 /* ── Post-game result panel ───────────────────────────────────────────────── */
 
 .manna-result-panel {
-  background: color-mix(in srgb, var(--journal-surface) 92%, transparent);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
+  background: color-mix(in srgb, var(--journal-surface) 97%, transparent);
   border: 1px solid color-mix(in srgb, var(--candle-amber) 35%, transparent);
   border-radius: 16px;
   padding: 1.4rem;
@@ -668,8 +606,8 @@
   color: var(--candle-amber);
   font-weight: 700;
   box-shadow:
-    0 0 6px 2px color-mix(in srgb, var(--candle-amber) 30%, transparent);
-  animation: amberPulse 3.5s ease-in-out infinite;
+    0 0  5px 1px  color-mix(in srgb, var(--candle-amber) 50%, transparent),
+    0 0 14px 4px  color-mix(in srgb, var(--candle-amber) 22%, transparent);
 }
 
 /* ── Scripture clue panel ─────────────────────────────────────────────────── */
@@ -818,13 +756,9 @@
                     0 0 24px  8px color-mix(in srgb, var(--blessing-gold)  8%, transparent); }
 }
 
-/* Each correct tile in the blooming grid gets a staggered gold bloom.
-   Delay = row_index * 180ms + tile_index * 70ms, approximated with nth-child.
-   The bloom settles into the regular bloomPulse after the cascade. */
+/* Each correct tile in the blooming grid gets a staggered gold bloom. */
 .manna-grid--blooming .manna-tile--correct {
-  animation:
-    cascadeBloom 0.7s ease-out calc(var(--row-idx, 0) * 180ms + var(--tile-index, 0) * 70ms) both,
-    bloomPulse 3.5s ease-in-out calc(var(--row-idx, 0) * 180ms + var(--tile-index, 0) * 70ms + 0.7s) infinite !important;
+  animation: cascadeBloom 0.7s ease-out calc(var(--row-idx, 0) * 180ms + var(--tile-index, 0) * 70ms) both !important;
 }
 
 /* ── Blessings burst (M-14) — gold sparkles radiate from post-game panel ── */
@@ -853,7 +787,6 @@
   font-size: 0.9rem;
   line-height: 1;
   animation: blessingsBurst 0.9s cubic-bezier(0.22, 1, 0.36, 1) both;
-  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--blessing-gold) 70%, transparent));
 }
 
 /* ── Streak badge (M-13) — shown in post-game panel ─────────────────────── */

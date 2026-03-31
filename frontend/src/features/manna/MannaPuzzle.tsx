@@ -194,7 +194,7 @@ export const MannaPuzzle: React.FC = () => {
   }, [t, archiveDate]);
 
   // ─── Hint handler ─────────────────────────────────────────────────────────
-  const handleHint = async () => {
+  const handleHint = useCallback(async () => {
     const g = gameRef.current;
     if (!g || hintLoading || g.status !== 'in_progress') return;
     if (g.hints_used >= 3) {
@@ -237,7 +237,8 @@ export const MannaPuzzle: React.FC = () => {
     } finally {
       setHintLoading(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [archiveDate, hintLoading, t]);
 
   // ─── Submit guess ─────────────────────────────────────────────────────────
   const handleSubmitRef = useRef<(() => Promise<void>) | undefined>(undefined);
@@ -491,63 +492,67 @@ export const MannaPuzzle: React.FC = () => {
   const hintsLeft = 3 - (game.hints_used ?? 0);
 
   // Hint map for active row rendering
-  const hintMap: Record<number, string> = Object.fromEntries(
-    (game.hint_letters ?? []).map(h => [h.position, h.letter])
+  const hintMap = useMemo<Record<number, string>>(
+    () => Object.fromEntries((game.hint_letters ?? []).map(h => [h.position, h.letter])),
+    [game.hint_letters]
   );
-  const freePositions = getFreePositions(game.hint_letters);
+  const freePositions = useMemo(() => getFreePositions(game.hint_letters), [game.hint_letters]);
   // The tile index where the cursor (blinking caret) sits
-  const cursorTileIdx = !isOver && currentWord.length < freePositions.length
-    ? freePositions[currentWord.length]
-    : -1;
+  const cursorTileIdx = useMemo(
+    () => (!isOver && currentWord.length < freePositions.length ? freePositions[currentWord.length] : -1),
+    [isOver, currentWord, freePositions]
+  );
 
-  const rows: { letters: string[]; states: TileState[]; flipping: boolean; win: boolean; shake: boolean }[] = [];
-
-  for (let r = 0; r < (game?.max_guesses ?? 6); r++) {
-    if (r < game.guesses.length) {
-      const g = game.guesses[r];
-      rows.push({
-        letters: g.word.split(''),
-        states: g.result.map(x => x as TileState),
-        flipping: false,
-        win: winRow === r,
-        shake: false,
-      });
-    } else if (flipping && flipping.rowIdx === r) {
-      rows.push({
-        letters: flipping.guess.word.split(''),
-        states: flipping.guess.result.map(x => x as TileState),
-        flipping: true,
-        win: false,
-        shake: false,
-      });
-    } else if (r === game.guesses.length && !isOver) {
-      // Active row: merge hint letters and user-typed letters
-      const letters = Array.from({ length: WORD_LENGTH }, (_, i) => {
-        if (i in hintMap) return hintMap[i];
-        const freeIdx = freePositions.indexOf(i);
-        return currentWord[freeIdx] ?? '';
-      });
-      const states: TileState[] = letters.map((l, i) => {
-        if (i in hintMap) return 'hint';
-        return l ? 'active' : 'empty';
-      });
-      rows.push({
-        letters,
-        states,
-        flipping: false,
-        win: false,
-        shake: shakeRow === r,
-      });
-    } else {
-      rows.push({
-        letters: Array(WORD_LENGTH).fill(''),
-        states: Array(WORD_LENGTH).fill('empty') as TileState[],
-        flipping: false,
-        win: false,
-        shake: false,
-      });
+  const rows = useMemo(() => {
+    const result: { letters: string[]; states: TileState[]; flipping: boolean; win: boolean; shake: boolean }[] = [];
+    for (let r = 0; r < (game?.max_guesses ?? 6); r++) {
+      if (r < game.guesses.length) {
+        const g = game.guesses[r];
+        result.push({
+          letters: g.word.split(''),
+          states: g.result.map(x => x as TileState),
+          flipping: false,
+          win: winRow === r,
+          shake: false,
+        });
+      } else if (flipping && flipping.rowIdx === r) {
+        result.push({
+          letters: flipping.guess.word.split(''),
+          states: flipping.guess.result.map(x => x as TileState),
+          flipping: true,
+          win: false,
+          shake: false,
+        });
+      } else if (r === game.guesses.length && !isOver) {
+        // Active row: merge hint letters and user-typed letters
+        const letters = Array.from({ length: WORD_LENGTH }, (_, i) => {
+          if (i in hintMap) return hintMap[i];
+          const freeIdx = freePositions.indexOf(i);
+          return currentWord[freeIdx] ?? '';
+        });
+        const states: TileState[] = letters.map((l, i) => {
+          if (i in hintMap) return 'hint';
+          return l ? 'active' : 'empty';
+        });
+        result.push({
+          letters,
+          states,
+          flipping: false,
+          win: false,
+          shake: shakeRow === r,
+        });
+      } else {
+        result.push({
+          letters: Array(WORD_LENGTH).fill(''),
+          states: Array(WORD_LENGTH).fill('empty') as TileState[],
+          flipping: false,
+          win: false,
+          shake: false,
+        });
+      }
     }
-  }
+    return result;
+  }, [game, isOver, flipping, winRow, shakeRow, hintMap, freePositions, currentWord]);
 
   const activeRow = isOver ? -1 : game.guesses.length;
 
@@ -1004,7 +1009,7 @@ const MOTE_CONFIG = [
   { left: '42%',  bottom: '5%',  size: 4, duration: '7.5s', delay: '4.0s' },
 ];
 
-const Motes: React.FC = () => (
+const Motes: React.FC = React.memo(() => (
   <div aria-hidden="true" style={{ position: 'absolute', inset: 0, pointerEvents: 'none', zIndex: 0 }}>
     {MOTE_CONFIG.map((m, i) => (
       <span
@@ -1021,7 +1026,7 @@ const Motes: React.FC = () => (
       />
     ))}
   </div>
-);
+));
 
 // ─── Next-puzzle countdown (M-08) ────────────────────────────────────────────
 
