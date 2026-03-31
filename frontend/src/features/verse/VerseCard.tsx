@@ -164,7 +164,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
   const isVerseAlreadyFavorited = isFavorited(verse.id);
 
-  // Long-press on the verse card to copy text (500ms, cancelled if pointer moves >10px)
+  // Long-press on the verse card to copy text (800ms, cancelled if pointer moves >10px)
   const handleLongPressStart = (e: React.PointerEvent) => {
     longPressOrigin.current = { x: e.clientX, y: e.clientY };
     setIsLongPressing(true);
@@ -179,7 +179,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       } catch {
         // Silently ignore clipboard errors
       }
-    }, 500);
+    }, 800);
   };
 
   const handleLongPressMove = (e: React.PointerEvent) => {

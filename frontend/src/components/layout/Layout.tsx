@@ -13,13 +13,10 @@ import { useStreak } from "../../contexts/StreakContext";
 export const Layout: React.FC = () => {
   const location = useLocation();
   const { checkoutOverlayVisible, cancelCheckout } = useStreak();
-  // On mobile: wrapper fills viewport (h-full) so body never scrolls.
-  // iOS Safari hides its address bar only when the body scrolls, which
-  // causes position:fixed elements to bounce. With body scroll eliminated,
-  // <main> handles scrolling internally (overflow-y-auto) and the nav stays put.
-  // On desktop (md+): revert to normal min-h-screen block flow.
+  // min-h-screen ensures the layout fills the viewport on desktop.
+  // On mobile the browser chrome can auto-hide; <main> handles internal scroll.
   return (
-    <div className="md:min-h-screen h-full flex flex-col">
+    <div className="min-h-screen flex flex-col">
       <Header />
       <OfflineBanner />
       {/* pb-20 on mobile clears the fixed bottom nav bar (56px + safe area) */}

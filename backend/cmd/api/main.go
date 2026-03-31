@@ -341,8 +341,11 @@ func main() {
     // on the next deploy without manual intervention.
     if err := database.SeedMannaWords(db); err != nil {
         log.Printf("WARNING: Manna seed failed: %v", err)
+    }
+    if wordCount := mannaService.SeedWordCount(); wordCount == 0 {
+        log.Printf("CRITICAL: Manna word bank is empty after seeding — /manna will return 500 until this is resolved")
     } else {
-        log.Printf("Manna word bank: %d words loaded", mannaService.SeedWordCount())
+        log.Printf("Manna word bank: %d words loaded", wordCount)
     }
     if err := database.SeedCommunityPosts(db); err != nil {
         log.Printf("WARNING: Community posts seed failed: %v", err)

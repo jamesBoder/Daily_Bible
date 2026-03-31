@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export interface TutorialStep {
@@ -22,6 +22,8 @@ interface TutorialModalProps {
 
 /**
  * Generic, accessible tutorial modal used across all features.
+ * - One step at a time with pagination dots
+ * - Compact size — never covers the app header
  * - Focus-trapped while open
  * - Escape key and backdrop click dismiss
  * - localStorage marking is handled by the caller (via useTutorial)
@@ -38,6 +40,18 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
 }) => {
   const { t } = useTranslation();
   const panelRef = useRef<HTMLDivElement>(null);
+  const [stepIdx, setStepIdx] = useState(0);
+
+  const step = steps[stepIdx];
+  const isLast = stepIdx === steps.length - 1;
+
+  const handleNext = () => {
+    if (isLast) {
+      onDismiss();
+    } else {
+      setStepIdx(i => i + 1);
+    }
+  };
 
   const handleBackdropClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) onDismiss();
@@ -69,11 +83,12 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
     first?.focus();
     return () => panel.removeEventListener('keydown', onKeyDown);
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [stepIdx]);
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm px-4 pb-4 sm:pb-0"
+      className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/60 backdrop-blur-sm px-4 pb-safe-bottom"
+      style={{ paddingBottom: 'max(1rem, env(safe-area-inset-bottom))' }}
       onClick={handleBackdropClick}
       role="dialog"
       aria-modal="true"
@@ -81,14 +96,14 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
     >
       <div
         ref={panelRef}
-        className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-h-[calc(100vh-2rem)] sm:max-h-[90vh] flex flex-col overflow-hidden"
+        className="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden"
       >
         {/* Decorative top accent */}
-        <div className="flex-shrink-0 h-1 w-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400" />
+        <div className="h-1 w-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400" />
 
         {/* Close button */}
         <button
-          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={onDismiss}
           aria-label={t('common.close', 'Close')}
         >
@@ -97,59 +112,62 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
           </svg>
         </button>
 
-        {/* Non-scrolling header */}
-        <div className="flex-shrink-0 px-4 sm:px-6 pt-4 sm:pt-5 pb-3">
-          <div className="flex flex-col items-center text-center">
-            <div className="text-4xl mb-3" aria-hidden>{icon}</div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 font-display">
-              {title}
-            </h2>
-            {subtitle && (
-              <p className="mt-1.5 text-sm text-gray-500 dark:text-gray-400 leading-relaxed">
-                {subtitle}
+        {/* Header — compact */}
+        <div className="px-5 pt-4 pb-3 text-center">
+          <div className="text-2xl mb-1" aria-hidden>{icon}</div>
+          <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 font-display leading-tight">
+            {title}
+          </h2>
+          {subtitle && stepIdx === 0 && (
+            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+              {subtitle}
+            </p>
+          )}
+        </div>
+
+        {/* Single step */}
+        <div className="px-5 pb-2">
+          <div className="flex gap-3 items-start p-3 rounded-xl bg-gray-50 dark:bg-gray-800/60">
+            <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-base" aria-hidden>
+              {step.emoji}
+            </div>
+            <div>
+              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-tight">
+                {step.title}
               </p>
-            )}
-          </div>
-          <div className="flex items-center gap-3 mt-4">
-            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-            <span className="text-xs text-gray-400 dark:text-gray-500 font-medium uppercase tracking-widest">
-              {t('tutorial.howItWorks', 'How it works')}
-            </span>
-            <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">
+                {step.body}
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Scrollable steps only */}
-        <div className="flex-1 overflow-y-auto px-4 sm:px-6 min-h-0">
-          <div className="space-y-4 py-2">
-            {steps.map((step, i) => (
-              <div key={i} className="flex gap-3 items-start">
-                <div className="flex-shrink-0 w-9 h-9 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-lg" aria-hidden>
-                  {step.emoji}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-                    {step.title}
-                  </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">
-                    {step.body}
-                  </p>
-                </div>
-              </div>
+        {/* Pagination dots */}
+        {steps.length > 1 && (
+          <div className="flex justify-center gap-1.5 py-2" aria-hidden>
+            {steps.map((_, i) => (
+              <span
+                key={i}
+                className={`rounded-full transition-all duration-200 ${
+                  i === stepIdx
+                    ? 'w-4 h-1.5 bg-primary-600'
+                    : 'w-1.5 h-1.5 bg-gray-300 dark:bg-gray-600'
+                }`}
+              />
             ))}
           </div>
-        </div>
+        )}
 
-        {/* Non-scrolling footer */}
-        <div className="flex-shrink-0 px-4 sm:px-6 pb-4 sm:pb-6 pt-3">
+        {/* CTA button */}
+        <div className="px-5 pb-4 pt-1">
           <button
-            className="w-full py-3 rounded-xl bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white font-semibold text-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
-            onClick={onDismiss}
+            className="w-full py-2.5 rounded-xl bg-primary-600 hover:bg-primary-700 active:scale-[0.98] text-white font-semibold text-sm transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900"
+            onClick={handleNext}
           >
-            {ctaLabel ?? t('tutorial.gotIt', 'Got it!')}
+            {isLast ? (ctaLabel ?? t('tutorial.gotIt', 'Got it!')) : t('tutorial.next', 'Next')}
           </button>
-          {reopenHint && (
-            <p className="mt-3 text-center text-xs text-gray-400 dark:text-gray-500">
+          {reopenHint && isLast && (
+            <p className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
               {reopenHint}
             </p>
           )}
