@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { usePricingModal } from '../../hooks/usePricingModal';
+import { useNavigate } from 'react-router-dom';
 import { useStreak } from '../../contexts/StreakContext';
 import { mannaApi, YesterdayResult } from '../../services/api/manna';
 import { MannaTile } from './MannaTile';
@@ -15,7 +15,7 @@ interface MannaLockedCardProps {
 
 export const MannaLockedCard: React.FC<MannaLockedCardProps> = ({ yesterday: initialYesterday }) => {
   const { t } = useTranslation();
-  const { openModal } = usePricingModal();
+  const navigate = useNavigate();
   const { subscription } = useStreak();
   const isPremium = subscription?.is_premium ?? false;
   const [yesterday, setYesterday] = useState<YesterdayResult | null>(initialYesterday ?? null);
@@ -78,7 +78,7 @@ export const MannaLockedCard: React.FC<MannaLockedCardProps> = ({ yesterday: ini
 
       {/* CTA */}
       <button
-        onClick={() => openModal('plans')}
+        onClick={() => navigate('/shop')}
         className="manna-cta-btn w-full py-3 px-6 rounded-xl font-semibold transition-all duration-200 hover:brightness-110 active:scale-95"
         style={{ position: 'relative', zIndex: 1 }}
       >
@@ -116,7 +116,7 @@ export const MannaLockedCard: React.FC<MannaLockedCardProps> = ({ yesterday: ini
               — {yesterday.scripture_reference}
               {' '}
               <button
-                onClick={() => openModal('plans')}
+                onClick={() => navigate('/shop')}
                 className="underline"
                 style={{ color: 'var(--blessing-gold)' }}
               >

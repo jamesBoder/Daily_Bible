@@ -185,6 +185,11 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // §8.18.2 — Recover a pending Stripe redirect that was interrupted
   const checkPendingCheckout = useCallback(async () => {
+    // If Stripe already redirected back with success params, the shop effect
+    // will clear pendingStripeUrl. Don't race it by redirecting back to Stripe.
+    const returnParams = new URLSearchParams(window.location.search);
+    if (returnParams.get('subscribed') || returnParams.get('purchased')) return;
+
     const url = sessionStorage.getItem('pendingStripeUrl');
     const type = sessionStorage.getItem('pendingStripeType');
     const initiatedAt = sessionStorage.getItem('pendingStripeInitiatedAt');

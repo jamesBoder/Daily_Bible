@@ -19,7 +19,7 @@ export const CommunitySection: React.FC = () => {
   const [isUpdating, setIsUpdating] = useState(false);
 
   useEffect(() => {
-    apiClient.get('/settings').then((r) => {
+    apiClient.get('/api/settings').then((r) => {
       setMilestoneOptIn(r.data.milestone_posts_opt_in ?? true);
     }).catch(() => {});
   }, []);
@@ -29,7 +29,7 @@ export const CommunitySection: React.FC = () => {
     setMilestoneOptIn(value); // Optimistic
     setIsUpdating(true);
     try {
-      await apiClient.put('/settings', { milestone_posts_opt_in: value });
+      await apiClient.put('/api/settings', { milestone_posts_opt_in: value });
     } catch {
       setMilestoneOptIn(!value); // Revert on error
     } finally {

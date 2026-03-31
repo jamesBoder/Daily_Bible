@@ -1,11 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
 import { mannaApi, GuessEntry, HintLetter, MannaGameResponse, MannaLockedResponse, YesterdayResult } from '../../services/api/manna';
 import { SoundService } from '../../services/SoundService';
 import { useStreak } from '../../contexts/StreakContext';
-import { usePricingModal } from '../../hooks/usePricingModal';
 import { PHYSICAL_KEY_SOUND_KEY } from '../settings/MannaSettings';
 import { MannaLockedCard } from './MannaLockedCard';
 import { MannaTile, TileState } from './MannaTile';
@@ -86,9 +86,9 @@ function buildSubmittedWord(typedLetters: string, hintLetters: HintLetter[] | un
 
 export const MannaPuzzle: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { refreshStreak, subscription } = useStreak();
   const isPremium = subscription?.is_premium ?? false;
-  const { openModal } = usePricingModal();
 
   const [loading, setLoading] = useState(true);
   const [locked, setLocked] = useState(false);
@@ -689,7 +689,7 @@ export const MannaPuzzle: React.FC = () => {
           </span>
           <button
             className="manna-hint-btn shrink-0"
-            onClick={() => openModal()}
+            onClick={() => navigate('/shop')}
             style={{ fontSize: '0.7rem', padding: '2px 8px' }}
           >
             {t('manna.freeUpgradeCta', 'Upgrade to Premium')}
@@ -817,7 +817,7 @@ export const MannaPuzzle: React.FC = () => {
               </p>
               <button
                 className="manna-hint-btn"
-                onClick={() => openModal()}
+                onClick={() => navigate('/shop')}
                 style={{ fontSize: '0.75rem' }}
               >
                 {t('manna.freeUpgradeCta', 'Upgrade to Premium')}
