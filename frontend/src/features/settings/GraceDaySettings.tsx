@@ -5,14 +5,20 @@ import { CalendarCheck, ShieldStar } from '@phosphor-icons/react';
 import { GraceDayTutorial } from './GraceDayTutorial';
 import styles from './GraceDaySettings.module.css';
 
+// Free users can hold up to 5 grace days (3 from natural accrual, up to 5 with purchases).
+// Premium users have no cap.
+const FREE_GRACE_DAY_CAP = 5;
+
 export const GraceDaySettings: React.FC = () => {
   const { t } = useTranslation();
-  const { streakData, useGraceDay: applyGraceDay } = useStreak();
+  const { streakData, subscription, useGraceDay: applyGraceDay } = useStreak();
   const [confirming, setConfirming] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [showTutorial, setShowTutorial] = useState(false);
 
   const remaining = streakData?.grace_days_remaining ?? 0;
+  const queued = streakData?.grace_days_queued ?? 0;
+  const isPremium = subscription?.is_premium ?? false;
 
   const handleUseGraceDay = async () => {
     if (!confirming) {
@@ -54,13 +60,28 @@ export const GraceDaySettings: React.FC = () => {
       </div>
 
       <div className={styles.pipsRow}>
-        {[0, 1].map(i => (
-          <div key={i} className={`${styles.pip} ${i < remaining ? styles.pipActive : styles.pipUsed}`} />
-        ))}
+        {isPremium ? (
+          // Premium: no cap — just show the count without pips
+          <span className={styles.pipsLabel} style={{ fontWeight: 700, fontSize: '1rem' }}>
+            {remaining}
+          </span>
+        ) : (
+          // Free: up to FREE_GRACE_DAY_CAP pips
+          Array.from({ length: FREE_GRACE_DAY_CAP }, (_, i) => (
+            <div key={i} className={`${styles.pip} ${i < remaining ? styles.pipActive : styles.pipUsed}`} />
+          ))
+        )}
         <span className={styles.pipsLabel}>
-          {remaining} {t('settings.graceDays.of2', 'of 2')} {t('settings.graceDays.available', 'available')}
+          {isPremium
+            ? t('settings.graceDays.availablePremium', 'available')
+            : `${remaining} ${t('settings.graceDays.ofN', { count: FREE_GRACE_DAY_CAP, defaultValue: `of ${FREE_GRACE_DAY_CAP}` })} ${t('settings.graceDays.available', 'available')}`}
         </span>
       </div>
+      {queued > 0 && (
+        <p className={styles.queuedNote}>
+          +{queued} {t('settings.graceDays.banked', 'banked — will restore as you use days')}
+        </p>
+      )}
 
       {remaining === 0 ? (
         <p className={styles.exhausted}>

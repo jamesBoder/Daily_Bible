@@ -140,6 +140,7 @@ func (h *StreakHandler) GetStreakSummary(c *gin.Context) {
 		"longest_streak":           streak.LongestStreak,
 		"last_active_date":         streak.LastActiveDate,
 		"grace_days_remaining":     streak.GraceDaysRemaining,
+		"grace_days_queued":        streak.GraceDaysQueued,
 		"grace_days_reset_at":      streak.GraceDaysResetAt,
 		"streak_recoverable":       streakRecoverable,
 		"blessings_balance":        balance,

@@ -242,14 +242,15 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 				blessingsCredited = credited
 			}
 
-			// Milestone check runs fully asynchronously — GetStreakSummary is
-			// called inside the goroutine so it never blocks the verse response.
+			// Milestone check runs synchronously so the record is committed before
+			// this response returns. The frontend's GET /api/streak (triggered by
+			// the blessings toast) will therefore always see the new milestone.
+			// Only the community-post side-effects remain async — they are best-effort.
 			if h.rewardsService != nil {
 				uid := userID.(uint)
 				tz := settings.PreferredTimezone
-				cs := h.communityService
-				ss := h.settingsService
-				go func() {
+
+				func() {
 					defer func() {
 						if r := recover(); r != nil {
 							log.Printf("CheckMilestones panic for user %d: %v", uid, r)
@@ -262,32 +263,27 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 					}
 					grantedKeys := h.rewardsService.CheckMilestones(uid, currentStreak)
 
-					// Phase 9: fire a community milestone post for each newly granted key.
+					// Community posts stay async — best-effort, never blocks the response.
+					cs := h.communityService
 					if cs != nil && len(grantedKeys) > 0 {
-						userSettings, err := ss.GetUserSettings(uid)
-						if err == nil && userSettings.MilestonePostsOptIn {
-							// Resolve the user's username for the post body.
-							var username string
-							if streakSummary != nil {
-								// Username isn't in StreakSummary — use a separate lookup below.
+						ss := h.settingsService
+						go func() {
+							defer func() {
+								if r := recover(); r != nil {
+									log.Printf("CreateMilestonePost panic user %d: %v", uid, r)
+								}
+							}()
+							userSettings, err := ss.GetUserSettings(uid)
+							if err != nil || !userSettings.MilestonePostsOptIn {
+								return
 							}
-							// Best-effort username fetch (same DB already warmed by settings read).
-							if uname, uErr := ss.GetUsernameByID(uid); uErr == nil {
-								username = uname
-							}
+							username, _ := ss.GetUsernameByID(uid)
 							for _, key := range grantedKeys {
-								go func(milestoneKey string) {
-									defer func() {
-										if r := recover(); r != nil {
-											log.Printf("CreateMilestonePost panic user %d key %s: %v", uid, milestoneKey, r)
-										}
-									}()
-									if err := cs.CreateMilestonePost(uid, username, milestoneKey); err != nil {
-										log.Printf("CreateMilestonePost error user %d key %s: %v", uid, milestoneKey, err)
-									}
-								}(key)
+								if err := cs.CreateMilestonePost(uid, username, key); err != nil {
+									log.Printf("CreateMilestonePost error user %d key %s: %v", uid, key, err)
+								}
 							}
-						}
+						}()
 					}
 				}()
 			}
@@ -342,6 +338,10 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	// offline support via its own cache (wop-api-v4).
 	c.Header("Cache-Control", "no-store")
 
+	dailyDate := ""
+	if verse.DailyDate != nil {
+		dailyDate = *verse.DailyDate
+	}
 	response := gin.H{
 		"verse": gin.H{
 			"id":           verse.ID,
@@ -352,6 +352,7 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 			"verse":        verse.VerseNumber,
 			"version":      resolvedVersion.Abbreviation,
 			"language":     language,
+			"daily_date":   dailyDate,
 		},
 	}
 	

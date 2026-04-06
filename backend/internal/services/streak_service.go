@@ -136,11 +136,11 @@ func (s *StreakService) UseGraceDay(userID uint, ianaTimezone string) error {
         t := time.Now().Add(30 * 24 * time.Hour)
         streak.GraceDaysResetAt = &t
 
-        // Phase 8: drain queued grace days (from grace_day_pack purchases by free users).
-        // Each time a grace day is used, one queued day refills the balance up to the free cap (2).
+        // Drain queued grace days (from grace_day_pack purchases by free users).
+        // Each time a grace day is used, one queued day refills the balance up to the free cap (5).
         if streak.GraceDaysQueued > 0 {
             streak.GraceDaysQueued--
-            if streak.GraceDaysRemaining < 2 {
+            if streak.GraceDaysRemaining < 5 {
                 streak.GraceDaysRemaining++
             }
         }
@@ -159,8 +159,12 @@ func (s *StreakService) UseGraceDay(userID uint, ianaTimezone string) error {
     })
 }
 
+// freeGraceDayCap is the maximum grace days a free user can hold at once.
+// Purchased days that exceed this cap are queued and drain in one-for-one as days are used.
+const freeGraceDayCap = 5
+
 // AddGraceDays adds `count` grace days to the user's balance.
-// For free users: caps immediately at 2, and stores the overflow in GraceDaysQueued.
+// For free users: caps immediately at freeGraceDayCap, stores overflow in GraceDaysQueued.
 // For premium users: no cap — all days are added directly to GraceDaysRemaining.
 // Called by SubscriptionService.HandleOneTimePurchase for the grace_day_pack product.
 func (s *StreakService) AddGraceDays(userID uint, count int) error {
@@ -175,8 +179,8 @@ func (s *StreakService) AddGraceDays(userID uint, count int) error {
             // Premium: no cap — add all days directly.
             streak.GraceDaysRemaining += count
         } else {
-            // Free: cap at 2 immediately, queue the overflow.
-            available := 2 - streak.GraceDaysRemaining
+            // Free: cap at freeGraceDayCap, queue the overflow.
+            available := freeGraceDayCap - streak.GraceDaysRemaining
             if available < 0 {
                 available = 0
             }
@@ -207,7 +211,7 @@ func (s *StreakService) AddGraceDaysTx(tx *gorm.DB, userID uint, count int) erro
 	if s.subscriptionChecker.IsPremium(userID) {
 		streak.GraceDaysRemaining += count
 	} else {
-		available := 2 - streak.GraceDaysRemaining
+		available := freeGraceDayCap - streak.GraceDaysRemaining
 		if available < 0 {
 			available = 0
 		}
@@ -253,10 +257,10 @@ func (s *StreakService) accrueGraceDays(streak *models.UserStreak, userID uint) 
     if s.subscriptionChecker.IsPremium(userID) {
         streak.GraceDaysRemaining += 3 // no cap for premium
     } else {
-        if streak.GraceDaysRemaining < 2 {
-            streak.GraceDaysRemaining++ // free: cap at 2
+        if streak.GraceDaysRemaining < 3 {
+            streak.GraceDaysRemaining++ // free: accrue up to 3 naturally
         }
-        // If already at 2, the accrual is silently skipped — no overflow loss.
+        // If already at 3+, the accrual is skipped — purchased days above 3 still held.
     }
 
     t := time.Now().Add(30 * 24 * time.Hour)

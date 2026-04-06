@@ -5,7 +5,7 @@ import { SettingsToggle } from '../../components/ui/SettingsToggle';
 import { ThemePicker } from './ThemePicker';
 
 const ANIM_KEY = 'celebrationAnimEnabled';
-const VERSE_FONT_SIZES = ['1rem', '1.125rem', '1.25rem', '1.5rem', '1.875rem'];
+const VERSE_FONT_SIZES = ['0.875rem', '1rem', '1.125rem', '1.25rem', '1.375rem'];
 const FONT_SIZE_LABELS = ['S', 'M', 'L', 'XL', 'XXL'];
 
 export const AppearanceSettings: React.FC = () => {

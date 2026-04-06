@@ -181,7 +181,12 @@ export const DailyVerse: React.FC = () => {
     if (sessionStorage.getItem(sessionKey)) return;
     sessionStorage.setItem(sessionKey, '1');
     showBlessingsToast(blessingsCredited, 'daily_view');
-    refreshStreak().catch(() => {});
+    // Delay so this refresh always falls outside the 1-second debounce window
+    // (StreakContext fetches streak on mount, ~0ms; verse arrives ~200-800ms later).
+    // The backend now writes milestones synchronously before the verse response
+    // returns, so a 1.5s delay is more than enough to pick them up.
+    const t = setTimeout(() => refreshStreak().catch(() => {}), 1500);
+    return () => clearTimeout(t);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verse, blessingsCredited]);
 
@@ -343,11 +348,14 @@ export const DailyVerse: React.FC = () => {
     );
   }
 
-  // Date display: use targetDate directly for past days (it's already YYYY-MM-DD)
-  const displayDate: Date =
-    historyIndex > 0 && targetDate
-      ? new Date(targetDate + "T12:00:00")
-      : new Date();
+  // Date display: for past days use targetDate; for today use the verse's daily_date
+  // (not new Date()) so the displayed date matches the actual verse, not the browser clock.
+  // This prevents the date from jumping to "tomorrow" at midnight before the verse rolls over.
+  const displayDate: Date = (() => {
+    if (historyIndex > 0 && targetDate) return new Date(targetDate + "T12:00:00");
+    if (verse?.daily_date) return new Date(verse.daily_date + "T12:00:00");
+    return new Date();
+  })();
 
   const formattedDate = (() => {
     try {
@@ -421,7 +429,7 @@ export const DailyVerse: React.FC = () => {
 
       {/* Title + date line */}
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+        <h1 className="text-xl md:text-2xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
           {t("dailyVerse.title")}
         </h1>
         <p key={formattedDate} className="text-gray-600 dark:text-gray-400 animate-fade-in">

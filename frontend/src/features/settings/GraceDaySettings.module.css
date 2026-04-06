@@ -79,6 +79,13 @@
   margin-left: 0.25rem;
 }
 
+.queuedNote {
+  font-size: 0.78rem;
+  margin: -0.25rem 0 0;
+  color: var(--candle-amber, #f59e0b);
+  opacity: 0.75;
+}
+
 .exhausted {
   font-size: 0.875rem;
   opacity: 0.6;
