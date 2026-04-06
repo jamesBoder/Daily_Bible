@@ -353,7 +353,7 @@ export const DailyVerse: React.FC = () => {
   // This prevents the date from jumping to "tomorrow" at midnight before the verse rolls over.
   const displayDate: Date = (() => {
     if (historyIndex > 0 && targetDate) return new Date(targetDate + "T12:00:00");
-    if (verse?.daily_date) return new Date(verse.daily_date + "T12:00:00");
+    if (verse?.daily_date) return new Date(verse.daily_date.slice(0, 10) + "T12:00:00");
     return new Date();
   })();
 
