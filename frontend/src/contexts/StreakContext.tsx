@@ -17,6 +17,7 @@ interface StreakData {
   longest_streak: number;
   last_active_date: string | null;
   grace_days_remaining: number;
+  grace_days_queued: number;
   grace_days_reset_at: string | null;
   streak_recoverable: boolean;
   blessings_balance: number;

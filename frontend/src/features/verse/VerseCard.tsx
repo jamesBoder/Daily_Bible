@@ -240,7 +240,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       )}
 
       {/* Decorative quote mark */}
-      <div className="absolute top-4 left-4 text-6xl text-primary-100 dark:text-primary-900 font-serif">
+      <div className="absolute top-4 left-4 text-4xl text-primary-100 dark:text-primary-900 font-serif">
         "
       </div>
 
@@ -248,7 +248,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       <div className="relative z-10 mb-6">
         <p
           className="text-gray-800 dark:text-gray-100 font-serif leading-relaxed text-center px-8 py-4"
-          style={{ fontSize: 'var(--verse-font-size, 1.25rem)' }}
+          style={{ fontSize: 'var(--verse-font-size, 1.125rem)' }}
         >
           {verse.text}
         </p>
@@ -256,7 +256,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
       {/* Reference */}
       <div className="text-center mb-6">
-        <p className="text-xl font-display font-semibold text-primary-700 dark:text-primary-400 drop-shadow-[0_2px_4px_rgba(0,0,0,0.15)] dark:drop-shadow-[0_2px_6px_rgba(0,0,0,0.5)]">
+        <p className="text-sm md:text-base font-display font-semibold text-primary-700 dark:text-primary-400 drop-shadow-[0_1px_2px_rgba(0,0,0,0.12)] dark:drop-shadow-[0_1px_4px_rgba(0,0,0,0.4)]">
           {verse.reference}
         </p>
         {/* Translation badge — authenticated users only */}

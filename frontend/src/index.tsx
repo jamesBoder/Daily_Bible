@@ -9,7 +9,7 @@ import "./index.css";
 import App from "./App";
 
 // Apply stored verse font-size preference before first paint to avoid flicker
-const VERSE_FONT_SIZES = ['1rem', '1.125rem', '1.25rem', '1.5rem', '1.875rem'];
+const VERSE_FONT_SIZES = ['0.875rem', '1rem', '1.125rem', '1.25rem', '1.375rem'];
 const storedSize = Number(localStorage.getItem('verseFontSize') ?? 3);
 const clampedSize = Math.min(5, Math.max(1, storedSize));
 document.documentElement.style.setProperty('--verse-font-size', VERSE_FONT_SIZES[clampedSize - 1]);
