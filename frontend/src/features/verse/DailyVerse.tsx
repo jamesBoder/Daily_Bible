@@ -388,7 +388,7 @@ export const DailyVerse: React.FC = () => {
 
   return (
     <div
-      className="max-w-3xl mx-auto px-4 pt-4 pb-8 md:py-8"
+      className="max-w-3xl mx-auto px-4 pt-1 pb-8 md:pt-4 md:pb-8"
       onTouchStart={(e) => { swipeHandlers.onTouchStart(e); ptr.onTouchStart(e); }}
       onTouchMove={ptr.onTouchMove}
       onTouchEnd={(e) => { swipeHandlers.onTouchEnd(e); ptr.onTouchEnd(); }}
@@ -403,110 +403,47 @@ export const DailyVerse: React.FC = () => {
         </>
       )}
 
-      {/* Mobile control row — sits between nav header and h1, hidden on desktop */}
-      {!isGuest && (
-        <div className="flex items-center justify-between px-4 py-1 md:hidden mb-2">
-          {/* Left zone — fixed width so center stays centered */}
-          <div className="w-11 flex justify-start">
-            {showBack && (
+      {/* Title + date row with inline nav arrows */}
+      <div className="text-center mb-4">
+        <h1 className="text-xl md:text-2xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
+          {t("dailyVerse.title")}
+        </h1>
+
+        {/* Date line with nav arrows on either side */}
+        <div className="flex items-center justify-center gap-4">
+          {/* Left arrow — always reserves space to keep date centered */}
+          <div className="w-11 flex justify-center">
+            {showBack && !isGuest && (
               <div className="animate-fade-in">
                 <NavArrow direction="back" onClick={goBack} size="sm" />
               </div>
             )}
           </div>
 
-          {/* Center zone — Today shortcut */}
-          <div className="flex items-center justify-center">
-            {historyIndex > 0 && <TodayButton onClick={() => setHistoryIndex(0)} />}
+          <div className="flex flex-col items-center">
+            <p key={formattedDate} className="text-gray-600 dark:text-gray-400 animate-fade-in">
+              {formattedDate}
+            </p>
+            {historyIndex > 0 && (
+              <div className="mt-1">
+                <TodayButton onClick={() => setHistoryIndex(0)} />
+              </div>
+            )}
           </div>
 
-          {/* Right zone — fixed width */}
-          <div className="w-11 flex justify-end">
-            {showForward && <NavArrow direction="forward" onClick={goForward} size="sm" />}
+          {/* Right arrow */}
+          <div className="w-11 flex justify-center">
+            {showForward && (
+              <div className="animate-fade-in">
+                <NavArrow direction="forward" onClick={goForward} size="sm" />
+              </div>
+            )}
           </div>
-        </div>
-      )}
-
-      {/* Title + date line */}
-      <div className="text-center mb-8">
-        <h1 className="text-xl md:text-2xl font-display font-bold text-primary-600 dark:text-primary-400 mb-2 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
-          {t("dailyVerse.title")}
-        </h1>
-        <p key={formattedDate} className="text-gray-600 dark:text-gray-400 animate-fade-in">
-          {formattedDate}
-        </p>
-        {/* Desktop Today shortcut — only shown when browsing history */}
-        {historyIndex > 0 && (
-          <p className="mt-1 hidden md:block">
-            <button
-              onClick={() => setHistoryIndex(0)}
-              className="text-xs font-semibold text-primary-600 dark:text-primary-400 hover:underline transition-colors duration-200"
-            >
-              ← Today
-            </button>
-          </p>
-        )}
-      </div>
-
-      {/* Desktop: three-column flex so card stays centered when arrows appear/disappear */}
-      <div className="hidden md:flex items-center gap-6">
-        {/* Left slot — always reserves w-14 space */}
-        <div className="w-14 flex-shrink-0 flex justify-center">
-          {showBack && (
-            <div className="animate-fade-in">
-              <NavArrow direction="back" onClick={goBack} />
-            </div>
-          )}
-        </div>
-
-        {/* Card — expands to fill remaining space */}
-        <div className="flex-1 min-w-0">
-          {verseAreaLoading ? (
-            <VerseCardSkeleton />
-          ) : fetchDateError ? (
-            <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-700 rounded-lg p-6 text-center">
-              <p className="text-red-700 dark:text-red-400 text-sm">{t("dailyVerse.error")}</p>
-            </div>
-          ) : (
-            <VerseCard
-              verse={renderedVerse}
-              lang={i18n.language}
-              onVersionSelect={
-                historyIndex === 0 && !isGuest
-                  ? handleVersionSelect
-                  : (historyIndex > 0 && isPremium ? handleHistoryVersionSelect : undefined)
-              }
-            />
-          )}
-          {/* Compare Translations — premium users, today's and history verses */}
-          {isPremium && (displayVerse ?? verse) && (
-            <div className="mt-3 flex justify-center">
-              {showComparison ? (
-                <SideBySideView
-                  reference={renderedVerse.reference}
-                  lang={i18n.language}
-                  onClose={() => setShowComparison(false)}
-                />
-              ) : (
-                <button
-                  onClick={() => setShowComparison(true)}
-                  className="text-sm font-semibold text-amber-600 dark:text-amber-400 hover:underline transition-colors px-2 py-1"
-                >
-                  {t("verse.compareTranslations", "Compare Translations")}
-                </button>
-              )}
-            </div>
-          )}
-        </div>
-
-        {/* Right slot — always reserves w-14 space */}
-        <div className="w-14 flex-shrink-0 flex justify-center">
-          {showForward && <NavArrow direction="forward" onClick={goForward} />}
         </div>
       </div>
 
-      {/* Mobile: single-column card */}
-      <div className="md:hidden">
+      {/* Card — full width on both mobile and desktop */}
+      <div>
         {verseAreaLoading ? (
           <VerseCardSkeleton />
         ) : fetchDateError ? (
