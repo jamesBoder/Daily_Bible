@@ -1,6 +1,7 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useVirtualizer } from '@tanstack/react-virtual';
 import { SearchResultCard } from './SearchResultCard';
 import { SearchEmptyState } from './SearchEmptyState';
 import { SavedSearchesTeaser } from './SavedSearchesTeaser';
@@ -41,6 +42,21 @@ export const SearchResultsPage: React.FC = () => {
     query,
     setQuery,
   } = useVerseSearch();
+
+  // Virtualizer — uses <main> as the scroll container (overflow-y-auto on mobile,
+  // overflow-visible on desktop where the window scrolls instead).
+  const scrollElementRef = useRef<HTMLElement | null>(null);
+  useLayoutEffect(() => {
+    scrollElementRef.current = document.querySelector('main');
+  }, []);
+
+  const rowVirtualizer = useVirtualizer({
+    count: results.length,
+    getScrollElement: () => scrollElementRef.current,
+    // ~88px card + 12px gap between cards
+    estimateSize: () => 100,
+    overscan: 5,
+  });
 
   // Fire search automatically when the URL query param is present
   useEffect(() => {
@@ -129,9 +145,29 @@ export const SearchResultsPage: React.FC = () => {
               ? t('search.verseFound', 'verse found')
               : t('search.versesFound', 'verses found')}
           </p>
-          <ul className={styles.results}>
-            {results.map((r, i) => (
-              <SearchResultCard key={r.id} result={r} index={i} />
+          {/* Virtual list — only renders items in the viewport */}
+          <ul
+            className={styles.results}
+            style={{
+              height: rowVirtualizer.getTotalSize(),
+              position: 'relative',
+              display: 'block', // override flex from CSS module
+            }}
+          >
+            {rowVirtualizer.getVirtualItems().map((virtualItem) => (
+              <li
+                key={results[virtualItem.index].id}
+                style={{
+                  position: 'absolute',
+                  top: 0,
+                  left: 0,
+                  width: '100%',
+                  transform: `translateY(${virtualItem.start}px)`,
+                  paddingBottom: '0.75rem', // replaces the CSS gap
+                }}
+              >
+                <SearchResultCard result={results[virtualItem.index]} index={virtualItem.index} />
+              </li>
             ))}
           </ul>
         </>

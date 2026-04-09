@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import api from "../../services/api/api";
 import { useTutorial } from "../../hooks/useTutorial";
 import { JournalTutorial, JOURNAL_TUTORIAL_KEY } from "./JournalTutorial";
+import { usePullToRefresh } from "../../hooks/usePullToRefresh";
+import PullRefreshIndicator from "../../components/common/PullRefreshIndicator";
 import "./JournalList.css";
 
 // ── Types ──────────────────────────────────────────────────────────────────────
@@ -111,6 +113,8 @@ export const JournalList: React.FC = () => {
     }
   }, [t]);
 
+  const ptr = usePullToRefresh({ onRefresh: fetchEntries });
+
   useEffect(() => {
     fetchEntries();
   }, [fetchEntries]);
@@ -124,7 +128,13 @@ export const JournalList: React.FC = () => {
       : 0;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div
+      className="max-w-2xl mx-auto px-4 py-6"
+      onTouchStart={ptr.onTouchStart}
+      onTouchMove={ptr.onTouchMove}
+      onTouchEnd={ptr.onTouchEnd}
+    >
+      <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
       {/* Tutorial overlay */}
       {showTutorial && <JournalTutorial onDismiss={dismissTutorial} />}
 

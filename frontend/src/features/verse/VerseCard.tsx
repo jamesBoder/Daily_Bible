@@ -72,10 +72,12 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
         const favoriteId = getFavoriteId(verse.id);
         if (favoriteId) {
           await removeFavorite(favoriteId);
+          if (navigator.vibrate) navigator.vibrate(10);
         }
       } else {
         // Add to favorites
         await addFavorite(verse.id);
+        if (navigator.vibrate) navigator.vibrate([15, 30, 15]);
         setHeartbeatKey(k => k + 1);
         setJustFavorited(true);
         setTimeout(() => setJustFavorited(false), 600);
@@ -248,7 +250,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       <div className="relative z-10 mb-6">
         <p
           className="text-gray-800 dark:text-gray-100 font-serif leading-relaxed text-center px-8 py-4"
-          style={{ fontSize: 'var(--verse-font-size, 1.125rem)' }}
+          style={{ fontSize: 'var(--verse-font-size, clamp(1rem, 4.5vw, 1.25rem))' }}
         >
           {verse.text}
         </p>

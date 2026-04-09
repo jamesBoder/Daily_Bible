@@ -43,6 +43,7 @@ const BottomNav: React.FC = () => {
   // Show nudge dot when the app can be installed and isn't already
   const showInstallNudge = !isInstalled && (canInstall || isIOS);
   const sheetSwipe = useSwipe({ onSwipeDown: () => setSheetOpen(false) });
+  const haptic = () => { if (navigator.vibrate) navigator.vibrate(8); };
 
   // Close sheet on route change
   useEffect(() => {
@@ -65,8 +66,19 @@ const BottomNav: React.FC = () => {
     navigate('/login');
   };
 
+  // Pill indicator position — derived from current route / sheet state
+  const tabPaths = ['/daily', '/manna', '/community', '/shop'];
+  const activePillIndex = sheetOpen
+    ? 4
+    : (() => {
+        const idx = tabPaths.findIndex(
+          (p) => location.pathname === p || location.pathname.startsWith(p + '/'),
+        );
+        return idx === -1 ? -1 : idx;
+      })();
+
   const tabBase =
-    'flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[11px] font-medium transition-all duration-150 active:scale-90 select-none focus:outline-none min-w-0 overflow-hidden';
+    'relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[11px] font-medium transition-colors duration-150 active:scale-90 select-none focus:outline-none min-w-0 overflow-hidden';
   const tabActive = 'text-amber-700 dark:text-amber-400';
   const tabInactive = 'text-gray-500 dark:text-gray-400';
 
@@ -94,10 +106,23 @@ const BottomNav: React.FC = () => {
         }}
         aria-label={t('nav.mainNavigation', 'Main navigation')}
       >
-        <div className="flex items-stretch h-14">
+        <div className="relative flex items-stretch h-14">
+          {/* Sliding pill behind active tab */}
+          {activePillIndex >= 0 && (
+            <div
+              className="absolute top-1.5 bottom-1.5 rounded-full bg-amber-100/80 dark:bg-amber-900/30 pointer-events-none transition-[left,width] duration-300 ease-out"
+              style={{
+                left: `calc(${activePillIndex * 20}% + 6px)`,
+                width: 'calc(20% - 12px)',
+              }}
+              aria-hidden="true"
+            />
+          )}
+
           {/* Home — always unlocked */}
           <NavLink
             to="/daily"
+            onClick={haptic}
             className={({ isActive }) =>
               `${tabBase} ${isActive ? tabActive : tabInactive}`
             }
@@ -114,6 +139,7 @@ const BottomNav: React.FC = () => {
           {/* Manna */}
           <NavLink
             to="/manna"
+            onClick={haptic}
             className={({ isActive }) =>
               `${tabBase} ${isActive ? tabActive : tabInactive}`
             }
@@ -133,6 +159,7 @@ const BottomNav: React.FC = () => {
           {/* Community */}
           <NavLink
             to="/community"
+            onClick={haptic}
             className={({ isActive }) =>
               `${tabBase} ${isActive ? tabActive : tabInactive}`
             }
@@ -152,6 +179,7 @@ const BottomNav: React.FC = () => {
           {/* Shop */}
           <NavLink
             to="/shop"
+            onClick={haptic}
             className={({ isActive }) =>
               `${tabBase} ${isActive ? tabActive : tabInactive} relative`
             }
@@ -175,7 +203,7 @@ const BottomNav: React.FC = () => {
           {/* More */}
           <button
             className={`${tabBase} ${sheetOpen ? tabActive : tabInactive}`}
-            onClick={() => setSheetOpen(true)}
+            onClick={() => { haptic(); setSheetOpen(true); }}
             aria-label={t('nav.more', 'More')}
             aria-haspopup="dialog"
             aria-expanded={sheetOpen}

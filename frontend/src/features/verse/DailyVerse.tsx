@@ -443,7 +443,8 @@ export const DailyVerse: React.FC = () => {
       </div>
 
       {/* Card — full width on both mobile and desktop */}
-      <div>
+      {/* key forces React to replay animate-content-fade-in when transitioning skeleton → content */}
+      <div key={verseAreaLoading ? 'skeleton' : 'content'} className={verseAreaLoading ? '' : 'animate-content-fade-in'}>
         {verseAreaLoading ? (
           <VerseCardSkeleton />
         ) : fetchDateError ? (

@@ -125,7 +125,7 @@ export const CommunityPostCard: React.FC<Props> = React.memo(({
 
   return (
     <div
-      className="community-card-enter community-post-card"
+      className="community-card-enter community-post-card active:scale-[0.985] transition-transform duration-150"
       style={{
         borderTop: `3px solid ${accentColor}`,
         padding: '0.9rem 1rem 0.75rem',
