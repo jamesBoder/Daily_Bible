@@ -336,6 +336,17 @@ func main() {
     // Push handler
     pushHandler := handlers.NewPushHandler(pushService)
 
+    // Phase 12 services
+    readingPlanService := services.NewReadingPlanService(db, subscriptionChecker, blessingsService)
+    annotationService  := services.NewAnnotationService(db)
+    searchService      := services.NewSearchService(db)
+
+    // Phase 12 handlers
+    readingPlanHandler := handlers.NewReadingPlanHandler(readingPlanService, subscriptionChecker)
+    annotationHandler  := handlers.NewAnnotationHandler(annotationService, subscriptionChecker)
+    searchHandler      := handlers.NewSearchHandler(searchService, subscriptionChecker)
+    prayerHandler      := handlers.NewPrayerHandler(db, blessingsService, subscriptionChecker)
+
     // Phase 10: seed word bank on every start — idempotent (ON CONFLICT DO NOTHING).
     // Running unconditionally means new words added to the SQL file are picked up
     // on the next deploy without manual intervention.
@@ -352,6 +363,9 @@ func main() {
     }
     if err := database.CleanCommunityPosts(db); err != nil {
         log.Printf("WARNING: Community cleanup failed: %v", err)
+    }
+    if err := database.SeedReadingPlans(db); err != nil {
+        log.Printf("WARNING: Reading plans seed failed: %v", err)
     }
 
     // 7. Setup router and start server
@@ -384,6 +398,7 @@ func main() {
     // Allow multiple origins for development and production
     allowedOrigins := []string{
         frontendURL,                                    // Production frontend URL from env
+        "https://www.wordsofpraise.app",               // www subdomain (Edge / some browsers use this)
         "http://localhost:3000",                        // Local development
         "http://localhost",                             // Local development
         "http://localhost:80",                          // Local development
@@ -412,7 +427,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler, readingPlanHandler, annotationHandler, searchHandler, prayerHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")

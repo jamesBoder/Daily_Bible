@@ -404,11 +404,13 @@ func (h *VerseHandler) GetVerseByReference(c *gin.Context) {
 	})
 }
 
-// SearchVerses searches for verses based on a query parameter
+// SearchVerses searches for verses based on a query parameter.
+// Accepts optional ?book=<BookName> to filter results by Bible book (free for all users).
 func (h *VerseHandler) SearchVerses(c *gin.Context) {
 	query := strings.TrimSpace(c.Query("q"))
 	limitStr := c.DefaultQuery("limit", "10")
 	language := c.DefaultQuery("lang", "en")
+	bookFilter := strings.TrimSpace(c.Query("book"))
 
 	// Return an empty result set immediately rather than hitting the Bible API
 	// with an empty query string.
@@ -434,7 +436,13 @@ func (h *VerseHandler) SearchVerses(c *gin.Context) {
 
 	// Use a pre-allocated slice so the JSON encodes as [] not null when empty.
 	results := make([]gin.H, 0, len(verses))
+	bookFilterLower := strings.ToLower(bookFilter)
 	for _, verse := range verses {
+		// Apply optional book filter (client-side on the result set — the Bible API
+		// doesn't support book-scoped search natively).
+		if bookFilterLower != "" && !strings.HasPrefix(strings.ToLower(verse.Reference), bookFilterLower) {
+			continue
+		}
 		results = append(results, gin.H{
 			"id":        verse.ID,
 			"reference": verse.Reference,

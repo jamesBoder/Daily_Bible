@@ -38,6 +38,11 @@ func SetupRoutes(
 	mannaHandler *handlers.MannaHandler,
 	// Push notifications
 	pushHandler *handlers.PushHandler,
+	// Phase 12
+	readingPlanHandler *handlers.ReadingPlanHandler,
+	annotationHandler  *handlers.AnnotationHandler,
+	searchHandler      *handlers.SearchHandler,
+	prayerHandler      *handlers.PrayerHandler,
 ) {
 	api := router.Group("/api")
 	{
@@ -223,7 +228,43 @@ func SetupRoutes(
 			{
 				adminManna.POST("/words", mannaHandler.AddWord)
 			}
+
+			// Phase 12: reading plans (auth-required routes)
+			// /my and /seasonal/current must be registered before /:slug to avoid Gin
+			// matching "my" and "seasonal" as slug values.
+			protected.GET("/plans/my", readingPlanHandler.GetMyPlans)
+			protected.GET("/plans/seasonal/current", readingPlanHandler.GetSeasonalCurrent)
+			protected.POST("/plans/:slug/enroll", readingPlanHandler.Enroll)
+			protected.DELETE("/plans/:slug/unenroll", readingPlanHandler.Unenroll)
+			protected.POST("/plans/:slug/advance", readingPlanHandler.Advance)
+			protected.GET("/plans/:slug/today", readingPlanHandler.GetTodayEntry)
+
+			// Phase 12: verse annotations (all auth-required; premium gate inside handlers)
+			protected.GET("/annotations", annotationHandler.GetAll)
+			protected.GET("/annotations/verse/:reference", annotationHandler.GetForVerse)
+			protected.POST("/annotations", annotationHandler.Create)
+			protected.PUT("/annotations/:id", annotationHandler.Update)
+			protected.DELETE("/annotations/:id", annotationHandler.Delete)
+
+			// Phase 12: premium search (auth-required; premium gate inside handlers)
+			protected.GET("/search/reflections", searchHandler.SearchReflections)
+			protected.GET("/search/journal", searchHandler.SearchJournal)
+			protected.GET("/search/saved", searchHandler.GetSavedSearches)
+			protected.POST("/search/saved", searchHandler.SaveSearch)
+			protected.DELETE("/search/saved/:id", searchHandler.DeleteSavedSearch)
+
+			// Phase 12: guided prayer (auth-required; premium gate inside handler)
+			protected.POST("/prayer/rosary/complete", prayerHandler.CompleteRosary)
 		}
+	}
+
+	// Phase 12: reading plan library and detail — optional auth for premium filtering.
+	// Registered outside the protected block so unauthenticated browsers can browse the library.
+	plansOptional := api.Group("/plans")
+	plansOptional.Use(middleware.OptionalAuthMiddleware(tokenService, subscriptionChecker))
+	{
+		plansOptional.GET("", readingPlanHandler.GetLibrary)
+		plansOptional.GET("/:slug", readingPlanHandler.GetPlan)
 	}
 
 	// Phase 10: yesterday's word — public, no auth

@@ -37,6 +37,13 @@ func RunMigrations(db *gorm.DB) error {
         &models.PushSubscription{},
         // Email reminders
         &models.EmailReminderLog{},
+        // Phase 12
+        &models.ReadingPlan{},
+        &models.ReadingPlanEntry{},
+        &models.UserPlanProgress{},
+        &models.VerseAnnotation{},
+        &models.SavedSearch{},
+        &models.RosaryCompletion{},
     ); err != nil {
         return err
     }
