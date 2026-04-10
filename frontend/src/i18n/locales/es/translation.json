@@ -17,7 +17,13 @@
     "search": "Buscar",
     "shop": "Tienda",
     "leaderboard": "Comunidad",
-    "manna": "Maná"
+    "manna": "Maná",
+    "plans": "Planes de Lectura",
+    "prayer": "Oración",
+    "more": "Más",
+    "mainNavigation": "Navegación principal",
+    "moreMenu": "Más opciones",
+    "signin": "Iniciar sesión"
   },
   "manna": {
     "title": "Maná",
@@ -504,7 +510,12 @@
     "title": "Buscar Escrituras",
     "placeholder": "Buscar escrituras… ej. \"Juan 3\" o \"gracia\"",
     "verseFound": "versículo encontrado",
-    "versesFound": "versículos encontrados"
+    "versesFound": "versículos encontrados",
+    "savedSearches": "Búsquedas Guardadas",
+    "saveThisSearch": "Guardar esta búsqueda",
+    "searchName": "Nombre (opcional)",
+    "saved": "Guardar",
+    "noSavedSearches": "Sin búsquedas guardadas aún."
   },
   "common": {
     "loading": "Cargando...",
@@ -522,7 +533,8 @@
     "noResults": "No se encontraron resultados",
     "contact": "Contacto",
     "comment": "Agregar una reflexión",
-    "help": "Ayuda"
+    "help": "Ayuda",
+    "comingSoon": "Próximamente"
   },
   "streak": {
     "tooltip": "Racha de {{count}} días",
@@ -867,5 +879,62 @@
       "iosStep3After": "en la esquina superior derecha",
       "genericHint": "Abre esta app en Chrome (Android) o Safari (iPhone) para agregarla a tu pantalla de inicio."
     }
+  },
+  "prayer": {
+    "guidedPrayerTitle": "Oración Guiada",
+    "rosaryTitle": "El Rosario",
+    "rosaryDesc": "Reza las 59 cuentas con oraciones y misterios guiados. Gana bendiciones al completarlo.",
+    "rosaryComplete": "Rosario Completo",
+    "rosaryCompleteDesc": "Has rezado el Rosario. Que Nuestra Señora interceda por ti ante Dios.",
+    "prayAgain": "Rezar de Nuevo",
+    "chooseMysteriesTitle": "Misterios de Hoy",
+    "resumeSession": "¿Continuar donde lo dejaste?",
+    "resume": "Continuar",
+    "restart": "Reiniciar",
+    "nextBead": "Siguiente",
+    "mysteryLabel": "Misterio",
+    "showText": "Mostrar texto",
+    "hideText": "Ocultar",
+    "todayLabel": "hoy",
+    "joyful": "Misterios Gozosos",
+    "sorrowful": "Misterios Dolorosos",
+    "glorious": "Misterios Gloriosos",
+    "luminous": "Misterios Luminosos",
+    "joyfulDays": "Lunes y Sábado",
+    "sorrowfulDays": "Martes y Viernes",
+    "gloriousDays": "Miércoles y Domingo",
+    "luminousDays": "Jueves"
+  },
+  "annotation": {
+    "panelTitle": "Tus notas sobre {{reference}}",
+    "premiumRequired": "Las anotaciones están disponibles con una suscripción a Words of Praise.",
+    "empty": "Sin anotaciones para este versículo.",
+    "addNote": "Agregar una nota",
+    "phrasePlaceholder": "Frase de este versículo…",
+    "notePlaceholder": "Tu reflexión sobre esta frase…",
+    "save": "Guardar",
+    "edit": "Editar",
+    "deleteConfirm": "¿Eliminar esta anotación?",
+    "delete": "Eliminar"
+  },
+  "plan": {
+    "libraryTitle": "Planes de Lectura",
+    "seasonalTitle": "Plan de Temporada",
+    "yourPlansTitle": "Tus Planes Activos",
+    "allPlansTitle": "Todos los Planes",
+    "dayLabel": "Día {{day}}",
+    "ofLabel": "de",
+    "done": "Hecho",
+    "enroll": "Iniciar Plan",
+    "unenroll": "Abandonar Plan",
+    "unenrollConfirm": "¿Abandonar este plan? Tu progreso se guardará.",
+    "markRead": "Marcar como Leído",
+    "planComplete": "¡Plan Completo!",
+    "planCompleteDesc": "Has terminado este plan de lectura.",
+    "noActivePlans": "Sin planes activos aún.",
+    "premiumRequired": "Este plan requiere una suscripción a Words of Praise.",
+    "day": "Día",
+    "reflection": "Reflexión",
+    "currentDay": "Lectura de Hoy"
   }
 }

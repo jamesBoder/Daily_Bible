@@ -5,9 +5,11 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import { SearchResultCard } from './SearchResultCard';
 import { SearchEmptyState } from './SearchEmptyState';
 import { SavedSearchesTeaser } from './SavedSearchesTeaser';
+import SavedSearchesList from './SavedSearchesList';
 import { useVerseSearch } from '../../hooks/useVerseSearch';
 import { useTutorial } from '../../hooks/useTutorial';
 import { SearchTutorial, SEARCH_TUTORIAL_KEY } from './SearchTutorial';
+import { useStreak } from '../../contexts/StreakContext';
 import styles from './SearchResultsPage.module.css';
 
 const SearchIcon: React.FC = () => (
@@ -32,6 +34,8 @@ export const SearchResultsPage: React.FC = () => {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(SEARCH_TUTORIAL_KEY);
+  const { subscription } = useStreak();
+  const isPremium = subscription?.is_premium ?? false;
 
   const {
     results,
@@ -127,6 +131,16 @@ export const SearchResultsPage: React.FC = () => {
         </button>
       </form>
 
+      {/* Saved searches — shown to premium users right below the search bar for quick access */}
+      {isPremium ? (
+        <SavedSearchesList
+          currentQuery={query}
+          onSelectSearch={(q) => navigate(`/search?q=${encodeURIComponent(q)}`, { replace: true })}
+        />
+      ) : (
+        !isLoading && !hasSearched && <SavedSearchesTeaser />
+      )}
+
       {isLoading && <SearchSkeleton />}
 
       {!isLoading && error && (
@@ -173,7 +187,6 @@ export const SearchResultsPage: React.FC = () => {
         </>
       )}
 
-      {!isLoading && results.length > 0 && <SavedSearchesTeaser />}
     </div>
   );
 };

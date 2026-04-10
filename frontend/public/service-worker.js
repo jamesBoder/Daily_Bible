@@ -18,7 +18,9 @@
 // v5 (API cache): networkFirst and staleWhileRevalidate now bypass the browser
 // HTTP cache (cache:'no-store') so a stale browser-cached response in the wrong
 // language can never be served through the service worker.
-const SHELL_CACHE   = 'wop-shell-v3';
+// v4 (shell): Phase 12 deploy — force eviction of any stale pre-Phase-12 asset
+// cache. Removed malformed %PUBLIC_URL% preload tag from index.html.
+const SHELL_CACHE   = 'wop-shell-v4';
 const API_CACHE     = 'wop-api-v4';
 
 // Do NOT include '/' — nginx 301-redirects it to '/daily'. Caching '/'

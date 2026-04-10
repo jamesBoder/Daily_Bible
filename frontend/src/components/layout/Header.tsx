@@ -7,7 +7,7 @@ import { useLanguage } from "../../contexts/LanguageContext";
 import StreakCandle from "../StreakCandle";
 import BlessingsChip from "../BlessingsChip";
 import { useStreak } from "../../contexts/StreakContext";
-import { MagnifyingGlass } from "@phosphor-icons/react";
+import { MagnifyingGlass, Path, HandsPraying } from "@phosphor-icons/react";
 
 export const Header: React.FC = () => {
   const { user, logout, isGuest } = useAuth();
@@ -90,6 +90,18 @@ export const Header: React.FC = () => {
             {!isGuest && (
               <NavLink to="/manna" className={navLinkDesktop}>
                 {t("nav.manna", "Manna")}
+              </NavLink>
+            )}
+            {!isGuest && (
+              <NavLink to="/plans" className={navLinkDesktop}>
+                <Path size={14} weight="duotone" className="shrink-0" />
+                {t("nav.plans", "Plans")}
+              </NavLink>
+            )}
+            {!isGuest && (
+              <NavLink to="/prayer" className={navLinkDesktop}>
+                <HandsPraying size={14} weight="duotone" className="shrink-0" />
+                {t("nav.prayer", "Prayer")}
               </NavLink>
             )}
             <div className="relative">

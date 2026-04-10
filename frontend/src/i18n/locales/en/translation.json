@@ -12,12 +12,18 @@
     "profile": "Profile",
     "settings": "Settings",
     "login": "Login",
+    "signin": "Sign In",
     "signup": "Sign Up",
     "logout": "Logout",
     "search": "Search",
     "shop": "Shop",
     "leaderboard": "Community",
-    "manna": "Manna"
+    "manna": "Manna",
+    "plans": "Reading Plans",
+    "prayer": "Prayer",
+    "more": "More",
+    "mainNavigation": "Main navigation",
+    "moreMenu": "More options"
   },
   "manna": {
     "title": "Manna",
@@ -524,7 +530,12 @@
     "title": "Search Scripture",
     "placeholder": "Search scriptures… e.g. \"John 3\" or \"grace\"",
     "verseFound": "verse found",
-    "versesFound": "verses found"
+    "versesFound": "verses found",
+    "savedSearches": "Saved Searches",
+    "saveThisSearch": "Save this search",
+    "searchName": "Name (optional)",
+    "saved": "Save",
+    "noSavedSearches": "No saved searches yet."
   },
   "common": {
     "loading": "Loading...",
@@ -542,7 +553,8 @@
     "noResults": "No results found",
     "contact": "Contact",
     "comment": "Add a reflection",
-    "help": "Help"
+    "help": "Help",
+    "comingSoon": "Coming soon"
   },
   "streak": {
     "tooltip": "Day {{count}} streak",
@@ -887,5 +899,62 @@
       "iosStep3After": "in the top-right corner",
       "genericHint": "Open this app in Chrome on Android or Safari on iPhone to add it to your home screen."
     }
+  },
+  "prayer": {
+    "guidedPrayerTitle": "Guided Prayer",
+    "rosaryTitle": "The Rosary",
+    "rosaryDesc": "Pray all 59 beads with guided prayers and mysteries. Earn blessings on completion.",
+    "rosaryComplete": "Rosary Complete",
+    "rosaryCompleteDesc": "You have prayed the Rosary. May Our Lady intercede for you and bring your intentions before God.",
+    "prayAgain": "Pray Again",
+    "chooseMysteriesTitle": "Today's Mysteries",
+    "resumeSession": "Continue where you left off?",
+    "resume": "Resume",
+    "restart": "Restart",
+    "nextBead": "Next",
+    "mysteryLabel": "Mystery",
+    "showText": "Show text",
+    "hideText": "Hide",
+    "todayLabel": "today's",
+    "joyful": "Joyful Mysteries",
+    "sorrowful": "Sorrowful Mysteries",
+    "glorious": "Glorious Mysteries",
+    "luminous": "Luminous Mysteries",
+    "joyfulDays": "Monday & Saturday",
+    "sorrowfulDays": "Tuesday & Friday",
+    "gloriousDays": "Wednesday & Sunday",
+    "luminousDays": "Thursday"
+  },
+  "annotation": {
+    "panelTitle": "Your Notes on {{reference}}",
+    "premiumRequired": "Annotations are available with a Words of Praise subscription.",
+    "empty": "No annotations yet for this verse.",
+    "addNote": "Add a note",
+    "phrasePlaceholder": "Phrase from this verse…",
+    "notePlaceholder": "Your reflection on this phrase…",
+    "save": "Save",
+    "edit": "Edit",
+    "deleteConfirm": "Delete this annotation?",
+    "delete": "Delete"
+  },
+  "plan": {
+    "libraryTitle": "Reading Plans",
+    "seasonalTitle": "Seasonal Plan",
+    "yourPlansTitle": "Your Active Plans",
+    "allPlansTitle": "All Plans",
+    "dayLabel": "Day {{day}}",
+    "ofLabel": "of",
+    "done": "Done",
+    "enroll": "Start Plan",
+    "unenroll": "Leave Plan",
+    "unenrollConfirm": "Leave this plan? Your progress will be saved.",
+    "markRead": "Mark as Read",
+    "planComplete": "Plan Complete!",
+    "planCompleteDesc": "You've finished this reading plan.",
+    "noActivePlans": "No active plans yet.",
+    "premiumRequired": "This plan requires a Words of Praise subscription.",
+    "day": "Day",
+    "reflection": "Reflection",
+    "currentDay": "Today's Reading"
   }
 }

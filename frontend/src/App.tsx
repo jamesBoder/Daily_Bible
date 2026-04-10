@@ -127,6 +127,19 @@ const MannaPuzzle = lazy(() =>
   }))
 );
 
+// Phase 12: Reading Plans
+const PlansLibrary = lazy(() =>
+  import("./features/plans/PlansLibrary").then((m) => ({ default: m.default }))
+);
+const PlanDetail = lazy(() =>
+  import("./features/plans/PlanDetail").then((m) => ({ default: m.default }))
+);
+
+// Phase 12: Guided Prayer
+const GuidedPrayerHome = lazy(() =>
+  import("./features/prayer/GuidedPrayerHome").then((m) => ({ default: m.default }))
+);
+
 const router = createBrowserRouter([
   // Public-only routes — redirect authenticated users to home
   {
@@ -232,6 +245,20 @@ const router = createBrowserRouter([
             </ErrorBoundary>
           </GuestBlockedRoute>
         ),
+      },
+      // Phase 12: Reading Plans
+      {
+        path: "plans",
+        element: <GuestBlockedRoute><PageSuspense><PlansLibrary /></PageSuspense></GuestBlockedRoute>,
+      },
+      {
+        path: "plans/:slug",
+        element: <GuestBlockedRoute><PageSuspense><PlanDetail /></PageSuspense></GuestBlockedRoute>,
+      },
+      // Phase 12: Guided Prayer
+      {
+        path: "prayer",
+        element: <GuestBlockedRoute><PageSuspense><GuidedPrayerHome /></PageSuspense></GuestBlockedRoute>,
       },
       // Journal routes (Phase 3)
       {

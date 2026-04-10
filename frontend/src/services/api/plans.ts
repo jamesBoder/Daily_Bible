@@ -1,0 +1,82 @@
+import apiClient from './client';
+
+export interface PlanProgressSummary {
+  last_read_day: number;
+  completed_at: string | null;
+  is_active: boolean;
+}
+
+export interface ReadingPlanSummary {
+  id: number;
+  slug: string;
+  title: string;
+  description: string;
+  length_days: number;
+  is_seasonal: boolean;
+  season_key: string;
+  requires_premium: boolean;
+  is_season_active: boolean;
+  user_progress?: PlanProgressSummary;
+}
+
+export interface ReadingPlanEntry {
+  id: number;
+  day_number: number;
+  verse_ref: string;
+  reflection: string;
+}
+
+export interface ReadingPlanDetail extends ReadingPlanSummary {
+  entries: ReadingPlanEntry[];
+}
+
+export interface UserPlanProgressDetail {
+  plan_id: number;
+  slug: string;
+  title: string;
+  length_days: number;
+  last_read_day: number;
+  completed_at: string | null;
+  enrolled_at: string;
+}
+
+export interface AdvanceResponse {
+  progress: {
+    id: number;
+    user_id: number;
+    plan_id: number;
+    last_read_day: number;
+    completed_at: string | null;
+    is_active: boolean;
+  };
+  just_completed: boolean;
+  blessings_earned: number;
+}
+
+const plansApi = {
+  getLibrary: () =>
+    apiClient.get<{ plans: ReadingPlanSummary[] }>('/api/plans').then(r => r.data.plans),
+
+  getPlan: (slug: string) =>
+    apiClient.get<ReadingPlanDetail>(`/api/plans/${slug}`).then(r => r.data),
+
+  getMyPlans: () =>
+    apiClient.get<{ enrollments: UserPlanProgressDetail[] }>('/api/plans/my').then(r => r.data.enrollments),
+
+  getSeasonalCurrent: () =>
+    apiClient.get<{ plan: ReadingPlanSummary | null }>('/api/plans/seasonal/current').then(r => r.data.plan),
+
+  getTodayEntry: (slug: string) =>
+    apiClient.get<ReadingPlanEntry>(`/api/plans/${slug}/today`).then(r => r.data),
+
+  enroll: (slug: string) =>
+    apiClient.post(`/api/plans/${slug}/enroll`).then(r => r.data),
+
+  advance: (slug: string) =>
+    apiClient.post<AdvanceResponse>(`/api/plans/${slug}/advance`).then(r => r.data),
+
+  unenroll: (slug: string) =>
+    apiClient.delete(`/api/plans/${slug}/unenroll`).then(r => r.data),
+};
+
+export default plansApi;

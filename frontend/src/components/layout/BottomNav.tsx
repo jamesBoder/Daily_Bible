@@ -18,6 +18,8 @@ import {
   LockSimple,
   UserPlus,
   SignIn,
+  Path,
+  HandsPraying,
 } from '@phosphor-icons/react';
 import { useSwipe } from '../../hooks/useSwipe';
 import { useInstallPromptContext } from '../../contexts/InstallPromptContext';
@@ -68,7 +70,9 @@ const BottomNav: React.FC = () => {
 
   // Pill indicator position — derived from current route / sheet state
   const tabPaths = ['/daily', '/manna', '/community', '/shop'];
-  const activePillIndex = sheetOpen
+  const moreRoutes = ['/favorites', '/journal', '/search', '/plans', '/prayer', '/settings', '/profile', '/account'];
+  const isMoreRoute = moreRoutes.some(p => location.pathname === p || location.pathname.startsWith(p + '/'));
+  const activePillIndex = sheetOpen || isMoreRoute
     ? 4
     : (() => {
         const idx = tabPaths.findIndex(
@@ -332,6 +336,34 @@ const BottomNav: React.FC = () => {
               >
                 <MagnifyingGlass size={20} weight="duotone" />
                 {t('nav.search', 'Search')}
+              </NavLink>
+
+              <NavLink
+                to="/plans"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                    isActive
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                  }`
+                }
+              >
+                <Path size={20} weight="duotone" />
+                {t('nav.plans', 'Reading Plans')}
+              </NavLink>
+
+              <NavLink
+                to="/prayer"
+                className={({ isActive }) =>
+                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                    isActive
+                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                  }`
+                }
+              >
+                <HandsPraying size={20} weight="duotone" />
+                {t('nav.prayer', 'Prayer')}
               </NavLink>
 
               {/* Install App — only shown when app is installable and not yet installed */}

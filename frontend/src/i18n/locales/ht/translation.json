@@ -17,7 +17,13 @@
     "shop": "Boutik",
     "journal": "Jounal",
     "leaderboard": "Kominote",
-    "manna": "Manna"
+    "manna": "Manna",
+    "plans": "Plan Lekti",
+    "prayer": "Priyè",
+    "more": "Plis",
+    "mainNavigation": "Navigasyon prensipal",
+    "moreMenu": "Plis opsyon",
+    "signin": "Konekte"
   },
   "manna": {
     "title": "Manna",
@@ -492,7 +498,12 @@
     "title": "Chèche nan Ekriti",
     "placeholder": "Chèche… egz. \"Jan 3\" oswa \"gras\"",
     "verseFound": "vèsè jwenn",
-    "versesFound": "vèsè jwenn"
+    "versesFound": "vèsè jwenn",
+    "savedSearches": "Rechèch Sove",
+    "saveThisSearch": "Sove rechèch sa a",
+    "searchName": "Non (opsyonèl)",
+    "saved": "Sove",
+    "noSavedSearches": "Pa gen rechèch sove pou kounye a."
   },
   "common": {
     "loading": "Ap chaje...",
@@ -510,7 +521,8 @@
     "noResults": "Pa jwenn rezilta",
     "contact": "Kontak",
     "comment": "Ajoute yon refleksyon",
-    "help": "Èd"
+    "help": "Èd",
+    "comingSoon": "Byento disponib"
   },
   "milestone": {
     "achieved_label": "Etap Atenn",
@@ -819,5 +831,62 @@
       "iosStep3After": "nan kwen anwo adwat",
       "genericHint": "Ouvri app sa a nan Chrome (Android) oswa Safari (iPhone) pou ajoute l nan ekran akèy ou."
     }
+  },
+  "prayer": {
+    "guidedPrayerTitle": "Priyè Gidé",
+    "rosaryTitle": "Chaplet la",
+    "rosaryDesc": "Priye 59 grenn yo ak priyè ak mistè gidé. Touche benediksyon lè ou fini.",
+    "rosaryComplete": "Chaplet Fini",
+    "rosaryCompleteDesc": "Ou fin priye Chaplet la. Ke Vièj Mari entèsede pou ou devan Bondye.",
+    "prayAgain": "Priye Ankò",
+    "chooseMysteriesTitle": "Mistè Jodi a",
+    "resumeSession": "Kontinye kote ou te kite?",
+    "resume": "Kontinye",
+    "restart": "Rekòmanse",
+    "nextBead": "Swivan",
+    "mysteryLabel": "Mistè",
+    "showText": "Montre tèks",
+    "hideText": "Kache",
+    "todayLabel": "jodi a",
+    "joyful": "Mistè Jwa yo",
+    "sorrowful": "Mistè Doulè yo",
+    "glorious": "Mistè Glwa yo",
+    "luminous": "Mistè Limyè yo",
+    "joyfulDays": "Lendi ak Samdi",
+    "sorrowfulDays": "Madi ak Vandredi",
+    "gloriousDays": "Mèkredi ak Dimanch",
+    "luminousDays": "Jedi"
+  },
+  "annotation": {
+    "panelTitle": "Nòt ou sou {{reference}}",
+    "premiumRequired": "Anotasyon disponib ak abònman Words of Praise.",
+    "empty": "Pa gen anotasyon pou vèsè sa a.",
+    "addNote": "Ajoute yon nòt",
+    "phrasePlaceholder": "Fraz nan vèsè sa a…",
+    "notePlaceholder": "Refleksyon ou sou fraz sa a…",
+    "save": "Sove",
+    "edit": "Modifye",
+    "deleteConfirm": "Efase anotasyon sa a?",
+    "delete": "Efase"
+  },
+  "plan": {
+    "libraryTitle": "Plan Lekti",
+    "seasonalTitle": "Plan Sezon",
+    "yourPlansTitle": "Plan Aktif Ou yo",
+    "allPlansTitle": "Tout Plan yo",
+    "dayLabel": "Jou {{day}}",
+    "ofLabel": "nan",
+    "done": "Fini",
+    "enroll": "Kòmanse Plan",
+    "unenroll": "Kite Plan",
+    "unenrollConfirm": "Kite plan sa a? Pwogrè ou ap sove.",
+    "markRead": "Make kòm Li",
+    "planComplete": "Plan Fini!",
+    "planCompleteDesc": "Ou fin konplete plan lekti sa a.",
+    "noActivePlans": "Pa gen plan aktif pou kounye a.",
+    "premiumRequired": "Plan sa a mande abònman Words of Praise.",
+    "day": "Jou",
+    "reflection": "Refleksyon",
+    "currentDay": "Lekti Jodi a"
   }
 }

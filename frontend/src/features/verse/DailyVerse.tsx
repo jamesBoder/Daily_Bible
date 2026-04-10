@@ -22,6 +22,9 @@ import { showBlessingsToast } from "../../components/BlessingsToast";
 import api from "../../services/api/api";
 import { Verse } from "../../types/verse";
 import { HistoryEntry } from "../../types/history";
+import SeasonalBanner from "../plans/SeasonalBanner";
+import AnnotationPanel from "./AnnotationPanel";
+import AnnotationIndicator from "./AnnotationIndicator";
 
 
 // NavArrow button component
@@ -106,6 +109,7 @@ export const DailyVerse: React.FC = () => {
   const [showComparison, setShowComparison] = useState(false);
   // When a premium user switches translation while browsing a past day, we fetch
   // the verse reference in the new version and display it here.
+  const [annotationOpen, setAnnotationOpen] = useState(false);
   const [historyOverrideVerse, setHistoryOverrideVerse] = useState<Verse | null>(null);
   const [historyVersionLoading, setHistoryVersionLoading] = useState(false);
   // Verses fetched by date for days the user did not originally view
@@ -220,9 +224,10 @@ export const DailyVerse: React.FC = () => {
   // The "active" past verse: from history if the user viewed it, otherwise from the API fetch
   const activeVerse = historyEntryForDate?.verse ?? fetchedVerse;
 
-  // Clear fetch error when navigating to a different day
+  // Clear fetch error and close annotation panel when navigating to a different day
   useEffect(() => {
     setFetchDateError(false);
+    setAnnotationOpen(false);
   }, [historyIndex]);
 
   // Fetch verse for the target date when it's not in the user's view history
@@ -380,10 +385,11 @@ export const DailyVerse: React.FC = () => {
     ((historyIndex > 0 && activeVerse === null) || isFetchingDate || historyVersionLoading) &&
     !fetchDateError;
 
-  // The verse to render (with override for premium translation switching)
+  // The verse to render (with override for premium translation switching).
+  // On past days, do NOT fall back to today's verse — use null so the skeleton shows.
   const renderedVerse =
     historyIndex > 0
-      ? (historyOverrideVerse ?? displayVerse ?? verse)
+      ? (historyOverrideVerse ?? displayVerse ?? null)
       : (displayVerse ?? verse);
 
   return (
@@ -394,6 +400,9 @@ export const DailyVerse: React.FC = () => {
       onTouchEnd={(e) => { swipeHandlers.onTouchEnd(e); ptr.onTouchEnd(); }}
     >
       <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
+      {/* Seasonal reading plan banner */}
+      {!isGuest && <SeasonalBanner />}
+
       {/* Streak-related banners and notifications */}
       {!isGuest && (
         <>
@@ -453,7 +462,7 @@ export const DailyVerse: React.FC = () => {
           </div>
         ) : (
           <VerseCard
-            verse={renderedVerse}
+            verse={renderedVerse!}
             lang={i18n.language}
             onVersionSelect={
               historyIndex === 0 && !isGuest
@@ -462,8 +471,21 @@ export const DailyVerse: React.FC = () => {
             }
           />
         )}
+        {/* Annotations button — shown for authenticated users on today's verse */}
+        {!isGuest && historyIndex === 0 && renderedVerse && (
+          <div className="mt-3 flex justify-center">
+            <button
+              onClick={() => { if (navigator.vibrate) navigator.vibrate(8); setAnnotationOpen(true); }}
+              className="flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-400 hover:opacity-75 transition-opacity px-2 py-1"
+            >
+              <AnnotationIndicator verseReference={renderedVerse.reference} />
+              {t('annotation.addNote', 'Add a note')}
+            </button>
+          </div>
+        )}
+
         {/* Compare Translations — premium users, today's and history verses */}
-        {isPremium && (displayVerse ?? verse) && (
+        {isPremium && renderedVerse && (
           <div className="mt-3 flex justify-center">
             {showComparison ? (
               <SideBySideView
@@ -482,6 +504,15 @@ export const DailyVerse: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Annotation bottom sheet / sidebar */}
+      {!isGuest && renderedVerse && (
+        <AnnotationPanel
+          verseReference={renderedVerse.reference}
+          isOpen={annotationOpen}
+          onClose={() => setAnnotationOpen(false)}
+        />
+      )}
     </div>
   );
 };

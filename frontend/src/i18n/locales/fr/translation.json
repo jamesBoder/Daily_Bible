@@ -17,7 +17,13 @@
     "shop": "Boutique",
     "journal": "Journal",
     "leaderboard": "Communauté",
-    "manna": "Manne"
+    "manna": "Manne",
+    "plans": "Plans de Lecture",
+    "prayer": "Prière",
+    "more": "Plus",
+    "mainNavigation": "Navigation principale",
+    "moreMenu": "Plus d'options",
+    "signin": "Se connecter"
   },
   "manna": {
     "title": "Manne",
@@ -492,7 +498,12 @@
     "title": "Rechercher les Écritures",
     "placeholder": "Rechercher… ex. \"Jean 3\" ou \"grâce\"",
     "verseFound": "verset trouvé",
-    "versesFound": "versets trouvés"
+    "versesFound": "versets trouvés",
+    "savedSearches": "Recherches Sauvegardées",
+    "saveThisSearch": "Sauvegarder cette recherche",
+    "searchName": "Nom (facultatif)",
+    "saved": "Sauvegarder",
+    "noSavedSearches": "Aucune recherche sauvegardée."
   },
   "common": {
     "loading": "Chargement...",
@@ -510,7 +521,8 @@
     "noResults": "Aucun résultat trouvé",
     "contact": "Contact",
     "comment": "Ajouter une réflexion",
-    "help": "Aide"
+    "help": "Aide",
+    "comingSoon": "Bientôt disponible"
   },
   "milestone": {
     "achieved_label": "Jalon Atteint",
@@ -819,5 +831,62 @@
       "iosStep3After": "en haut à droite",
       "genericHint": "Ouvrez cette app dans Chrome (Android) ou Safari (iPhone) pour l'ajouter à votre écran d'accueil."
     }
+  },
+  "prayer": {
+    "guidedPrayerTitle": "Prière Guidée",
+    "rosaryTitle": "Le Rosaire",
+    "rosaryDesc": "Priez les 59 grains avec prières et mystères guidés. Gagnez des bénédictions à la fin.",
+    "rosaryComplete": "Rosaire Terminé",
+    "rosaryCompleteDesc": "Vous avez prié le Rosaire. Que Notre-Dame intercède pour vous auprès de Dieu.",
+    "prayAgain": "Prier à Nouveau",
+    "chooseMysteriesTitle": "Mystères du Jour",
+    "resumeSession": "Continuer où vous en étiez?",
+    "resume": "Continuer",
+    "restart": "Recommencer",
+    "nextBead": "Suivant",
+    "mysteryLabel": "Mystère",
+    "showText": "Afficher le texte",
+    "hideText": "Masquer",
+    "todayLabel": "aujourd'hui",
+    "joyful": "Mystères Joyeux",
+    "sorrowful": "Mystères Douloureux",
+    "glorious": "Mystères Glorieux",
+    "luminous": "Mystères Lumineux",
+    "joyfulDays": "Lundi & Samedi",
+    "sorrowfulDays": "Mardi & Vendredi",
+    "gloriousDays": "Mercredi & Dimanche",
+    "luminousDays": "Jeudi"
+  },
+  "annotation": {
+    "panelTitle": "Vos notes sur {{reference}}",
+    "premiumRequired": "Les annotations sont disponibles avec un abonnement Words of Praise.",
+    "empty": "Aucune annotation pour ce verset.",
+    "addNote": "Ajouter une note",
+    "phrasePlaceholder": "Phrase de ce verset…",
+    "notePlaceholder": "Votre réflexion sur cette phrase…",
+    "save": "Enregistrer",
+    "edit": "Modifier",
+    "deleteConfirm": "Supprimer cette annotation?",
+    "delete": "Supprimer"
+  },
+  "plan": {
+    "libraryTitle": "Plans de Lecture",
+    "seasonalTitle": "Plan de Saison",
+    "yourPlansTitle": "Vos Plans Actifs",
+    "allPlansTitle": "Tous les Plans",
+    "dayLabel": "Jour {{day}}",
+    "ofLabel": "sur",
+    "done": "Terminé",
+    "enroll": "Commencer le Plan",
+    "unenroll": "Quitter le Plan",
+    "unenrollConfirm": "Quitter ce plan? Votre progression sera sauvegardée.",
+    "markRead": "Marquer comme Lu",
+    "planComplete": "Plan Terminé!",
+    "planCompleteDesc": "Vous avez terminé ce plan de lecture.",
+    "noActivePlans": "Aucun plan actif pour l'instant.",
+    "premiumRequired": "Ce plan nécessite un abonnement Words of Praise.",
+    "day": "Jour",
+    "reflection": "Réflexion",
+    "currentDay": "Lecture du Jour"
   }
 }

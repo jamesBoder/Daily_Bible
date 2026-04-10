@@ -14,7 +14,9 @@ type AudioCue =
   | 'checkout-tap'
   | 'subscription-success'
   | 'purchase-success'
-  | 'payment-alert';
+  | 'payment-alert'
+  | 'rosary-bead'
+  | 'rosary-complete';
 
 class SoundServiceClass {
   private ctx: AudioContext | null = null;
@@ -86,6 +88,8 @@ class SoundServiceClass {
         case 'subscription-success': return this.playSubscriptionSuccess();
         case 'purchase-success':     return this.playPurchaseSuccess();
         case 'payment-alert':        return this.playPaymentAlert();
+        case 'rosary-bead':          return this.playRosaryBead();
+        case 'rosary-complete':      return this.playRosaryComplete();
       }
     } catch {
       // Web Audio failures are non-critical — never surface to user
@@ -303,6 +307,30 @@ class SoundServiceClass {
       gain.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
       osc.start(start);
       osc.stop(start + 0.3);
+    });
+  }
+
+  // Soft wooden-bead click — tactile advance through the Rosary
+  private playRosaryBead(): void {
+    this.playTone(600, 0.045, 0.12, 'triangle');
+  }
+
+  // Gentle ascending triad — quiet completion of the full Rosary
+  private playRosaryComplete(): void {
+    const ctx = this.getCtx();
+    [392, 523, 659].forEach((freq, i) => { // G4 C5 E5
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + i * 0.2;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.10, start + 0.04);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.7);
+      osc.start(start);
+      osc.stop(start + 0.7);
     });
   }
 
