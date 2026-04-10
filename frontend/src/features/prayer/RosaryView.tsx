@@ -100,6 +100,7 @@ const RosaryView: React.FC<RosaryViewProps> = ({ onBack }) => {
               totalBeads={rosary.totalBeads}
               completedBeads={rosary.completedBeads}
               activeBeadIndex={activeBeadRingIndex}
+              onAdvance={rosary.isComplete ? undefined : rosary.advance}
             />
             <RosaryPrayerCard
               step={rosary.currentStep}
