@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <link rel="icon" href="%PUBLIC_URL%/favicon.ico" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5, user-scalable=yes, interactive-widget=resizes-content" />
-    <meta name="description" content="Daily Bible verses for inspiration" />
+    <meta name="description" content="Daily Bible verse app with the Manna Bible word puzzle, reading plans, prayer journal, and streak tracking. Free in English, Spanish, French &amp; Haitian Creole." />
 
     <!-- theme-color meta tag — amber-700 matches the app's candle-amber brand -->
     <meta name="theme-color" content="#b45309" />
@@ -17,24 +17,46 @@
     <!-- Apple Meta Tags -->
 
     <!-- Open Graph Tags -->
-    <meta property="og:title" content="Words of Praise - Inspiration Every Day" />
-    <meta property="og:description" content="Daily Bible verses for inspiration" />
+    <meta property="og:title" content="Words of Praise&#8482; &#8211; Daily Bible Verse App &amp; Bible Word Puzzle" />
+    <meta property="og:description" content="Daily Bible verse app with the Manna Bible word puzzle, reading plans, prayer journal, and streak tracking. Free in English, Spanish, French &amp; Haitian Creole." />
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Words of Praise" />
-    <meta property="og:image" content="%PUBLIC_URL%/logo192.png" />
+    <meta property="og:image" content="https://wordsofpraise.app/logo512.png" />
+    <meta property="og:image:width" content="512" />
+    <meta property="og:image:height" content="512" />
     <!-- Close Graph Tags -->
 
     <!-- Twitter Card Tags -->
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Words of Praise - Inspiration Every Day" />
-    <meta name="twitter:description" content="Daily Bible verses for inspiration" />
-    <meta name="twitter:image" content="%PUBLIC_URL%/logo192.png" />
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Words of Praise&#8482; &#8211; Daily Bible Verse App &amp; Bible Word Puzzle" />
+    <meta name="twitter:description" content="Daily Bible verse app with the Manna Bible word puzzle, reading plans, prayer journal, and streak tracking. Free in English, Spanish, French &amp; Haitian Creole." />
+    <meta name="twitter:image" content="https://wordsofpraise.app/logo512.png" />
     <!-- Twitter Card Tags -->
 
     <!-- Security Meta Tags -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' http://localhost:8080 http://localhost:8888 http://localhost:18080 https://api.wordsofpraise.app https://wordsofpraise-backend.fly.dev https://accounts.google.com https://rest.api.bible/v1; frame-src https://apis.google.com https://accounts.google.com;" />
 
     
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebApplication",
+      "name": "Words of Praise",
+      "url": "https://wordsofpraise.app",
+      "description": "Daily Bible verse app with the Manna Bible word puzzle, reading plans, prayer journal, streak tracking, and community prayer wall. Available in English, Spanish, French, and Haitian Creole.",
+      "applicationCategory": "LifestyleApplication",
+      "operatingSystem": "Web",
+      "offers": {
+        "@type": "Offer",
+        "price": "0",
+        "priceCurrency": "USD",
+        "description": "Free to start. Premium one-time unlock for $9.99."
+      },
+      "inLanguage": ["en", "es", "fr", "ht"]
+    }
+    </script>
+
     <!-- Self-hosted fonts — no external CDN round-trip, same-origin delivery -->
     <!-- Preload the two most-used subsets so they're in-flight before CSS parses -->
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
@@ -44,7 +66,7 @@
     <!-- DNS prefetch removed for production - uncomment only for local development if needed -->
     <!-- <link rel="dns-prefetch" href="//localhost:8080"> -->
     
-    <title>Words of Praise - Inspiration Every Day</title>
+    <title>Words of Praise&#8482; &#8211; Daily Bible Verse App &amp; Bible Word Puzzle</title>
     
     <!-- Critical CSS for above-the-fold content -->
     <style>
