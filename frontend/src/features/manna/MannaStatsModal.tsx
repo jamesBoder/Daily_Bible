@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import type { TFunction } from 'i18next';
 import { mannaApi, MannaStats, MannaGameSummary } from '../../services/api/manna';
 import './manna.css';
 
@@ -168,8 +169,6 @@ export const MannaStatsModal: React.FC<MannaStatsModalProps> = ({ onDismiss }) =
 };
 
 // ─── Stats content ────────────────────────────────────────────────────────────
-
-import type { TFunction } from 'i18next';
 
 const StatsContent: React.FC<{ stats: MannaStats; t: TFunction }> = ({ stats, t }) => {
   const maxDist = Math.max(...Object.values(stats.guess_distribution), 1);

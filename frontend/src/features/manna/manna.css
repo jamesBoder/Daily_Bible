@@ -466,11 +466,11 @@
   align-items: center;
   justify-content: center;
   /* M-09: key height scales with viewport to match tile sizing */
-  height: clamp(2.8rem, 12vw, 3.6rem);
-  min-width: clamp(1.7rem, 7.5vw, 2.1rem);
-  padding: 0 0.4rem;
+  height: clamp(3.4rem, 13vw, 4.2rem);
+  min-width: clamp(2.1rem, 9vw, 2.7rem);
+  padding: 0 0.3rem;
   border-radius: 8px;
-  font-size: clamp(0.72rem, 2.5vw, 0.85rem);
+  font-size: clamp(0.85rem, 3vw, 1rem);
   font-weight: 700;
   cursor: pointer;
   user-select: none;
@@ -508,8 +508,8 @@
 }
 
 .manna-key--wide {
-  min-width: 3.5rem;
-  font-size: 0.75rem;
+  min-width: 4.2rem;
+  font-size: 0.8rem;
 }
 
 /* Correct key: blessing-gold bloom — tracks theme */
@@ -1290,13 +1290,11 @@
     font-size: clamp(1rem, 5vw, 1.3rem);
   }
 
-  /* Shrink keys — was height clamp(2.8rem, 12vw, 3.6rem).
-     Floor raised to 2.5rem (~40px) so keys remain tappable on portrait iPhones
-     (e.g. iPhone 8 at 667px height falls into this media query). */
+  /* Shrink keys for short viewports — floor kept tall enough to stay tappable. */
   .manna-key {
-    height:    clamp(2.5rem, 9.5vw, 2.8rem);
-    min-width: clamp(1.45rem, 6.2vw, 1.8rem);
-    font-size: clamp(0.62rem, 2.1vw, 0.78rem);
+    height:    clamp(2.9rem, 10.5vw, 3.4rem);
+    min-width: clamp(1.75rem, 7vw, 2.2rem);
+    font-size: clamp(0.75rem, 2.4vw, 0.9rem);
   }
 
   /* Tighter grid card padding */

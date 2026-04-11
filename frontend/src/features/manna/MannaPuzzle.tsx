@@ -558,7 +558,7 @@ export const MannaPuzzle: React.FC = () => {
   const activeRow = isOver ? -1 : game.guesses.length;
 
   return (
-    <div className="manna-scene flex flex-col items-center gap-3 py-5 px-4 max-w-sm mx-auto">
+    <div className="manna-scene flex flex-col items-center gap-3 pt-2 pb-5 px-4 max-w-sm mx-auto">
       {/* Tutorial overlay — shown on first visit or when ? is tapped */}
       {showTutorial && (
         <MannaHowToPlay onDismiss={() => setShowTutorial(false)} />

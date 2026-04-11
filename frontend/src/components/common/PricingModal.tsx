@@ -93,6 +93,9 @@ export const PricingModal: React.FC = () => {
     return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
+  // Swipe down on the modal panel closes it on mobile
+  const swipeHandlers = useSwipe({ onSwipeDown: handleClose });
+
   if (!isOpen && !isClosing) return null;
 
   const handleCheckout = async () => {
@@ -110,9 +113,6 @@ export const PricingModal: React.FC = () => {
   const handleOverlayClick = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) handleClose();
   };
-
-  // Swipe down on the modal panel closes it on mobile
-  const swipeHandlers = useSwipe({ onSwipeDown: handleClose });
 
   return (
     <div
