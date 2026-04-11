@@ -2,25 +2,38 @@ import React, { useState } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
+import { Input } from "../../components/common/Input";
 import apiClient from "../../services/api/api";
 import { showToast } from "../../utils/toast";
 import { API_ENDPOINTS } from "../../utils/constants";
 
 export const VerifyEmailPending: React.FC = () => {
   const location = useLocation();
-  const email = (location.state as { email?: string })?.email || "";
+  const stateEmail = (location.state as { email?: string })?.email || "";
+  const [emailInput, setEmailInput] = useState(stateEmail);
+  const [emailError, setEmailError] = useState("");
   const [isResending, setIsResending] = useState(false);
   const [resent, setResent] = useState(false);
 
+  const validateEmail = (value: string) => /\S+@\S+\.\S+/.test(value);
+
   const handleResend = async () => {
-    if (!email) return;
+    if (!validateEmail(emailInput)) {
+      setEmailError("Please enter a valid email address.");
+      return;
+    }
+    setEmailError("");
     setIsResending(true);
     try {
-      await apiClient.post(API_ENDPOINTS.RESEND_VERIFICATION, { email });
+      await apiClient.post(API_ENDPOINTS.RESEND_VERIFICATION, { email: emailInput });
       setResent(true);
       showToast.success("Verification email resent!");
-    } catch {
-      showToast.error("Failed to resend. Please try again.");
+    } catch (err: any) {
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Failed to resend. Please try again.";
+      showToast.error(msg);
     } finally {
       setIsResending(false);
     }
@@ -37,9 +50,9 @@ export const VerifyEmailPending: React.FC = () => {
             </h2>
             <p className="text-gray-600 dark:text-gray-400">
               We sent a verification link to{" "}
-              {email ? (
+              {stateEmail ? (
                 <strong className="text-gray-900 dark:text-gray-100">
-                  {email}
+                  {stateEmail}
                 </strong>
               ) : (
                 "your email address"
@@ -51,15 +64,33 @@ export const VerifyEmailPending: React.FC = () => {
             </p>
 
             {!resent ? (
-              <div className="pt-2">
-                <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+              <div className="pt-2 space-y-3">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
                   Didn't receive it?
                 </p>
+
+                {/* Show email input only when we don't have it from state */}
+                {!stateEmail && (
+                  <Input
+                    label="Your email address"
+                    type="email"
+                    name="email"
+                    value={emailInput}
+                    onChange={(e) => {
+                      setEmailInput(e.target.value);
+                      if (emailError) setEmailError("");
+                    }}
+                    placeholder="your@email.com"
+                    error={emailError}
+                    autoComplete="email"
+                  />
+                )}
+
                 <Button
                   variant="secondary"
                   onClick={handleResend}
                   isLoading={isResending}
-                  disabled={!email || isResending}
+                  disabled={isResending}
                   className="w-full"
                 >
                   Resend verification email

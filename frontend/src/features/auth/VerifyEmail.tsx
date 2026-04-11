@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from "react-router-dom";
 import { useAuth } from "../../hooks/useAuth";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
+import { Input } from "../../components/common/Input";
 import { Loading } from "../../components/common/Loading";
 import apiClient from "../../services/api/api";
 import { showToast } from "../../utils/toast";
@@ -16,6 +17,12 @@ export const VerifyEmail: React.FC = () => {
   const { loginWithToken } = useAuth();
   const [status, setStatus] = useState<VerifyStatus>("verifying");
   const [errorMessage, setErrorMessage] = useState("");
+
+  // For expired/error — inline resend state
+  const [resendEmail, setResendEmail] = useState("");
+  const [resendEmailError, setResendEmailError] = useState("");
+  const [isResending, setIsResending] = useState(false);
+  const [resent, setResent] = useState(false);
 
   useEffect(() => {
     const token = searchParams.get("token");
@@ -45,7 +52,8 @@ export const VerifyEmail: React.FC = () => {
           ? "New email confirmed! Your email address has been updated."
           : "Email verified! Welcome to Words of Praise 🎉"
       );
-      setTimeout(() => navigate("/"), 2000);
+      // 2 seconds — gives users time to read the confirmation before redirect
+      setTimeout(() => navigate("/", { replace: true }), 2000);
     } catch (err: any) {
       const msg =
         err.response?.data?.error ||
@@ -57,6 +65,28 @@ export const VerifyEmail: React.FC = () => {
         setStatus("error");
       }
       setErrorMessage(msg);
+    }
+  };
+
+  const handleResend = async () => {
+    if (!/\S+@\S+\.\S+/.test(resendEmail)) {
+      setResendEmailError("Please enter a valid email address.");
+      return;
+    }
+    setResendEmailError("");
+    setIsResending(true);
+    try {
+      await apiClient.post(API_ENDPOINTS.RESEND_VERIFICATION, { email: resendEmail });
+      setResent(true);
+      showToast.success("Verification email resent! Check your inbox.");
+    } catch (err: any) {
+      const msg =
+        err.response?.data?.error ||
+        err.response?.data?.message ||
+        "Failed to resend. Please try again.";
+      showToast.error(msg);
+    } finally {
+      setIsResending(false);
     }
   };
 
@@ -109,13 +139,50 @@ export const VerifyEmail: React.FC = () => {
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
                 Link Expired
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">{errorMessage}</p>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                Verification links expire after 24 hours.
+              <p className="text-gray-600 dark:text-gray-400">
+                Verification links expire after 24 hours. Enter your email below to get a new one.
               </p>
-              <Button onClick={() => navigate("/login")} className="w-full">
-                Go to Login to Resend
-              </Button>
+
+              {!resent ? (
+                <form
+                  onSubmit={(e) => { e.preventDefault(); handleResend(); }}
+                  className="space-y-3 text-left"
+                >
+                  <Input
+                    label="Email address"
+                    type="email"
+                    name="resendEmail"
+                    value={resendEmail}
+                    onChange={(e) => {
+                      setResendEmail(e.target.value);
+                      if (resendEmailError) setResendEmailError("");
+                    }}
+                    placeholder="your@email.com"
+                    error={resendEmailError}
+                    autoComplete="email"
+                  />
+                  <Button
+                    type="submit"
+                    isLoading={isResending}
+                    disabled={isResending}
+                    className="w-full"
+                  >
+                    Send new verification email
+                  </Button>
+                </form>
+              ) : (
+                <p className="text-sm text-green-600 dark:text-green-400 font-medium">
+                  ✓ New verification email sent! Check your inbox.
+                </p>
+              )}
+
+              <button
+                type="button"
+                onClick={() => navigate("/login")}
+                className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                Back to login
+              </button>
             </div>
           </Card>
         </div>
@@ -133,8 +200,8 @@ export const VerifyEmail: React.FC = () => {
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
               Verification Failed
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">{errorMessage}</p>
-            <Button onClick={() => navigate("/login")} className="w-full">
+            <p className="text-gray-600 dark:text-gray-400 break-words">{errorMessage}</p>
+            <Button type="button" onClick={() => navigate("/login")} className="w-full">
               Back to Login
             </Button>
           </div>
