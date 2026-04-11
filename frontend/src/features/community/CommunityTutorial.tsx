@@ -32,6 +32,11 @@ export const CommunityTutorial: React.FC<CommunityTutorialProps> = ({ onDismiss 
       title: t('community.tutorial.step4Title', 'React & connect'),
       body: t('community.tutorial.step4Body', 'Tap the reaction buttons on any post to show encouragement. New posts appear automatically.'),
     },
+    {
+      emoji: '⚠️',
+      title: t('community.tutorial.step5Title', 'Community Guidelines'),
+      body: t('community.tutorial.step5Body', 'Keep this space respectful and uplifting. Offensive, hateful, or inappropriate language is not tolerated and may result in account suspension or permanent removal.'),
+    },
   ];
 
   return (

@@ -141,6 +141,10 @@ export const CommunityComposer: React.FC<Props> = ({
           {error}
         </p>
       )}
+
+      <p style={{ fontSize: '0.72rem', color: 'var(--foreground)', opacity: 0.45, marginTop: '0.55rem', lineHeight: 1.4 }}>
+        {t('community.composer.guidelines', 'Be respectful and uplifting. Offensive or inappropriate language may result in account suspension or removal.')}
+      </p>
     </div>
   );
 };
