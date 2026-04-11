@@ -23,7 +23,15 @@ export interface ReadingPlanEntry {
   id: number;
   day_number: number;
   verse_ref: string;
+  verse_text: string;        // resolved server-side from local DB; empty when ref not found
   reflection: string;
+  passage_refs: string;      // JSON array of extra refs, empty string when absent
+  prayer: string;
+  application: string;
+  question: string;
+  context_note: string;
+  content_type: string;      // "verse" | "passage" | "psalm" | "chapter" | "meditation"
+  is_memory_verse: boolean;
 }
 
 export interface ReadingPlanDetail extends ReadingPlanSummary {

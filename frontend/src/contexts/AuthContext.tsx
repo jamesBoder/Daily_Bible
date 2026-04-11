@@ -46,43 +46,64 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Initialize user synchronously from localStorage so guests never start in a
-  // loading state. This prevents a blank-screen flash at the root URL because
-  // ProtectedRoute can render the Layout (and fire the /daily redirect) on the
-  // very first paint instead of waiting for a useEffect round-trip.
+  // loading state and returning users see their data immediately.
   const [user, setUser] = useState<User | null>(() => {
     if (guestStorage.get()) return GUEST_USER;
-    if (authService.isAuthenticated()) return null; // need async server verify
-    // No session at all — auto-guest mode
+    if (authService.isAuthenticated()) {
+      // Pre-populate from cache. The async verifyToken effect will confirm/update.
+      return authService.getStoredUser(); // null if no cached user data yet
+    }
+    // No valid session — auto-guest mode
     guestStorage.set();
     return GUEST_USER;
   });
 
-  // Only show a loading state when we have a local token that needs server
-  // verification. Pure guest / no-session cases are resolved synchronously above.
+  // Only show a loading state when we have a token but no cached user data yet
+  // (first login on a new device). Returning users with cached data skip this.
   const [isLoading, setIsLoading] = useState<boolean>(
-    () => !guestStorage.get() && authService.isAuthenticated()
+    () => !guestStorage.get() && authService.isAuthenticated() && !authService.getStoredUser()
   );
 
-  // Async effect: only runs when there is a token to verify with the server.
+  // Async effect: verify the stored token with the server.
   useEffect(() => {
-    if (!authService.isAuthenticated()) return; // already resolved synchronously
+    if (!authService.isAuthenticated()) return;
 
     const verifyToken = async () => {
       try {
         const currentUser = await authService.getCurrentUser(true); // silent on init
         setUser(currentUser);
-      } catch (error) {
-        console.error("Failed to initialize auth:", error);
-        // Clear the stale/invalid token. Swallow logout API errors (likely 401).
-        try { await authService.logout(); } catch { /* clear localStorage only */ }
-        guestStorage.set();
-        setUser(GUEST_USER);
+      } catch (error: any) {
+        const status = error?.response?.status;
+        if (status === 401 || status === 403) {
+          // Server rejected the token — clear session and fall back to guest.
+          // Swallow logout API errors (the token is already invalid).
+          try { await authService.logout(); } catch { /* clear localStorage only */ }
+          guestStorage.set();
+          setUser(GUEST_USER);
+        }
+        // For network errors / timeouts (device waking up, slow connection): keep
+        // whatever user we pre-populated from localStorage. Do NOT log the user out
+        // — they have a valid token and will succeed once connectivity is restored.
       } finally {
         setIsLoading(false);
       }
     };
 
     verifyToken();
+  }, []);
+
+  // Listen for the session-expired event dispatched by the API interceptors when
+  // a 401 is received. This lets us transition state within React instead of
+  // doing a full page reload (window.location.href), which caused "parts stop
+  // loading" because the React tree was torn down mid-render.
+  useEffect(() => {
+    const handleSessionExpired = () => {
+      queryClient.clear();
+      guestStorage.set();
+      setUser(GUEST_USER);
+    };
+    window.addEventListener('auth:session-expired', handleSessionExpired);
+    return () => window.removeEventListener('auth:session-expired', handleSessionExpired);
   }, []);
 
   const loginAsGuest = () => {

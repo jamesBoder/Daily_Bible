@@ -422,6 +422,14 @@
     "feature7Desc": "Personnalisez votre expérience avec de beaux thèmes. Gagnez ou achetez des apparences premium.",
     "feature8Title": "4 Langues",
     "feature8Desc": "Support complet pour l'English, l'Español, le Français et le Kreyòl Ayisyen.",
+    "feature9Title": "Plans de Lecture",
+    "feature9Desc": "Parcours bibliques sur plusieurs jours avec texte du verset, prière guidée, action quotidienne et question de réflexion — tout en un seul endroit.",
+    "feature10Title": "Prière Guidée",
+    "feature10Desc": "Expériences de prière structurées ancrées dans la tradition chrétienne, y compris un Rosaire immersif grain par grain.",
+    "feature11Title": "Rechercher l'Écriture",
+    "feature11Desc": "Recherchez toute l'Écriture par mot-clé, référence ou livre. Enregistrez vos recherches préférées et cherchez dans vos propres réflexions.",
+    "feature12Title": "Annotations de Versets",
+    "feature12Desc": "Soulignez une phrase de n'importe quel verset et ajoutez une note personnelle. Vos réflexions, ancrées à la Parole.",
     "ctaTitle": "Commencez Votre Voyage",
     "ctaDesc": "Créez un compte gratuit pour sauvegarder vos versets préférés, démarrer votre série, écrire des réflexions et rejoindre la communauté. L'inscription prend moins d'une minute.",
     "createAccount": "Créer un Compte Gratuit",
@@ -602,7 +610,10 @@
       "translations": "Traductions bibliques modernes",
       "streak_calendar": "Calendrier de série complet",
       "blessings_multiplier": "Bénédictions ×1,5 à chaque action",
-      "reflection_archive": "Archive complète des réflexions"
+      "reflection_archive": "Archive complète des réflexions",
+      "reading_plans": "Bibliothèque complète de plans de lecture biblique",
+      "annotations": "Annotations de versets et notes personnelles",
+      "saved_searches": "Recherches enregistrées et filtres de recherche"
     }
   },
   "otp": {
@@ -887,6 +898,14 @@
     "premiumRequired": "Ce plan nécessite un abonnement Words of Praise.",
     "day": "Jour",
     "reflection": "Réflexion",
-    "currentDay": "Lecture du Jour"
+    "currentDay": "Lecture du Jour",
+    "memoryVerse": "Verset de mémoire de la semaine",
+    "historicalContext": "Contexte historique",
+    "todayLabel": "Aujourd'hui",
+    "reflectLabel": "Réfléchis",
+    "tapToJournal": "Appuie pour écrire dans ton journal →",
+    "notEnrolled": "Vous n'êtes pas inscrit à ce plan.",
+    "loadError": "Impossible de charger la lecture du jour. Veuillez réessayer.",
+    "alreadyRead": "Vous avez lu ceci aujourd'hui"
   }
 }

@@ -13,6 +13,9 @@ import { ShopTutorial, SHOP_TUTORIAL_KEY } from './ShopTutorial';
 import styles from './RewardsShop.module.css';
 
 const PLAN_FEATURES = [
+  'subscription.feature.reading_plans',
+  'subscription.feature.annotations',
+  'subscription.feature.saved_searches',
   'subscription.feature.all_themes',
   'subscription.feature.journal',
   'subscription.feature.prompts',

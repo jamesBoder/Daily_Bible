@@ -27,13 +27,23 @@ type ReadingPlan struct {
 
 // ReadingPlanEntry is a single day in a ReadingPlan.
 // Reflection is optional curator-authored framing text for the day.
+// The enriched fields (Prayer, Application, Question, ContextNote, PassageRefs,
+// ContentType, IsMemoryVerse) are all nullable — existing seed rows are unaffected.
 type ReadingPlanEntry struct {
-	ID         uint   `gorm:"primaryKey;autoIncrement"`
-	PlanID     uint   `gorm:"index"`
-	DayNumber  int                           // 1-based
-	VerseRef   string `gorm:"size:100"`   // e.g. "John 14:27"
-	Reflection string `gorm:"type:text"`  // optional curator-authored framing text
-	CreatedAt  time.Time
+	ID           uint   `gorm:"primaryKey;autoIncrement"`
+	PlanID       uint   `gorm:"index"`
+	DayNumber    int                              // 1-based
+	VerseRef     string `gorm:"size:100"`        // e.g. "John 14:27"
+	Reflection   string `gorm:"type:text"`       // optional curator-authored framing text
+	// Enriched fields (Part 1b)
+	PassageRefs  string `gorm:"type:text"`       // JSON array of extra refs, e.g. ["Romans 5:1","Psalm 29:11"]
+	Prayer       string `gorm:"type:text"`       // suggested prayer for the day (1–3 sentences)
+	Application  string `gorm:"type:text"`       // one practical action to take today
+	Question     string `gorm:"type:text"`       // journaling / reflection prompt
+	ContextNote  string `gorm:"type:text"`       // brief historical or literary context
+	ContentType  string `gorm:"size:30;default:'verse'"` // verse | passage | psalm | chapter | meditation
+	IsMemoryVerse bool  `gorm:"default:false"`   // highlight as the week's memory verse
+	CreatedAt    time.Time
 }
 
 // UserPlanProgress tracks a user's enrollment and progress through a ReadingPlan.

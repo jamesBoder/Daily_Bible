@@ -2,6 +2,7 @@ package services
 
 import (
 	"dailybible/internal/models"
+	"dailybible/internal/repository"
 	"errors"
 	"time"
 
@@ -47,11 +48,24 @@ type ReadingPlanDetail struct {
 }
 
 // ReadingPlanEntryResponse is the JSON shape for a single plan day entry.
+// Enriched fields (prayer, application, question, context_note, content_type,
+// is_memory_verse) are included when populated; they default to empty/false for
+// legacy entries that pre-date Part 1b.
+// VerseText is resolved from the local verses table in GetPlanForToday so the
+// client never needs a second round-trip to /api/verses/search.
 type ReadingPlanEntryResponse struct {
-	ID         uint   `json:"id"`
-	DayNumber  int    `json:"day_number"`
-	VerseRef   string `json:"verse_ref"`
-	Reflection string `json:"reflection"`
+	ID            uint   `json:"id"`
+	DayNumber     int    `json:"day_number"`
+	VerseRef      string `json:"verse_ref"`
+	VerseText     string `json:"verse_text"`     // resolved locally; empty when ref not in DB
+	Reflection    string `json:"reflection"`
+	PassageRefs   string `json:"passage_refs"`
+	Prayer        string `json:"prayer"`
+	Application   string `json:"application"`
+	Question      string `json:"question"`
+	ContextNote   string `json:"context_note"`
+	ContentType   string `json:"content_type"`
+	IsMemoryVerse bool   `json:"is_memory_verse"`
 }
 
 // UserPlanProgressDetail includes plan metadata alongside progress.
@@ -65,17 +79,41 @@ type UserPlanProgressDetail struct {
 	EnrolledAt  time.Time  `json:"enrolled_at"`
 }
 
+// entryToResponse maps a ReadingPlanEntry model to its JSON response shape.
+// ContentType defaults to "verse" when the DB column is empty (legacy rows).
+func entryToResponse(e models.ReadingPlanEntry) ReadingPlanEntryResponse {
+	ct := e.ContentType
+	if ct == "" {
+		ct = "verse"
+	}
+	return ReadingPlanEntryResponse{
+		ID:            e.ID,
+		DayNumber:     e.DayNumber,
+		VerseRef:      e.VerseRef,
+		Reflection:    e.Reflection,
+		PassageRefs:   e.PassageRefs,
+		Prayer:        e.Prayer,
+		Application:   e.Application,
+		Question:      e.Question,
+		ContextNote:   e.ContextNote,
+		ContentType:   ct,
+		IsMemoryVerse: e.IsMemoryVerse,
+	}
+}
+
 // ReadingPlanService handles all reading plan operations.
 type ReadingPlanService struct {
 	db                  *gorm.DB
+	verseRepo           repository.VerseRepository
 	subscriptionChecker SubscriptionChecker
 	blessingsService    *BlessingsService
 }
 
 // NewReadingPlanService creates a new ReadingPlanService.
-func NewReadingPlanService(db *gorm.DB, subscriptionChecker SubscriptionChecker, blessingsService *BlessingsService) *ReadingPlanService {
+func NewReadingPlanService(db *gorm.DB, verseRepo repository.VerseRepository, subscriptionChecker SubscriptionChecker, blessingsService *BlessingsService) *ReadingPlanService {
 	return &ReadingPlanService{
 		db:                  db,
+		verseRepo:           verseRepo,
 		subscriptionChecker: subscriptionChecker,
 		blessingsService:    blessingsService,
 	}
@@ -150,12 +188,7 @@ func (s *ReadingPlanService) GetPlan(slug string, userID uint, isPremium bool) (
 	}
 
 	for _, e := range entries {
-		detail.Entries = append(detail.Entries, ReadingPlanEntryResponse{
-			ID:         e.ID,
-			DayNumber:  e.DayNumber,
-			VerseRef:   e.VerseRef,
-			Reflection: e.Reflection,
-		})
+		detail.Entries = append(detail.Entries, entryToResponse(e))
 	}
 	return detail, nil
 }
@@ -344,12 +377,16 @@ func (s *ReadingPlanService) GetPlanForToday(userID uint, slug string) (*Reading
 		return nil, err
 	}
 
-	resp := ReadingPlanEntryResponse{
-		ID:         entry.ID,
-		DayNumber:  entry.DayNumber,
-		VerseRef:   entry.VerseRef,
-		Reflection: entry.Reflection,
+	resp := entryToResponse(entry)
+
+	// Resolve verse text from the local DB — no external API call needed.
+	// This eliminates the second round-trip that Option A required on the client.
+	// Best-effort: if the reference isn't in the DB (multi-verse range, unknown
+	// formatting), VerseText stays empty and the frontend falls back gracefully.
+	if verse, err := s.verseRepo.GetByReference(entry.VerseRef); err == nil && verse != nil {
+		resp.VerseText = verse.Text
 	}
+
 	return &resp, nil
 }
 

@@ -16,12 +16,10 @@ export const AboutContent: React.FC = () => {
     { emoji: '📚', titleKey: 'about.feature6Title', descKey: 'about.feature6Desc' },
     { emoji: '🎨', titleKey: 'about.feature7Title', descKey: 'about.feature7Desc' },
     { emoji: '🌐', titleKey: 'about.feature8Title', descKey: 'about.feature8Desc' },
-  ];
-
-  const comingSoon = [
-    { emoji: '🔔', key: 'about.comingSoon1' },
-    { emoji: '📖', key: 'about.comingSoon2' },
-    { emoji: '✨', key: 'about.comingSoon3' },
+    { emoji: '🗺️', titleKey: 'about.feature9Title', descKey: 'about.feature9Desc' },
+    { emoji: '🙏', titleKey: 'about.feature10Title', descKey: 'about.feature10Desc' },
+    { emoji: '🔍', titleKey: 'about.feature11Title', descKey: 'about.feature11Desc' },
+    { emoji: '📝', titleKey: 'about.feature12Title', descKey: 'about.feature12Desc' },
   ];
 
   return (
@@ -104,25 +102,6 @@ export const AboutContent: React.FC = () => {
                 {t('about.alreadyHaveAccount')}
               </Link>
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* ── Coming Soon ───────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-white dark:bg-gray-800">
-        <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl sm:text-4xl font-bold mb-8 text-center text-primary-600 dark:text-primary-400">
-            🚀 {t('about.comingSoon')}
-          </h2>
-          <div className="bg-gradient-to-br from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-2xl p-8 border-2 border-primary-200 dark:border-primary-800">
-            <ul className="space-y-4 text-lg text-gray-700 dark:text-gray-300">
-              {comingSoon.map(({ emoji, key }) => (
-                <li key={key} className="flex items-center gap-3">
-                  <span className="text-2xl">{emoji}</span>
-                  <span>{t(key)}</span>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       </section>

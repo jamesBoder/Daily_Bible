@@ -434,6 +434,14 @@
     "feature7Desc": "Personalize your experience with beautiful themes. Earn or purchase premium looks and add-ons.",
     "feature8Title": "4 Languages",
     "feature8Desc": "Full support for English, Español, Français, and Kreyòl Ayisyen.",
+    "feature9Title": "Reading Plans",
+    "feature9Desc": "Multi-day Scripture journeys with verse text, guided prayer, a daily action, and a reflection prompt — all in one place.",
+    "feature10Title": "Guided Prayer",
+    "feature10Desc": "Structured prayer experiences rooted in Christian tradition, including an immersive bead-by-bead Rosary.",
+    "feature11Title": "Search Scripture",
+    "feature11Desc": "Search all of Scripture by keyword, reference, or book. Save your favorite searches and search within your own reflections.",
+    "feature12Title": "Verse Annotations",
+    "feature12Desc": "Highlight a phrase from any verse and attach a personal note. Your insights, anchored to the Word.",
     "ctaTitle": "Begin Your Journey",
     "ctaDesc": "Create a free account to save your favorite verses, start your streak, write reflections, and join the community. Sign up takes less than a minute.",
     "createAccount": "Create Free Account",
@@ -691,6 +699,9 @@
     "success_toast": "Welcome to Premium!",
     "nav_badge_tooltip": "You are a Premium member",
     "feature": {
+      "reading_plans": "Full Scripture reading plan library",
+      "annotations": "Verse annotations & personal notes",
+      "saved_searches": "Saved searches & search filters",
       "all_themes": "All premium themes",
       "journal": "Unlimited journal entries",
       "prompts": "Weekly reflection prompts",
@@ -955,6 +966,14 @@
     "premiumRequired": "This plan requires a Words of Praise subscription.",
     "day": "Day",
     "reflection": "Reflection",
-    "currentDay": "Today's Reading"
+    "currentDay": "Today's Reading",
+    "memoryVerse": "This week's memory verse",
+    "historicalContext": "Historical context",
+    "todayLabel": "Today",
+    "reflectLabel": "Reflect",
+    "tapToJournal": "Tap to write in your journal →",
+    "notEnrolled": "You are not enrolled in this plan.",
+    "loadError": "Unable to load today's reading. Please try again.",
+    "alreadyRead": "You've read this today"
   }
 }

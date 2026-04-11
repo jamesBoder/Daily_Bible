@@ -337,7 +337,7 @@ func main() {
     pushHandler := handlers.NewPushHandler(pushService)
 
     // Phase 12 services
-    readingPlanService := services.NewReadingPlanService(db, subscriptionChecker, blessingsService)
+    readingPlanService := services.NewReadingPlanService(db, verseRepo, subscriptionChecker, blessingsService)
     annotationService  := services.NewAnnotationService(db)
     searchService      := services.NewSearchService(db)
 

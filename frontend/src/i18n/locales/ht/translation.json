@@ -422,6 +422,14 @@
     "feature7Desc": "Pèsonalize eksperyans ou avèk bèl tèm. Genyen oswa achte aparans premium ak ajoute.",
     "feature8Title": "4 Lang",
     "feature8Desc": "Sipò konplè pou English, Español, Français ak Kreyòl Ayisyen.",
+    "feature9Title": "Plan Lekti",
+    "feature9Desc": "Vwayaj biblik plizyè jou ak tèks vèsè, priyè gide, aksyon chak jou ak kesyon refleksyon — tout nan yon sèl kote.",
+    "feature10Title": "Priyè Gide",
+    "feature10Desc": "Eksperyans priyè estriktire ki baze nan tradisyon kretyen, ki gen ladan yon Wozè imèsif grenn pa grenn.",
+    "feature11Title": "Chèche Ekriti",
+    "feature11Desc": "Chèche nan tout Ekriti pa mo kle, referans oswa liv. Anrejistre rechèch prefere ou yo epi chèche nan pwòp refleksyon ou yo.",
+    "feature12Title": "Anòtasyon Vèsè",
+    "feature12Desc": "Souliye yon fraz nan nenpòt vèsè epi mete yon nòt pèsonèl. Refleksyon ou yo, anchore nan Pawòl la.",
     "ctaTitle": "Kòmanse Vwayaj Ou",
     "ctaDesc": "Kreye yon kont gratis pou anrejistre vèsè prefere ou yo, kòmanse seri ou, ekri refleksyon ak rejwenn kominote a. Enskripsyon pran mwens pase yon minit.",
     "createAccount": "Kreye Kont Gratis",
@@ -602,7 +610,10 @@
       "translations": "Tradiksyon Bib modèn",
       "streak_calendar": "Kalandriye seri konplè",
       "blessings_multiplier": "Benediksyon ×1.5 pou chak aksyon",
-      "reflection_archive": "Achiv refleksyon konplè"
+      "reflection_archive": "Achiv refleksyon konplè",
+      "reading_plans": "Bibliyotèk plan lekti biblik konplè",
+      "annotations": "Anòtasyon vèsè ak nòt pèsonèl",
+      "saved_searches": "Rechèch anrejistre ak filtre rechèch"
     }
   },
   "otp": {
@@ -887,6 +898,14 @@
     "premiumRequired": "Plan sa a mande abònman Words of Praise.",
     "day": "Jou",
     "reflection": "Refleksyon",
-    "currentDay": "Lekti Jodi a"
+    "currentDay": "Lekti Jodi a",
+    "memoryVerse": "Vèsè memwa semèn sa a",
+    "historicalContext": "Kontèks istorik",
+    "todayLabel": "Jodi a",
+    "reflectLabel": "Reflechi",
+    "tapToJournal": "Touche pou ekri nan jounal ou →",
+    "notEnrolled": "Ou pa enskri nan plan sa a.",
+    "loadError": "Pa kapab chaje lekti jodi a. Tanpri eseye ankò.",
+    "alreadyRead": "Ou deja li sa jodi a"
   }
 }

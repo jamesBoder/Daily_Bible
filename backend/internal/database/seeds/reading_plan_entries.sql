@@ -117,3 +117,140 @@ FROM reading_plans p,
 ) AS v(day_number, verse_ref, reflection)
 WHERE p.slug = 'rooted-in-love'
   AND NOT EXISTS (SELECT 1 FROM reading_plan_entries WHERE plan_id = p.id);
+
+-- ============================================================
+-- Part 1b Enrichment — UPDATE existing entries with prayer,
+-- application, question, context_note, and is_memory_verse.
+-- Uses (plan_slug, day_number) as the stable key so these
+-- are safe to re-run (idempotent UPDATEs).
+-- ============================================================
+
+-- Walking in Peace (7 days)
+UPDATE reading_plan_entries e
+SET
+  prayer         = v.prayer,
+  application    = v.application,
+  question       = v.question,
+  context_note   = v.context_note,
+  content_type   = 'verse',
+  is_memory_verse = v.is_memory_verse
+FROM reading_plans p,
+(VALUES
+  (1,
+   'Lord Jesus, You offered Your peace as a parting gift before the cross. I receive it now. Still my heart wherever it is unsettled, and remind me that Your presence is enough. Amen.',
+   'Write down one thing stealing your peace today. Hold it in your open hands for thirty seconds and consciously give it to God before you do anything else.',
+   'When have you experienced a peace that made no logical sense given your circumstances? What was different about that season?',
+   'Jesus spoke these words in the upper room the night before His crucifixion (John 14). His peace was not the absence of suffering — He was walking directly toward it.',
+   true
+  ),
+  (2,
+   'Good Shepherd, lead me beside still waters today. Where my soul is worn and restless, restore it. I trust You to know the path I cannot see. Amen.',
+   'Find five minutes of physical stillness today — no screen, no sound. Just sit. Notice what happens in your body and your thoughts.',
+   'What does "rest" actually mean to you right now? Is there a form of rest you have been avoiding?',
+   'Psalm 23 is likely David''s most personal poem. The imagery of still waters (Hebrew: *me menuhot*) means resting waters — the kind that do not frighten sheep, who fear fast currents.',
+   false
+  ),
+  (3,
+   'Father, fix my mind on You today. When anxious thoughts rise up, help me return to this promise: perfect peace for a steadfast heart. Amen.',
+   'Choose one worry you have been carrying and rehearse a single truth about God that speaks directly to it. Write that truth somewhere visible.',
+   'What does it look like practically for you to "keep your mind" on God during an ordinary workday?',
+   'Isaiah 26:3 comes from a song of praise in a chapter describing God''s final victory. The word "perfect" in Hebrew is *shalom shalom* — peace doubled for emphasis.',
+   false
+  ),
+  (4,
+   'Lord, I bring my anxiety to You right now in prayer. What I cannot understand, You hold. Guard my heart and mind with the peace that is beyond all reasoning. Amen.',
+   'Before you check your phone or email this morning, spend two minutes in prayer listing specific things you are grateful for. Let that be the first input of the day.',
+   'Paul wrote Philippians from prison. How does knowing that change the weight of his instruction to "not be anxious about anything"?',
+   'Philippians 4:6-7 was written from a Roman prison cell, likely around AD 61. The "peace of God" Paul describes was a present reality for him in chains — not a future hope.',
+   true
+  ),
+  (5,
+   'Jesus, I come to You weary. I accept Your invitation. Teach me what it means to take Your yoke — to share the burden instead of carrying it alone. Amen.',
+   'Identify the heaviest thing you are carrying right now. Ask a trusted person to pray with you about it today — share the load literally.',
+   'What is the difference between Jesus'' yoke being "easy" and life being painless? Have you ever experienced genuine rest in the middle of a hard season?',
+   'In first-century Jewish culture, a "yoke" was also a metaphor for a rabbi''s teaching. Jesus is inviting His followers to exchange the burden of religious law for the lightness of relationship with Him.',
+   false
+  ),
+  (6,
+   'God, I quiet myself before You now. Help me to stop striving and simply know — really know — that You are God and that is enough. Be exalted in my life today. Amen.',
+   'Set a two-minute timer and sit in silence before God. No agenda, no list. Simply be still. If thoughts intrude, gently return to the phrase: "You are God."',
+   'Stillness is countercultural. What makes it hard for you personally? What would change if you practiced one minute of intentional stillness each morning?',
+   'Psalm 46 was likely written in response to a military crisis — possibly the Assyrian siege of Jerusalem in 701 BC. "Be still" (*raphah*) means to let go, to release, to stop fighting.',
+   false
+  ),
+  (7,
+   'God of hope, fill me with all joy and peace as I trust in You, so that I may overflow with hope by the power of Your Holy Spirit. Make that promise real in my life today. Amen.',
+   'End this plan by writing one sentence about how your understanding of peace has shifted over these seven days. Keep it somewhere you will find it in a hard moment.',
+   'Romans 15:13 describes peace as a foundation from which hope overflows. Looking back at this week — where do you feel the most peace? Where is God inviting you to grow?',
+   'Romans 15:13 is Paul''s closing benediction before his final greetings. He has spent fifteen chapters building a case for the gospel — and he closes not with doctrine, but with a blessing of peace.',
+   false
+  )
+) AS v(day_number, prayer, application, question, context_note, is_memory_verse)
+WHERE p.slug = 'walking-in-peace'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Strength in the Storm (7 days)
+UPDATE reading_plan_entries e
+SET
+  prayer         = v.prayer,
+  application    = v.application,
+  question       = v.question,
+  context_note   = v.context_note,
+  content_type   = 'verse',
+  is_memory_verse = v.is_memory_verse
+FROM reading_plans p,
+(VALUES
+  (1,
+   'Lord, You are my refuge right now, in the middle of this storm — not on the other side of it. I choose to run to You, not away from You. Be my very present help. Amen.',
+   'Name the storm you are in right now. Write it down plainly. Then write the words "God is my refuge" directly beneath it.',
+   'Psalm 46 says God is a "very present help in trouble." When has God felt most present to you during a difficult season — not before or after it, but in it?',
+   'Psalm 46 is an anonymous psalm of confidence, possibly written in response to the miraculous deliverance of Jerusalem from Assyria (2 Kings 19). The opening declaration is present tense — not future.',
+   true
+  ),
+  (2,
+   'Father, I receive Your command: "Fear not." Not because my circumstances have changed, but because You are with me. Strengthen me today, uphold me with Your righteous right hand. Amen.',
+   'Read Isaiah 41:10 aloud three times slowly. Let each reading land on a different word: "I am with you." "I will strengthen you." "I will uphold you."',
+   '"Fear not" appears over 300 times in the Bible. Why do you think God repeats this command so often? What specific fear are you carrying right now that needs to hear it?',
+   'Isaiah 41:10 was addressed to Israel in Babylonian exile — a people who had lost everything: homeland, temple, and national identity. God''s command to not fear was spoken into total devastation.',
+   false
+  ),
+  (3,
+   'Lord, I confess I do not always want steadfastness — I want relief. Teach me to see this trial through Your eyes. Produce in me the character that only suffering makes possible. Amen.',
+   'Write down one way you have already grown through a past difficulty you would never have chosen. Let that be evidence that God can work through this one too.',
+   'James says to "consider it all joy" when you face trials. What would it look like to hold both genuine grief and genuine trust at the same time — not pretending the pain isn''t real?',
+   'James 1:2-4 echoes a Stoic philosophical tradition James reframes through faith: hardship produces virtue. But unlike Stoicism, James points to a Person — not willpower — as the source of endurance.',
+   false
+  ),
+  (4,
+   'Jesus, when I look at my circumstances I feel crushed. Help me to look up and see what Paul saw from his prison cell — that this is light and momentary, and glory is coming. Amen.',
+   'Write down the hardship you are carrying. Next to it write: "This is preparing an eternal weight of glory beyond all comparison." Read it again tomorrow.',
+   'Paul calls his suffering "light and momentary" — yet he was shipwrecked, beaten, imprisoned, and eventually executed. What does it mean to hold suffering that lightly? Is that even possible?',
+   '2 Corinthians 4:17 was written by Paul after extraordinary suffering (see 2 Cor 11:23-27). His ability to call it "light" was not denial — it was perspective forged by genuine encounter with the risen Christ.',
+   true
+  ),
+  (5,
+   'Father, I trust that You are working in this — even the parts I cannot see or understand. Help me to stop demanding an explanation and start looking for Your hand. Amen.',
+   'Think of one "broken piece" in your life right now. Ask God in prayer: "What are You making out of this?" Then listen for even a partial answer.',
+   'Romans 8:28 says "all things" — not just the good ones. What is one painful thing in your past that you can now see God used for good? What does that tell you about what He might do now?',
+   'Romans 8:28 is one of the most misused verses in the Bible — often quoted to minimize pain. Paul''s context is one of suffering, groaning creation, and the Spirit interceding with wordless sighs (v.26). "Good" means conformity to Christ, not personal comfort.',
+   false
+  ),
+  (6,
+   'Lord, You are close to me right now even when I cannot feel it. Draw near to my broken heart today. I am not too far gone, not too crushed for You. Amen.',
+   'Reach out to someone you know who is brokenhearted today — not to fix anything, just to say: "I am here." Be the nearness of God to someone else.',
+   'David writes that God is "close to the brokenhearted." When have you felt that closeness most acutely? What made it real to you — a person, a moment, a word?',
+   'Psalm 34 is an acrostic psalm (each verse begins with the next letter of the Hebrew alphabet) written after David feigned madness before the Philistine king Abimelech. He writes praise in the aftermath of fear.',
+   false
+  ),
+  (7,
+   'Lord, in this day of trouble, I take refuge in You. You know me. You know this storm. And You are good. I trust You with what I cannot control. Amen.',
+   'Close this plan by writing a one-sentence declaration of trust. Not that the storm is over — but that God is good in the middle of it. Keep it somewhere visible.',
+   'Nahum 1:7 says God "knows those who take refuge in Him." What does it mean to be known by God in the middle of suffering — not just helped, but known?',
+   'The book of Nahum is rarely read — it is an oracle of judgment against Nineveh, the capital of Assyria that had brutalized Israel. Verse 1:7 is a sudden pivot in the middle of the oracle: God is good, and He knows those who hide in Him.',
+   false
+  )
+) AS v(day_number, prayer, application, question, context_note, is_memory_verse)
+WHERE p.slug = 'strength-in-the-storm'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
