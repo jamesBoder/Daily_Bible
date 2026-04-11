@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
 import { useStreak } from '../contexts/StreakContext';
 import { useAuth } from '../hooks/useAuth';
 
 const FirstEngagementOnboarding: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const { streakData } = useStreak();
   const { isGuest } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
@@ -14,14 +16,14 @@ const FirstEngagementOnboarding: React.FC = () => {
     // Don't show for guests
     if (isGuest) return;
 
-    // Check if user has seen the intro
+    // Check if user has already seen the intro
     const hasSeenIntro = localStorage.getItem('hasSeenStreakIntro') === 'true';
-
     if (hasSeenIntro || hasAppeared) return;
 
-    // Show when user gets their first streak point
-    if (streakData && streakData.current_streak === 1 && streakData.blessings_balance > 0) {
-      // Delay appearance by 2 seconds to let user read the verse first
+    // Show on the first day of the streak — blessings may not have been
+    // credited yet when this fires, so don't gate on blessings_balance.
+    if (streakData && streakData.current_streak === 1) {
+      // Delay 2 seconds so the user reads the verse first
       const timer = setTimeout(() => {
         setIsVisible(true);
         setHasAppeared(true);
@@ -34,6 +36,11 @@ const FirstEngagementOnboarding: React.FC = () => {
   const handleDismiss = () => {
     setIsVisible(false);
     localStorage.setItem('hasSeenStreakIntro', 'true');
+  };
+
+  const handleTryManna = () => {
+    handleDismiss();
+    navigate('/manna');
   };
 
   // Handle ESC key
@@ -60,11 +67,13 @@ const FirstEngagementOnboarding: React.FC = () => {
         onClick={handleDismiss}
       />
 
-      {/* Centered popup modal — slides down from the top */}
-      <div className="fixed inset-0 z-50 flex items-start justify-center pt-24 px-4 pointer-events-none">
-        <div className="pointer-events-auto w-full max-w-md animate-slide-from-top">
-          <div className="bg-white dark:bg-gray-900 rounded-3xl shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40">
-            <div className="p-7 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50
+      {/* Centered popup modal — slides down from the top.
+          On small phones (short viewports / landscape) use a smaller top offset and
+          make the panel scrollable so the buttons are always reachable. */}
+      <div className="fixed inset-0 z-50 flex items-start justify-center pt-4 sm:pt-16 px-4 pointer-events-none">
+        <div className="pointer-events-auto w-full max-w-md animate-slide-from-top max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-3xl">
+          <div className="bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
+            <div className="p-6 sm:p-7 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50
                            dark:from-amber-900/30 dark:via-yellow-900/20 dark:to-orange-900/20">
               {/* Header with candle icon */}
               <div className="flex items-center space-x-3 mb-5">
@@ -109,20 +118,39 @@ const FirstEngagementOnboarding: React.FC = () => {
                     {t('onboarding.feature3', 'Track your spiritual journey in your profile')}
                   </p>
                 </div>
+                <div className="flex items-start space-x-2">
+                  <span className="text-amber-500 mt-0.5">✦</span>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    {t('onboarding.feature4', 'Play Manna — a daily biblical word puzzle')}
+                  </p>
+                </div>
               </div>
 
-              {/* Action button */}
-              <div className="mt-7">
+              {/* Return hook */}
+              <p className="mt-5 text-sm font-medium text-amber-700 dark:text-amber-400">
+                {t('onboarding.returnHook', 'Come back tomorrow — a new verse and a new puzzle await.')}
+              </p>
+
+              {/* Action buttons */}
+              <div className="mt-6 space-y-3">
                 <button
-                  onClick={handleDismiss}
+                  onClick={handleTryManna}
                   className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500
                            hover:from-amber-600 hover:to-yellow-600
                            text-white font-semibold rounded-2xl
                            transform transition-all duration-200 hover:scale-[1.02]
-                           focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2
+                           focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-200 focus:ring-offset-2
                            shadow-lg shadow-amber-200/50 dark:shadow-amber-900/30"
                 >
-                  {t('onboarding.begin', 'Begin')}
+                  {t('onboarding.tryManna', 'Try today\'s Manna puzzle')}
+                </button>
+                <button
+                  onClick={handleDismiss}
+                  className="w-full py-2.5 px-4 text-sm font-medium text-gray-500 dark:text-gray-400
+                           hover:text-gray-700 dark:hover:text-gray-200
+                           transition-colors duration-150"
+                >
+                  {t('onboarding.begin', 'Start with the verse')}
                 </button>
               </div>
             </div>

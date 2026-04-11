@@ -532,6 +532,19 @@
     "help": "Èd",
     "comingSoon": "Byento disponib"
   },
+  "onboarding": {
+    "title": "Vwayaj ou kòmanse",
+    "line1": "Chak jou ou louvri Pawòl la, seri ou grandi.",
+    "line2": "Ou rate yon jou ? Jou Lagras yo ka prezève seri ou.",
+    "line3": "Fidelite ou merite onore.",
+    "feature1": "Ranmase Benediksyon lè w li vèsè chak jou epi ajoute refleksyon",
+    "feature2": "Reyalize etap pandan seri ou ap grandi",
+    "feature3": "Swiv vwayaj espirityèl ou nan pwofil ou",
+    "feature4": "Jwe Manna — yon puzzle mo biblik chak jou",
+    "returnHook": "Tounen demen — yon nouvo vèsè ak yon nouvo puzzle ap tann ou.",
+    "tryManna": "Eseye puzzle Manna jodi a",
+    "begin": "Kòmanse ak vèsè a"
+  },
   "milestone": {
     "achieved_label": "Etap Atenn",
     "blessings_label": "Benediksyon",

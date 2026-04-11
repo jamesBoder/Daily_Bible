@@ -623,7 +623,10 @@
     "feature1": "Earn Blessings by reading daily verses and adding reflections",
     "feature2": "Achieve milestones as your streak grows",
     "feature3": "Track your spiritual journey in your profile",
-    "begin": "Begin"
+    "feature4": "Play Manna — a daily biblical word puzzle",
+    "returnHook": "Come back tomorrow — a new verse and a new puzzle await.",
+    "tryManna": "Try today's Manna puzzle",
+    "begin": "Start with the verse"
   },
   "milestone": {
     "achieved_label": "Milestone Achieved",

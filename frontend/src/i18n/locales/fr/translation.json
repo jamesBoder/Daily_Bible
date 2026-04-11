@@ -532,6 +532,19 @@
     "help": "Aide",
     "comingSoon": "Bientôt disponible"
   },
+  "onboarding": {
+    "title": "Votre voyage commence",
+    "line1": "Chaque jour que vous ouvrez la Parole, votre série grandit.",
+    "line2": "Vous avez raté un jour ? Les Jours de Grâce peuvent préserver votre série.",
+    "line3": "Votre fidélité mérite d'être honorée.",
+    "feature1": "Gagnez des Bénédictions en lisant des versets quotidiens et en ajoutant des réflexions",
+    "feature2": "Atteignez des jalons à mesure que votre série grandit",
+    "feature3": "Suivez votre voyage spirituel dans votre profil",
+    "feature4": "Jouez à Manna — un puzzle biblique quotidien",
+    "returnHook": "Revenez demain — un nouveau verset et un nouveau puzzle vous attendent.",
+    "tryManna": "Essayez le puzzle Manna d'aujourd'hui",
+    "begin": "Commencer avec le verset"
+  },
   "milestone": {
     "achieved_label": "Jalon Atteint",
     "blessings_label": "Bénédictions",

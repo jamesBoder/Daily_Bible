@@ -605,7 +605,10 @@
     "feature1": "Gana Bendiciones leyendo versículos diarios y agregando reflexiones",
     "feature2": "Alcanza hitos a medida que crece tu racha",
     "feature3": "Rastrea tu viaje espiritual en tu perfil",
-    "begin": "Comenzar"
+    "feature4": "Juega Manna — un crucigrama bíblico diario",
+    "returnHook": "Vuelve mañana — un nuevo versículo y un nuevo rompecabezas te esperan.",
+    "tryManna": "Prueba el rompecabezas Manna de hoy",
+    "begin": "Comenzar con el versículo"
   },
   "milestone": {
     "achieved_label": "Hito Alcanzado",
