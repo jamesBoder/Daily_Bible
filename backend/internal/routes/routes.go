@@ -43,6 +43,8 @@ func SetupRoutes(
 	annotationHandler  *handlers.AnnotationHandler,
 	searchHandler      *handlers.SearchHandler,
 	prayerHandler      *handlers.PrayerHandler,
+	// Email capture
+	subscriberHandler *handlers.SubscriberHandler,
 ) {
 	api := router.Group("/api")
 	{
@@ -72,6 +74,10 @@ func SetupRoutes(
 
 		// Public — no auth required (user arrives from email link)
 		api.GET("/settings/unsubscribe", settingsHandler.Unsubscribe)
+
+		// Email capture — public landing page opt-in
+		api.POST("/subscribe", subscriberHandler.Subscribe)
+		api.GET("/subscribe/unsubscribe", subscriberHandler.Unsubscribe)
 
 		// translations route (Phase 4) — public with optional auth
 		translationsGroup := api.Group("/translations")

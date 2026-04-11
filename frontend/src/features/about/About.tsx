@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { FAQ } from './FAQ';
+import EmailCapture from '../../components/EmailCapture';
 
 /** Shareable inner content — used by both the /about route and the Settings "About" tab */
 export const AboutContent: React.FC = () => {
@@ -78,6 +79,23 @@ export const AboutContent: React.FC = () => {
         </div>
       </section>
 
+      {/* ── Email Capture — shown first to capture visitors not ready to sign up ── */}
+      <section className="py-8 px-4">
+        <div className="max-w-xl mx-auto">
+          <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/20 rounded-3xl shadow-lg p-8 border border-amber-200/60 dark:border-amber-700/40 text-center">
+            <div className="text-3xl mb-3">📖</div>
+            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+              Get today's verse in your inbox
+            </h3>
+            <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+              Not ready to create an account? Drop your email and we'll send you a
+              verse each morning — free, always.
+            </p>
+            <EmailCapture />
+          </div>
+        </div>
+      </section>
+
       {/* ── Sign-Up CTA ───────────────────────────────────────────────────── */}
       <section className="py-8 px-4">
         <div className="max-w-3xl mx-auto">
@@ -124,7 +142,7 @@ export const AboutContent: React.FC = () => {
             <p className="text-gray-600 dark:text-gray-400 mb-2 text-sm sm:text-base">{t('about.emailUs')}</p>
             <a
               href="mailto:wordsofpraiseapp@gmail.com?subject=Words%20of%20Praise%20-%20Inquiry"
-              className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors inline-block hover:scale-105 transform break-all"
+              className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors inline-block hover:scale-105 transform break-words"
             >
               wordsofpraiseapp@gmail.com
             </a>

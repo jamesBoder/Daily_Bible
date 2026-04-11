@@ -171,6 +171,49 @@ func (s *EmailService) SendEmailChangeNotification(oldEmail, username, newEmail 
 	return err
 }
 
+// SendSubscriberWelcome sends a one-time welcome email to a new landing-page subscriber.
+// unsubURL is a token-based link that lets the user opt out without logging in.
+func (s *EmailService) SendSubscriberWelcome(toEmail, unsubURL string) error {
+	html := fmt.Sprintf(`<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:0;background:#faf8f3;">
+  <div style="background:#f59e0b;padding:20px 24px;text-align:center;">
+    <span style="font-size:24px;color:#fff;font-weight:bold;">🕯 Words of Praise</span>
+  </div>
+  <div style="padding:32px 24px;">
+    <h2 style="margin:0 0 16px;font-size:22px;color:#1f2937;">You're on the list!</h2>
+    <p style="margin:0 0 16px;font-size:16px;color:#374151;">
+      Thank you for signing up. You'll receive today's verse in your inbox each morning —
+      a simple, daily moment with Scripture.
+    </p>
+    <p style="margin:0 0 24px;font-size:16px;color:#374151;">
+      Want to do more? Create a free account to track your streak, play the Manna puzzle,
+      and journal your reflections.
+    </p>
+    <a href="%s/signup" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">Create a Free Account →</a>
+  </div>
+  <div style="padding:20px 24px;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0;font-size:12px;color:#9ca3af;">
+      <a href="%s" style="color:#6b7280;">Unsubscribe</a>
+    </p>
+    <p style="margin:8px 0 0;font-size:11px;color:#d1d5db;">Words of Praise · wordsofpraise.app</p>
+  </div>
+</div>`, s.frontendURL, unsubURL)
+
+	req := &resend.SendEmailRequest{
+		From:    s.fromEmail,
+		To:      []string{toEmail},
+		Subject: "Your daily verse is on its way — Words of Praise",
+		Html:    html,
+	}
+	if unsubURL != "" {
+		req.Headers = map[string]string{
+			"List-Unsubscribe":      "<" + unsubURL + ">",
+			"List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+		}
+	}
+	_, err := s.client.Emails.Send(req)
+	return err
+}
+
 // SendPasswordResetEmail sends a password reset link to the user
 func (s *EmailService) SendPasswordResetEmail(toEmail, username, token string) error {
 	url := fmt.Sprintf("%s/reset-password?token=%s", s.frontendURL, token)

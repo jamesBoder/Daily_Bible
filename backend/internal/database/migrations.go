@@ -44,6 +44,8 @@ func RunMigrations(db *gorm.DB) error {
         &models.VerseAnnotation{},
         &models.SavedSearch{},
         &models.RosaryCompletion{},
+        // Email capture
+        &models.EmailSubscriber{},
     ); err != nil {
         return err
     }

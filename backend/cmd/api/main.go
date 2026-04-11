@@ -347,6 +347,9 @@ func main() {
     searchHandler      := handlers.NewSearchHandler(searchService, subscriptionChecker)
     prayerHandler      := handlers.NewPrayerHandler(db, blessingsService, subscriptionChecker)
 
+    // Email capture handler — public landing page opt-in
+    subscriberHandler := handlers.NewSubscriberHandler(db, emailService, cfg.FrontendURL)
+
     // Phase 10: seed word bank on every start — idempotent (ON CONFLICT DO NOTHING).
     // Running unconditionally means new words added to the SQL file are picked up
     // on the next deploy without manual intervention.
@@ -427,7 +430,7 @@ func main() {
     log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
     // setup routes
-    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler, readingPlanHandler, annotationHandler, searchHandler, prayerHandler)
+    routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler, readingPlanHandler, annotationHandler, searchHandler, prayerHandler, subscriberHandler)
 
     // debug print setup routes
     log.Println("Routes have been set up")
