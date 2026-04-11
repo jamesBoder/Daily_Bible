@@ -94,8 +94,8 @@ func (h *SubscriptionHandler) HandleStripeWebhook(c *gin.Context) {
 			c.Status(http.StatusOK)
 			return
 		}
-		// Only fulfill one-time purchases here.
-		// Subscription checkouts are handled by customer.subscription.created above.
+		// Only fulfill one-time purchases (mode=payment).
+		// Subscription mode is not used — all purchases are one-time.
 		if session.Mode != stripe.CheckoutSessionModePayment {
 			c.Status(http.StatusOK)
 			return

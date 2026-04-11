@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X, Crown, Star, BookOpen, Palette, Calendar, Scroll, Infinity } from '@phosphor-icons/react';
+import toast from 'react-hot-toast';
 import { usePricingModal } from '../../hooks/usePricingModal';
 import { useStreak } from '../../contexts/StreakContext';
 import { FocusTrap } from './FocusTrap';
@@ -49,6 +50,7 @@ export const PricingModal: React.FC = () => {
   const { t } = useTranslation();
   const { isOpen, initialView, closeModal } = usePricingModal();
   const { subscriptionLoading, startOneTimePurchase, subscription } = useStreak();
+  const isPremium = subscription?.is_premium ?? false;
   const [view, setView] = useState<'plans' | 'otp'>(initialView);
   const [isClosing, setIsClosing] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -104,8 +106,9 @@ export const PricingModal: React.FC = () => {
     checkoutInFlight.current = true;
     try {
       await startOneTimePurchase('premium_lifetime');
-    } catch {
-      // redirect in progress or cancelled
+    } catch (err: any) {
+      const msg = err?.response?.data?.error ?? t('subscription.checkout_error', 'Could not start checkout. Please try again.');
+      toast.error(msg);
     } finally {
       checkoutInFlight.current = false;
     }
@@ -122,7 +125,7 @@ export const PricingModal: React.FC = () => {
       onClick={handleOverlayClick}
       role="dialog"
       aria-modal="true"
-      aria-label={t('subscription.modal_label', 'Premium subscription')}
+      aria-label={t('subscription.modal_label', 'Premium membership')}
     >
       <FocusTrap active={true}>
         <div className={`pricing-modal${isClosing ? ' pricing-modal--closing' : ''}`} {...swipeHandlers}>
@@ -177,24 +180,34 @@ export const PricingModal: React.FC = () => {
                 ))}
               </ul>
 
-              <div className="pricing-modal__lifetime-pricing">
-                <span className="pricing-modal__lifetime-original">$12.99</span>
-                <span className="pricing-modal__lifetime-sale">$9.99</span>
-                <span className="pricing-modal__lifetime-badge">{t('subscription.launch_offer', 'Launch offer')}</span>
-              </div>
+              {isPremium ? (
+                <p className="pricing-modal__legal" style={{ textAlign: 'center', fontWeight: 600 }}>
+                  <Infinity size={16} weight="bold" style={{ verticalAlign: 'middle', marginRight: 4 }} />
+                  {t('subscription.lifetime_title', 'Lifetime Member')} —{' '}
+                  {t('subscription.lifetime_meta', 'All features unlocked — yours forever, including future content.')}
+                </p>
+              ) : (
+                <>
+                  <div className="pricing-modal__lifetime-pricing">
+                    <span className="pricing-modal__lifetime-original">$12.99</span>
+                    <span className="pricing-modal__lifetime-sale">$9.99</span>
+                    <span className="pricing-modal__lifetime-badge">{t('subscription.launch_offer', 'Launch offer')}</span>
+                  </div>
 
-              <button
-                className="pricing-modal__cta"
-                onClick={handleCheckout}
-                disabled={subscriptionLoading}
-              >
-                <Infinity size={18} weight="bold" />
-                {t('subscription.upgrade_cta', 'Unlock Premium')}
-              </button>
+                  <button
+                    className="pricing-modal__cta"
+                    onClick={handleCheckout}
+                    disabled={subscriptionLoading}
+                  >
+                    <Infinity size={18} weight="bold" />
+                    {t('subscription.upgrade_cta', 'Unlock Premium')}
+                  </button>
 
-              <p className="pricing-modal__legal">
-                {t('subscription.modal_legal', 'One-time payment. No subscription. Future content included.')}
-              </p>
+                  <p className="pricing-modal__legal">
+                    {t('subscription.modal_legal', 'One-time payment. No subscription. Future content included.')}
+                  </p>
+                </>
+              )}
             </div>
           )}
 

@@ -52,7 +52,7 @@ export const Header: React.FC = () => {
           <Link to="/" className="flex items-center gap-2 group shrink-0 min-w-0">
             <span className="text-lg leading-none shrink-0" aria-hidden="true">🕯</span>
             <span className="text-xl font-display font-bold text-amber-700 dark:text-amber-400 tracking-tight transition-all duration-300 group-hover:drop-shadow-[0_0_10px_rgba(245,158,11,0.55)] truncate">
-              Words of Praise
+              Words of Praise&#8482;
             </span>
           </Link>
 

@@ -62,7 +62,6 @@ export const RewardsShop: React.FC = () => {
 
   const isPremium = subscription?.is_premium ?? false;
   const ownedKeys = subscription?.owned_purchase_keys ?? [];
-  const isLifetime = ownedKeys.includes('premium_lifetime');
 
   const handleLifetimeCheckout = async () => {
     if (checkoutInFlight.current) return;
@@ -100,7 +99,7 @@ export const RewardsShop: React.FC = () => {
       </div>
 
       {/* ── Lifetime member status card ──────────────────────────────────── */}
-      {isLifetime && (
+      {isPremium && (
         <div className={styles.activeCard}>
           <Infinity size={20} weight="bold" className={styles.activeCardCrown} />
           <div className={styles.activeCardBody}>

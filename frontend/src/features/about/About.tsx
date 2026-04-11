@@ -29,7 +29,7 @@ export const AboutContent: React.FC = () => {
         <div className="absolute inset-0 bg-gradient-to-r from-primary-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 opacity-50 rounded-3xl" />
         <div className="relative">
           <h1 className="text-5xl md:text-6xl font-display font-bold mb-4 bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
-            Words of Praise
+            Words of Praise&#8482;
           </h1>
           <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light">
             {t('about.subtitle')}

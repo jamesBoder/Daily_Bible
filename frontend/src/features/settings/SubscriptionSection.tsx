@@ -13,7 +13,6 @@ export const SubscriptionSection: React.FC = () => {
 
   const isPremium = subscription?.is_premium ?? false;
   const ownedKeys = subscription?.owned_purchase_keys ?? [];
-  const isLifetime = ownedKeys.includes('premium_lifetime');
 
   const handleCheckout = async () => {
     if (checkoutInFlight.current) return;
@@ -29,7 +28,7 @@ export const SubscriptionSection: React.FC = () => {
   };
 
   // ── LIFETIME MEMBER ────────────────────────────────────────────────────────
-  if (isLifetime || isPremium) {
+  if (isPremium) {
     return (
       <div className="settings-section">
         <h3 className="settings-section__title">
