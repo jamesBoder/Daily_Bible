@@ -470,13 +470,11 @@
       "q4": "Why can I only make 4 guesses in Manna?",
       "a4": "Free accounts are limited to 4 guesses per Manna puzzle. A premium membership increases this to 6 guesses and also unlocks the full scripture clue from the start, hints (which reveal a letter for 15 Blessings), and detailed solve statistics.",
       "q5": "How do I unlock modern translations like NIV or ESV?",
-      "a5": "Modern translations (NIV, ESV, NLT, and more) are premium. You can unlock them either with a Words of Praise subscription ($1.99/mo or $17.99/yr) or a one-time \"Modern Translations\" purchase for $3.99 in the Shop.",
+      "a5": "Modern translations (NIV, ESV, NLT, and more) are premium. You can unlock them with a Premium membership ($9.99 once, no subscription) or a one-time \"Modern Translations\" purchase for $3.99 in the Shop.",
       "q6": "What are Blessings and what can I do with them?",
       "a6": "Blessings (✦) are the app's in-app currency, earned by reading the daily verse, writing reflections, journaling, playing Manna, and reaching streak milestones. Premium members earn 1.5× Blessings on every action. Spend them in the Shop to unlock themes. They never expire.",
       "q7": "Can I post on the Community Board?",
-      "a7": "The Community Board requires a premium (\"Devoted Member\") subscription to post. The Prayer Wall is open to all members — free and premium — including anonymous prayer requests. Challenges are visible to everyone.",
-      "q8": "My subscription shows \"Past Due\" — what do I do?",
-      "a8": "A past-due status means your last payment failed. Open the Account section in Settings and tap \"Manage Subscription\" to update your payment method in the Stripe portal. Your premium access is paused until payment is resolved."
+      "a7": "The Community Board requires a premium (\"Devoted Member\") membership to post. The Prayer Wall is open to all members — free and premium — including anonymous prayer requests. Challenges are visible to everyone."
     }
   },
   "account": {
@@ -666,38 +664,21 @@
   },
   "subscription": {
     "title": "Premium",
-    "free_description": "Unlock all premium features with a subscription.",
-    "choose_plan": "Choose plan",
-    "plan": {
-      "monthly": "Monthly",
-      "monthly_price": "$1.99 / mo",
-      "annual": "Annual",
-      "annual_price": "$17.99 / yr",
-      "annual_save": "Save 25%"
-    },
-    "upgrade_cta": "Upgrade to Premium",
+    "free_description": "Unlock everything, once. No subscription.",
+    "upgrade_cta": "Unlock Premium",
     "view_addons": "View Add-ons",
-    "active_title": "Premium Member",
-    "active_plan": "Plan:",
-    "renews": "Renews",
-    "manage": "Manage Subscription",
-    "trial_title": "Free Trial",
-    "trial_ends": "Trial ends {{date}}",
-    "canceled_title": "Subscription Canceled",
-    "access_until": "Access until {{date}}",
-    "reactivate": "Reactivate",
-    "past_due_title": "Payment Failed",
-    "past_due_description": "Please update your payment method to keep your premium access.",
-    "past_due_banner": "Your last payment failed. Please update your payment method to keep premium access.",
-    "update_payment": "Update Payment Method",
-    "refresh": "Refresh Status",
+    "lifetime_title": "Lifetime Member",
+    "lifetime_meta": "All features unlocked — yours forever, including future content.",
+    "launch_offer": "Launch offer",
     "loading": "Loading…",
-    "modal_label": "Premium subscription",
+    "modal_label": "Unlock Premium",
     "modal_title": "Go Premium",
-    "modal_subtitle": "Deepen your daily practice",
-    "modal_legal": "Cancel anytime. No hidden fees.",
+    "modal_subtitle": "One payment. Yours forever.",
+    "modal_legal": "One-time payment. No subscription. Future content included.",
     "success_toast": "Welcome to Premium!",
     "nav_badge_tooltip": "You are a Premium member",
+    "checkout_error": "Could not start checkout. Please try again.",
+    "became_premium": "Welcome to Premium!",
     "feature": {
       "reading_plans": "Full Scripture reading plan library",
       "annotations": "Verse annotations & personal notes",
@@ -708,7 +689,8 @@
       "translations": "Modern Bible translations",
       "streak_calendar": "Full streak calendar",
       "blessings_multiplier": "1.5× Blessings on every action",
-      "reflection_archive": "Full reflection archive"
+      "reflection_archive": "Full reflection archive",
+      "future_content": "All future features & content"
     }
   },
   "otp": {
@@ -938,7 +920,7 @@
   },
   "annotation": {
     "panelTitle": "Your Notes on {{reference}}",
-    "premiumRequired": "Annotations are available with a Words of Praise subscription.",
+    "premiumRequired": "Annotations are available with a Words of Praise Premium membership.",
     "empty": "No annotations yet for this verse.",
     "addNote": "Add a note",
     "phrasePlaceholder": "Phrase from this verse…",
@@ -963,7 +945,7 @@
     "planComplete": "Plan Complete!",
     "planCompleteDesc": "You've finished this reading plan.",
     "noActivePlans": "No active plans yet.",
-    "premiumRequired": "This plan requires a Words of Praise subscription.",
+    "premiumRequired": "This plan requires a Words of Praise Premium membership.",
     "day": "Day",
     "reflection": "Reflection",
     "currentDay": "Today's Reading",

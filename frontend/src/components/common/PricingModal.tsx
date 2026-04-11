@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { X, Crown, Star, BookOpen, Palette, Calendar, Scroll } from '@phosphor-icons/react';
+import { X, Crown, Star, BookOpen, Palette, Calendar, Scroll, Infinity } from '@phosphor-icons/react';
 import { usePricingModal } from '../../hooks/usePricingModal';
 import { useStreak } from '../../contexts/StreakContext';
 import { FocusTrap } from './FocusTrap';
@@ -14,6 +14,7 @@ const PLAN_FEATURES: string[] = [
   'subscription.feature.streak_calendar',
   'subscription.feature.blessings_multiplier',
   'subscription.feature.reflection_archive',
+  'subscription.feature.future_content',
 ];
 
 const FEATURE_ICONS: React.ReactNode[] = [
@@ -24,6 +25,7 @@ const FEATURE_ICONS: React.ReactNode[] = [
   <Calendar size={18} weight="duotone" key="calendar" />,
   <Crown size={18} weight="duotone" key="blessings" />,
   <BookOpen size={18} weight="duotone" key="reflections" />,
+  <Infinity size={18} weight="duotone" key="future" />,
 ];
 
 const OTP_MODAL_ITEMS = [
@@ -46,8 +48,7 @@ const CLOSE_ANIMATION_MS = 200;
 export const PricingModal: React.FC = () => {
   const { t } = useTranslation();
   const { isOpen, initialView, closeModal } = usePricingModal();
-  const { startCheckout, subscriptionLoading, startOneTimePurchase, subscription } = useStreak();
-  const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
+  const { subscriptionLoading, startOneTimePurchase, subscription } = useStreak();
   const [view, setView] = useState<'plans' | 'otp'>(initialView);
   const [isClosing, setIsClosing] = useState(false);
   const overlayRef = useRef<HTMLDivElement>(null);
@@ -102,7 +103,7 @@ export const PricingModal: React.FC = () => {
     if (checkoutInFlight.current) return;
     checkoutInFlight.current = true;
     try {
-      await startCheckout(planChoice);
+      await startOneTimePurchase('premium_lifetime');
     } catch {
       // redirect in progress or cancelled
     } finally {
@@ -176,33 +177,10 @@ export const PricingModal: React.FC = () => {
                 ))}
               </ul>
 
-              <div className="pricing-modal__plans" role="radiogroup" aria-label={t('subscription.choose_plan', 'Choose plan')}>
-                <label className={`pricing-modal__plan${planChoice === 'monthly' ? ' pricing-modal__plan--selected' : ''}`}>
-                  <input
-                    type="radio"
-                    name="pricing-plan"
-                    value="monthly"
-                    checked={planChoice === 'monthly'}
-                    onChange={() => setPlanChoice('monthly')}
-                    className="sr-only"
-                  />
-                  <span className="pricing-modal__plan-name">{t('subscription.plan.monthly', 'Monthly')}</span>
-                  <span className="pricing-modal__plan-price">{t('subscription.plan.monthly_price', '$2.99 / mo')}</span>
-                </label>
-
-                <label className={`pricing-modal__plan${planChoice === 'annual' ? ' pricing-modal__plan--selected' : ''}`}>
-                  <input
-                    type="radio"
-                    name="pricing-plan"
-                    value="annual"
-                    checked={planChoice === 'annual'}
-                    onChange={() => setPlanChoice('annual')}
-                    className="sr-only"
-                  />
-                  <span className="pricing-modal__plan-name">{t('subscription.plan.annual', 'Annual')}</span>
-                  <span className="pricing-modal__plan-price">{t('subscription.plan.annual_price', '$29.99 / yr')}</span>
-                  <span className="pricing-modal__plan-badge">{t('subscription.plan.annual_save', 'Save 17%')}</span>
-                </label>
+              <div className="pricing-modal__lifetime-pricing">
+                <span className="pricing-modal__lifetime-original">$12.99</span>
+                <span className="pricing-modal__lifetime-sale">$9.99</span>
+                <span className="pricing-modal__lifetime-badge">{t('subscription.launch_offer', 'Launch offer')}</span>
               </div>
 
               <button
@@ -210,12 +188,12 @@ export const PricingModal: React.FC = () => {
                 onClick={handleCheckout}
                 disabled={subscriptionLoading}
               >
-                <Crown size={18} weight="fill" />
-                {t('subscription.upgrade_cta', 'Upgrade to Premium')}
+                <Infinity size={18} weight="bold" />
+                {t('subscription.upgrade_cta', 'Unlock Premium')}
               </button>
 
               <p className="pricing-modal__legal">
-                {t('subscription.modal_legal', 'Cancel anytime. No hidden fees.')}
+                {t('subscription.modal_legal', 'One-time payment. No subscription. Future content included.')}
               </p>
             </div>
           )}

@@ -16,7 +16,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/stripe/stripe-go/v80"
 	checkoutsession "github.com/stripe/stripe-go/v80/checkout/session"
-	portalsession "github.com/stripe/stripe-go/v80/billingportal/session"
 	"github.com/stripe/stripe-go/v80/webhook"
 	"golang.org/x/time/rate"
 )
@@ -88,43 +87,6 @@ func (h *SubscriptionHandler) HandleStripeWebhook(c *gin.Context) {
 	// Return 500 only on genuine transient failures (DB commit failures) so Stripe retries.
 	switch event.Type {
 
-	case "customer.subscription.created",
-		"customer.subscription.updated",
-		"customer.subscription.deleted":
-		var sub stripe.Subscription
-		if err := json.Unmarshal(event.Data.Raw, &sub); err != nil {
-			log.Printf("Webhook: failed to parse subscription event: %v", err)
-			c.Status(http.StatusOK)
-			return
-		}
-		priceID := ""
-		if len(sub.Items.Data) > 0 {
-			priceID = sub.Items.Data[0].Price.ID
-		}
-		var periodEnd *time.Time
-		if sub.CurrentPeriodEnd != 0 {
-			t := time.Unix(sub.CurrentPeriodEnd, 0).UTC()
-			periodEnd = &t
-		}
-		var canceledAt *time.Time
-		if sub.CanceledAt != 0 {
-			t := time.Unix(sub.CanceledAt, 0).UTC()
-			canceledAt = &t
-		}
-		customerID := ""
-		if sub.Customer != nil {
-			customerID = sub.Customer.ID
-		}
-		if affectedUserID, err := h.subscriptionService.SyncFromWebhook(
-			sub.ID, string(sub.Status), priceID, customerID, periodEnd, canceledAt,
-		); err != nil {
-			log.Printf("Webhook: SyncFromWebhook failed: %v", err)
-		} else if h.cachedChecker != nil {
-			// Invalidate the IsPremium cache for this user so the status change
-			// takes effect immediately rather than waiting for TTL expiry.
-			h.cachedChecker.Invalidate(affectedUserID)
-		}
-
 	case "checkout.session.completed":
 		var session stripe.CheckoutSession
 		if err := json.Unmarshal(event.Data.Raw, &session); err != nil {
@@ -153,13 +115,6 @@ func (h *SubscriptionHandler) HandleStripeWebhook(c *gin.Context) {
 			return
 		}
 
-	case "invoice.payment_failed":
-		// Payment failed — the subsequent customer.subscription.updated event will
-		// update our DB status to "past_due". Log only; no action needed here.
-		var inv stripe.Invoice
-		if err := json.Unmarshal(event.Data.Raw, &inv); err == nil && inv.Customer != nil {
-			log.Printf("Webhook: invoice.payment_failed for customer %s", inv.Customer.ID)
-		}
 	}
 
 	c.Status(http.StatusOK)
@@ -183,7 +138,7 @@ func (h *SubscriptionHandler) GetStatus(c *gin.Context) {
 }
 
 // CreateCheckout handles POST /api/subscription/checkout.
-// Accepts EITHER { "plan": "monthly"|"annual" } OR { "product_key": "..." } — mutually exclusive.
+// Accepts { "product_key": "..." } for one-time purchases (including "premium_lifetime").
 func (h *SubscriptionHandler) CreateCheckout(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
 
@@ -194,21 +149,10 @@ func (h *SubscriptionHandler) CreateCheckout(c *gin.Context) {
 	}
 
 	var req struct {
-		Plan       string `json:"plan"`        // "monthly" or "annual"
-		ProductKey string `json:"product_key"` // one of the 9 product keys
+		ProductKey string `json:"product_key"`
 	}
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid request body"})
-		return
-	}
-
-	// Validate: exactly one of plan or product_key must be set.
-	if (req.Plan == "" && req.ProductKey == "") || (req.Plan != "" && req.ProductKey != "") {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "provide either plan or product_key, not both"})
-		return
-	}
-	if req.Plan != "" && req.Plan != "monthly" && req.Plan != "annual" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "plan must be 'monthly' or 'annual'"})
+	if err := c.ShouldBindJSON(&req); err != nil || req.ProductKey == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "product_key is required"})
 		return
 	}
 
@@ -235,53 +179,25 @@ func (h *SubscriptionHandler) CreateCheckout(c *gin.Context) {
 		return
 	}
 
-	var (
-		priceID  string
-		mode     stripe.CheckoutSessionMode
-		metadata map[string]string
-	)
-
-	if req.Plan != "" {
-		// Guard against creating a second active subscription.
-		if existing.Status == "active" || existing.Status == "trialing" {
-			c.JSON(http.StatusConflict, gin.H{"error": "subscription already active"})
-			return
-		}
-		mode = stripe.CheckoutSessionModeSubscription
-		if req.Plan == "annual" {
-			priceID = os.Getenv("STRIPE_PRICE_ANNUAL")
-		} else {
-			priceID = os.Getenv("STRIPE_PRICE_MONTHLY")
-		}
-		metadata = map[string]string{"user_id": strconv.Itoa(int(userID))}
-	} else {
-		mode = stripe.CheckoutSessionModePayment
-		priceID = services.ProductKeyToPriceID(req.ProductKey)
-		if priceID == "" {
-			c.JSON(http.StatusBadRequest, gin.H{"error": "unknown product_key"})
-			return
-		}
-		metadata = map[string]string{
-			"user_id":     strconv.Itoa(int(userID)),
-			"product_key": req.ProductKey,
-		}
+	priceID := services.ProductKeyToPriceID(req.ProductKey)
+	if priceID == "" {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "unknown product_key"})
+		return
 	}
 
 	frontendBase := os.Getenv("FRONTEND_BASE_URL")
-	successURL := frontendBase + "/shop?subscribed=true"
-	if req.ProductKey != "" {
-		successURL = frontendBase + "/shop?purchased=" + req.ProductKey
-	}
-
 	params := &stripe.CheckoutSessionParams{
 		Customer: stripe.String(customerID),
-		Mode:     stripe.String(string(mode)),
+		Mode:     stripe.String(string(stripe.CheckoutSessionModePayment)),
 		LineItems: []*stripe.CheckoutSessionLineItemParams{
 			{Price: stripe.String(priceID), Quantity: stripe.Int64(1)},
 		},
-		SuccessURL: stripe.String(successURL),
+		SuccessURL: stripe.String(frontendBase + "/shop?purchased=" + req.ProductKey),
 		CancelURL:  stripe.String(frontendBase + "/shop"),
-		Metadata:   metadata,
+		Metadata: map[string]string{
+			"user_id":     strconv.Itoa(int(userID)),
+			"product_key": req.ProductKey,
+		},
 	}
 
 	session, err := checkoutsession.New(params)
@@ -292,7 +208,7 @@ func (h *SubscriptionHandler) CreateCheckout(c *gin.Context) {
 	}
 
 	if session.URL == "" {
-		log.Printf("Checkout: Stripe returned empty URL for userID=%d productKey=%q plan=%q", userID, req.ProductKey, req.Plan)
+		log.Printf("Checkout: Stripe returned empty URL for userID=%d productKey=%q", userID, req.ProductKey)
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create checkout session"})
 		return
 	}
@@ -304,25 +220,3 @@ func (h *SubscriptionHandler) CreateCheckout(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"url": session.URL})
 }
 
-// CreatePortalSession handles POST /api/subscription/portal.
-func (h *SubscriptionHandler) CreatePortalSession(c *gin.Context) {
-	userID := c.MustGet("userID").(uint)
-	sub := h.subscriptionService.GetSubscription(userID)
-
-	if sub.StripeCustomerID == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "no active subscription to manage"})
-		return
-	}
-
-	params := &stripe.BillingPortalSessionParams{
-		Customer:  stripe.String(sub.StripeCustomerID),
-		ReturnURL: stripe.String(os.Getenv("FRONTEND_BASE_URL") + "/shop"),
-	}
-	ps, err := portalsession.New(params)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create portal session"})
-		return
-	}
-
-	c.JSON(http.StatusOK, gin.H{"url": ps.URL})
-}

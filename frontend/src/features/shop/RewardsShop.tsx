@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
-import { Crown, Check, Palette, Sparkle } from '@phosphor-icons/react';
+import { Crown, Check, Palette, Sparkle, Infinity } from '@phosphor-icons/react';
 import toast from 'react-hot-toast';
 import { ThemePicker } from '../settings/ThemePicker';
 import { OneTimePurchaseSection } from '../settings/OneTimePurchaseSection';
@@ -23,34 +23,25 @@ const PLAN_FEATURES = [
   'subscription.feature.streak_calendar',
   'subscription.feature.blessings_multiplier',
   'subscription.feature.reflection_archive',
+  'subscription.feature.future_content',
 ];
-
-const formatDate = (iso: string | null): string => {
-  if (!iso) return '';
-  return new Date(iso).toLocaleDateString(undefined, {
-    year: 'numeric', month: 'long', day: 'numeric',
-  });
-};
 
 export const RewardsShop: React.FC = () => {
   const { t } = useTranslation();
   const location = useLocation();
   const {
     subscription, subscriptionLoading,
-    startCheckout, openPortal, refreshSubscription, refreshStreak,
+    startOneTimePurchase, refreshSubscription, refreshStreak,
   } = useStreak();
-  const [planChoice, setPlanChoice] = useState<'monthly' | 'annual'>('annual');
-  const [portalLoading, setPortalLoading] = useState(false);
   // §8.18.1: prevent double-tap before overlay appears
   const checkoutInFlight = useRef(false);
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(SHOP_TUTORIAL_KEY);
 
-  // Handle Stripe return (?subscribed=true or ?purchased=<key>)
+  // Handle Stripe return (?purchased=<key>)
   React.useEffect(() => {
     const params = new URLSearchParams(location.search);
-    const subscribed = params.get('subscribed');
     const purchased = params.get('purchased');
-    if (!subscribed && !purchased) return;
+    if (!purchased) return;
 
     window.history.replaceState({}, '', location.pathname);
     sessionStorage.removeItem('pendingStripeUrl');
@@ -58,13 +49,10 @@ export const RewardsShop: React.FC = () => {
     sessionStorage.removeItem('pendingStripeInitiatedAt');
 
     refreshSubscription().then(() => {
-      // Always refresh blessings balance alongside subscription — OTP purchases
-      // (e.g. Grace Day Pack) may credit blessings, and the chip must update.
       refreshStreak().catch(() => {});
-      if (subscribed === 'true') {
-        // subscription-success sound fires via StreakContext isPremium transition watcher
-      } else if (purchased) {
-        // §8.18.3: play purchase-success sound after OTP purchase
+      // §8.18.3: premium_lifetime fires welcome ceremony via StreakContext isPremium watcher;
+      // all other OTP purchases play the generic success sound.
+      if (purchased !== 'premium_lifetime') {
         SoundService.play('purchase-success');
         toast.success(t('otp.success_toast', 'Purchase complete!'));
       }
@@ -72,32 +60,19 @@ export const RewardsShop: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const status = subscription?.status ?? 'none';
   const isPremium = subscription?.is_premium ?? false;
-  const plan = subscription?.plan ?? '';
-  const periodEnd = subscription?.period_end ?? null;
-  const canceledAt = subscription?.canceled_at ?? null;
   const ownedKeys = subscription?.owned_purchase_keys ?? [];
+  const isLifetime = ownedKeys.includes('premium_lifetime');
 
-  const handleCheckout = async () => {
+  const handleLifetimeCheckout = async () => {
     if (checkoutInFlight.current) return;
     checkoutInFlight.current = true;
-    try { await startCheckout(planChoice); }
+    try { await startOneTimePurchase('premium_lifetime'); }
     catch (err: any) {
       const msg = err?.response?.data?.error ?? t('subscription.checkout_error', 'Could not start checkout. Please try again.');
       toast.error(msg);
     }
     finally { checkoutInFlight.current = false; }
-  };
-
-  const handlePortal = async () => {
-    setPortalLoading(true);
-    try { await openPortal(); }
-    catch (err: any) {
-      setPortalLoading(false);
-      const msg = err?.response?.data?.error ?? t('subscription.portal_error', 'Could not open subscription portal. Please try again.');
-      toast.error(msg);
-    }
   };
 
   return (
@@ -124,8 +99,23 @@ export const RewardsShop: React.FC = () => {
         </button>
       </div>
 
-      {/* ── Premium hero card (free / non-premium users) ─────────────────── */}
-      {!isPremium && status !== 'canceled' && status !== 'past_due' && (
+      {/* ── Lifetime member status card ──────────────────────────────────── */}
+      {isLifetime && (
+        <div className={styles.activeCard}>
+          <Infinity size={20} weight="bold" className={styles.activeCardCrown} />
+          <div className={styles.activeCardBody}>
+            <p className={styles.activeCardTitle}>
+              {t('subscription.lifetime_title', 'Lifetime Member')}
+            </p>
+            <p className={styles.activeCardMeta}>
+              {t('subscription.lifetime_meta', 'All features unlocked — yours forever, including future content.')}
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* ── Lifetime offer card (free users) ────────────────────────────── */}
+      {!isPremium && (
         <div className={styles.premiumCard}>
           <div className={styles.premiumCardGlow} aria-hidden="true" />
 
@@ -137,7 +127,7 @@ export const RewardsShop: React.FC = () => {
               {t('subscription.modal_title', 'Go Premium')}
             </h2>
             <p className={styles.premiumCardSubtitle}>
-              {t('subscription.modal_subtitle', 'Deepen your daily practice')}
+              {t('subscription.modal_subtitle', 'One payment. Yours forever.')}
             </p>
           </div>
 
@@ -152,97 +142,24 @@ export const RewardsShop: React.FC = () => {
             ))}
           </ul>
 
-          <div className={styles.planToggle} role="radiogroup" aria-label={t('subscription.choose_plan', 'Choose plan')}>
-            <label className={`${styles.planOption}${planChoice === 'monthly' ? ` ${styles.planOptionActive}` : ''}`}>
-              <input
-                type="radio"
-                name="shop-plan"
-                value="monthly"
-                checked={planChoice === 'monthly'}
-                onChange={() => setPlanChoice('monthly')}
-                className="sr-only"
-              />
-              <span className={styles.planName}>{t('subscription.plan.monthly', 'Monthly')}</span>
-              <span className={styles.planPrice}>{t('subscription.plan.monthly_price', '$1.99 / mo')}</span>
-            </label>
-            <label className={`${styles.planOption}${planChoice === 'annual' ? ` ${styles.planOptionActive}` : ''}`}>
-              <input
-                type="radio"
-                name="shop-plan"
-                value="annual"
-                checked={planChoice === 'annual'}
-                onChange={() => setPlanChoice('annual')}
-                className="sr-only"
-              />
-              <div className={styles.planNameRow}>
-                <span className={styles.planName}>{t('subscription.plan.annual', 'Annual')}</span>
-                <span className={styles.planBestValue}>{t('subscription.plan.annual_save', 'Save 25%')}</span>
-              </div>
-              <span className={styles.planPrice}>{t('subscription.plan.annual_price', '$17.99 / yr')}</span>
-            </label>
+          <div className={styles.lifetimePricing}>
+            <span className={styles.lifetimeOriginalPrice}>$12.99</span>
+            <span className={styles.lifetimeSalePrice}>$9.99</span>
+            <span className={styles.lifetimeBadge}>{t('subscription.launch_offer', 'Launch offer')}</span>
           </div>
 
           <button
             className={styles.premiumCta}
-            onClick={handleCheckout}
+            onClick={handleLifetimeCheckout}
             disabled={subscriptionLoading}
           >
             <Crown size={18} weight="fill" />
-            {t('subscription.upgrade_cta', 'Upgrade to Premium')}
+            {t('subscription.upgrade_cta', 'Unlock Premium')}
           </button>
 
           <p className={styles.premiumLegal}>
-            {t('subscription.modal_legal', 'Cancel anytime. No hidden fees.')}
+            {t('subscription.modal_legal', 'One-time payment. No subscription. Future content included.')}
           </p>
-        </div>
-      )}
-
-      {/* ── Active premium status card ───────────────────────────────────── */}
-      {isPremium && !canceledAt && (
-        <div className={styles.activeCard}>
-          <Crown size={20} weight="fill" className={styles.activeCardCrown} />
-          <div className={styles.activeCardBody}>
-            <p className={styles.activeCardTitle}>
-              {t('subscription.active_title', 'Premium Member')}
-            </p>
-            <p className={styles.activeCardMeta}>
-              {t('subscription.active_plan', 'Plan:')} <strong>{t(`subscription.plan.${plan}`, plan)}</strong>
-              {periodEnd && (
-                <> · {t('subscription.renews', 'Renews')} {formatDate(periodEnd)}</>
-              )}
-            </p>
-          </div>
-          <button
-            className={styles.manageBtn}
-            onClick={handlePortal}
-            disabled={portalLoading}
-          >
-            {portalLoading ? t('subscription.loading', 'Loading…') : t('subscription.manage', 'Manage')}
-          </button>
-        </div>
-      )}
-
-      {/* ── Canceled — still has access ─────────────────────────────────── */}
-      {status === 'canceled' && (
-        <div className={`${styles.activeCard} ${styles.activeCardCanceled}`}>
-          <Crown size={20} weight="fill" className={styles.activeCardCrown} />
-          <div className={styles.activeCardBody}>
-            <p className={styles.activeCardTitle}>
-              {t('subscription.canceled_title', 'Subscription Canceled')}
-            </p>
-            {periodEnd && (
-              <p className={styles.activeCardMeta}>
-                {t('subscription.access_until', 'Access until {{date}}', { date: formatDate(periodEnd) })}
-              </p>
-            )}
-          </div>
-          <button
-            className={`${styles.manageBtn} ${styles.manageBtnPrimary}`}
-            onClick={handlePortal}
-            disabled={portalLoading}
-          >
-            {portalLoading ? t('subscription.loading', 'Loading…') : t('subscription.reactivate', 'Reactivate')}
-          </button>
         </div>
       )}
 

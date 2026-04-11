@@ -297,6 +297,49 @@
   margin: 0;
 }
 
+/* ── Lifetime pricing row ─────────────────────────────────────────────── */
+.lifetimePricing {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.625rem;
+}
+
+.lifetimeOriginalPrice {
+  font-size: 1.0625rem;
+  font-weight: 600;
+  color: #92400e;
+  text-decoration: line-through;
+  opacity: 0.55;
+}
+
+:global(.dark) .lifetimeOriginalPrice {
+  color: #fde68a;
+}
+
+.lifetimeSalePrice {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #92400e;
+  letter-spacing: -0.02em;
+}
+
+:global(.dark) .lifetimeSalePrice {
+  color: #fde68a;
+}
+
+.lifetimeBadge {
+  font-size: 0.6875rem;
+  font-weight: 700;
+  color: #fff;
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  padding: 0.2rem 0.5rem;
+  border-radius: 999px;
+  white-space: nowrap;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
 /* ── Active subscription card ─────────────────────────────────────────── */
 .activeCard {
   display: flex;

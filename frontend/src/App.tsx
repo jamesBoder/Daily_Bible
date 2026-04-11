@@ -18,7 +18,6 @@ import { SoundService } from "./services/SoundService";
 import { PricingModalProvider } from "./hooks/usePricingModal";
 import { InstallPromptProvider } from "./contexts/InstallPromptContext";
 import { PricingModal } from "./components/common/PricingModal";
-import { PaymentAlert } from "./components/common/PaymentAlert";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
 import "./App.css";
 
@@ -326,7 +325,6 @@ function App() {
                 }}
               />
               <BlessingsToast />
-              <PaymentAlert />
               <PricingModal />
               <RouterProvider router={router} />
             </PricingModalProvider>

@@ -192,7 +192,6 @@ func SetupRoutes(
 			{
 				sub.GET("/status", subscriptionHandler.GetStatus)
 				sub.POST("/checkout", subscriptionHandler.CreateCheckout)
-				sub.POST("/portal", subscriptionHandler.CreatePortalSession)
 			}
 
 			// Phase 9: community board (auth-required routes)

@@ -45,9 +45,7 @@ interface StreakContextType {
   subscription: SubscriptionData | null;
   subscriptionLoading: boolean;
   refreshSubscription: () => Promise<void>;
-  startCheckout: (plan: string) => Promise<void>;
   startOneTimePurchase: (productKey: string) => Promise<void>;
-  openPortal: () => Promise<void>;
   // §8.18.4
   checkoutOverlayVisible: boolean;
   cancelCheckout: () => void;
@@ -88,9 +86,8 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   const [checkoutOverlayVisible, setCheckoutOverlayVisible] = useState(false);
   const checkoutControllerRef = useRef<AbortController | null>(null);
 
-  // §8.18.4: Track subscription transitions for welcome ceremony and past_due resolution
+  // Track premium transitions for welcome ceremony
   const prevIsPremiumRef = useRef<boolean | undefined>(undefined);
-  const prevStatusRef = useRef<string | undefined>(undefined);
 
   // Debounced refresh function to prevent rapid API calls
   const refreshStreak = useCallback(async () => {
@@ -152,7 +149,6 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     const wasPremium = prevIsPremiumRef.current;
     const isPremium = subscription.is_premium;
-    const prevStatus = prevStatusRef.current;
 
     // Welcome ceremony: false → true (guarded by sessionStorage to play once per session)
     if (wasPremium === false && isPremium === true) {
@@ -166,16 +162,8 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       }
     }
 
-    // past_due → active: quiet confirmation
-    if (prevStatus === 'past_due' && subscription.status === 'active') {
-      toast.success(t('subscription.past_due_resolved', 'Payment resolved. Your subscription is active.'));
-      localStorage.removeItem('paymentAlertDismissedAt');
-      sessionStorage.removeItem('paymentAlertSounded');
-    }
-
     prevIsPremiumRef.current = isPremium;
-    prevStatusRef.current = subscription.status;
-  }, [subscription?.is_premium, subscription?.status, t]);
+  }, [subscription?.is_premium, t]);
 
   // §8.18.4: Cancel in-flight checkout
   const cancelCheckout = useCallback(() => {
@@ -243,28 +231,6 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [isAuthenticated, refreshStreak]);
 
-  const startCheckout = useCallback(async (plan: string) => {
-    // §8.18.1/8.18.3/8.18.4: play tap sound, show overlay, abort previous if any
-    checkoutControllerRef.current?.abort();
-    const controller = new AbortController();
-    checkoutControllerRef.current = controller;
-    SoundService.play('checkout-tap');
-    setCheckoutOverlayVisible(true);
-    try {
-      const res = await api.post('/api/subscription/checkout', { plan },
-        { signal: controller.signal });
-      const { url } = res.data;
-      sessionStorage.setItem('pendingStripeUrl', url);
-      sessionStorage.setItem('pendingStripeType', 'subscription');
-      sessionStorage.setItem('pendingStripeInitiatedAt', String(Date.now()));
-      window.location.href = url;
-      // overlay persists until page navigates away
-    } catch (err: any) {
-      setCheckoutOverlayVisible(false);
-      throw err; // let callers handle the error toast
-    }
-  }, []);
-
   const startOneTimePurchase = useCallback(async (productKey: string) => {
     checkoutControllerRef.current?.abort();
     const controller = new AbortController();
@@ -285,10 +251,6 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, []);
 
-  const openPortal = useCallback(async () => {
-    const res = await api.post('/api/subscription/portal');
-    window.location.href = res.data.url;
-  }, []);
 
   // Initial load and auth change
   useEffect(() => {
@@ -358,9 +320,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         subscription,
         subscriptionLoading,
         refreshSubscription,
-        startCheckout,
         startOneTimePurchase,
-        openPortal,
         checkoutOverlayVisible,
         cancelCheckout,
       }}

@@ -5,7 +5,6 @@ import (
 	"os"
 	"strconv"
 	"strings"
-	"time"
 
 	"gorm.io/gorm"
 )
@@ -36,35 +35,22 @@ func NewStripeSubscriptionChecker(db *gorm.DB) SubscriptionChecker {
 	return &StripeSubscriptionChecker{db: db, overrideIDs: overrides}
 }
 
-// IsPremium returns true if the user has an active or trialing subscription,
-// OR if their subscription is canceled/past_due but the current period has not yet ended
-// (access is preserved through the paid period even after cancellation).
+// IsPremium returns true if the user has a lifetime purchase unlock,
+// OR an active/trialing subscription (legacy path, kept for backward compatibility).
 // DEV_PREMIUM_USER_IDS overrides are respected for test/dev users.
 func (s *StripeSubscriptionChecker) IsPremium(userID uint) bool {
 	if s.overrideIDs[userID] {
 		return true
 	}
 
-	var sub models.UserSubscription
-	if err := s.db.Where("user_id = ?", userID).First(&sub).Error; err != nil {
-		return false // no record = free user
+	// Lifetime one-time purchase — primary path going forward.
+	var count int64
+	s.db.Model(&models.UserUnlock{}).
+		Where("user_id = ? AND unlock_type = 'purchase' AND unlock_key = 'premium_lifetime'", userID).
+		Count(&count)
+	if count > 0 {
+		return true
 	}
 
-	switch sub.Status {
-	case "active", "trialing":
-		return true
-	case "canceled":
-		// Preserve access through the end of the paid period.
-		if sub.CurrentPeriodEnd != nil && sub.CurrentPeriodEnd.After(time.Now()) {
-			return true
-		}
-	case "past_due":
-		// Payment failed but not yet canceled — Stripe gives a grace window.
-		// Keep premium access during this window to avoid penalizing users for
-		// temporary payment failures (expired card, etc.).
-		if sub.CurrentPeriodEnd != nil && sub.CurrentPeriodEnd.After(time.Now()) {
-			return true
-		}
-	}
 	return false
 }

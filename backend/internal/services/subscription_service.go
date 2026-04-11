@@ -164,6 +164,26 @@ func (s *SubscriptionService) handleOneTimePurchaseWithTx(tx *gorm.DB, userID ui
 		return s.fulfillGraceDayPackWithTx(tx, userID, stripeSessionID)
 	case "full_theme_library":
 		return s.fulfillFullThemeLibraryWithTx(tx, userID)
+	case "premium_lifetime":
+		created, err := s.createUnlockRecordWithTx(tx, userID, "premium_lifetime")
+		if err != nil {
+			return err
+		}
+		if created {
+			uid := userID
+			go func() {
+				defer func() {
+					if r := recover(); r != nil {
+						log.Printf("premium_lifetime goroutine panic for user %d: %v", uid, r)
+					}
+				}()
+				s.rewardsService.UpgradeBadgesToPremium(uid)
+				if err := s.streakService.FlushGraceDaysQueue(uid); err != nil {
+					log.Printf("FlushGraceDaysQueue failed for user %d: %v", uid, err)
+				}
+			}()
+		}
+		return nil
 	case "premium_badges":
 		created, err := s.createUnlockRecordWithTx(tx, userID, "premium_badges")
 		if err != nil {
@@ -324,6 +344,7 @@ func mapStripeStatus(stripeStatus string) string {
 // Keys must match exactly what the frontend sends in { "product_key": "..." }.
 func ProductKeyToPriceID(key string) string {
 	m := map[string]string{
+		"premium_lifetime":    os.Getenv("STRIPE_PRICE_PREMIUM_LIFETIME"),
 		"grace_day_pack":      os.Getenv("STRIPE_PRICE_GRACE_DAY_PACK"),
 		"reflection_archive":  os.Getenv("STRIPE_PRICE_REFLECTION_ARCHIVE"),
 		"journal_unlock":      os.Getenv("STRIPE_PRICE_JOURNAL_UNLOCK"),

@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { useLanguage } from "../../contexts/LanguageContext";
 import StreakCandle from "../StreakCandle";
 import BlessingsChip from "../BlessingsChip";
-import { useStreak } from "../../contexts/StreakContext";
 import { MagnifyingGlass, Path, HandsPraying } from "@phosphor-icons/react";
 
 export const Header: React.FC = () => {
@@ -23,8 +22,6 @@ export const Header: React.FC = () => {
   const { t } = useTranslation();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { currentLanguage: _lang } = useLanguage();
-  const { subscription } = useStreak();
-  const isPastDue = subscription?.status === 'past_due';
 
   const handleLogout = async () => {
     await logout();
@@ -108,13 +105,6 @@ export const Header: React.FC = () => {
               <NavLink to="/settings" className={navLinkDesktop}>
                 {t("nav.settings")}
               </NavLink>
-              {isPastDue && (
-                <span
-                  className="absolute -top-1 -right-2 w-2 h-2 rounded-full bg-amber-500"
-                  aria-label={t('subscription.nav_badge.tooltip', 'Payment issue — update your payment method')}
-                  title={t('subscription.nav_badge.tooltip', 'Payment issue — update your payment method')}
-                />
-              )}
             </div>
           </div>
 

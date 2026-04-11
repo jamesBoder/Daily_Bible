@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
-import { useStreak } from '../../contexts/StreakContext';
 import {
   House,
   TextT,
@@ -34,13 +33,11 @@ import { DeviceMobile } from '@phosphor-icons/react';
 const BottomNav: React.FC = () => {
   const { t } = useTranslation();
   const { isGuest, logout } = useAuth();
-  const { subscription } = useStreak();
   const navigate = useNavigate();
   const location = useLocation();
   const [sheetOpen, setSheetOpen] = useState(false);
   const sheetRef = useRef<HTMLDivElement>(null);
 
-  const isPastDue = subscription?.status === 'past_due';
   const { canInstall, isInstalled, isIOS, install } = useInstallPromptContext();
   // Show nudge dot when the app can be installed and isn't already
   const showInstallNudge = !isInstalled && (canInstall || isIOS);
@@ -195,8 +192,6 @@ const BottomNav: React.FC = () => {
                   <Crown size={22} weight={isActive ? 'fill' : 'regular'} />
                   {isGuest ? (
                     <LockBadge />
-                  ) : isPastDue ? (
-                    <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500 animate-pulse" />
                   ) : null}
                 </span>
                 <span className="truncate w-full text-center">{t('nav.shop', 'Shop')}</span>
