@@ -995,7 +995,7 @@
   100% { transform: rotateX(0deg);  opacity: 1; }
 }
 
-/* Full-screen dimming backdrop */
+/* Full-screen dimming backdrop — always vertically centered */
 .manna-tutorial-backdrop {
   position: fixed;
   inset: 0;
@@ -1003,70 +1003,34 @@
   backdrop-filter: blur(5px);
   -webkit-backdrop-filter: blur(5px);
   display: flex;
-  align-items: flex-end;
+  align-items: center;
   justify-content: center;
   z-index: 200;
-  padding: 0;
+  padding: 1rem;
 }
 
-/* On taller viewports, center the panel instead of sheet-from-bottom */
-@media (min-height: 600px) {
-  .manna-tutorial-backdrop {
-    align-items: center;
-    padding: 1rem;
-  }
-}
-
-/* Panel card — compact, never tall enough to hide close button */
+/* Panel card — centered modal on all screen sizes */
 .manna-tutorial-panel {
   background: var(--journal-surface);
   border: 1px solid color-mix(in srgb, var(--blessing-gold) 22%, transparent);
-  border-radius: 20px 20px 0 0;
+  border-radius: 20px;
   padding: 1.1rem 1.25rem 1.4rem;
   width: 100%;
   max-width: 380px;
-  /* Compact max-height — leaves room above for the app header */
-  max-height: 60vh;
+  max-height: 80vh;
   overflow-y: auto;
   position: relative;
   box-shadow:
-    0 -6px 40px color-mix(in srgb, var(--foreground) 22%, transparent),
+    0 8px 60px color-mix(in srgb, var(--foreground) 30%, transparent),
     inset 0 1px 0 color-mix(in srgb, var(--blessing-gold) 18%, transparent);
   animation: tutorialSlideUp 0.38s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-@media (min-height: 600px) {
-  .manna-tutorial-panel {
-    border-radius: 20px;
-    max-height: 55vh;
-    box-shadow:
-      0 8px 60px color-mix(in srgb, var(--foreground) 30%, transparent),
-      inset 0 1px 0 color-mix(in srgb, var(--blessing-gold) 18%, transparent);
-  }
-}
-
-/* Landscape / short-screen */
+/* Landscape / very short screens */
 @media (max-height: 500px) {
   .manna-tutorial-panel {
     padding: 0.75rem 1rem 1rem;
-    max-height: 80vh;
-  }
-}
-
-/* Drag handle notch — mobile sheet affordance */
-.manna-tutorial-panel::before {
-  content: '';
-  display: block;
-  width: 42px;
-  height: 4px;
-  background: color-mix(in srgb, var(--foreground) 18%, transparent);
-  border-radius: 2px;
-  margin: 0 auto 1.25rem;
-}
-
-@media (min-height: 600px) {
-  .manna-tutorial-panel::before {
-    display: none;
+    max-height: 90vh;
   }
 }
 

@@ -22,7 +22,7 @@ import type { ThemeId } from "../../contexts/ThemeContext";
 
 type Tab = 'settings' | 'about';
 
-type SectionId = 'journey' | 'devotion' | 'appearance' | 'manna' | 'community' | 'install' | 'help' | 'account';
+type SectionId = 'journey' | 'devotion' | 'appearance' | 'manna' | 'community' | 'install' | 'help' | 'feedback' | 'account';
 
 const scrollToSection = (id: SectionId) => {
   document.getElementById(`settings-section-${id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -101,6 +101,9 @@ export const Settings: React.FC = () => {
             <button onClick={() => scrollToSection('help')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.sections.help', 'Help')}
             </button>
+            <button onClick={() => scrollToSection('feedback')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              {t('settings.sections.feedback', 'Feedback')}
+            </button>
             <button onClick={() => scrollToSection('account')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.tabs.account', 'Account')}
             </button>
@@ -176,6 +179,25 @@ export const Settings: React.FC = () => {
                 {t('settings.sections.helpDesc', 'Tap any feature to view its guide again.')}
               </p>
               <TutorialsSection />
+            </Card>
+
+            {/* Feedback & Contact */}
+            <Card id="settings-section-feedback">
+              <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
+                {t('settings.sections.feedback', 'Feedback & Contact')}
+              </h2>
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                {t('settings.sections.feedbackDesc', 'Found a bug or have a suggestion? We would love to hear from you.')}
+              </p>
+              <a
+                href="mailto:wordsofpraiseapp@gmail.com?subject=Words%20of%20Praise%20-%20Feedback"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-primary-50 dark:bg-primary-900/30 border border-primary-200 dark:border-primary-700 text-primary-700 dark:text-primary-300 font-medium text-sm hover:bg-primary-100 dark:hover:bg-primary-900/50 transition-colors"
+              >
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 256 256" fill="currentColor" aria-hidden="true">
+                  <path d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.19V181.81Z"/>
+                </svg>
+                wordsofpraiseapp@gmail.com
+              </a>
             </Card>
 
             {/* Account */}
