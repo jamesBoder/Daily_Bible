@@ -32,7 +32,7 @@ import { DeviceMobile } from '@phosphor-icons/react';
 
 const BottomNav: React.FC = () => {
   const { t } = useTranslation();
-  const { isGuest, logout } = useAuth();
+  const { user, logout } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sheetOpen, setSheetOpen] = useState(false);
@@ -62,7 +62,7 @@ const BottomNav: React.FC = () => {
   const handleLogout = async () => {
     setSheetOpen(false);
     await logout();
-    navigate('/login');
+    navigate('/daily');
   };
 
   // Pill indicator position — derived from current route / sheet state
@@ -150,14 +150,14 @@ const BottomNav: React.FC = () => {
               <>
                 <span className="relative">
                   <TextT size={22} weight={isActive ? 'fill' : 'regular'} />
-                  {isGuest && <LockBadge />}
+                  {!user && <LockBadge />}
                 </span>
                 <span className="truncate w-full text-center">{t('nav.manna', 'Manna')}</span>
               </>
             )}
           </NavLink>
 
-          {/* Community */}
+          {/* Community — open to all visitors */}
           <NavLink
             to="/community"
             onClick={haptic}
@@ -168,10 +168,7 @@ const BottomNav: React.FC = () => {
           >
             {({ isActive }) => (
               <>
-                <span className="relative">
-                  <Users size={22} weight={isActive ? 'fill' : 'regular'} />
-                  {isGuest && <LockBadge />}
-                </span>
+                <Users size={22} weight={isActive ? 'fill' : 'regular'} />
                 <span className="truncate w-full text-center">{t('nav.leaderboard', 'Community')}</span>
               </>
             )}
@@ -190,7 +187,7 @@ const BottomNav: React.FC = () => {
               <>
                 <span className="relative">
                   <Crown size={22} weight={isActive ? 'fill' : 'regular'} />
-                  {isGuest ? (
+                  {!user ? (
                     <LockBadge />
                   ) : null}
                 </span>
@@ -209,7 +206,7 @@ const BottomNav: React.FC = () => {
           >
             <span className="relative">
               <List size={22} weight={sheetOpen ? 'fill' : 'regular'} />
-              {isGuest ? <LockBadge /> : showInstallNudge && (
+              {!user ? <LockBadge /> : showInstallNudge && (
                 <span className="absolute -top-0.5 -right-1 w-2 h-2 rounded-full bg-amber-500 animate-pulse" aria-hidden="true" />
               )}
             </span>
@@ -257,160 +254,166 @@ const BottomNav: React.FC = () => {
           <X size={18} />
         </button>
 
-        {isGuest ? (
-          /* ── Guest sheet: sign-up prompt ─────────────────────────────── */
-          <div className="px-4 pb-6 pt-2">
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4 px-1">
-              {t('nav.moreMenu', 'More')}
-            </p>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-5 px-1">
-              Create a free account to unlock favorites, journal, search, and more.
-            </p>
-            <div className="flex flex-col gap-2">
-              <button
-                onClick={() => { setSheetOpen(false); navigate('/signup'); }}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-semibold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 transition-colors w-full"
-              >
-                <UserPlus size={20} />
-                Sign Up Free
-              </button>
-              <button
-                onClick={() => { setSheetOpen(false); navigate('/login'); }}
-                className="flex items-center gap-3 px-4 py-3 rounded-xl font-medium text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors w-full"
-              >
-                <SignIn size={20} />
-                Sign In
-              </button>
+        <div className="px-4 pb-4 pt-2">
+          {/* Visitor sign-up banner — shown at the top when not signed in */}
+          {!user && (
+            <div className="mb-3 p-3 rounded-xl bg-amber-50 dark:bg-amber-900/20 border border-amber-200/60 dark:border-amber-700/40 flex items-center gap-3">
+              <div className="flex-1 min-w-0">
+                <p className="text-xs font-semibold text-amber-800 dark:text-amber-300 leading-snug">
+                  Unlock the full experience
+                </p>
+                <p className="text-xs text-amber-700/70 dark:text-amber-400/70 mt-0.5">
+                  Save progress, track your streak &amp; more.
+                </p>
+              </div>
+              <div className="flex gap-1.5 shrink-0">
+                <button
+                  onClick={() => { setSheetOpen(false); navigate('/signup'); }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-semibold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 transition-colors"
+                >
+                  Sign Up
+                </button>
+                <button
+                  onClick={() => { setSheetOpen(false); navigate('/login'); }}
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                >
+                  Sign In
+                </button>
+              </div>
             </div>
+          )}
+
+          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-1">
+            {t('nav.moreMenu', 'More')}
+          </p>
+
+          <div className="flex flex-col gap-1">
+            <NavLink
+              to="/favorites"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                }`
+              }
+            >
+              <Heart size={20} weight="duotone" />
+              <span className="flex-1">{t('nav.favorites', 'Favorites')}</span>
+              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+            </NavLink>
+
+            <NavLink
+              to="/journal"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                }`
+              }
+            >
+              <BookOpen size={20} weight="duotone" />
+              <span className="flex-1">{t('nav.journal', 'Journal')}</span>
+              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+            </NavLink>
+
+            <NavLink
+              to="/search"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                }`
+              }
+            >
+              <MagnifyingGlass size={20} weight="duotone" />
+              <span className="flex-1">{t('nav.search', 'Search')}</span>
+              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+            </NavLink>
+
+            <NavLink
+              to="/plans"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                }`
+              }
+            >
+              <Path size={20} weight="duotone" />
+              {t('nav.plans', 'Reading Plans')}
+            </NavLink>
+
+            <NavLink
+              to="/prayer"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                }`
+              }
+            >
+              <HandsPraying size={20} weight="duotone" />
+              <span className="flex-1">{t('nav.prayer', 'Prayer')}</span>
+              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+            </NavLink>
+
+            {/* Install App — only shown when app is installable and not yet installed */}
+            {showInstallNudge && (
+              canInstall ? (
+                <button
+                  onClick={async () => { setSheetOpen(false); await install(); }}
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 w-full text-left"
+                >
+                  <DeviceMobile size={20} weight="duotone" />
+                  <span className="flex-1">{t('pwa.settings.androidTitle', 'Add to Home Screen')}</span>
+                  <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 animate-pulse" aria-hidden="true" />
+                </button>
+              ) : (
+                <NavLink
+                  to="/settings"
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
+                  onClick={() => setSheetOpen(false)}
+                >
+                  <DeviceMobile size={20} weight="duotone" />
+                  <span className="flex-1">{t('pwa.settings.iosTitle', 'Add to Home Screen')}</span>
+                  <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 animate-pulse" aria-hidden="true" />
+                </NavLink>
+              )
+            )}
+
+            <NavLink
+              to="/settings"
+              className={({ isActive }) =>
+                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
+                  isActive
+                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
+                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                }`
+              }
+            >
+              <Gear size={20} weight="duotone" />
+              {t('nav.settings', 'Settings')}
+            </NavLink>
+
+            {!!user && (
+              <>
+                <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left"
+                >
+                  <SignOut size={20} />
+                  {t('nav.logout', 'Log out')}
+                </button>
+              </>
+            )}
           </div>
-        ) : (
-          /* ── Authenticated sheet: full nav ───────────────────────────── */
-          <div className="px-4 pb-4 pt-2">
-            <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-1">
-              {t('nav.moreMenu', 'More')}
-            </p>
-
-            <div className="flex flex-col gap-1">
-              <NavLink
-                to="/favorites"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                    isActive
-                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                  }`
-                }
-              >
-                <Heart size={20} weight="duotone" />
-                {t('nav.favorites', 'Favorites')}
-              </NavLink>
-
-              <NavLink
-                to="/journal"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                    isActive
-                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                  }`
-                }
-              >
-                <BookOpen size={20} weight="duotone" />
-                {t('nav.journal', 'Journal')}
-              </NavLink>
-
-              <NavLink
-                to="/search"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                    isActive
-                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                  }`
-                }
-              >
-                <MagnifyingGlass size={20} weight="duotone" />
-                {t('nav.search', 'Search')}
-              </NavLink>
-
-              <NavLink
-                to="/plans"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                    isActive
-                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                  }`
-                }
-              >
-                <Path size={20} weight="duotone" />
-                {t('nav.plans', 'Reading Plans')}
-              </NavLink>
-
-              <NavLink
-                to="/prayer"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                    isActive
-                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                  }`
-                }
-              >
-                <HandsPraying size={20} weight="duotone" />
-                {t('nav.prayer', 'Prayer')}
-              </NavLink>
-
-              {/* Install App — only shown when app is installable and not yet installed */}
-              {showInstallNudge && (
-                canInstall ? (
-                  <button
-                    onClick={async () => { setSheetOpen(false); await install(); }}
-                    className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 w-full text-left"
-                  >
-                    <DeviceMobile size={20} weight="duotone" />
-                    <span className="flex-1">{t('pwa.settings.androidTitle', 'Add to Home Screen')}</span>
-                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 animate-pulse" aria-hidden="true" />
-                  </button>
-                ) : (
-                  <NavLink
-                    to="/settings"
-                    className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-amber-700 dark:text-amber-400 hover:bg-amber-50 dark:hover:bg-amber-900/20"
-                    onClick={() => setSheetOpen(false)}
-                  >
-                    <DeviceMobile size={20} weight="duotone" />
-                    <span className="flex-1">{t('pwa.settings.iosTitle', 'Add to Home Screen')}</span>
-                    <span className="w-2 h-2 rounded-full bg-amber-500 flex-shrink-0 animate-pulse" aria-hidden="true" />
-                  </NavLink>
-                )
-              )}
-
-              <NavLink
-                to="/settings"
-                className={({ isActive }) =>
-                  `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                    isActive
-                      ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                      : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                  }`
-                }
-              >
-                <Gear size={20} weight="duotone" />
-                {t('nav.settings', 'Settings')}
-              </NavLink>
-
-              <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
-
-              <button
-                onClick={handleLogout}
-                className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left"
-              >
-                <SignOut size={20} />
-                {t('nav.logout', 'Log out')}
-              </button>
-            </div>
-          </div>
-        )}
+        </div>
       </div>
     </>
   );
