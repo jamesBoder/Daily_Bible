@@ -9,6 +9,7 @@ primary_region = 'ewr'
 [build]
   [build.args]
     REACT_APP_API_URL = "https://api.wordsofpraise.app"
+    REACT_APP_POSTHOG_HOST = "https://us.i.posthog.com"
 
 [http_service]
   internal_port = 80

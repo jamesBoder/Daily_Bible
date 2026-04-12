@@ -4,9 +4,17 @@ import { reportWebVitals } from "./reportWebVitals";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./lib/queryClient";
 import { ErrorBoundary } from "./components/common/ErrorBoundary";
+import posthog from "posthog-js";
 import "./i18n"; // Initialize i18n
 import "./index.css";
 import App from "./App";
+
+if (process.env.NODE_ENV === "production" && process.env.REACT_APP_POSTHOG_KEY) {
+  posthog.init(process.env.REACT_APP_POSTHOG_KEY, {
+    api_host: process.env.REACT_APP_POSTHOG_HOST ?? "https://us.i.posthog.com",
+    person_profiles: "identified_only",
+  });
+}
 
 // Apply stored verse font-size preference before first paint to avoid flicker
 const VERSE_FONT_SIZES = ['0.875rem', '1rem', '1.125rem', '1.25rem', '1.375rem'];

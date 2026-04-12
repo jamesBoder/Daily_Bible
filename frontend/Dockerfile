@@ -13,10 +13,14 @@ COPY . .
 # Accept build arguments
 ARG REACT_APP_API_URL=https://wordsofpraise-backend.fly.dev
 ARG REACT_APP_GOOGLE_CLIENT_ID
+ARG REACT_APP_POSTHOG_KEY
+ARG REACT_APP_POSTHOG_HOST=https://us.i.posthog.com
 
 # Set environment variables for build
 ENV REACT_APP_API_URL=$REACT_APP_API_URL
 ENV REACT_APP_GOOGLE_CLIENT_ID=$REACT_APP_GOOGLE_CLIENT_ID
+ENV REACT_APP_POSTHOG_KEY=$REACT_APP_POSTHOG_KEY
+ENV REACT_APP_POSTHOG_HOST=$REACT_APP_POSTHOG_HOST
 
 # Build the app (source maps and ESLint disabled to speed up Docker build)
 RUN GENERATE_SOURCEMAP=false DISABLE_ESLINT_PLUGIN=true npm run build
