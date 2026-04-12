@@ -6,7 +6,7 @@ import { useStreak } from '../contexts/StreakContext';
 import { showBlessingsToast } from '../components/BlessingsToast';
 
 export const useFavorites = () => {
-  const { isGuest } = useAuth();
+  const { user } = useAuth();
   const { i18n } = useTranslation();
   const lang = i18n.language;
   const { refreshStreak } = useStreak();
@@ -14,7 +14,7 @@ export const useFavorites = () => {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['favorites', lang],
     queryFn: () => favoriteService.getFavorites(1, 100, undefined, lang),
-    enabled: !isGuest, // Pitfall 1: skip API call entirely for guests (prevents 401)
+    enabled: !!user, // skip API call for unauthenticated visitors (prevents 401)
     select: (response) => response.favorites,
   });
 
@@ -23,11 +23,11 @@ export const useFavorites = () => {
   const addMutation = useMutation({
     mutationFn: (verseId: number) => {
       // Pitfall 14: guard mutations — guests should never reach here, but safety net
-      if (isGuest) return Promise.resolve(null as any);
+      if (!user) return Promise.resolve(null as any);
       return favoriteService.addFavorite(verseId);
     },
     onSuccess: (data) => {
-      if (!isGuest) {
+      if (!!user) {
         queryClient.invalidateQueries({ queryKey: ['favorites'] });
         if (data?.blessings_credited && data.blessings_credited > 0) {
           showBlessingsToast(data.blessings_credited, 'verse_favorited');
@@ -40,11 +40,11 @@ export const useFavorites = () => {
   const removeMutation = useMutation({
     mutationFn: (favoriteId: number) => {
       // Pitfall 14: guard mutations — guests should never reach here, but safety net
-      if (isGuest) return Promise.resolve(null as any);
+      if (!user) return Promise.resolve(null as any);
       return favoriteService.removeFavorite(favoriteId);
     },
     onSuccess: () => {
-      if (!isGuest) queryClient.invalidateQueries({ queryKey: ['favorites'] });
+      if (!!user) queryClient.invalidateQueries({ queryKey: ['favorites'] });
     },
   });
 

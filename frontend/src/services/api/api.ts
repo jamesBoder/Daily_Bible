@@ -33,15 +33,11 @@ apiClient.interceptors.response.use(
   (response) => response,
   (error: AxiosError) => {
     if (error.response?.status === 401) {
-      // Safety net: do NOT clear session for guests — they have no token to clear
-      const isGuestSession = localStorage.getItem('is_guest') === 'true';
-      if (!isGuestSession) {
-        // Clear token and notify the app via event so React Router can handle
-        // the redirect gracefully (no full page reload).
-        localStorage.removeItem(TOKEN_KEY);
-        localStorage.removeItem('user_data');
-        window.dispatchEvent(new CustomEvent('auth:session-expired'));
-      }
+      // Clear token and notify the app via event so React Router can handle
+      // the redirect gracefully (no full page reload).
+      localStorage.removeItem(TOKEN_KEY);
+      localStorage.removeItem('user_data');
+      window.dispatchEvent(new CustomEvent('auth:session-expired'));
     }
     return Promise.reject(error);
   }

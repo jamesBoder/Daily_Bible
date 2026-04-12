@@ -8,13 +8,13 @@ const FirstEngagementOnboarding: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { streakData } = useStreak();
-  const { isGuest } = useAuth();
+  const { user } = useAuth();
   const [isVisible, setIsVisible] = useState(false);
   const [hasAppeared, setHasAppeared] = useState(false);
 
   useEffect(() => {
-    // Don't show for guests
-    if (isGuest) return;
+    // Don't show for unauthenticated visitors
+    if (!user) return;
 
     // Check if user has already seen the intro
     const hasSeenIntro = localStorage.getItem('hasSeenStreakIntro') === 'true';
@@ -31,7 +31,7 @@ const FirstEngagementOnboarding: React.FC = () => {
 
       return () => clearTimeout(timer);
     }
-  }, [streakData, isGuest, hasAppeared]);
+  }, [streakData, user, hasAppeared]);
 
   const handleDismiss = () => {
     setIsVisible(false);

@@ -36,7 +36,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
   initialPushReminderTime,
 }) => {
   const { t } = useTranslation();
-  const { isGuest } = useAuth();
+  const { user } = useAuth();
   const [searchParams, setSearchParams] = useSearchParams();
   const [emailNotifications, setEmailNotifications] = useState(initialEmail ?? true);
   const [dailyVerseReminder, setDailyVerseReminder] = useState(initialReminder ?? true);
@@ -58,16 +58,16 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
 
   // Only fetch independently when parent didn't provide initial values
   useEffect(() => {
-    if (isGuest || initialEmail !== undefined) return;
+    if (!user || initialEmail !== undefined) return;
     settingsService.getSettings().then(s => {
       setEmailNotifications(s.email_notifications);
       setDailyVerseReminder(s.daily_verse_reminder);
       if (s.push_reminder_time) setPushReminderTime(s.push_reminder_time);
     }).catch(() => {});
-  }, [isGuest, initialEmail]);
+  }, [user, initialEmail]);
 
   const save = async (updates: { email_notifications?: boolean; daily_verse_reminder?: boolean }) => {
-    if (isGuest) return;
+    if (!user) return;
     try {
       await settingsService.updateSettings(updates);
     } catch {
@@ -135,7 +135,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       />
 
       {/* Push notification toggle — authenticated users only */}
-      {!isGuest && (
+      {!!user && (
         <>
           <SettingsToggle
             label={t('settings.notifications.pushNotifications', 'Push Notifications')}

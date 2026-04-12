@@ -71,7 +71,7 @@ export const useStreak = () => {
 };
 
 export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { isAuthenticated, isGuest } = useAuth();
+  const { isAuthenticated } = useAuth();
   const { t } = useTranslation();
   const [streakData, setStreakData] = useState<StreakData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -97,7 +97,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       return;
     }
 
-    if (!isAuthenticated || isGuest) {
+    if (!isAuthenticated) {
       setStreakData(null);
       return;
     }
@@ -120,12 +120,12 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setLoading(false);
     }
-  }, [isAuthenticated, isGuest]);
+  }, [isAuthenticated]);
 
   const refreshSubscription = useCallback(async () => {
     const now = Date.now();
     if (now - lastSubFetchRef.current < 1000) return;
-    if (!isAuthenticated || isGuest) {
+    if (!isAuthenticated) {
       setSubscription(DEFAULT_SUBSCRIPTION);
       return;
     }
@@ -141,7 +141,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     } finally {
       setSubscriptionLoading(false);
     }
-  }, [isAuthenticated, isGuest]);
+  }, [isAuthenticated]);
 
   // §8.18.3/8.18.4: Watch for subscription transitions
   useEffect(() => {
@@ -254,7 +254,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
   // Initial load and auth change
   useEffect(() => {
-    if (isAuthenticated && !isGuest) {
+    if (isAuthenticated) {
       refreshStreak();
       refreshSubscription();
       checkPendingCheckout();
@@ -262,7 +262,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       setStreakData(null);
       setSubscription(DEFAULT_SUBSCRIPTION);
     }
-  }, [isAuthenticated, isGuest, refreshStreak, refreshSubscription, checkPendingCheckout]);
+  }, [isAuthenticated, refreshStreak, refreshSubscription, checkPendingCheckout]);
 
   // Refresh on visibility change (when user returns to tab)
   useEffect(() => {

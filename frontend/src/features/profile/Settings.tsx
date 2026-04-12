@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { Card } from "../../components/common/Card";
 import { Profile } from "./Profile";
 import { AccountManagement } from "./AccountManagement";
-import { GuestAccountManagement } from "./GuestAccountManagement";
 import { TranslationPicker } from "./TranslationPicker";
 import { GraceDaySettings } from "../settings/GraceDaySettings";
 import { NotificationSettings } from "../settings/NotificationSettings";
@@ -29,7 +29,8 @@ const scrollToSection = (id: SectionId) => {
 };
 
 export const Settings: React.FC = () => {
-  const { isGuest } = useAuth();
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const { t } = useTranslation();
   const { initTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('settings');
@@ -39,14 +40,14 @@ export const Settings: React.FC = () => {
 
   // Single settings load: syncs theme silently + passes notification values down
   useEffect(() => {
-    if (isGuest) return;
+    if (!user) return;
     settingsService.getSettings().then(s => {
       if (s.active_theme) initTheme(s.active_theme as ThemeId);
       setNotifEmail(s.email_notifications);
       setNotifReminder(s.daily_verse_reminder);
       setPushReminderTime(s.push_reminder_time ?? '08:00');
     }).catch(() => {});
-  }, [isGuest, initTheme]);
+  }, [user, initTheme]);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
@@ -74,7 +75,7 @@ export const Settings: React.FC = () => {
         <>
           {/* Section quick-jump nav */}
           <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
-            {(!isGuest) && (
+            {(!!user) && (
               <button onClick={() => scrollToSection('journey')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                 {t('settings.sections.myJourney', 'My Journey')}
               </button>
@@ -85,12 +86,12 @@ export const Settings: React.FC = () => {
             <button onClick={() => scrollToSection('appearance')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.sections.appearance', 'Appearance')}
             </button>
-            {!isGuest && (
+            {!!user && (
               <button onClick={() => scrollToSection('manna')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                 {t('settings.sections.manna', 'Manna')}
               </button>
             )}
-            {!isGuest && (
+            {!!user && (
               <button onClick={() => scrollToSection('community')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                 {t('nav.community', 'Community')}
               </button>
@@ -111,7 +112,7 @@ export const Settings: React.FC = () => {
 
           <div className="space-y-6">
             {/* My Journey — authenticated users only */}
-            {!isGuest && (
+            {!!user && (
               <Card id="settings-section-journey">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   {t('settings.sections.myJourney', 'My Journey')}
@@ -130,7 +131,7 @@ export const Settings: React.FC = () => {
               <div className="mt-2">
                 <LanguageSettings />
               </div>
-              {!isGuest && (
+              {!!user && (
                 <div className="mt-2">
                   <TranslationPicker />
                 </div>
@@ -146,7 +147,7 @@ export const Settings: React.FC = () => {
             </Card>
 
             {/* Manna — authenticated users only (Phase 10) */}
-            {!isGuest && (
+            {!!user && (
               <Card id="settings-section-manna">
                 <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                   {t('settings.sections.manna', 'Manna Puzzle')}
@@ -156,7 +157,7 @@ export const Settings: React.FC = () => {
             )}
 
             {/* Community — authenticated users only (Phase 9) */}
-            {!isGuest && (
+            {!!user && (
               <Card id="settings-section-community">
                 <CommunitySection />
               </Card>
@@ -205,7 +206,29 @@ export const Settings: React.FC = () => {
               <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
                 {t('settings.tabs.account')}
               </h2>
-              {isGuest ? <GuestAccountManagement /> : <AccountManagement />}
+              {user ? (
+                <AccountManagement />
+              ) : (
+                <div className="flex flex-col items-center gap-4 py-4 text-center">
+                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                    {t('settings.account.signUpPrompt', 'Create a free account to manage your profile, streak, and preferences.')}
+                  </p>
+                  <div className="flex gap-3">
+                    <button
+                      onClick={() => navigate('/signup')}
+                      className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 transition-colors"
+                    >
+                      {t('nav.signup', 'Sign Up Free')}
+                    </button>
+                    <button
+                      onClick={() => navigate('/login')}
+                      className="px-5 py-2 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                    >
+                      {t('nav.signin', 'Sign In')}
+                    </button>
+                  </div>
+                </div>
+              )}
             </Card>
           </div>
         </>

@@ -5,7 +5,7 @@ import {
   Navigate,  // used by catch-all route
 } from "react-router-dom";
 import { AuthProvider } from "./contexts/AuthContext";
-import { ProtectedRoute, GuestBlockedRoute, PublicOnlyRoute } from "./components/common/ProtectedRoute";
+import { AuthRequiredRoute, PublicOnlyRoute } from "./components/common/ProtectedRoute";
 import { Layout } from "./components/layout/Layout";
 
 import { ThemeProvider } from "./contexts/ThemeContext";
@@ -174,10 +174,10 @@ const router = createBrowserRouter([
     path: "/auth/google/callback",
     element: <PageSuspense><GoogleCallback /></PageSuspense>,
   },
-  // Protected routes with layout
+  // Layout — open to all visitors; individual routes gate as needed
   {
     path: "/",
-    element: <ProtectedRoute><Layout /></ProtectedRoute>,
+    element: <Layout />,
     children: [
       {
         // Render DailyVerse at "/" directly. Nginx 301-redirects "/" → "/daily"
@@ -192,39 +192,48 @@ const router = createBrowserRouter([
         path: "daily",
         element: <PageSuspense><DailyVerse /></PageSuspense>,
       },
+      // Community — open to visitors (read-only feed); posting requires auth inside the component
       {
-        path: "favorites",
-        element: <GuestBlockedRoute><PageSuspense><FavoritesList /></PageSuspense></GuestBlockedRoute>,
+        path: "community",
+        element: <PageSuspense><CommunityView /></PageSuspense>,
+      },
+      // Plans — open to visitors (browse-only); enrollment requires auth inside the component
+      {
+        path: "plans",
+        element: <PageSuspense><PlansLibrary /></PageSuspense>,
       },
       {
-        path: "profile",
-        element: <GuestBlockedRoute><PageSuspense><Profile /></PageSuspense></GuestBlockedRoute>,
+        path: "plans/:slug",
+        element: <PageSuspense><PlanDetail /></PageSuspense>,
       },
+      // Settings — open to visitors (theme, language useful without account)
       {
         path: "settings",
         element: <PageSuspense><Settings /></PageSuspense>,
       },
-      // Search route (Phase 5) — authenticated users only
+      // Auth-required routes — show inline sign-up upsell for unauthenticated visitors
+      {
+        path: "favorites",
+        element: <AuthRequiredRoute><PageSuspense><FavoritesList /></PageSuspense></AuthRequiredRoute>,
+      },
+      {
+        path: "profile",
+        element: <AuthRequiredRoute><PageSuspense><Profile /></PageSuspense></AuthRequiredRoute>,
+      },
       {
         path: "search",
-        element: <GuestBlockedRoute><PageSuspense><SearchResultsPage /></PageSuspense></GuestBlockedRoute>,
+        element: <AuthRequiredRoute><PageSuspense><SearchResultsPage /></PageSuspense></AuthRequiredRoute>,
       },
-      // Rewards Shop (Phase 6) — authenticated users only
       {
         path: "shop",
-        element: <GuestBlockedRoute><PageSuspense><RewardsShop /></PageSuspense></GuestBlockedRoute>,
+        element: <AuthRequiredRoute><PageSuspense><RewardsShop /></PageSuspense></AuthRequiredRoute>,
       },
-      // Phase 9: Community Board — authenticated users only (guests redirected to /login)
-      {
-        path: "community",
-        element: <GuestBlockedRoute><PageSuspense><CommunityView /></PageSuspense></GuestBlockedRoute>,
-      },
-      // Phase 10: Manna puzzle — authenticated users only
+      // Phase 10: Manna puzzle — requires free account
       // M-23: ErrorBoundary catches runtime errors (e.g. malformed API response) so the page doesn't crash
       {
         path: "manna",
         element: (
-          <GuestBlockedRoute>
+          <AuthRequiredRoute>
             <ErrorBoundary fallback={
               <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
                 <div className="text-5xl" aria-hidden>🌾</div>
@@ -242,35 +251,26 @@ const router = createBrowserRouter([
             }>
               <PageSuspense><MannaPuzzle /></PageSuspense>
             </ErrorBoundary>
-          </GuestBlockedRoute>
+          </AuthRequiredRoute>
         ),
-      },
-      // Phase 12: Reading Plans
-      {
-        path: "plans",
-        element: <GuestBlockedRoute><PageSuspense><PlansLibrary /></PageSuspense></GuestBlockedRoute>,
-      },
-      {
-        path: "plans/:slug",
-        element: <GuestBlockedRoute><PageSuspense><PlanDetail /></PageSuspense></GuestBlockedRoute>,
       },
       // Phase 12: Guided Prayer
       {
         path: "prayer",
-        element: <GuestBlockedRoute><PageSuspense><GuidedPrayerHome /></PageSuspense></GuestBlockedRoute>,
+        element: <AuthRequiredRoute><PageSuspense><GuidedPrayerHome /></PageSuspense></AuthRequiredRoute>,
       },
       // Journal routes (Phase 3)
       {
         path: "journal",
-        element: <GuestBlockedRoute><PageSuspense><JournalList /></PageSuspense></GuestBlockedRoute>,
+        element: <AuthRequiredRoute><PageSuspense><JournalList /></PageSuspense></AuthRequiredRoute>,
       },
       {
         path: "journal/new",
-        element: <GuestBlockedRoute><PageSuspense><JournalEditor /></PageSuspense></GuestBlockedRoute>,
+        element: <AuthRequiredRoute><PageSuspense><JournalEditor /></PageSuspense></AuthRequiredRoute>,
       },
       {
         path: "journal/:id",
-        element: <GuestBlockedRoute><PageSuspense><JournalEditor /></PageSuspense></GuestBlockedRoute>,
+        element: <AuthRequiredRoute><PageSuspense><JournalEditor /></PageSuspense></AuthRequiredRoute>,
       },
       // Nested catch-all: any unmatched path inside the Layout (e.g. /daily/foo) → /daily
       {

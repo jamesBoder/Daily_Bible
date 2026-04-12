@@ -28,7 +28,7 @@ interface VerseCardProps {
 }
 
 export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVersionSelect }) => {
-  const { isGuest } = useAuth();
+  const { user } = useAuth();
   const { t, i18n } = useTranslation();
   const [isVisible, setIsVisible] = useState(false);
   const [popoverOpen, setPopoverOpen] = useState(false);
@@ -45,8 +45,8 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   const longPressOrigin = useRef<{ x: number; y: number } | null>(null);
 
   const handleCommentSaved = async () => {
-    // Pitfall 13: guard — CommentSection is hidden for guests, but safety net
-    if (isGuest) return;
+    // Guard — CommentSection is hidden for unauthenticated users, but safety net
+    if (!user) return;
     if (!isFavorited(verse.id)) {
       try {
         await addFavorite(verse.id);
@@ -57,9 +57,9 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   };
 
   const handleFavorite = async () => {
-    // Guest mode: show sign-up prompt instead of calling the API
-    if (isGuest) {
-      showToast.info("Sign up to save your favorite verses!");
+    // Unauthenticated: show a friendly sign-up nudge instead of calling the API
+    if (!user) {
+      showToast.info("Sign up free to save your favorite verses!");
       return;
     }
 
@@ -94,7 +94,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   // Called once after any share action succeeds. Fire-and-forget — never blocks UI.
   const { refreshStreak } = useStreak();
   const creditShareBlessings = () => {
-    if (isGuest) return;
+    if (!user) return;
     verseService.recordShare().then((credited) => {
       if (credited > 0) {
         showBlessingsToast(credited, 'verse_shared');
@@ -262,7 +262,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
           {verse.reference}
         </p>
         {/* Translation badge — authenticated users only */}
-        {!isGuest && verse.version && onVersionSelect && (
+        {!!user && verse.version && onVersionSelect && (
           <div ref={badgeRef} className="relative inline-block mt-1.5">
             <TranslationBadge
               version={verse.version}
@@ -407,7 +407,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
         </div>
       </div>
       {/* Comment section — hidden for guests (Pitfall 5: also removes 'c' keyboard shortcut) */}
-      {!isGuest && (
+      {!!user && (
         <CommentSection
           verseId={verse.id}
           verseReference={verse.reference}

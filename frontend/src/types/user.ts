@@ -16,8 +16,6 @@ export interface User {
   google_email?: string;
   google_picture?: string;
   is_google_linked?: boolean;
-  // Guest Mode
-  is_guest?: boolean;
 }
 
 

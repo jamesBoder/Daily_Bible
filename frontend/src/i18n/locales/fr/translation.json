@@ -532,6 +532,21 @@
     "help": "Aide",
     "comingSoon": "Bientôt disponible"
   },
+  "visitor": {
+    "title": "Restez dans la Parole",
+    "body": "Recevez un nouveau verset dans votre boîte mail chaque matin — ou créez un compte gratuit pour suivre votre série, sauvegarder vos favoris et débloquer l'expérience complète.",
+    "emailLabel": "Verset quotidien par e-mail",
+    "emailPlaceholder": "votre@email.com",
+    "subscribe": "S'abonner",
+    "subscribing": "Envoi…",
+    "emailError": "Une erreur s'est produite. Veuillez réessayer.",
+    "or": "ou",
+    "signUp": "Créer un compte gratuit",
+    "maybeLater": "Peut-être plus tard",
+    "successTitle": "Vous êtes sur la liste !",
+    "successBody": "Vérifiez votre boîte de réception pour un e-mail de bienvenue.",
+    "continue": "Continuer la lecture"
+  },
   "onboarding": {
     "title": "Votre voyage commence",
     "line1": "Chaque jour que vous ouvrez la Parole, votre série grandit.",

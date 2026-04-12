@@ -615,6 +615,21 @@
       "remaining": "{{count}} remaining"
     }
   },
+  "visitor": {
+    "title": "Stay in the Word",
+    "body": "Get a new verse in your inbox every morning — or create a free account to track your streak, save favorites, and unlock the full experience.",
+    "emailLabel": "Daily verse by email",
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Subscribe",
+    "subscribing": "Sending…",
+    "emailError": "Something went wrong. Please try again.",
+    "or": "or",
+    "signUp": "Create a free account",
+    "maybeLater": "Maybe later",
+    "successTitle": "You're on the list!",
+    "successBody": "Check your inbox for a welcome email.",
+    "continue": "Continue reading"
+  },
   "onboarding": {
     "title": "Your journey begins",
     "line1": "Each day you open the Word, your streak grows.",

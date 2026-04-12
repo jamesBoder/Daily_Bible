@@ -597,6 +597,21 @@
       "remaining": "{{count}} restantes"
     }
   },
+  "visitor": {
+    "title": "Permanece en la Palabra",
+    "body": "Recibe un versículo nuevo en tu correo cada mañana — o crea una cuenta gratuita para seguir tu racha, guardar favoritos y desbloquear la experiencia completa.",
+    "emailLabel": "Versículo diario por correo",
+    "emailPlaceholder": "tu@correo.com",
+    "subscribe": "Suscribirse",
+    "subscribing": "Enviando…",
+    "emailError": "Algo salió mal. Por favor, inténtalo de nuevo.",
+    "or": "o",
+    "signUp": "Crear una cuenta gratuita",
+    "maybeLater": "Quizás más tarde",
+    "successTitle": "¡Estás en la lista!",
+    "successBody": "Revisa tu bandeja de entrada para un correo de bienvenida.",
+    "continue": "Continuar leyendo"
+  },
   "onboarding": {
     "title": "Tu viaje comienza",
     "line1": "Cada día que abres la Palabra, tu racha crece.",

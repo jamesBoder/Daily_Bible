@@ -16,7 +16,6 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   }
 
   if (!isAuthenticated) {
-    // Redirect to login, but save the location they were trying to access
     return <Navigate to="/login" state={{ from: location }} replace />;
   }
 
@@ -24,19 +23,18 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
 };
 
 /**
- * PublicOnlyRoute — wraps routes that authenticated (non-guest) users should NOT access.
- * Redirects logged-in users to "/" (home). Guests and unauthenticated users pass through.
+ * PublicOnlyRoute — wraps routes that authenticated users should NOT access.
+ * Redirects logged-in users to "/daily". Unauthenticated users pass through.
  * Used for /login and /signup.
  */
 export const PublicOnlyRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isGuest, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return <VerseCardSkeleton />;
   }
 
-  // Authenticated non-guest users should not see login/signup
-  if (isAuthenticated && !isGuest) {
+  if (isAuthenticated) {
     return <Navigate to="/daily" replace />;
   }
 
@@ -44,12 +42,15 @@ export const PublicOnlyRoute: React.FC<ProtectedRouteProps> = ({ children }) => 
 };
 
 /**
- * GuestUpsell — shown in place of locked content for guest users.
+ * AuthRequiredUpsell — inline sign-up prompt shown within the Layout when an
+ * unauthenticated visitor tries to access a feature that requires an account.
  * Renders within the Layout so the tab bar stays visible and the selected
  * tab remains highlighted, giving context for what the user is unlocking.
  */
-const GuestUpsell: React.FC = () => {
+const AuthRequiredUpsell: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] gap-6 text-center px-6 pb-20">
       <div className="w-16 h-16 rounded-2xl bg-amber-100 dark:bg-amber-900/30 flex items-center justify-center text-3xl select-none">
@@ -65,13 +66,13 @@ const GuestUpsell: React.FC = () => {
       </div>
       <div className="flex flex-col gap-3 w-full max-w-xs">
         <button
-          onClick={() => navigate('/signup')}
+          onClick={() => navigate('/signup', { state: { from: location } })}
           className="w-full py-3 px-6 rounded-xl font-semibold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 transition-colors"
         >
           Sign Up Free
         </button>
         <button
-          onClick={() => navigate('/login')}
+          onClick={() => navigate('/login', { state: { from: location } })}
           className="w-full py-3 px-6 rounded-xl font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
         >
           Sign In
@@ -82,25 +83,20 @@ const GuestUpsell: React.FC = () => {
 };
 
 /**
- * GuestBlockedRoute — wraps routes that guests cannot access.
- * Shows an inline sign-up upsell screen instead of redirecting away,
- * so the selected tab stays highlighted and context is clear.
- * Non-guests pass through normally.
+ * AuthRequiredRoute — wraps routes that require an account.
+ * Shows an inline sign-up upsell screen for unauthenticated visitors instead
+ * of redirecting away, so the selected tab stays highlighted and context is clear.
+ * Authenticated users pass through normally.
  */
-export const GuestBlockedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const { isAuthenticated, isGuest, isLoading } = useAuth();
-  const location = useLocation();
+export const AuthRequiredRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  const { isAuthenticated, isLoading } = useAuth();
 
   if (isLoading) {
     return <VerseCardSkeleton />;
   }
 
   if (!isAuthenticated) {
-    return <Navigate to="/login" state={{ from: location }} replace />;
-  }
-
-  if (isGuest) {
-    return <GuestUpsell />;
+    return <AuthRequiredUpsell />;
   }
 
   return <>{children}</>;

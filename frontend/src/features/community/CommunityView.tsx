@@ -1,5 +1,7 @@
 import React, { useState, useEffect, useRef, useLayoutEffect } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../hooks/useAuth';
 import { useStreak } from '../../contexts/StreakContext';
 import { useCommunity } from '../../hooks/useCommunity';
 import { useTutorial } from '../../hooks/useTutorial';
@@ -30,6 +32,8 @@ const SKELETON_COUNT = 3;
 
 export const CommunityView: React.FC = () => {
   const { t } = useTranslation();
+  const navigate = useNavigate();
+  const { user } = useAuth();
   const { subscription } = useStreak();
   const isPremium = subscription?.is_premium ?? false;
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(COMMUNITY_TUTORIAL_KEY);
@@ -101,6 +105,10 @@ export const CommunityView: React.FC = () => {
   // ── Handlers ─────────────────────────────────────────────────────────────
   const handleCreatePost   = (body: string) => createPost('user', body);
   const handleCreatePrayer = (body: string, anonymous: boolean) => createPost('prayer', body, anonymous);
+
+  // Reaction handlers — gate for unauthenticated visitors
+  const handleAddReaction    = user ? addReaction    : () => navigate('/signup');
+  const handleRemoveReaction = user ? removeReaction : () => {};
 
   const handleBannerClick = () => {
     setBannerState('dismissing');
@@ -187,8 +195,8 @@ export const CommunityView: React.FC = () => {
               key={post.id}
               post={post}
               index={i}
-              onAddReaction={addReaction}
-              onRemoveReaction={removeReaction}
+              onAddReaction={handleAddReaction}
+              onRemoveReaction={handleRemoveReaction}
               onDelete={post.is_self ? deletePost : undefined}
             />
           ))}
@@ -236,8 +244,8 @@ export const CommunityView: React.FC = () => {
                 key={post.id}
                 post={post}
                 index={i}
-                onAddReaction={addReaction}
-                onRemoveReaction={removeReaction}
+                onAddReaction={handleAddReaction}
+                onRemoveReaction={handleRemoveReaction}
                 onDelete={post.is_self ? deletePost : undefined}
               />
             ))
@@ -254,7 +262,21 @@ export const CommunityView: React.FC = () => {
           )}
 
           <div style={{ marginTop: '1rem' }}>
-            <CommunityComposer isPremium={isPremium} onSubmit={handleCreatePost} />
+            {user ? (
+              <CommunityComposer isPremium={isPremium} onSubmit={handleCreatePost} />
+            ) : (
+              <div className="flex flex-col items-center gap-3 py-5 px-4 rounded-xl border border-amber-200/60 dark:border-amber-700/30 text-center">
+                <p className="text-sm text-gray-500 dark:text-gray-400">
+                  {t('community.signUpToPost', 'Sign up free to share your reflection with the community.')}
+                </p>
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="px-5 py-2 rounded-xl text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 transition-colors"
+                >
+                  {t('nav.signup', 'Sign Up Free')}
+                </button>
+              </div>
+            )}
           </div>
         </>
       )}
@@ -264,10 +286,10 @@ export const CommunityView: React.FC = () => {
         <PrayerWallTab
           posts={posts}
           isLoading={isLoading}
-          onCreatePrayer={handleCreatePrayer}
-          onAddReaction={addReaction}
-          onRemoveReaction={removeReaction}
-          onDelete={deletePost}
+          onCreatePrayer={user ? handleCreatePrayer : async () => { navigate('/signup'); }}
+          onAddReaction={handleAddReaction}
+          onRemoveReaction={handleRemoveReaction}
+          onDelete={user ? deletePost : async () => {}}
         />
       )}
 
@@ -276,8 +298,8 @@ export const CommunityView: React.FC = () => {
         <ChallengesTab
           posts={posts}
           isLoading={isLoading}
-          onAddReaction={addReaction}
-          onRemoveReaction={removeReaction}
+          onAddReaction={handleAddReaction}
+          onRemoveReaction={handleRemoveReaction}
         />
       )}
     </div>

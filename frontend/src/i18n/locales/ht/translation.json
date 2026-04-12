@@ -532,6 +532,21 @@
     "help": "Èd",
     "comingSoon": "Byento disponib"
   },
+  "visitor": {
+    "title": "Rete nan Pawòl la",
+    "body": "Resevwa yon vèsè nouvo nan bwat imèl ou chak maten — oswa kreye yon kont gratis pou swiv seri ou, sove favori yo, e debloke eksperyans konplè a.",
+    "emailLabel": "Vèsè chak jou pa imèl",
+    "emailPlaceholder": "ou@imèl.com",
+    "subscribe": "Abòne",
+    "subscribing": "Ap voye…",
+    "emailError": "Yon erè te pase. Tanpri eseye ankò.",
+    "or": "oswa",
+    "signUp": "Kreye yon kont gratis",
+    "maybeLater": "Petèt pita",
+    "successTitle": "Ou sou lis la!",
+    "successBody": "Tcheke bwat imèl ou pou yon imèl byenveni.",
+    "continue": "Kontinye li"
+  },
   "onboarding": {
     "title": "Vwayaj ou kòmanse",
     "line1": "Chak jou ou louvri Pawòl la, seri ou grandi.",

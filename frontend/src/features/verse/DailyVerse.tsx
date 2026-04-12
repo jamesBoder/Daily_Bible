@@ -18,6 +18,7 @@ import { useTranslation } from "react-i18next";
 import GraceDayBanner from "../../components/GraceDayBanner";
 import StreakResetAcknowledgment from "../../components/StreakResetAcknowledgment";
 import FirstEngagementOnboarding from "../../components/FirstEngagementOnboarding";
+import VisitorEngagementModal from "../../components/VisitorEngagementModal";
 import { showBlessingsToast } from "../../components/BlessingsToast";
 import api from "../../services/api/api";
 import { Verse } from "../../types/verse";
@@ -99,7 +100,7 @@ const MAX_DAYS_BACK = 30;
 
 export const DailyVerse: React.FC = () => {
   const { t, i18n } = useTranslation();
-  const { isGuest } = useAuth();
+  const { user } = useAuth();
   const { refreshStreak } = useStreak();
 
   // Per-session version override (key like "kjv", "web"). Empty = use server preference.
@@ -119,7 +120,7 @@ export const DailyVerse: React.FC = () => {
 
   const queryClient = useQueryClient();
   const { verse, blessingsCredited, isLoading, error, refetch } = useVerse(i18n.language, sessionVersion);
-  const { history } = useHistory(!isGuest);
+  const { history } = useHistory(!!user);
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [historyIndex, setHistoryIndex] = useState(0);
@@ -157,7 +158,7 @@ export const DailyVerse: React.FC = () => {
 
   // Fetch premium status once when auth state changes — language is irrelevant to subscription.
   useEffect(() => {
-    if (isGuest) return;
+    if (!user) return;
     let cancelled = false;
     api
       .get<{ user_is_premium: boolean }>('/api/translations')
@@ -166,7 +167,7 @@ export const DailyVerse: React.FC = () => {
       })
       .catch(() => {});
     return () => { cancelled = true; };
-  }, [isGuest]);
+  }, [user]);
 
   // Fire streak-confirm sound once per session when today's verse loads
   const streakSoundFiredRef = useRef(false);
@@ -180,7 +181,7 @@ export const DailyVerse: React.FC = () => {
   // Show blessings toast once per calendar day when the daily verse credits blessings.
   // Guarded by sessionStorage so it doesn't re-fire on every component mount.
   useEffect(() => {
-    if (isGuest || !verse || historyIndex !== 0 || blessingsCredited <= 0) return;
+    if (!user || !verse || historyIndex !== 0 || blessingsCredited <= 0) return;
     const sessionKey = `blessings-daily-toasted-${todayStr}`;
     if (sessionStorage.getItem(sessionKey)) return;
     sessionStorage.setItem(sessionKey, '1');
@@ -267,7 +268,7 @@ export const DailyVerse: React.FC = () => {
 
   const displayVerse = historyIndex === 0 ? verse : (activeVerse ?? null);
   const showForward = historyIndex > 0;
-  const showBack = !isGuest && historyIndex < MAX_DAYS_BACK;
+  const showBack = !!user && historyIndex < MAX_DAYS_BACK;
 
   const handleVersionSelect = useCallback((key: string) => {
     setSessionVersion(key);
@@ -401,10 +402,13 @@ export const DailyVerse: React.FC = () => {
     >
       <PullRefreshIndicator progress={ptr.pullProgress} isRefreshing={ptr.isRefreshing} />
       {/* Seasonal reading plan banner */}
-      {!isGuest && <SeasonalBanner />}
+      {!!user && <SeasonalBanner />}
+
+      {/* Visitor nudge — shown once to unauthenticated users after a short delay */}
+      {!user && <VisitorEngagementModal />}
 
       {/* Streak-related banners and notifications */}
-      {!isGuest && (
+      {!!user && (
         <>
           <GraceDayBanner />
           <StreakResetAcknowledgment />
@@ -422,7 +426,7 @@ export const DailyVerse: React.FC = () => {
         <div className="flex items-center justify-center gap-4">
           {/* Left arrow — always reserves space to keep date centered */}
           <div className="w-11 flex justify-center">
-            {showBack && !isGuest && (
+            {showBack && !!user && (
               <div className="animate-fade-in">
                 <NavArrow direction="back" onClick={goBack} size="sm" />
               </div>
@@ -465,14 +469,14 @@ export const DailyVerse: React.FC = () => {
             verse={renderedVerse!}
             lang={i18n.language}
             onVersionSelect={
-              historyIndex === 0 && !isGuest
+              historyIndex === 0 && !!user
                 ? handleVersionSelect
                 : (historyIndex > 0 && isPremium ? handleHistoryVersionSelect : undefined)
             }
           />
         )}
         {/* Annotations button — shown for authenticated users on today's verse */}
-        {!isGuest && historyIndex === 0 && renderedVerse && (
+        {!!user && historyIndex === 0 && renderedVerse && (
           <div className="mt-3 flex justify-center">
             <button
               onClick={() => { if (navigator.vibrate) navigator.vibrate(8); setAnnotationOpen(true); }}
@@ -506,7 +510,7 @@ export const DailyVerse: React.FC = () => {
       </div>
 
       {/* Annotation bottom sheet / sidebar */}
-      {!isGuest && renderedVerse && (
+      {!!user && renderedVerse && (
         <AnnotationPanel
           verseReference={renderedVerse.reference}
           isOpen={annotationOpen}
