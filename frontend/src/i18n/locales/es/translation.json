@@ -612,6 +612,13 @@
     "successBody": "Revisa tu bandeja de entrada para un correo de bienvenida.",
     "continue": "Continuar leyendo"
   },
+  "endOfDay": {
+    "title": "Ya terminaste por hoy",
+    "body": "Vuelve mañana — un nuevo versículo y un nuevo puzzle te esperan.",
+    "streakLabel": "Mañana",
+    "streakValue": "Día {{streak}}",
+    "cta": "Hasta mañana"
+  },
   "onboarding": {
     "title": "Tu viaje comienza",
     "line1": "Cada día que abres la Palabra, tu racha crece.",
@@ -867,6 +874,12 @@
     "reopenHint": "Toca ? en el panel de Días de Gracia para ver esto de nuevo."
   },
   "pwa": {
+    "iosGuide": {
+      "label": "Guía de instalación iOS",
+      "title": "Agregar a tu pantalla de inicio",
+      "subtitle": "Accede al instante, incluso sin conexión.",
+      "gotIt": "Entendido"
+    },
     "install": {
       "label": "Install app prompt",
       "title": "Agregar a pantalla de inicio",

@@ -66,8 +66,8 @@ const VisitorEngagementModal: React.FC = () => {
       />
 
       {/* Modal */}
-      <div className="fixed inset-0 z-50 flex items-start justify-center pt-4 sm:pt-16 px-4 pointer-events-none">
-        <div className="pointer-events-auto w-full max-w-md animate-slide-from-top max-h-[calc(100dvh-2rem)] sm:max-h-[calc(100dvh-4rem)] overflow-y-auto rounded-3xl">
+      <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-4 pointer-events-none">
+        <div className="pointer-events-auto w-full max-w-md animate-slide-from-top max-h-[calc(100dvh-8rem)] sm:max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-3xl">
           <div className="bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
             <div className="p-6 sm:p-7 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50
                            dark:from-amber-900/30 dark:via-yellow-900/20 dark:to-orange-900/20">

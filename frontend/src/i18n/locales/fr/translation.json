@@ -547,6 +547,13 @@
     "successBody": "Vérifiez votre boîte de réception pour un e-mail de bienvenue.",
     "continue": "Continuer la lecture"
   },
+  "endOfDay": {
+    "title": "C'est tout pour aujourd'hui",
+    "body": "Revenez demain — un nouveau verset et un nouveau puzzle vous attendent.",
+    "streakLabel": "Demain",
+    "streakValue": "Jour {{streak}}",
+    "cta": "À demain"
+  },
   "onboarding": {
     "title": "Votre voyage commence",
     "line1": "Chaque jour que vous ouvrez la Parole, votre série grandit.",
@@ -829,6 +836,12 @@
     "reopenHint": "Appuyez sur ? dans le panneau Jours de Grâce pour revoir ceci."
   },
   "pwa": {
+    "iosGuide": {
+      "label": "Guide d'installation iOS",
+      "title": "Ajouter à votre écran d'accueil",
+      "subtitle": "Accès instantané, même hors ligne.",
+      "gotIt": "Compris"
+    },
     "install": {
       "label": "Install app prompt",
       "title": "Ajouter à l'écran d'accueil",

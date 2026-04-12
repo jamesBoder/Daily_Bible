@@ -630,6 +630,13 @@
     "successBody": "Check your inbox for a welcome email.",
     "continue": "Continue reading"
   },
+  "endOfDay": {
+    "title": "You're done for today",
+    "body": "Come back tomorrow — a new verse and a new puzzle await.",
+    "streakLabel": "Tomorrow",
+    "streakValue": "Day {{streak}}",
+    "cta": "See you tomorrow"
+  },
   "onboarding": {
     "title": "Your journey begins",
     "line1": "Each day you open the Word, your streak grows.",
@@ -885,6 +892,12 @@
     "reopenHint": "Tap ? in the Grace Days panel to see this again."
   },
   "pwa": {
+    "iosGuide": {
+      "label": "iOS install guide",
+      "title": "Add to Your Home Screen",
+      "subtitle": "Open instantly, even offline.",
+      "gotIt": "Got it"
+    },
     "install": {
       "label": "Install app prompt",
       "title": "Add to Home Screen",

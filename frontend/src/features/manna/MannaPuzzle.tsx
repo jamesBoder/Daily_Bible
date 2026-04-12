@@ -13,7 +13,10 @@ import { MannaKeyboard } from './MannaKeyboard';
 import { MannaHowToPlay, MANNA_TUTORIAL_KEY } from './MannaHowToPlay';
 import { MannaStatsModal } from './MannaStatsModal';
 import { MannaArchive } from './MannaArchive';
+import EndOfDayModal from '../../components/EndOfDayModal';
 import './manna.css';
+
+const EOD_SESSION_KEY_PREFIX = 'eod-shown-';
 
 const WORD_LENGTH = 5;
 
@@ -87,7 +90,7 @@ function buildSubmittedWord(typedLetters: string, hintLetters: HintLetter[] | un
 export const MannaPuzzle: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { refreshStreak, subscription } = useStreak();
+  const { refreshStreak, subscription, streakData } = useStreak();
   const isPremium = subscription?.is_premium ?? false;
 
   const [loading, setLoading] = useState(true);
@@ -107,6 +110,23 @@ export const MannaPuzzle: React.FC = () => {
 
   // Stats/history modal — opened via 📊 button
   const [showStats, setShowStats] = useState(false);
+
+  // End-of-day modal — shown once after today's game is solved + verse read.
+  // The effect below (not the solve handler) owns the trigger so that EOD fires
+  // correctly regardless of whether the verse was read before or after solving.
+  const [showEOD, setShowEOD] = useState(false);
+
+  useEffect(() => {
+    if (archiveDate) return;
+    if (game?.status !== 'solved') return;
+    if (game?.is_free_play) return;
+    const today = new Date().toISOString().slice(0, 10);
+    if (sessionStorage.getItem(EOD_SESSION_KEY_PREFIX + today)) return;
+    if (streakData?.last_active_date !== today) return;
+    // Both conditions met: puzzle solved + verse read. Show after animations settle.
+    const timer = setTimeout(() => setShowEOD(true), 3000);
+    return () => clearTimeout(timer);
+  }, [game?.status, game?.is_free_play, streakData?.last_active_date, archiveDate]);
   const showStatsRef = useRef(false);
   useEffect(() => { showStatsRef.current = showStats; }, [showStats]);
 
@@ -567,6 +587,20 @@ export const MannaPuzzle: React.FC = () => {
       {/* Stats & History modal — opened via 📊 button */}
       {showStats && (
         <MannaStatsModal onDismiss={() => setShowStats(false)} />
+      )}
+
+      {/* End-of-day modal — fires after today's solve once verse is also read */}
+      {showEOD && (
+        <EndOfDayModal
+          streak={streakData!.current_streak}
+          onDismiss={() => {
+            setShowEOD(false);
+            sessionStorage.setItem(
+              EOD_SESSION_KEY_PREFIX + new Date().toISOString().slice(0, 10),
+              '1',
+            );
+          }}
+        />
       )}
 
       {/* M-10: visually hidden aria-live region — screen readers announce guess results */}

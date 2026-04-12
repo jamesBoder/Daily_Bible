@@ -547,6 +547,13 @@
     "successBody": "Tcheke bwat imèl ou pou yon imèl byenveni.",
     "continue": "Kontinye li"
   },
+  "endOfDay": {
+    "title": "Ou fini pou jodi a",
+    "body": "Tounen demen — yon nouvo vèsè ak yon nouvo jigsò ap tann ou.",
+    "streakLabel": "Demen",
+    "streakValue": "Jou {{streak}}",
+    "cta": "Wè ou demen"
+  },
   "onboarding": {
     "title": "Vwayaj ou kòmanse",
     "line1": "Chak jou ou louvri Pawòl la, seri ou grandi.",
@@ -829,6 +836,12 @@
     "reopenHint": "Tape ? nan panèl Jou Gras pou wè sa ankò."
   },
   "pwa": {
+    "iosGuide": {
+      "label": "Gid enstalasyon iOS",
+      "title": "Ajoute sou Ekran Akèy ou",
+      "subtitle": "Ouvri imedyatman, menm san koneksyon.",
+      "gotIt": "Konprann"
+    },
     "install": {
       "label": "Install app prompt",
       "title": "Ajoute nan Ekran Akèy",
