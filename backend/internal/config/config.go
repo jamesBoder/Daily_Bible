@@ -42,6 +42,9 @@ type Config struct {
     ReminderEnabled   bool
     ReminderSendHour  int
     ReminderBatchSize int
+
+    // Error monitoring
+    SentryDSN string
 }
 
 func Load() (*Config, error) {
@@ -76,6 +79,7 @@ func Load() (*Config, error) {
         ReminderEnabled:   getEnvOrDefault("REMINDER_ENABLED", "true") == "true",
         ReminderSendHour:  parseIntOrDefault("REMINDER_SEND_HOUR", 8),
         ReminderBatchSize: parseIntOrDefault("REMINDER_BATCH_SIZE", 100),
+        SentryDSN:         os.Getenv("SENTRY_DSN"),
     }, nil
 }
 

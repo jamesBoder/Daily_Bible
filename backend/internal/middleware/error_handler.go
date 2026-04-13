@@ -1,50 +1,52 @@
 package middleware
 
-import(
+import (
+	"fmt"
 	"log"
+
+	sentry "github.com/getsentry/sentry-go"
+	sentrygin "github.com/getsentry/sentry-go/gin"
 	"github.com/gin-gonic/gin"
-	
 )
 
-// implement error handler middleware to -
-// Catch panics and recover
-// Return consistent error format
-// Log errors for debugging
-// Don't expose internal details
-
+// ErrorHandler catches panics, captures them in Sentry (when available), and
+// returns a generic 500. Wire sentrygin middleware before this one so the hub
+// is available on the context.
 func ErrorHandler() gin.HandlerFunc {
-	return func (c *gin.Context) {
+	return func(c *gin.Context) {
 		defer func() {
-			if err := recover(); err != nil {
-				// Log the error
-				log.Printf("Panic recovered: %v", err)
+			if r := recover(); r != nil {
+				log.Printf("Panic recovered: %v", r)
 
-				// Return a generic error response
-				c.JSON(500, gin.H{
-					"error": "Internal Server Error",
-				})
+				// Report to Sentry via the per-request hub when available,
+				// otherwise fall back to the global hub.
+				err := fmt.Errorf("%v", r)
+				if hub := sentrygin.GetHubFromContext(c); hub != nil {
+					hub.CaptureException(err)
+				} else {
+					sentry.CaptureException(err)
+				}
+
+				c.JSON(500, gin.H{"error": "Internal Server Error"})
 				c.Abort()
-
-				//
 			}
 		}()
-		// Continue to next middleware/handler
+
 		c.Next()
 
-		// Check for errors set during request processing
+		// Report any errors attached to the context during request processing.
 		if len(c.Errors) > 0 {
-			// Log the errors
+			hub := sentrygin.GetHubFromContext(c)
 			for _, e := range c.Errors {
 				log.Printf("Error: %v", e.Err)
+				if hub != nil {
+					hub.CaptureException(e.Err)
+				} else {
+					sentry.CaptureException(e.Err)
+				}
 			}
-
-			// Return a generic error response
-			c.JSON(500, gin.H{
-				"error": "Internal Server Error",
-			})
+			c.JSON(500, gin.H{"error": "Internal Server Error"})
 			c.Abort()
 		}
-
-		// No errors, proceed normally
 	}
 }

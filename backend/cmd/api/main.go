@@ -24,6 +24,8 @@ import (
     "github.com/gin-contrib/cors"
     "github.com/gin-contrib/gzip"
     "github.com/go-playground/validator/v10"
+    sentry "github.com/getsentry/sentry-go"
+    sentrygin "github.com/getsentry/sentry-go/gin"
     stripe "github.com/stripe/stripe-go/v80"
 )
 
@@ -52,6 +54,20 @@ func main() {
         log.Fatal("Failed to load config:", err)
     }
     
+    // 1b. Initialize Sentry (no-op when DSN is empty)
+    if cfg.SentryDSN != "" {
+        if err := sentry.Init(sentry.ClientOptions{
+            Dsn:              cfg.SentryDSN,
+            EnableTracing:    true,
+            TracesSampleRate: 0.2,
+        }); err != nil {
+            log.Printf("Sentry init failed: %v", err)
+        } else {
+            defer sentry.Flush(2 * time.Second)
+            log.Println("Sentry initialized")
+        }
+    }
+
     // 2. Connect to database
     db, err := database.Connect(cfg)        
     if err != nil {
@@ -379,6 +395,13 @@ func main() {
     // init gin router
     router := gin.New()
 
+    // Sentry must be the first middleware so it can capture panics from all
+    // subsequent middleware and handlers. Repanic: true re-panics after capture
+    // so gin.Recovery() still handles the HTTP response.
+    router.Use(sentrygin.New(sentrygin.Options{
+        Repanic: true,
+    }))
+
     // use logger middleware
     router.Use(middleware.Logger())
     //
@@ -422,7 +445,7 @@ func main() {
     // In production, you might want to use AllowOriginFunc for more flexible origin checking
     corsConfig.AllowOrigins = allowedOrigins
     corsConfig.AllowMethods = []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"}
-    corsConfig.AllowHeaders = []string{"Authorization", "Content-Type"}
+    corsConfig.AllowHeaders = []string{"Authorization", "Content-Type", "sentry-trace", "baggage"}
     router.Use(cors.New(corsConfig))
     router.Use(gzip.Gzip(gzip.DefaultCompression))
 
