@@ -88,6 +88,12 @@ const About = lazy(() =>
   }))
 );
 
+const Privacy = lazy(() =>
+  import("./features/legal/Privacy").then((module) => ({
+    default: module.Privacy,
+  }))
+);
+
 const JournalList = lazy(() =>
   import("./features/journal/JournalList").then((module) => ({
     default: module.JournalList,
@@ -169,6 +175,10 @@ const router = createBrowserRouter([
   {
     path: "/about",
     element: <PageSuspense><About /></PageSuspense>,
+  },
+  {
+    path: "/privacy",
+    element: <PageSuspense><Privacy /></PageSuspense>,
   },
   {
     path: "/auth/google/callback",

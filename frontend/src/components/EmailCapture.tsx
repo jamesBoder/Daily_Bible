@@ -135,7 +135,10 @@ const EmailCapture: React.FC = () => {
       )}
 
       <p className="text-xs text-gray-500 dark:text-gray-500 text-center">
-        One email a day. No spam. Unsubscribe any time.
+        One email a day. No spam. Unsubscribe any time.{" "}
+        <a href="/privacy" className="underline hover:text-gray-700 dark:hover:text-gray-300">
+          Privacy policy
+        </a>
       </p>
     </form>
   );

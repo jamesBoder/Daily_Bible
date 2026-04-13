@@ -22,6 +22,12 @@ export const Footer: React.FC = () => {
             >
               {t('common.contact', 'Contact')}
             </a>
+            <a
+              href="/privacy"
+              className="hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+            >
+              Privacy
+            </a>
           </div>
 
           {/* Social Media */}
