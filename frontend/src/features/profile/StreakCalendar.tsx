@@ -1,8 +1,10 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useQuery } from '@tanstack/react-query';
 import api from '../../services/api/api';
 import { useLanguage } from '../../contexts/LanguageContext';
+import { msUntilDailyReset } from '../../lib/queryClient';
 
 interface CalendarDay {
   date: string;
@@ -63,27 +65,20 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
   const { t } = useTranslation();
   const { currentLanguage } = useLanguage();
   const navigate = useNavigate();
-  const [apiMonths, setApiMonths] = useState<CalendarMonth[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(false);
+
+  const { data: calData, isLoading, isError } = useQuery({
+    queryKey: ['streak-calendar'],
+    queryFn: () => api.get(`/api/streak/calendar?months=${FETCH_MONTHS}`).then(r => r.data),
+    staleTime: msUntilDailyReset(), // calendar only changes at the daily reset
+  });
+
+  const apiMonths: CalendarMonth[] = calData?.months ?? [];
 
   // Index into the spine (0 = oldest, spine.length-1 = current month)
   const spine = buildMonthSpine(FETCH_MONTHS);
   const [viewIdx, setViewIdx] = useState(spine.length - 1);
 
-  useEffect(() => {
-    api.get(`/api/streak/calendar?months=${FETCH_MONTHS}`)
-      .then(res => {
-        setApiMonths(res.data.months ?? []);
-        setLoading(false);
-      })
-      .catch(() => {
-        setError(true);
-        setLoading(false);
-      });
-  }, []);
-
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: 35 }).map((_, i) => (
@@ -93,7 +88,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
     );
   }
 
-  if (error) {
+  if (isError) {
     return (
       <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
         {t('profile.calendar_error', 'Calendar temporarily unavailable.')}

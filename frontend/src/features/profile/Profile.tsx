@@ -1,5 +1,6 @@
-import React, { useEffect, useState, useCallback, useRef } from 'react';
+import React, { useState, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuth } from '../../hooks/useAuth';
 import { useStreak } from '../../contexts/StreakContext';
 import api from '../../services/api/api';
@@ -131,10 +132,15 @@ export const Profile: React.FC = () => {
   const { t } = useTranslation();
   const { user } = useAuth();
   const { useGraceDay: applyGraceDay } = useStreak();
+  const qc = useQueryClient();
 
-  const [data, setData] = useState<ProfileData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [sectionError, setSectionError] = useState(false);
+  const { data, isLoading: loading, isError: sectionError } = useQuery<ProfileData>({
+    queryKey: ['profile-aggregate'],
+    queryFn: () => api.get('/api/profile/aggregate').then(r => r.data),
+    staleTime: 5 * 60 * 1000,
+    enabled: !!user,
+  });
+
   const [graceLoading, setGraceLoading] = useState(false);
 
   // Inline edit state
@@ -152,21 +158,6 @@ export const Profile: React.FC = () => {
   const [emailStatus, setEmailStatus] = useState<AvailStatus>('idle');
   const usernameTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const emailTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  const fetchProfile = useCallback(async () => {
-    try {
-      const res = await api.get('/api/profile/aggregate');
-      setData(res.data);
-    } catch {
-      setSectionError(true);
-    } finally {
-      setLoading(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchProfile();
-  }, [fetchProfile]);
 
   const handleEditOpen = () => {
     if (!data) return;
@@ -249,7 +240,7 @@ export const Profile: React.FC = () => {
       if (editCurrentPassword) payload.current_password = editCurrentPassword;
       const result = await profileService.updateProfile(payload);
       // If an email change is pending, keep the old email displayed; update username only
-      setData(prev => {
+      qc.setQueryData<ProfileData>(['profile-aggregate'], prev => {
         if (!prev) return prev;
         return {
           ...prev,
@@ -273,7 +264,7 @@ export const Profile: React.FC = () => {
     setGraceLoading(true);
     const result = await applyGraceDay();
     if (result.success) {
-      fetchProfile();
+      qc.invalidateQueries({ queryKey: ['profile-aggregate'] });
     }
     setGraceLoading(false);
   };

@@ -94,6 +94,8 @@ export const MannaPuzzle: React.FC = () => {
   const isPremium = subscription?.is_premium ?? false;
 
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState(false);
+  const [fetchKey, setFetchKey] = useState(0);
   const [locked, setLocked] = useState(false);
   const [yesterdayData, setYesterdayData] = useState<YesterdayResult | null>(null);
   const [game, setGame] = useState<MannaGameResponse | null>(null);
@@ -182,36 +184,52 @@ export const MannaPuzzle: React.FC = () => {
 
   // ─── Load today's game (or archive game) ──────────────────────────────────
   useEffect(() => {
-    setLoading(true);
-    const fetchPromise = archiveDate
-      ? mannaApi.getArchive(archiveDate)
-      : mannaApi.getToday().then(resp => {
-          if (resp.locked) {
-            setLocked(true);
-            const lockedResp = resp as MannaLockedResponse;
-            if (lockedResp.yesterday) setYesterdayData(lockedResp.yesterday);
-            return null;
-          }
-          return resp as MannaGameResponse;
-        });
+    let cancelled = false;
 
-    fetchPromise
-      .then(gameResp => {
-        if (!gameResp) return; // locked path already handled
-        setGame(gameResp);
-        // Show confetti if already solved — once per session to avoid re-firing on reload
-        if (gameResp.status === 'solved' && !archiveDate && !sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
-          setShowConfetti(true);
-          sessionStorage.setItem(CONFETTI_SESSION_KEY, '1');
-        }
-        // Show tutorial on first ever visit (not seen before)
-        if (!archiveDate && !localStorage.getItem(MANNA_TUTORIAL_KEY)) {
-          setShowTutorial(true);
-        }
-      })
-      .catch(() => toast.error(t('manna.errorLoading', 'Failed to load today\'s puzzle.')))
-      .finally(() => setLoading(false));
-  }, [t, archiveDate]);
+    const attemptFetch = () => {
+      const fetchPromise = archiveDate
+        ? mannaApi.getArchive(archiveDate)
+        : mannaApi.getToday().then(resp => {
+            if (resp.locked) {
+              if (!cancelled) {
+                setLocked(true);
+                const lockedResp = resp as MannaLockedResponse;
+                if (lockedResp.yesterday) setYesterdayData(lockedResp.yesterday);
+              }
+              return null;
+            }
+            return resp as MannaGameResponse;
+          });
+
+      return fetchPromise
+        .then(gameResp => {
+          if (cancelled) return;
+          if (!gameResp) return; // locked path already handled
+          setGame(gameResp);
+          // Show confetti if already solved — once per session to avoid re-firing on reload
+          if (gameResp.status === 'solved' && !archiveDate && !sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
+            setShowConfetti(true);
+            sessionStorage.setItem(CONFETTI_SESSION_KEY, '1');
+          }
+          // Show tutorial on first ever visit (not seen before)
+          if (!archiveDate && !localStorage.getItem(MANNA_TUTORIAL_KEY)) {
+            setShowTutorial(true);
+          }
+        });
+    };
+
+    setLoading(true);
+    setLoadError(false);
+
+    // Attempt fetch — if it fails, wait 3 seconds and retry once automatically
+    // before showing the error screen. Covers the backend restart window (~2–5s).
+    attemptFetch()
+      .catch(() => new Promise<void>(resolve => setTimeout(resolve, 3000)).then(attemptFetch))
+      .catch(() => { if (!cancelled) setLoadError(true); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+
+    return () => { cancelled = true; };
+  }, [archiveDate, fetchKey]);
 
   // ─── Hint handler ─────────────────────────────────────────────────────────
   const handleHint = useCallback(async () => {
@@ -569,7 +587,23 @@ export const MannaPuzzle: React.FC = () => {
     );
   }
 
-  if (!game) return null;
+  if (loadError || !game) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
+        <div className="text-5xl" aria-hidden>🌾</div>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          {t('manna.errorLoading', "Failed to load today's puzzle.")}
+        </p>
+        <button
+          onClick={() => { setGame(null); setLocked(false); setLoadError(false); setFetchKey(k => k + 1); }}
+          className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white active:scale-[0.98] transition-all"
+          style={{ background: 'var(--blessing-gold)' }}
+        >
+          {t('common.retry', 'Retry')}
+        </button>
+      </div>
+    );
+  }
   const isOver = game.status !== 'in_progress';
   const isSolved = game.status === 'solved';
   const isFreePlay = game.is_free_play ?? false;

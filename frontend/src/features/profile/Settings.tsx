@@ -32,22 +32,24 @@ export const Settings: React.FC = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { initTheme } = useTheme();
+  const { initTheme, activeTheme } = useTheme();
   const [activeTab, setActiveTab] = useState<Tab>('settings');
   const [notifEmail, setNotifEmail] = useState<boolean | undefined>(undefined);
   const [notifReminder, setNotifReminder] = useState<boolean | undefined>(undefined);
   const [pushReminderTime, setPushReminderTime] = useState<string | undefined>(undefined);
 
-  // Single settings load: syncs theme silently + passes notification values down
+  // Single settings load: syncs theme silently + passes notification values down.
+  // Only apply the server theme if it differs from what's already active locally —
+  // prevents the 800ms debounce race from reverting a theme the user just changed.
   useEffect(() => {
     if (!user) return;
     settingsService.getSettings().then(s => {
-      if (s.active_theme) initTheme(s.active_theme as ThemeId);
+      if (s.active_theme && s.active_theme !== activeTheme) initTheme(s.active_theme as ThemeId);
       setNotifEmail(s.email_notifications);
       setNotifReminder(s.daily_verse_reminder);
       setPushReminderTime(s.push_reminder_time ?? '08:00');
     }).catch(() => {});
-  }, [user, initTheme]);
+  }, [user]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
