@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, ReactNode } from "react";
 import { User, LoginCredentials, SignupCredentials } from "../types/user";
 import { authService } from "../services/api/authService";
 import { queryClient } from "../lib/queryClient";
+import posthog from "posthog-js";
 
 interface AuthContextType {
   user: User | null;
@@ -84,6 +85,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const response = await authService.login(credentials);
     queryClient.clear();
     setUser(response.user);
+    posthog.identify(String(response.user.id), { email: response.user.email });
   };
 
   const signup = async (credentials: SignupCredentials) => {
@@ -107,6 +109,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       queryClient.clear();
       setUser(null);
+      posthog.reset();
     }
   };
 
@@ -114,6 +117,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     const response = await authService.loginWithToken(token);
     queryClient.clear();
     setUser(response.user);
+    posthog.identify(String(response.user.id), { email: response.user.email });
   };
 
   const refreshUser = async () => {

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Outlet, useLocation } from "react-router-dom";
 import { Header } from "./Header";
 import { Footer } from "./Footer";
@@ -8,11 +8,16 @@ import MilestoneCelebrationModal from "../../features/streak/MilestoneCelebratio
 import { CheckoutOverlay } from "../common/CheckoutOverlay";
 import { InstallPrompt } from "../InstallPrompt";
 import { useStreak } from "../../contexts/StreakContext";
+import posthog from "posthog-js";
 
 
 export const Layout: React.FC = () => {
   const location = useLocation();
   const { checkoutOverlayVisible, cancelCheckout } = useStreak();
+
+  useEffect(() => {
+    posthog.capture("$pageview");
+  }, [location.pathname]);
   // On mobile: h-full locks the wrapper to the dvh-sized viewport so body
   // never scrolls and <main> handles all scrolling internally. The html
   // element is sized to 100dvh so the container grows when the browser
