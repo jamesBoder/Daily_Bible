@@ -130,7 +130,7 @@ func main() {
     log.Printf("Email config: FROM_EMAIL=%q  FRONTEND_URL=%q  RESEND_API_KEY_SET=%v",
         cfg.FromEmail, cfg.FrontendURL, cfg.ResendAPIKey != "")
     emailService := services.NewEmailService(cfg.ResendAPIKey, cfg.FromEmail, cfg.FrontendURL)
-    oauthService := services.NewOAuthService(userRepo, tokenService, googleOAuthConfig)
+    oauthService := services.NewOAuthService(userRepo, tokenService, googleOAuthConfig, emailService)
     verseService := services.NewVerseService(verseRepo)
     favoriteService := services.NewFavoriteService(favoriteRepo, verseRepo)
     bibleAPIService := services.NewBibleAPIService(
@@ -207,6 +207,24 @@ func main() {
         go reminderScheduler.RunHourly(ctx)
         log.Printf("ReminderScheduler: started (send_hour=%d, batch=%d)",
             cfg.ReminderSendHour, cfg.ReminderBatchSize)
+    }
+
+    // Streak-break reminder scheduler
+    streakReminderScheduler := services.NewStreakReminderScheduler(
+        db, emailService, tokenService, cfg,
+    )
+    if cfg.StreakReminderEnabled {
+        go streakReminderScheduler.RunHourly(ctx)
+        log.Printf("StreakReminderScheduler: started (send_hour=%d local)", cfg.StreakReminderHour)
+    }
+
+    // Landing-page subscriber daily verse scheduler
+    subscriberReminderScheduler := services.NewSubscriberReminderScheduler(
+        db, emailService, dailyVerseService, cfg,
+    )
+    if cfg.SubscriberReminderEnabled {
+        go subscriberReminderScheduler.RunHourly(ctx)
+        log.Printf("SubscriberReminderScheduler: started (send_hour=%d UTC)", cfg.ReminderSendHour)
     }
 
     // create validator instance

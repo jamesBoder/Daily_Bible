@@ -84,7 +84,7 @@ func (h *SubscriberHandler) Subscribe(c *gin.Context) {
 	}
 
 	// Send welcome email asynchronously — don't block the HTTP response on it
-	unsubURL := fmt.Sprintf("%s/unsubscribe?token=%s", h.frontendURL, token)
+	unsubURL := fmt.Sprintf("%s/api/subscribe/unsubscribe?token=%s", h.frontendURL, token)
 	go func() {
 		if err := h.emailService.SendSubscriberWelcome(email, unsubURL); err != nil {
 			log.Printf("SubscriberHandler: welcome email failed for %s: %v", email, err)

@@ -5,12 +5,12 @@ package services
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
-	"errors"
+	"log"
 	"strings"
 
-	
 	"dailybible/internal/models"
 	"dailybible/internal/repository"
 	"golang.org/x/oauth2"
@@ -18,18 +18,20 @@ import (
 
 // init OAuthService
 type OAuthService struct {
-	userRepo       repository.UserRepository
-	tokenService    *TokenService
-	oauthConfig   *oauth2.Config
+	userRepo     repository.UserRepository
+	tokenService *TokenService
+	oauthConfig  *oauth2.Config
+	emailService *EmailService
 }
 
 // constructor
 // NewOAuthService creates a new instance of OAuthService
-func NewOAuthService(userRepo repository.UserRepository, tokenService *TokenService, config *oauth2.Config) *OAuthService {
+func NewOAuthService(userRepo repository.UserRepository, tokenService *TokenService, config *oauth2.Config, emailService *EmailService) *OAuthService {
     return &OAuthService{
         userRepo:     userRepo,
         tokenService: tokenService,
         oauthConfig:  config,
+        emailService: emailService,
     }
 }
 
@@ -118,6 +120,17 @@ func (s *OAuthService) HandleGoogleCallback(code string) (*models.User, string, 
             }
             if err := s.userRepo.Create(user); err != nil {
                 return nil, "", fmt.Errorf("failed to create user: %w", err)
+            }
+
+            // Schedule the onboarding email sequence for this brand-new Google user.
+            if err := s.userRepo.MarkOnboardingScheduled(user.ID); err != nil {
+                log.Printf("OAuthService: failed to mark onboarding scheduled for user %d: %v", user.ID, err)
+            } else {
+                go func(email, username string) {
+                    if err := s.emailService.ScheduleOnboardingSequence(email, username); err != nil {
+                        log.Printf("OAuthService: onboarding sequence failed for %s: %v", email, err)
+                    }
+                }(user.Email, user.Username)
             }
         }
     }

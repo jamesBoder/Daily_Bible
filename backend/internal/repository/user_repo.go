@@ -36,6 +36,9 @@ type UserRepository interface {
     UpdateResetToken(userID uint, token string, expiresAt time.Time) error
     GetByResetToken(token string) (*models.User, error)
     ClearResetToken(userID uint) error
+
+    // Onboarding email sequence
+    MarkOnboardingScheduled(userID uint) error
 }
 
 // define the struct that implements UserRepository
@@ -226,6 +229,16 @@ func (r *userRepository) GetByResetToken(token string) (*models.User, error) {
         return nil, err
     }
     return &user, nil
+}
+
+// MarkOnboardingScheduled records that the onboarding email sequence has been
+// scheduled for this user. Idempotent: safe to call more than once, but callers
+// should check OnboardingEmailSentAt == nil before doing so.
+func (r *userRepository) MarkOnboardingScheduled(userID uint) error {
+    now := time.Now()
+    return r.db.Model(&models.User{}).Where("id = ?", userID).UpdateColumns(map[string]interface{}{
+        "onboarding_email_sent_at": now,
+    }).Error
 }
 
 // ClearResetToken invalidates the password reset token after use

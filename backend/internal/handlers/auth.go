@@ -284,6 +284,22 @@ func (h *AuthHandler) VerifyEmail(c *gin.Context) {
 		return
 	}
 
+	// Schedule the 3-email onboarding sequence exactly once per user.
+	// Guard with OnboardingEmailSentAt to survive stale verification links.
+	if user.OnboardingEmailSentAt == nil {
+		if err := h.userRepo.MarkOnboardingScheduled(user.ID); err != nil {
+			log.Printf("VerifyEmail: failed to mark onboarding scheduled for user %d: %v", user.ID, err)
+		} else {
+			// Copy values before entering the goroutine — never close over the pointer.
+			email, username, uid := user.Email, user.Username, user.ID
+			go func() {
+				if err := h.emailService.ScheduleOnboardingSequence(email, username); err != nil {
+					log.Printf("VerifyEmail: onboarding sequence failed for user %d: %v", uid, err)
+				}
+			}()
+		}
+	}
+
 	// Reload user to get updated EmailVerified = true
 	user.EmailVerified = true
 

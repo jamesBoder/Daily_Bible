@@ -38,10 +38,18 @@ type Config struct {
     // Hour of day (UTC, 0-23) to dispatch daily verse push reminders.
     PushReminderHour int
 
-    // Email reminder scheduler
+    // Email reminder scheduler (registered users)
     ReminderEnabled   bool
     ReminderSendHour  int
     ReminderBatchSize int
+
+    // Email reminder scheduler (landing-page subscribers)
+    SubscriberReminderEnabled bool
+
+    // Streak-break reminder email — fires at StreakReminderHour local time if
+    // the user has an active streak but hasn't engaged today.
+    StreakReminderEnabled bool
+    StreakReminderHour    int // local hour (0-23), default 21 (9 pm)
 
     // Error monitoring
     SentryDSN string
@@ -76,9 +84,12 @@ func Load() (*Config, error) {
         VAPIDPrivateKey: os.Getenv("VAPID_PRIVATE_KEY"),
         VAPIDSubscriber: getEnvOrDefault("VAPID_SUBSCRIBER", "mailto:admin@wordsofpraise.app"),
         PushReminderHour:  parsePushHour(getEnvOrDefault("PUSH_REMINDER_HOUR", "8")),
-        ReminderEnabled:   getEnvOrDefault("REMINDER_ENABLED", "true") == "true",
-        ReminderSendHour:  parseIntOrDefault("REMINDER_SEND_HOUR", 8),
-        ReminderBatchSize: parseIntOrDefault("REMINDER_BATCH_SIZE", 100),
+        ReminderEnabled:           getEnvOrDefault("REMINDER_ENABLED", "true") == "true",
+        ReminderSendHour:          parseIntOrDefault("REMINDER_SEND_HOUR", 8),
+        ReminderBatchSize:         parseIntOrDefault("REMINDER_BATCH_SIZE", 100),
+        SubscriberReminderEnabled: getEnvOrDefault("SUBSCRIBER_REMINDER_ENABLED", "true") == "true",
+        StreakReminderEnabled:     getEnvOrDefault("STREAK_REMINDER_ENABLED", "true") == "true",
+        StreakReminderHour:        parseIntOrDefault("STREAK_REMINDER_HOUR", 21),
         SentryDSN:         os.Getenv("SENTRY_DSN"),
     }, nil
 }

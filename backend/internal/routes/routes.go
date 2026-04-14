@@ -275,6 +275,11 @@ func SetupRoutes(
 	// Phase 10: yesterday's word — public, no auth
 	api.GET("/manna/yesterday", mannaHandler.GetYesterday)
 
+	// Phase 10: guest game — public, no auth (unauthenticated users play with 3 guesses,
+	// state managed client-side; stateless server-side evaluation)
+	api.GET("/manna/guest/today", mannaHandler.GetGuestGame)
+	api.POST("/manna/guest/guess", mannaHandler.SubmitGuestGuess)
+
 	// Push notifications — public VAPID key endpoint + protected subscribe/unsubscribe
 	api.GET("/push/vapid-key", pushHandler.GetVAPIDPublicKey)
 	push := api.Group("/push")

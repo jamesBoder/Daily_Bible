@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"log"
+	"time"
 
 	"github.com/resend/resend-go/v2"
 )
@@ -212,6 +213,249 @@ func (s *EmailService) SendSubscriberWelcome(toEmail, unsubURL string) error {
 	}
 	_, err := s.client.Emails.Send(req)
 	return err
+}
+
+const subscriberDailyVerseHTMLTemplate = `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:0;background:#faf8f3;">
+  <div style="background:#f59e0b;padding:20px 24px;text-align:center;">
+    <span style="font-size:24px;color:#fff;font-weight:bold;">🕯 Words of Praise</span>
+  </div>
+  <div style="padding:32px 24px;">
+    <p style="margin:0 0 24px;font-size:16px;color:#374151;">Good morning! Here is your verse for today:</p>
+    <blockquote style="margin:0 0 24px;padding:20px 24px;background:#fff;border-left:4px solid #f59e0b;border-radius:4px;">
+      <p style="margin:0 0 12px;font-size:18px;color:#1f2937;font-style:italic;">"%s"</p>
+      <p style="margin:0;font-size:14px;color:#6b7280;">— %s</p>
+    </blockquote>
+    <a href="%s/daily" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;margin-bottom:16px;">Read Today's Verse →</a>
+    <p style="margin:16px 0 8px;font-size:14px;color:#6b7280;">Want to go deeper? Create a free account to track your streak, play the Manna puzzle, and keep a prayer journal.</p>
+    <a href="%s/signup" style="font-size:14px;color:#f59e0b;text-decoration:underline;">Create a free account →</a>
+  </div>
+  <div style="padding:20px 24px;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0 0 8px;font-size:12px;color:#9ca3af;">You're receiving this because you subscribed to daily verse emails.</p>
+    <p style="margin:0;font-size:12px;color:#9ca3af;">
+      <a href="%s" style="color:#6b7280;">Unsubscribe</a>
+    </p>
+    <p style="margin:8px 0 0;font-size:11px;color:#d1d5db;">Words of Praise · wordsofpraise.app</p>
+  </div>
+</div>`
+
+// SendSubscriberDailyVerse sends the daily verse email to a landing-page subscriber.
+// Unlike SendDailyReminder, there is no username or per-user language preference.
+func (s *EmailService) SendSubscriberDailyVerse(toEmail, verseText, reference, unsubURL string) error {
+	subject := fmt.Sprintf("Your verse for today — %s", reference)
+	html := fmt.Sprintf(subscriberDailyVerseHTMLTemplate,
+		verseText, reference,
+		s.frontendURL, // Read Today's Verse → /daily
+		s.frontendURL, // Create a free account → /signup
+		unsubURL,
+	)
+	_, err := s.client.Emails.Send(&resend.SendEmailRequest{
+		From:    s.fromEmail,
+		To:      []string{toEmail},
+		Subject: subject,
+		Html:    html,
+		Headers: map[string]string{
+			"List-Unsubscribe":      "<" + unsubURL + ">",
+			"List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+		},
+	})
+	return err
+}
+
+// ── Streak-break reminder ─────────────────────────────────────────────────────
+
+// SendStreakReminder sends a late-evening nudge to a user whose streak is at risk.
+// Called at ~9 pm local time when no daily_engagement has been recorded for today.
+// streakDays is the current streak count — shown in the email to raise the stakes.
+func (s *EmailService) SendStreakReminder(toEmail, username string, streakDays int, unsubURL string) error {
+	// Subject: "1-day streak" is grammatically awkward; simplify for day 1.
+	var subject string
+	if streakDays == 1 {
+		subject = fmt.Sprintf("Your streak ends at midnight, %s", username)
+	} else {
+		subject = fmt.Sprintf("Your %d-day streak ends at midnight, %s", streakDays, username)
+	}
+
+	// Body label: always show the count — "🔥 1-day streak" is clear; "🔥 streak" alone is not.
+	streakLabel := fmt.Sprintf("%d-day streak", streakDays)
+
+	html := fmt.Sprintf(`<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:0;background:#faf8f3;">
+  <div style="background:#f59e0b;padding:20px 24px;text-align:center;">
+    <span style="font-size:24px;color:#fff;font-weight:bold;">🕯 Words of Praise</span>
+  </div>
+  <div style="padding:32px 24px;">
+    <p style="margin:0 0 8px;font-size:16px;color:#374151;">Hi <strong>%s</strong>,</p>
+    <p style="margin:0 0 8px;font-size:28px;font-weight:bold;color:#f59e0b;">🔥 %s</p>
+    <p style="margin:0 0 24px;font-size:16px;color:#374151;">Today hasn't been recorded yet. Read today's verse and your streak is safe — it takes 60 seconds.</p>
+    <a href="%s/daily" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">Keep my streak →</a>
+  </div>
+  <div style="padding:20px 24px;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;">You're receiving this because you have daily verse reminders enabled.</p>
+    <p style="margin:0;font-size:12px;color:#9ca3af;">
+      <a href="%s" style="color:#6b7280;">Unsubscribe</a>
+      &nbsp;·&nbsp;
+      <a href="%s/settings" style="color:#6b7280;">Manage preferences</a>
+    </p>
+    <p style="margin:8px 0 0;font-size:11px;color:#d1d5db;">Words of Praise · wordsofpraise.app</p>
+  </div>
+</div>`, username, streakLabel, s.frontendURL, unsubURL, s.frontendURL)
+
+	_, err := s.client.Emails.Send(&resend.SendEmailRequest{
+		From:    s.fromEmail,
+		To:      []string{toEmail},
+		Subject: subject,
+		Html:    html,
+		Headers: map[string]string{
+			"List-Unsubscribe":      "<" + unsubURL + ">",
+			"List-Unsubscribe-Post": "List-Unsubscribe=One-Click",
+		},
+	})
+	return err
+}
+
+// ── Onboarding sequence ───────────────────────────────────────────────────────
+
+// Day 1 — immediate: welcome + what to do first
+// %s = username, %s = frontendURL
+const onboardingDay1HTML = `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:0;background:#faf8f3;">
+  <div style="background:#f59e0b;padding:20px 24px;text-align:center;">
+    <span style="font-size:24px;color:#fff;font-weight:bold;">🕯 Words of Praise</span>
+  </div>
+  <div style="padding:32px 24px;">
+    <h2 style="margin:0 0 16px;font-size:22px;color:#1f2937;">Welcome, <strong>%s</strong>!</h2>
+    <p style="margin:0 0 20px;font-size:16px;color:#374151;">Your account is ready. Here's how to get the most out of your first day:</p>
+    <table style="width:100%%;border-collapse:collapse;margin:0 0 24px;">
+      <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;vertical-align:top;width:32px;font-size:20px;">📖</td>
+        <td style="padding:12px 0 12px 12px;border-bottom:1px solid #f3f4f6;">
+          <strong style="color:#1f2937;">Read today's verse</strong><br>
+          <span style="font-size:14px;color:#6b7280;">A new verse appears every day. Take 60 seconds to sit with it.</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;border-bottom:1px solid #f3f4f6;vertical-align:top;font-size:20px;">🟨</td>
+        <td style="padding:12px 0 12px 12px;border-bottom:1px solid #f3f4f6;">
+          <strong style="color:#1f2937;">Play Manna</strong><br>
+          <span style="font-size:14px;color:#6b7280;">Guess the hidden biblical word in 6 tries — one puzzle per day, just like Wordle.</span>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding:12px 0;vertical-align:top;font-size:20px;">🔥</td>
+        <td style="padding:12px 0 12px 12px;">
+          <strong style="color:#1f2937;">Start your streak</strong><br>
+          <span style="font-size:14px;color:#6b7280;">Read the verse and play Manna to earn your first streak day. Come back tomorrow to keep it going.</span>
+        </td>
+      </tr>
+    </table>
+    <a href="%s/daily" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">Start with today's verse →</a>
+  </div>
+  <div style="padding:20px 24px;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;">You're receiving this because you created an account on Words of Praise.</p>
+    <p style="margin:0;font-size:12px;color:#9ca3af;"><a href="%s/settings" style="color:#6b7280;">Manage email preferences</a></p>
+    <p style="margin:8px 0 0;font-size:11px;color:#d1d5db;">Words of Praise · wordsofpraise.app</p>
+  </div>
+</div>`
+
+// Day 3 — scheduled +2 days: feature discovery, forward-looking
+// %s = username, %s = frontendURL, %s = frontendURL (settings)
+const onboardingDay3HTML = `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:0;background:#faf8f3;">
+  <div style="background:#f59e0b;padding:20px 24px;text-align:center;">
+    <span style="font-size:24px;color:#fff;font-weight:bold;">🕯 Words of Praise</span>
+  </div>
+  <div style="padding:32px 24px;">
+    <p style="margin:0 0 8px;font-size:16px;color:#374151;">Hi <strong>%s</strong>,</p>
+    <p style="margin:0 0 20px;font-size:16px;color:#374151;">It's day three. The hardest part of any habit is staying consistent through the first week — here's what's waiting for you when you open the app today:</p>
+    <ul style="margin:0 0 24px;padding-left:20px;color:#374151;font-size:15px;line-height:1.8;">
+      <li><strong>Journal</strong> — write a short reflection on today's verse. It takes 2 minutes and compounds over time.</li>
+      <li><strong>Community board</strong> — see how others are engaging with the same verse you're reading.</li>
+      <li><strong>Favorites</strong> — save the verses that land on you. They're easy to find later.</li>
+    </ul>
+    <a href="%s/daily" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;">Open today's verse →</a>
+  </div>
+  <div style="padding:20px 24px;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;">You're receiving this as part of your Words of Praise welcome series.</p>
+    <p style="margin:0;font-size:12px;color:#9ca3af;"><a href="%s/settings" style="color:#6b7280;">Manage email preferences</a></p>
+    <p style="margin:8px 0 0;font-size:11px;color:#d1d5db;">Words of Praise · wordsofpraise.app</p>
+  </div>
+</div>`
+
+// Day 7 — scheduled +6 days: "you made it a week" + soft premium mention
+// %s = username, %s = frontendURL (/daily), %s = frontendURL (/shop)
+const onboardingDay7HTML = `<div style="font-family:Georgia,serif;max-width:600px;margin:0 auto;padding:0;background:#faf8f3;">
+  <div style="background:#f59e0b;padding:20px 24px;text-align:center;">
+    <span style="font-size:24px;color:#fff;font-weight:bold;">🕯 Words of Praise</span>
+  </div>
+  <div style="padding:32px 24px;">
+    <p style="margin:0 0 8px;font-size:16px;color:#374151;">Hi <strong>%s</strong>,</p>
+    <p style="margin:0 0 20px;font-size:22px;font-weight:bold;color:#1f2937;">One week. You showed up.</p>
+    <p style="margin:0 0 20px;font-size:16px;color:#374151;">Seven days of returning to Scripture is not nothing. Most apps get one session. You've given this seven.</p>
+    <p style="margin:0 0 24px;font-size:16px;color:#374151;">If you want to go deeper, there's a one-time Premium upgrade that unlocks everything — reading plans, guided prayer, hard mode Manna, verse annotations, and streak protection (Grace Days) so a busy day doesn't break what you've built.</p>
+    <p style="margin:0 0 20px;font-size:14px;color:#6b7280;">Launch price: <strong style="color:#1f2937;">$9.99 once</strong>, no subscription, no renewal.</p>
+    <a href="%s/daily" style="display:inline-block;background:#f59e0b;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;font-size:15px;margin-bottom:12px;">Continue to day 8 →</a>
+    <br>
+    <a href="%s/shop" style="font-size:14px;color:#f59e0b;text-decoration:underline;">See what's included in Premium →</a>
+  </div>
+  <div style="padding:20px 24px;border-top:1px solid #e5e7eb;text-align:center;">
+    <p style="margin:0 0 4px;font-size:12px;color:#9ca3af;">You're receiving this as part of your Words of Praise welcome series.</p>
+    <p style="margin:0;font-size:12px;color:#9ca3af;"><a href="%s/settings" style="color:#6b7280;">Manage email preferences</a></p>
+    <p style="margin:8px 0 0;font-size:11px;color:#d1d5db;">Words of Praise · wordsofpraise.app</p>
+  </div>
+</div>`
+
+// ScheduleOnboardingSequence schedules 3 onboarding emails for a newly activated
+// user using Resend's ScheduledAt field. Day 1 is sent immediately; Day 3 and Day 7
+// are scheduled via Resend so no background goroutine or DB scheduler is needed.
+// All three sends are attempted independently — a failure on one does not cancel
+// the others. The caller is responsible for calling MarkOnboardingScheduled on
+// the user record to prevent a second scheduling if VerifyEmail is somehow called
+// twice.
+func (s *EmailService) ScheduleOnboardingSequence(toEmail, username string) error {
+	now := time.Now()
+
+	type emailJob struct {
+		subject     string
+		html        string
+		scheduledAt string // empty = send immediately
+	}
+
+	jobs := []emailJob{
+		{
+			// Day 1: username, frontendURL (/daily CTA), frontendURL (/settings footer)
+			subject: fmt.Sprintf("You're in, %s — start here", username),
+			html:    fmt.Sprintf(onboardingDay1HTML, username, s.frontendURL, s.frontendURL),
+		},
+		{
+			// Day 3: username, frontendURL (/daily CTA), frontendURL (/settings footer)
+			subject:     fmt.Sprintf("3 days in, %s — here's what to try next", username),
+			html:        fmt.Sprintf(onboardingDay3HTML, username, s.frontendURL, s.frontendURL),
+			scheduledAt: now.Add(2 * 24 * time.Hour).UTC().Format(time.RFC3339),
+		},
+		{
+			// Day 7: username, frontendURL (/daily CTA), frontendURL (/shop link), frontendURL (/settings footer)
+			subject:     fmt.Sprintf("One week, %s — you showed up", username),
+			html:        fmt.Sprintf(onboardingDay7HTML, username, s.frontendURL, s.frontendURL, s.frontendURL),
+			scheduledAt: now.Add(6 * 24 * time.Hour).UTC().Format(time.RFC3339),
+		},
+	}
+
+	var firstErr error
+	for _, job := range jobs {
+		req := &resend.SendEmailRequest{
+			From:    s.fromEmail,
+			To:      []string{toEmail},
+			Subject: job.subject,
+			Html:    job.html,
+		}
+		if job.scheduledAt != "" {
+			req.ScheduledAt = job.scheduledAt
+		}
+		if _, err := s.client.Emails.Send(req); err != nil {
+			log.Printf("ScheduleOnboardingSequence: failed to send %q to %s: %v", job.subject, toEmail, err)
+			if firstErr == nil {
+				firstErr = err
+			}
+		}
+	}
+	return firstErr
 }
 
 // SendPasswordResetEmail sends a password reset link to the user

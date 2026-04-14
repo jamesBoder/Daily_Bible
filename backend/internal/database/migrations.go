@@ -46,6 +46,10 @@ func RunMigrations(db *gorm.DB) error {
         &models.RosaryCompletion{},
         // Email capture
         &models.EmailSubscriber{},
+        // Subscriber daily verse emails
+        &models.SubscriberReminderLog{},
+        // Streak-break warning emails
+        &models.StreakReminderLog{},
     ); err != nil {
         return err
     }

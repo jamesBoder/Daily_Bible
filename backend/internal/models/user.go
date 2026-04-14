@@ -42,6 +42,11 @@ type User struct {
     // Username change cooldown
     UsernameChangedAt *time.Time `json:"-"`
 
+    // Onboarding email sequence — set once when the sequence is scheduled at
+    // account activation (email verification or Google OAuth). Prevents re-scheduling
+    // if the user clicks a stale verification link a second time.
+    OnboardingEmailSentAt *time.Time `json:"-"`
+
     // Password reset
     ResetToken          *string    `gorm:"size:128" json:"-"`
     ResetTokenExpiresAt *time.Time `json:"-"`
