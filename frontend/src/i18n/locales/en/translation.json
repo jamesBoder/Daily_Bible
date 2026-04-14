@@ -924,6 +924,15 @@
       "genericHint": "Open this app in Chrome on Android or Safari on iPhone to add it to your home screen."
     }
   },
+  "push": {
+    "prompt": {
+      "label": "Enable push notifications prompt",
+      "title": "Never miss a day",
+      "subtitle": "Get a daily verse reminder on your device.",
+      "cta": "Enable",
+      "enabling": "Enabling…"
+    }
+  },
   "prayer": {
     "guidedPrayerTitle": "Guided Prayer",
     "rosaryTitle": "The Rosary",

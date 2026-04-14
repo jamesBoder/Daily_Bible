@@ -868,6 +868,15 @@
       "genericHint": "Ouvri app sa a nan Chrome (Android) oswa Safari (iPhone) pou ajoute l nan ekran akèy ou."
     }
   },
+  "push": {
+    "prompt": {
+      "label": "Envitasyon pou aktive notifikasyon",
+      "title": "Pa janm rate yon jou",
+      "subtitle": "Resevwa vèsè chak jou sou aparèy ou.",
+      "cta": "Aktive",
+      "enabling": "Ap aktive…"
+    }
+  },
   "prayer": {
     "guidedPrayerTitle": "Priyè Gidé",
     "rosaryTitle": "Chaplet la",

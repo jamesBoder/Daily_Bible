@@ -868,6 +868,15 @@
       "genericHint": "Ouvrez cette app dans Chrome (Android) ou Safari (iPhone) pour l'ajouter à votre écran d'accueil."
     }
   },
+  "push": {
+    "prompt": {
+      "label": "Invite à activer les notifications",
+      "title": "Ne manquez aucun jour",
+      "subtitle": "Recevez le verset quotidien sur votre appareil.",
+      "cta": "Activer",
+      "enabling": "Activation…"
+    }
+  },
   "prayer": {
     "guidedPrayerTitle": "Prière Guidée",
     "rosaryTitle": "Le Rosaire",

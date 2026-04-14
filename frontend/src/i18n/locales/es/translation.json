@@ -906,6 +906,15 @@
       "genericHint": "Abre esta app en Chrome (Android) o Safari (iPhone) para agregarla a tu pantalla de inicio."
     }
   },
+  "push": {
+    "prompt": {
+      "label": "Aviso para activar notificaciones",
+      "title": "No te pierdas ni un día",
+      "subtitle": "Recibe el versículo diario en tu dispositivo.",
+      "cta": "Activar",
+      "enabling": "Activando…"
+    }
+  },
   "prayer": {
     "guidedPrayerTitle": "Oración Guiada",
     "rosaryTitle": "El Rosario",

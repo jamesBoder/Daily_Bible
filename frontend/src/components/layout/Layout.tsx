@@ -7,6 +7,7 @@ import { OfflineBanner } from "../common/OfflineBanner";
 import MilestoneCelebrationModal from "../../features/streak/MilestoneCelebrationModal";
 import { CheckoutOverlay } from "../common/CheckoutOverlay";
 import { InstallPrompt } from "../InstallPrompt";
+import { PushPrompt } from "../PushPrompt";
 import { useStreak } from "../../contexts/StreakContext";
 import posthog from "posthog-js";
 
@@ -37,6 +38,7 @@ export const Layout: React.FC = () => {
       </div>
       <BottomNav />
       <InstallPrompt />
+      <PushPrompt />
       <MilestoneCelebrationModal />
       {/* §8.18.4: Full-screen checkout overlay — position:fixed, survives re-renders */}
       <CheckoutOverlay visible={checkoutOverlayVisible} onCancel={cancelCheckout} />
