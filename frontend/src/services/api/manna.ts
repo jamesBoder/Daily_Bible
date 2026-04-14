@@ -70,8 +70,20 @@ export interface MannaGameSummary {
   game_date: string;
   status: 'in_progress' | 'solved' | 'failed';
   guess_count: number;
-  max_guesses: number; // 4 for free games, 6 for premium
+  max_guesses: number;
   word: string;
+}
+
+// Guest game (unauthenticated play) — state is managed client-side in localStorage
+export interface GuestGameInfo {
+  word_length: number;
+  max_guesses: number; // always 3 for guests
+}
+
+export interface GuestGuessResult {
+  result: ('correct' | 'present' | 'absent')[];
+  answer?: string;              // returned on correct guess or last guess
+  scripture_reference?: string; // returned when game ends
 }
 
 export interface MannaStats {
@@ -119,5 +131,14 @@ export const mannaApi = {
 
   getArchiveHint(date: string): Promise<HintResult> {
     return apiClient.post<HintResult>(`/api/manna/archive/${date}/hint`).then(r => r.data);
+  },
+
+  // Guest (unauthenticated) endpoints — no auth required, stateless server-side
+  getGuestGame(): Promise<GuestGameInfo> {
+    return apiClient.get<GuestGameInfo>('/api/manna/guest/today').then(r => r.data);
+  },
+
+  submitGuestGuess(guess: string, isLastGuess: boolean): Promise<GuestGuessResult> {
+    return apiClient.post<GuestGuessResult>('/api/manna/guest/guess', { guess, is_last_guess: isLastGuess }).then(r => r.data);
   },
 };

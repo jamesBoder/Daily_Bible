@@ -17,7 +17,7 @@ import (
 )
 
 const maxMannaGuesses = 6
-const freeMannaGuesses = 4
+const guestMannaGuesses = 3
 const maxMannaHints = 3
 const hintCost = 15
 
@@ -126,7 +126,7 @@ type MannaGameSummary struct {
 	GameDate   string `json:"game_date"`
 	Status     string `json:"status"`
 	GuessCount int    `json:"guess_count"`
-	MaxGuesses int    `json:"max_guesses"` // 4 for free games, 6 for premium
+	MaxGuesses int    `json:"max_guesses"`
 	Word       string `json:"word,omitempty"` // revealed after game is over
 }
 
@@ -185,16 +185,12 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 // ─── Game management ──────────────────────────────────────────────────────────
 
 // getOrCreateGameForDate returns the user's game for the given date, creating one if absent.
-// isPremium controls max guesses and whether scripture clue is included.
-func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time, isPremium bool) (*MannaGameResponse, error) {
+// All signed-in users (free and premium alike) get the full daily game: 6 guesses + scripture clue.
+// Premium-only features (hints, history, archive) are gated in the handler layer.
+func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time) (*MannaGameResponse, error) {
 	word, err := s.getWordForDate(date)
 	if err != nil {
 		return nil, fmt.Errorf("getWordForDate: %w", err)
-	}
-
-	maxGuesses := maxMannaGuesses
-	if !isPremium {
-		maxGuesses = freeMannaGuesses
 	}
 
 	var game models.MannaGame
@@ -203,7 +199,7 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time, isPre
 		GameDate:   date,
 		WordID:     word.ID,
 		Status:     "in_progress",
-		MaxGuesses: maxGuesses,
+		MaxGuesses: maxMannaGuesses,
 	}
 	ins := s.db.Clauses(clause.OnConflict{DoNothing: true}).Create(&newGame)
 	if ins.Error != nil {
@@ -215,10 +211,6 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time, isPre
 		if err := s.db.Where("user_id = ? AND game_date = ?", userID, date).First(&game).Error; err != nil {
 			return nil, fmt.Errorf("refetch game: %w", err)
 		}
-		// Use the stored MaxGuesses if the game already exists
-		if game.MaxGuesses > 0 {
-			maxGuesses = game.MaxGuesses
-		}
 	}
 
 	guesses, err := s.loadGuesses(game.ID)
@@ -226,43 +218,33 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time, isPre
 		return nil, err
 	}
 
-	// Derive effective max guesses from the stored game (handles mid-day upgrades correctly).
-	// For newly created games, game.MaxGuesses == maxGuesses (set above).
-	// For pre-existing games, game.MaxGuesses reflects what was set at creation time.
+	// Effective max: use stored value if present (handles rows created before this migration).
 	effectiveMax := game.MaxGuesses
 	if effectiveMax == 0 {
-		effectiveMax = maxMannaGuesses // backward compat for rows before this migration
+		effectiveMax = maxMannaGuesses
 	}
-	isFreeGame := effectiveMax == freeMannaGuesses
 
 	resp := &MannaGameResponse{
-		Locked:      false,
-		GameID:      game.ID,
-		Status:      game.Status,
-		GuessCount:  game.GuessCount,
-		MaxGuesses:  effectiveMax,
-		Guesses:     guesses,
-		WordLength:  5,
-		IsFreePlay:  isFreeGame,
-		HintsUsed:   game.HintsUsed,
-		HintLetters: parseHintLetters(game.HintLetters),
-	}
-
-	// Scripture clue is a premium-only feature — only populate for premium games.
-	if !isFreeGame {
-		resp.ScriptureReference = word.ScriptureReference
-		resp.ScriptureClue = buildScriptureClue(word.ScriptureText, word.Word)
-		resp.Testament = getTestament(word.ScriptureReference)
+		Locked:             false,
+		GameID:             game.ID,
+		Status:             game.Status,
+		GuessCount:         game.GuessCount,
+		MaxGuesses:         effectiveMax,
+		Guesses:            guesses,
+		WordLength:         5,
+		IsFreePlay:         false, // all signed-in users get the full game
+		HintsUsed:          game.HintsUsed,
+		HintLetters:        parseHintLetters(game.HintLetters),
+		ScriptureReference: word.ScriptureReference,
+		ScriptureClue:      buildScriptureClue(word.ScriptureText, word.Word),
+		Testament:          getTestament(word.ScriptureReference),
 	}
 
 	if game.Status == "solved" || game.Status == "failed" {
 		resp.Answer = &word.Word
-		// Full scripture text and connection note are premium-only.
-		if !isFreeGame {
-			resp.ScriptureText = &word.ScriptureText
-			if word.ConnectionNote != "" {
-				resp.ConnectionNote = &word.ConnectionNote
-			}
+		resp.ScriptureText = &word.ScriptureText
+		if word.ConnectionNote != "" {
+			resp.ConnectionNote = &word.ConnectionNote
 		}
 	}
 
@@ -270,13 +252,14 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time, isPre
 }
 
 // GetOrCreateGame returns the user's game for today, creating one if absent.
-func (s *MannaService) GetOrCreateGame(userID uint, isPremium bool) (*MannaGameResponse, error) {
-	return s.getOrCreateGameForDate(userID, time.Now().UTC().Truncate(24*time.Hour), isPremium)
+// All authenticated users (free and premium) get the full game.
+func (s *MannaService) GetOrCreateGame(userID uint) (*MannaGameResponse, error) {
+	return s.getOrCreateGameForDate(userID, time.Now().UTC().Truncate(24*time.Hour))
 }
 
-// GetOrCreateArchiveGame returns a premium game for a past date, creating one if absent.
+// GetOrCreateArchiveGame returns a game for a past date, creating one if absent (premium-gated in handler).
 func (s *MannaService) GetOrCreateArchiveGame(userID uint, date time.Time) (*MannaGameResponse, error) {
-	return s.getOrCreateGameForDate(userID, date, true)
+	return s.getOrCreateGameForDate(userID, date)
 }
 
 // submitGuessForDate validates a guess and advances the game state for the given date.
@@ -499,6 +482,66 @@ func (s *MannaService) GetHint(userID uint) (*HintResponse, error) {
 // GetArchiveHint reveals one unrevealed letter position for an archive game.
 func (s *MannaService) GetArchiveHint(userID uint, date time.Time) (*HintResponse, error) {
 	return s.getHintForDate(userID, date)
+}
+
+// ─── Guest game (unauthenticated play) ───────────────────────────────────────
+
+// GuestGameInfo is returned by GET /api/manna/guest/today.
+// No word is included — the frontend only learns the word when the game ends.
+type GuestGameInfo struct {
+	WordLength int `json:"word_length"`
+	MaxGuesses int `json:"max_guesses"`
+}
+
+// GuestGuessResult is returned by POST /api/manna/guest/guess.
+type GuestGuessResult struct {
+	Result             []string `json:"result"`
+	Answer             *string  `json:"answer,omitempty"`              // only on correct guess or last guess
+	ScriptureReference *string  `json:"scripture_reference,omitempty"` // only on game end
+}
+
+// GetGuestGameInfo returns the guest game configuration (word length + max guesses).
+func (s *MannaService) GetGuestGameInfo() *GuestGameInfo {
+	return &GuestGameInfo{WordLength: 5, MaxGuesses: guestMannaGuesses}
+}
+
+// EvaluateGuestGuess validates and scores a guest guess against today's word.
+// isLastGuess should be true when the client has used its final allowed guess (so the
+// answer can be revealed on a wrong final guess).
+// No game state is stored — guest state lives entirely in the browser (localStorage).
+func (s *MannaService) EvaluateGuestGuess(guess string, isLastGuess bool) (*GuestGuessResult, error) {
+	guess = strings.ToUpper(strings.TrimSpace(guess))
+	if len(guess) != 5 {
+		return nil, errors.New("guess_length: Guesses must be exactly 5 letters")
+	}
+	for _, ch := range guess {
+		if ch < 'A' || ch > 'Z' {
+			return nil, errors.New("guess_chars: Guesses must contain only letters A–Z")
+		}
+	}
+
+	var wordCount int64
+	if err := s.db.Model(&models.MannaWord{}).Where("word = ?", guess).Count(&wordCount).Error; err != nil {
+		return nil, fmt.Errorf("validate word: %w", err)
+	}
+	if wordCount == 0 {
+		return nil, errors.New("not_a_word: Not a recognized biblical word")
+	}
+
+	word, err := s.GetTodayWord()
+	if err != nil {
+		return nil, fmt.Errorf("get today word: %w", err)
+	}
+
+	result := evaluateGuess(word.Word, guess)
+	isSolved := guess == word.Word
+
+	resp := &GuestGuessResult{Result: result}
+	if isSolved || isLastGuess {
+		resp.Answer = &word.Word
+		resp.ScriptureReference = &word.ScriptureReference
+	}
+	return resp, nil
 }
 
 // GetYesterdayResult returns yesterday's word + scripture. Public — no auth needed.

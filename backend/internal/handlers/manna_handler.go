@@ -39,15 +39,14 @@ func NewMannaHandler(
 }
 
 // GetToday returns the user's game for today.
-// Free users get a limited game (4 guesses, no scripture clue).
+// All signed-in users (free and premium) get the full game: 6 guesses + scripture clue.
+// Premium-only features (hints, stats, history, archive) are gated individually.
 // GET /api/manna/today
 func (h *MannaHandler) GetToday(c *gin.Context) {
 	userID, _ := c.Get("userID")
 	uid := userID.(uint)
 
-	isPremium := h.subscriptionChecker.IsPremium(uid)
-
-	game, err := h.mannaService.GetOrCreateGame(uid, isPremium)
+	game, err := h.mannaService.GetOrCreateGame(uid)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to load today's game"})
 		return
@@ -56,7 +55,7 @@ func (h *MannaHandler) GetToday(c *gin.Context) {
 	// Record daily engagement so Manna play counts toward the reading streak.
 	// Only premium users get streak credit for Manna.
 	// Fires in a goroutine — streak update must not block the puzzle response.
-	if isPremium {
+	if h.subscriptionChecker.IsPremium(uid) {
 		go func() {
 			settings, err := h.settingsService.GetUserSettings(uid)
 			if err != nil {
@@ -69,6 +68,45 @@ func (h *MannaHandler) GetToday(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, game)
+}
+
+// GetGuestGame returns the guest game configuration (word length + max guesses).
+// Public — no auth required. Guest state is managed client-side (localStorage).
+// GET /api/manna/guest/today
+func (h *MannaHandler) GetGuestGame(c *gin.Context) {
+	c.JSON(http.StatusOK, h.mannaService.GetGuestGameInfo())
+}
+
+// SubmitGuestGuess evaluates a guess for a guest (unauthenticated) player.
+// Stateless — no game state is stored server-side.
+// POST /api/manna/guest/guess
+func (h *MannaHandler) SubmitGuestGuess(c *gin.Context) {
+	var req struct {
+		Guess       string `json:"guess" binding:"required"`
+		IsLastGuess bool   `json:"is_last_guess"`
+	}
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Missing guess field"})
+		return
+	}
+
+	result, err := h.mannaService.EvaluateGuestGuess(req.Guess, req.IsLastGuess)
+	if err != nil {
+		msg := err.Error()
+		switch {
+		case strings.HasPrefix(msg, "guess_length:"):
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must be exactly 5 letters."})
+		case strings.HasPrefix(msg, "guess_chars:"):
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must contain only letters A–Z."})
+		case strings.HasPrefix(msg, "not_a_word:"):
+			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "not_a_word"})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to submit guess"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
 }
 
 // SubmitGuess handles a guess submission.
