@@ -91,6 +91,12 @@ export const authService = {
   // Get stored user data
   getStoredUser: (): User | null => {
     const userData = localStorage.getItem(STORAGE_KEYS.USER);
-    return userData ? JSON.parse(userData) : null;
+    if (!userData) return null;
+    try {
+      return JSON.parse(userData);
+    } catch {
+      localStorage.removeItem(STORAGE_KEYS.USER);
+      return null;
+    }
   },
 };

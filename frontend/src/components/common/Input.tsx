@@ -20,6 +20,7 @@ export const Input: React.FC<InputProps> = ({
       )}
       <input
         className={`input-field ${error ? "border-red-500" : ""} ${className}`}
+        aria-invalid={!!error}
         {...props}
       />
       {error && <p className="mt-1 text-sm text-red-600">{error}</p>}
