@@ -23,24 +23,29 @@ export interface SavedSearch {
 }
 
 const searchExtendedApi = {
-  searchReflections: (q: string) =>
-    apiClient.get<{ results: ReflectionSearchResult[] }>('/api/search/reflections', { params: { q } })
-      .then(r => r.data.results),
+  searchReflections: async (q: string): Promise<ReflectionSearchResult[]> => {
+    const r = await apiClient.get<{ results: ReflectionSearchResult[] }>('/api/search/reflections', { params: { q } });
+    return r.data.results;
+  },
 
-  searchJournal: (q: string) =>
-    apiClient.get<{ results: JournalSearchResult[] }>('/api/search/journal', { params: { q } })
-      .then(r => r.data.results),
+  searchJournal: async (q: string): Promise<JournalSearchResult[]> => {
+    const r = await apiClient.get<{ results: JournalSearchResult[] }>('/api/search/journal', { params: { q } });
+    return r.data.results;
+  },
 
-  getSavedSearches: () =>
-    apiClient.get<{ saved_searches: SavedSearch[] }>('/api/search/saved')
-      .then(r => r.data.saved_searches),
+  getSavedSearches: async (): Promise<SavedSearch[]> => {
+    const r = await apiClient.get<{ saved_searches: SavedSearch[] }>('/api/search/saved');
+    return r.data.saved_searches;
+  },
 
-  saveSearch: (query: string, name?: string) =>
-    apiClient.post<SavedSearch>('/api/search/saved', { query, name: name ?? '' })
-      .then(r => r.data),
+  saveSearch: async (query: string, name?: string): Promise<SavedSearch> => {
+    const r = await apiClient.post<SavedSearch>('/api/search/saved', { query, name: name ?? '' });
+    return r.data;
+  },
 
-  deleteSavedSearch: (id: number) =>
-    apiClient.delete(`/api/search/saved/${id}`),
+  deleteSavedSearch: async (id: number): Promise<void> => {
+    await apiClient.delete(`/api/search/saved/${id}`);
+  },
 };
 
 export default searchExtendedApi;
