@@ -8,6 +8,7 @@ export interface UseCommunityReturn {
   isLoading: boolean;
   hasMore: boolean;
   isAdmin: boolean;
+  error: string | null;
   loadMore: () => void;
   createPost: (postType: string, body: string, anonymous?: boolean) => Promise<void>;
   deletePost: (postId: number) => Promise<void>;
@@ -21,6 +22,7 @@ export function useCommunity(): UseCommunityReturn {
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
   const [isAdmin, setIsAdmin] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const isLoadingRef = useRef(false);
 
   const fetchPage = useCallback(async (beforeId: number, append: boolean) => {
@@ -28,13 +30,14 @@ export function useCommunity(): UseCommunityReturn {
     isLoadingRef.current = true;
     setIsLoading(true);
     try {
+      setError(null);
       const data = await communityApi.getFeed(beforeId, PAGE_LIMIT);
       const incoming = data.posts ?? [];
       setPosts((prev) => (append ? [...prev, ...incoming] : incoming));
       setHasMore(incoming.length === PAGE_LIMIT);
       if (!append) setIsAdmin(data.is_admin ?? false);
     } catch {
-      // Silently ignore network errors on fetch
+      setError('Failed to load community posts. Pull down to retry.');
     } finally {
       isLoadingRef.current = false;
       setIsLoading(false);
@@ -130,5 +133,5 @@ export function useCommunity(): UseCommunityReturn {
     }
   }, []);
 
-  return { posts, isLoading, hasMore, isAdmin, loadMore, createPost, deletePost, addReaction, removeReaction, reload };
+  return { posts, isLoading, hasMore, isAdmin, error, loadMore, createPost, deletePost, addReaction, removeReaction, reload };
 }

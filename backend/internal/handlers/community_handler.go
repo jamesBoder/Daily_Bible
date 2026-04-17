@@ -42,7 +42,12 @@ func (h *CommunityHandler) GetFeed(c *gin.Context) {
 		}
 	}
 
-	beforeID, _ := strconv.ParseUint(c.DefaultQuery("before_id", "0"), 10, 64)
+	beforeIDRaw := c.DefaultQuery("before_id", "0")
+	beforeID, err := strconv.ParseUint(beforeIDRaw, 10, 64)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid before_id"})
+		return
+	}
 	limit, _ := strconv.Atoi(c.DefaultQuery("limit", "20"))
 	if limit <= 0 || limit > 50 {
 		limit = 20

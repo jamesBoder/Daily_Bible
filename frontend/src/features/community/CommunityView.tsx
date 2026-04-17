@@ -42,7 +42,7 @@ export const CommunityView: React.FC = () => {
   // 'hidden' | 'visible' | 'dismissing'
   const [bannerState, setBannerState] = useState<'hidden' | 'visible' | 'dismissing'>('hidden');
 
-  const { posts, isLoading, hasMore, isAdmin, loadMore, createPost, deletePost, addReaction, removeReaction, reload } =
+  const { posts, isLoading, hasMore, isAdmin, error, loadMore, createPost, deletePost, addReaction, removeReaction, reload } =
     useCommunity();
 
   // ── Pill tab sliding background ──────────────────────────────────────────
@@ -229,7 +229,14 @@ export const CommunityView: React.FC = () => {
       {/* Board tab */}
       {activeTab === 'board' && (
         <>
-          {isLoading && boardPosts.length === 0 ? (
+          {error && boardPosts.length === 0 ? (
+            <div style={{ textAlign: 'center', padding: '2rem 0' }}>
+              <p style={{ color: 'var(--grace-lavender)', marginBottom: '0.75rem' }}>{error}</p>
+              <button className="btn btn-ghost btn-sm" onClick={reload}>
+                {t('common.retry', 'Retry')}
+              </button>
+            </div>
+          ) : isLoading && boardPosts.length === 0 ? (
             Array.from({ length: SKELETON_COUNT }).map((_, i) => <CommunityPostSkeleton key={i} />)
           ) : boardPosts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem 0' }}>
