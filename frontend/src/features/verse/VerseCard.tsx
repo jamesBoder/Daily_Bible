@@ -13,8 +13,24 @@ import { TranslationSwitcherPopover } from "./TranslationSwitcherPopover";
 import { verseService } from "../../services/api/verse";
 import { showBlessingsToast } from "../../components/BlessingsToast";
 import { useStreak } from "../../contexts/StreakContext";
+import posthog from "posthog-js";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
+
+// Visible copy-paste block — displayed in the UI and copied to clipboard
+const buildCopyBlock = (verse: Verse): string => {
+  const version = verse.version || verse.translation;
+  const versionStr = version ? ` (${version})` : '';
+  const dateStr = verse.daily_date
+    ? new Date(verse.daily_date + 'T12:00:00').toLocaleDateString('en-US', {
+        month: 'long', day: 'numeric', year: 'numeric',
+      })
+    : null;
+  const header = dateStr ? `Today's Verse · ${dateStr}\n\n` : '';
+  return `${header}"${verse.text}"\n— ${verse.reference}${versionStr}\n\nwordsofpraise.app`;
+};
+
+// Social share text — includes the app URL and a friendlier intro
 const buildShareText = (verse: Verse): string => {
   const version = verse.version || verse.translation;
   const appUrl = window.location.hostname;
@@ -104,13 +120,18 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   };
 
   // ── Share handlers ────────────────────────────────────────────────────────
-  const handleCopy = async (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const trackShare = (method: string) =>
+    posthog.capture('verse_shared', { method, reference: verse.reference });
+
+  const handleCopy = async (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     try {
-      await navigator.clipboard.writeText(buildShareText(verse));
+      await navigator.clipboard.writeText(buildCopyBlock(verse));
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      if (navigator.vibrate) navigator.vibrate(15);
+      setTimeout(() => setIsCopied(false), 2500);
       creditShareBlessings();
+      trackShare('copy');
     } catch {
       showToast.error('Could not copy to clipboard');
     }
@@ -121,6 +142,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://twitter.com/intent/tweet?text=${text}`, "_blank", "noopener,noreferrer");
     creditShareBlessings();
+    trackShare('twitter');
   };
 
   const handleWhatsAppShare = (e: React.MouseEvent) => {
@@ -128,6 +150,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://wa.me/?text=${text}`, "_blank", "noopener,noreferrer");
     creditShareBlessings();
+    trackShare('whatsapp');
   };
 
   const handleFacebookShare = (e: React.MouseEvent) => {
@@ -135,19 +158,21 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
     const text = encodeURIComponent(buildShareText(verse));
     window.open(`https://www.facebook.com/sharer/sharer.php?quote=${text}`, "_blank", "noopener,noreferrer");
     creditShareBlessings();
+    trackShare('facebook');
   };
 
   const handleInstagramShare = async (e: React.MouseEvent) => {
     e.stopPropagation();
     try {
-      await navigator.clipboard.writeText(buildShareText(verse));
+      await navigator.clipboard.writeText(buildCopyBlock(verse));
       setIsCopied(true);
-      setTimeout(() => setIsCopied(false), 2000);
+      setTimeout(() => setIsCopied(false), 2500);
     } catch {
       showToast.error('Could not copy to clipboard');
     }
     window.open("https://www.instagram.com/", "_blank", "noopener,noreferrer");
     creditShareBlessings();
+    trackShare('instagram');
   };
 
   const handleNativeShare = async (e: React.MouseEvent) => {
@@ -155,6 +180,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
     try {
       await navigator.share({ title: "Bible Verse", text: buildShareText(verse) });
       creditShareBlessings();
+      trackShare('native');
     } catch (err: any) {
       // AbortError = user cancelled the share sheet — ignore it
       if (err?.name !== 'AbortError') {
@@ -174,10 +200,11 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       longPressOrigin.current = null;
       setIsLongPressing(false);
       try {
-        await navigator.clipboard.writeText(buildShareText(verse));
+        await navigator.clipboard.writeText(buildCopyBlock(verse));
         setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2000);
+        setTimeout(() => setIsCopied(false), 2500);
         if (navigator.vibrate) navigator.vibrate(40);
+        trackShare('longpress');
       } catch {
         // Silently ignore clipboard errors
       }
@@ -316,33 +343,53 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       </div>
 
       {/* Share panel — always visible on Daily Verse page */}
-      <div className="border-t border-gray-300 dark:border-gray-600 pt-4">
-        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3 text-center">
-          {t('verse.share')}
+      <div className="border-t border-gray-200 dark:border-gray-700 pt-4">
+        <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide mb-3 text-center">
+          {t('verse.share', 'Share')}
         </p>
-        <div className="flex items-center justify-center gap-2">
-          {/* Copy */}
+
+        {/* ── Copy-paste block ── */}
+        <div className="mb-4">
+          <div
+            className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap font-serif select-all cursor-pointer"
+            onClick={() => handleCopy()}
+            title="Tap to copy"
+            aria-label="Tap to copy verse"
+          >
+            {buildCopyBlock(verse)}
+          </div>
           <button
-            onClick={handleCopy}
+            onClick={() => handleCopy()}
             aria-label="Copy verse to clipboard"
-            title="Copy verse to clipboard"
-            className={`inline-flex items-center justify-center w-9 h-9 rounded-full transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-1 ${
+            className={`mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-1 ${
               isCopied
-                ? "bg-green-500 text-white focus:ring-green-400"
-                : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 focus:ring-gray-400"
+                ? 'bg-green-500 text-white focus:ring-green-400'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-gray-400'
             }`}
           >
             {isCopied ? (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
-              </svg>
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                </svg>
+                {t('verse.copied', 'Copied!')}
+              </>
             ) : (
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
-              </svg>
+              <>
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+                </svg>
+                {t('verse.copyVerse', 'Copy Verse')}
+              </>
             )}
           </button>
+        </div>
 
+        {/* ── Social share icons ── */}
+        <p className="text-xs text-gray-400 dark:text-gray-500 mb-2 text-center">
+          {t('verse.shareOn', 'Share on')}
+        </p>
+        <div className="flex items-center justify-center gap-2">
           {/* Twitter / X */}
           <button
             onClick={handleTwitterShare}
