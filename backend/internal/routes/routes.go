@@ -272,6 +272,9 @@ func SetupRoutes(
 		plansOptional.GET("/:slug", readingPlanHandler.GetPlan)
 	}
 
+	// Open Graph image for the /daily page — public, no auth
+	api.GET("/og/daily", verseHandler.GetDailyVerseOG)
+
 	// Phase 10: yesterday's word — public, no auth
 	api.GET("/manna/yesterday", mannaHandler.GetYesterday)
 
