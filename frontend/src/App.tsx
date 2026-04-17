@@ -238,30 +238,28 @@ const router = createBrowserRouter([
         path: "shop",
         element: <AuthRequiredRoute><PageSuspense><RewardsShop /></PageSuspense></AuthRequiredRoute>,
       },
-      // Phase 10: Manna puzzle — requires free account
+      // Phase 10: Manna puzzle — open to guests (limited to 3 guesses, no blessings/hints/history)
       // M-23: ErrorBoundary catches runtime errors (e.g. malformed API response) so the page doesn't crash
       {
         path: "manna",
         element: (
-          <AuthRequiredRoute>
-            <ErrorBoundary fallback={
-              <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
-                <div className="text-5xl" aria-hidden>🌾</div>
-                <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-                  Could not load today's puzzle
-                </p>
-                <button
-                  onClick={() => window.location.reload()}
-                  className="px-6 py-2 rounded-xl font-semibold text-white"
-                  style={{ background: 'var(--blessing-gold)' }}
-                >
-                  Tap to retry
-                </button>
-              </div>
-            }>
-              <PageSuspense><MannaPuzzle /></PageSuspense>
-            </ErrorBoundary>
-          </AuthRequiredRoute>
+          <ErrorBoundary fallback={
+            <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
+              <div className="text-5xl" aria-hidden>🌾</div>
+              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+                Could not load today's puzzle
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="px-6 py-2 rounded-xl font-semibold text-white"
+                style={{ background: 'var(--blessing-gold)' }}
+              >
+                Tap to retry
+              </button>
+            </div>
+          }>
+            <PageSuspense><MannaPuzzle /></PageSuspense>
+          </ErrorBoundary>
         ),
       },
       // Phase 12: Guided Prayer

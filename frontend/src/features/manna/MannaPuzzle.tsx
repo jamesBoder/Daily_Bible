@@ -15,6 +15,7 @@ import { MannaHowToPlay, MANNA_TUTORIAL_KEY } from './MannaHowToPlay';
 import { MannaStatsModal } from './MannaStatsModal';
 import { MannaArchive } from './MannaArchive';
 import EndOfDayModal from '../../components/EndOfDayModal';
+import posthog from 'posthog-js';
 import './manna.css';
 
 const EOD_SESSION_KEY_PREFIX = 'eod-shown-';
@@ -510,6 +511,12 @@ export const MannaPuzzle: React.FC = () => {
         );
 
         if (result.status === 'solved') {
+          posthog.capture('manna_completed', {
+            word: result.answer,
+            attempts: (game?.guess_count ?? 0) + 1,
+            solved: true,
+            is_archive: !!archiveDate,
+          });
           setWinRow(rowIdx);
           SoundService.play('manna-solve');
           // U-02: positive haptic on win — two pulses (uplifting pattern)
@@ -552,6 +559,12 @@ export const MannaPuzzle: React.FC = () => {
           // G-02: refresh streak count in header so blessings and streak display update immediately
           refreshStreak().catch(() => {});
         } else if (result.status === 'failed') {
+          posthog.capture('manna_completed', {
+            word: result.answer,
+            attempts: game?.max_guesses ?? 6,
+            solved: false,
+            is_archive: !!archiveDate,
+          });
           SoundService.play('manna-fail');
           setAnnouncement(t('manna.ariaFailed', 'Game over. The word was {{word}}.', { word: result.answer ?? '' }));
           // G-02: refresh streak so blessings update after a failed game too
