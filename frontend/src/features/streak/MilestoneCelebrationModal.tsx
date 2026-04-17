@@ -2,6 +2,7 @@ import React, { useState, useEffect, useMemo, useRef, useCallback } from 'react'
 import { useTranslation } from 'react-i18next';
 import { useStreak } from '../../contexts/StreakContext';
 import { SoundService } from '../../services/SoundService';
+import posthog from 'posthog-js';
 
 interface Particle {
   id: number;
@@ -35,6 +36,16 @@ const MilestoneCelebrationModal: React.FC = () => {
     window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const celebrationEnabled = localStorage.getItem('celebrationAnimEnabled') !== 'false';
+
+  // Fire once when modal opens — captures which milestone was earned.
+  useEffect(() => {
+    if (!shouldShow || !milestone) return;
+    posthog.capture('streak_milestone', {
+      milestone_key: milestone.key,
+      days_required: milestone.days_required,
+      blessings_awarded: milestone.blessings_awarded,
+    });
+  }, [shouldShow, milestone?.key]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // On open: save previous focus, advance animation steps.
   useEffect(() => {

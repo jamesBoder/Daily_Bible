@@ -4,6 +4,7 @@ import api from '../services/api/api';
 import toast from 'react-hot-toast';
 import { useTranslation } from 'react-i18next';
 import { SoundService } from '../services/SoundService';
+import posthog from 'posthog-js';
 
 interface Milestone {
   key: string;
@@ -152,6 +153,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // Welcome ceremony: false → true (guarded by sessionStorage to play once per session)
     if (wasPremium === false && isPremium === true) {
+      posthog.capture('premium_upgraded');
       if (!sessionStorage.getItem('welcomeCeremonyPlayed')) {
         sessionStorage.setItem('welcomeCeremonyPlayed', '1');
         if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
