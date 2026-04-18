@@ -65,12 +65,13 @@ func (s *PushService) DeleteSubscription(userID uint, endpoint string) error {
 		Delete(&models.PushSubscription{}).Error
 }
 
-// subRow is a join of PushSubscription + relevant UserSettings fields.
+// subRow is a join of PushSubscription + relevant UserSettings + UserStreak fields.
 type subRow struct {
 	models.PushSubscription
 	PreferredTimezone string
 	PreferredLanguage string
 	PushReminderTime  string
+	LastActiveDate    *string // user's local YYYY-MM-DD from user_streaks
 }
 
 // localizedBody holds per-language push notification strings.
@@ -112,15 +113,17 @@ func (s *PushService) SendRemindersForHour() {
 
 	nowUTC := time.Now().UTC()
 
-	// Load all active subscriptions with their user's settings in one query.
+	// Load all active subscriptions with user settings and streak data in one query.
 	var rows []subRow
 	if err := s.db.Table("push_subscriptions").
 		Joins("JOIN user_settings ON user_settings.user_id = push_subscriptions.user_id AND user_settings.deleted_at IS NULL").
+		Joins("LEFT JOIN user_streaks ON user_streaks.user_id = push_subscriptions.user_id").
 		Where("push_subscriptions.deleted_at IS NULL").
 		Select(`push_subscriptions.*,
 			COALESCE(user_settings.preferred_timezone, 'UTC') AS preferred_timezone,
 			COALESCE(user_settings.preferred_language, 'en')  AS preferred_language,
-			COALESCE(user_settings.push_reminder_time, '08:00') AS push_reminder_time`).
+			COALESCE(user_settings.push_reminder_time, '08:00') AS push_reminder_time,
+			user_streaks.last_active_date AS last_active_date`).
 		Find(&rows).Error; err != nil {
 		log.Printf("push: failed to load subscriptions: %v", err)
 		return
@@ -129,11 +132,23 @@ func (s *PushService) SendRemindersForHour() {
 		return
 	}
 
-	sent, pruned, skipped := 0, 0, 0
+	sent, pruned, skipped, engaged := 0, 0, 0, 0
 	for _, row := range rows {
 		if !s.shouldSendNow(row.PreferredTimezone, row.PushReminderTime, nowUTC) {
 			skipped++
 			continue
+		}
+		// Skip users who already read the verse today — no need to remind them.
+		if row.LastActiveDate != nil {
+			loc, err := time.LoadLocation(row.PreferredTimezone)
+			if err != nil {
+				loc = time.UTC
+			}
+			todayLocal := nowUTC.In(loc).Format("2006-01-02")
+			if *row.LastActiveDate == todayLocal {
+				engaged++
+				continue
+			}
 		}
 		payload := localizedPayload(row.PreferredLanguage)
 		gone := s.send(row.PushSubscription, payload)
@@ -143,7 +158,7 @@ func (s *PushService) SendRemindersForHour() {
 			sent++
 		}
 	}
-	log.Printf("push: hourly check — sent=%d pruned=%d skipped=%d", sent, pruned, skipped)
+	log.Printf("push: hourly check — sent=%d pruned=%d skipped=%d engaged=%d", sent, pruned, skipped, engaged)
 }
 
 // shouldSendNow returns true when the user's local hour (derived from their
