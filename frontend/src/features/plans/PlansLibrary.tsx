@@ -7,6 +7,8 @@ import plansApi, { type ReadingPlanSummary } from '../../services/api/plans';
 import { useStreak } from '../../contexts/StreakContext';
 import { msUntilDailyReset } from '../../lib/queryClient';
 import { usePricingModal } from '../../hooks/usePricingModal';
+import { useTutorial } from '../../hooks/useTutorial';
+import { PlansTutorial, PLANS_TUTORIAL_KEY } from './PlansTutorial';
 
 const PlansLibrary: React.FC = () => {
   const { t } = useTranslation();
@@ -14,6 +16,7 @@ const PlansLibrary: React.FC = () => {
   const { subscription } = useStreak();
   const isPremium = subscription?.is_premium ?? false;
   const { openModal } = usePricingModal();
+  const { showTutorial, dismissTutorial, openTutorial } = useTutorial(PLANS_TUTORIAL_KEY);
 
   const { data: plans = [], isLoading, refetch, isRefetching } = useQuery({
     queryKey: ['plans-library'],
@@ -45,11 +48,23 @@ const PlansLibrary: React.FC = () => {
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
+      {showTutorial && <PlansTutorial onDismiss={dismissTutorial} />}
+
       <div className="flex items-center gap-2">
         <BookmarkSimple size={22} style={{ color: 'var(--blessing-gold)' }} weight="fill" />
-        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex-1">
           {t('plans.title', 'Reading Plans')}
         </h1>
+        <button
+          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
+          onClick={openTutorial}
+          aria-label={t('common.help', 'Help')}
+          title={t('common.help', 'Help')}
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+        </button>
       </div>
 
       {/* Seasonal plans */}

@@ -186,22 +186,32 @@
     "exitGuest": "Exit Guest",
     "login": {
       "title": "Welcome Back",
-      "subtitle": "Sign in to your account",
+      "subtitle": "Sign in to continue your spiritual journey",
       "email": "Email",
       "password": "Password",
-      "rememberMe": "Remember me",
+      "rememberMe": "Remember me for 30 days",
       "forgotPassword": "Forgot password?",
       "submit": "Sign In",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
       "orContinueWith": "Or continue with",
       "google": "Sign in with Google",
-      "guest": "Continue as Guest"
+      "guest": "Continue as Guest",
+      "or": "OR",
+      "loginFailed": "Login Failed",
+      "didntReceiveEmail": "Didn't receive the email?",
+      "resendVerification": "Resend verification email",
+      "sending": "Sending...",
+      "showPassword": "Show password",
+      "hidePassword": "Hide password",
+      "verificationEmailSent": "Verification email sent! Check your inbox.",
+      "resendFailed": "Failed to resend. Please try again."
     },
     "signup": {
       "title": "Create Account",
-      "subtitle": "Join our community",
+      "subtitle": "Join us on your spiritual journey",
       "username": "Username",
+      "name": "Name (Optional)",
       "email": "Email",
       "password": "Password",
       "confirmPassword": "Confirm Password",
@@ -209,7 +219,76 @@
       "hasAccount": "Already have an account?",
       "signIn": "Sign in",
       "orContinueWith": "Or continue with",
-      "google": "Sign up with Google"
+      "google": "Sign up with Google",
+      "or": "OR",
+      "registrationFailed": "Registration Failed",
+      "didYouMean": "Did you mean",
+      "submitFailed": "Signup failed. Please try again."
+    },
+    "validation": {
+      "emailRequired": "Email is required",
+      "emailInvalid": "Email is invalid",
+      "usernameRequired": "Username is required",
+      "usernameTooShort": "Username must be at least 3 characters",
+      "passwordRequired": "Password is required",
+      "passwordsMustMatch": "Passwords do not match"
+    },
+    "forgotPassword": {
+      "title": "Forgot Password",
+      "subtitle": "Enter your email and we'll send you a reset link.",
+      "emailLabel": "Email address",
+      "submit": "Send Reset Link",
+      "backToLogin": "Back to login",
+      "checkEmailTitle": "Check your email",
+      "checkEmailBody": "If an account with {{email}} exists, we've sent a password reset link. The link expires in 1 hour.",
+      "genericError": "Something went wrong. Please try again."
+    },
+    "resetPassword": {
+      "title": "Reset Password",
+      "subtitle": "Enter your new password below.",
+      "submit": "Reset Password",
+      "backToLogin": "Back to login",
+      "successTitle": "Password Reset!",
+      "successBody": "Your password has been updated. Redirecting to login...",
+      "invalidLinkTitle": "Invalid Link",
+      "invalidLinkBody": "This password reset link is invalid or missing.",
+      "requestNewLink": "Request a new reset link",
+      "resetSuccess": "Password reset successfully!",
+      "newPasswordLabel": "New Password",
+      "confirmNewPasswordLabel": "Confirm New Password",
+      "failedDesc": "Failed to reset password. The link may have expired."
+    },
+    "verifyEmail": {
+      "verifying": "Verifying your email...",
+      "pendingTitle": "Check your email",
+      "pendingBody": "We sent a verification link to {{email}}. Click the link to activate your account.",
+      "pendingBodyNoEmail": "We sent a verification link to your email address. Click the link to activate your account.",
+      "expires24h": "The link expires in 24 hours.",
+      "didntReceive": "Didn't receive it?",
+      "emailLabel": "Your email address",
+      "resendBtn": "Resend verification email",
+      "resentConfirm": "✓ Verification email resent!",
+      "backToLogin": "Back to login",
+      "invalidEmail": "Please enter a valid email address.",
+      "emailUpdatedTitle": "Email Updated!",
+      "emailVerifiedTitle": "Email Verified!",
+      "emailUpdatedBody": "Your email address has been changed successfully. Redirecting...",
+      "emailVerifiedBody": "Your account is now active. Redirecting you to the app...",
+      "expiredTitle": "Link Expired",
+      "expiredBody": "Verification links expire after 24 hours. Enter your email below to get a new one.",
+      "sendNewBtn": "Send new verification email",
+      "newSentSuccess": "✓ New verification email sent! Check your inbox.",
+      "failedTitle": "Verification Failed",
+      "noToken": "No verification token found in the link.",
+      "resendSuccess": "Verification email resent! Check your inbox.",
+      "resendFailed": "Failed to resend. Please try again.",
+      "emailUpdatedToast": "New email confirmed! Your email address has been updated.",
+      "emailVerifiedToast": "Email verified! Welcome to Words of Praise 🎉",
+      "verificationFailed": "Verification failed."
+    },
+    "google": {
+      "continueWith": "Continue with Google",
+      "linkAccount": "Link Google Account"
     },
     "errors": {
       "invalidCredentials": "Invalid email or password",
@@ -560,7 +639,10 @@
     "contact": "Contact",
     "comment": "Add a reflection",
     "help": "Help",
-    "comingSoon": "Coming soon"
+    "comingSoon": "Coming soon",
+    "goHome": "Go Home",
+    "somethingWentWrong": "Oops! Something went wrong",
+    "errorRefresh": "We're sorry for the inconvenience. Please try refreshing the page."
   },
   "streak": {
     "tooltip": "Day {{count}} streak",
@@ -996,6 +1078,20 @@
     "tapToJournal": "Tap to write in your journal →",
     "notEnrolled": "You are not enrolled in this plan.",
     "loadError": "Unable to load today's reading. Please try again.",
-    "alreadyRead": "You've read this today"
+    "alreadyRead": "You've read this today",
+    "tutorial": {
+      "title": "Reading Plans",
+      "subtitle": "A guided journey through Scripture, one day at a time.",
+      "step1Title": "Your guided path",
+      "step1Body": "Reading plans take you through curated Scripture day by day. Each plan follows a theme — peace, gratitude, the cross, and more.",
+      "step2Title": "Read, reflect, pray",
+      "step2Body": "Each day shows a passage with a reflection, prayer, and a journaling prompt. Take as long as you need — there's no timer.",
+      "step3Title": "Mark your progress",
+      "step3Body": "Tap \"Mark as Read\" when you've finished a day. Your progress is saved automatically so you can pick up where you left off.",
+      "step4Title": "Free & Devoted plans",
+      "step4Body": "\"Walking in Peace\" is free for everyone. Devoted Members unlock the full library — including seasonal Advent, Lent, and Holy Week journeys.",
+      "cta": "Explore Plans",
+      "reopenHint": "Tap ? anytime to see this guide again."
+    }
   }
 }

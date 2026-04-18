@@ -15,7 +15,7 @@
     "logout": "Déconnexion",
     "search": "Rechercher",
     "shop": "Boutique",
-    "journal": "Journal",
+    "journal": "Carnet",
     "leaderboard": "Communauté",
     "manna": "Manne",
     "plans": "Plans de Lecture",
@@ -95,23 +95,23 @@
     "hintNoBlessings": "Pas assez de Bénédictions pour un indice.",
     "hintRevealed": "Position {{n}} : {{letter}}",
     "hintsRevealed": "Révélées :",
-    "archive": "Archive",
-    "archiveSubtitle": "Play any past day's word puzzle.",
-    "archiveNotPlayed": "Not played",
-    "archiveSolved": "Solved in {{n}}",
-    "archiveFailed": "Failed",
-    "freeBanner": "Free Play",
-    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
-    "freeUpgradeCta": "Upgrade to Premium",
-    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
-    "archiveLabel": "Archive",
-    "backToToday": "← Today",
-    "backToArchive": "← Archive",
-    "archiveInProgress": "In progress",
-    "archiveError": "Could not load history. Tap a date to play anyway.",
-    "archivePlay": "Play",
-    "solvedArchiveTitle": "You solved it!",
-    "failedArchiveTitle": "The word was:",
+    "archive": "Archives",
+    "archiveSubtitle": "Jouez à n'importe quel puzzle d'un jour passé.",
+    "archiveNotPlayed": "Non joué",
+    "archiveSolved": "Résolu en {{n}}",
+    "archiveFailed": "Échoué",
+    "freeBanner": "Jeu Gratuit",
+    "freeBannerDetail": "4 tentatives · Abonnez-vous pour les indices scripturaux, les pistes et plus",
+    "freeUpgradeCta": "Passer à Premium",
+    "freeUpgradePostGame": "Abonnez-vous pour voir les Écritures complètes et suivre vos séries.",
+    "archiveLabel": "Archives",
+    "backToToday": "← Aujourd'hui",
+    "backToArchive": "← Archives",
+    "archiveInProgress": "En cours",
+    "archiveError": "Impossible de charger l'historique. Appuyez sur une date pour jouer quand même.",
+    "archivePlay": "Jouer",
+    "solvedArchiveTitle": "Vous l'avez résolu !",
+    "failedArchiveTitle": "Le mot était :",
     "streakBonus": "+{{bonus}} bonus de série ! (série de {{streak}} jours 🔥)"
   },
   "journal": {
@@ -173,7 +173,12 @@
     "share": "Partager",
     "copied": "Verset copié dans le presse-papiers !",
     "comment": "Ajouter une note",
-    "commentPlaceholder": "Ajoutez votre réflexion personnelle..."
+    "commentPlaceholder": "Ajoutez votre réflexion personnelle...",
+    "compareTranslations": "Comparer les Traductions",
+    "switchTranslation": "Changer de Traduction",
+    "sessionOnly": "Session uniquement — ne change pas vos paramètres",
+    "premiumTranslation": "Disponible avec un abonnement Words of Praise",
+    "translationUnavailable": "Traduction non disponible"
   },
   "auth": {
     "browsingAsGuest": "Navigation en tant qu'Invité",
@@ -181,30 +186,109 @@
     "exitGuest": "Quitter le mode Invité",
     "login": {
       "title": "Bon Retour",
-      "subtitle": "Connectez-vous à votre compte",
-      "email": "Email",
+      "subtitle": "Connectez-vous pour continuer votre chemin spirituel",
+      "email": "Courriel",
       "password": "Mot de passe",
-      "rememberMe": "Se souvenir de moi",
+      "rememberMe": "Se souvenir de moi pendant 30 jours",
       "forgotPassword": "Mot de passe oublié ?",
       "submit": "Se Connecter",
       "noAccount": "Vous n'avez pas de compte ?",
       "signUp": "S'inscrire",
       "orContinueWith": "Ou continuer avec",
       "google": "Se connecter avec Google",
-      "guest": "Continuer en tant qu'Invité"
+      "guest": "Continuer en tant qu'Invité",
+      "or": "OU",
+      "loginFailed": "Échec de la Connexion",
+      "didntReceiveEmail": "Vous n'avez pas reçu l'e-mail ?",
+      "resendVerification": "Renvoyer l'e-mail de vérification",
+      "sending": "Envoi...",
+      "showPassword": "Afficher le mot de passe",
+      "hidePassword": "Masquer le mot de passe",
+      "verificationEmailSent": "E-mail de vérification envoyé ! Vérifiez votre boîte de réception.",
+      "resendFailed": "Échec du renvoi. Veuillez réessayer."
     },
     "signup": {
       "title": "Créer un Compte",
-      "subtitle": "Rejoignez notre communauté",
+      "subtitle": "Rejoignez-nous dans votre voyage spirituel",
       "username": "Nom d'utilisateur",
-      "email": "Email",
+      "name": "Nom (Facultatif)",
+      "email": "Courriel",
       "password": "Mot de passe",
       "confirmPassword": "Confirmer le Mot de passe",
       "submit": "Créer un Compte",
       "hasAccount": "Vous avez déjà un compte ?",
       "signIn": "Se connecter",
+      "or": "OU",
+      "registrationFailed": "Échec de l'Inscription",
+      "didYouMean": "Vouliez-vous dire",
+      "submitFailed": "Échec de l'inscription. Veuillez réessayer.",
       "orContinueWith": "Ou continuer avec",
       "google": "S'inscrire avec Google"
+    },
+    "validation": {
+      "emailRequired": "L'adresse e-mail est obligatoire",
+      "emailInvalid": "L'adresse e-mail n'est pas valide",
+      "usernameRequired": "Le nom d'utilisateur est obligatoire",
+      "usernameTooShort": "Le nom d'utilisateur doit contenir au moins 3 caractères",
+      "passwordRequired": "Le mot de passe est obligatoire",
+      "passwordsMustMatch": "Les mots de passe ne correspondent pas"
+    },
+    "forgotPassword": {
+      "title": "Mot de Passe Oublié",
+      "subtitle": "Entrez votre e-mail et nous vous enverrons un lien de réinitialisation.",
+      "emailLabel": "Adresse e-mail",
+      "submit": "Envoyer le Lien",
+      "backToLogin": "Retour à la connexion",
+      "checkEmailTitle": "Vérifiez votre e-mail",
+      "checkEmailBody": "Si un compte avec {{email}} existe, nous avons envoyé un lien de réinitialisation. Le lien expire dans 1 heure.",
+      "genericError": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "resetPassword": {
+      "title": "Réinitialiser le Mot de Passe",
+      "subtitle": "Entrez votre nouveau mot de passe ci-dessous.",
+      "submit": "Réinitialiser",
+      "backToLogin": "Retour à la connexion",
+      "successTitle": "Mot de Passe Réinitialisé !",
+      "successBody": "Votre mot de passe a été mis à jour. Redirection vers la connexion...",
+      "invalidLinkTitle": "Lien Invalide",
+      "invalidLinkBody": "Ce lien de réinitialisation est invalide ou manquant.",
+      "requestNewLink": "Demander un nouveau lien",
+      "resetSuccess": "Mot de passe réinitialisé avec succès !",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmNewPasswordLabel": "Confirmer le nouveau mot de passe",
+      "failedDesc": "Impossible de réinitialiser le mot de passe. Le lien a peut-être expiré."
+    },
+    "verifyEmail": {
+      "verifying": "Vérification de votre e-mail...",
+      "pendingTitle": "Vérifiez votre e-mail",
+      "pendingBody": "Nous avons envoyé un lien de vérification à {{email}}. Cliquez sur le lien pour activer votre compte.",
+      "pendingBodyNoEmail": "Nous avons envoyé un lien de vérification à votre adresse e-mail. Cliquez sur le lien pour activer votre compte.",
+      "expires24h": "Le lien expire dans 24 heures.",
+      "didntReceive": "Vous ne l'avez pas reçu ?",
+      "emailLabel": "Votre adresse e-mail",
+      "resendBtn": "Renvoyer l'e-mail de vérification",
+      "resentConfirm": "✓ E-mail de vérification renvoyé !",
+      "backToLogin": "Retour à la connexion",
+      "invalidEmail": "Veuillez entrer une adresse e-mail valide.",
+      "emailUpdatedTitle": "E-mail Mis à Jour !",
+      "emailVerifiedTitle": "E-mail Vérifié !",
+      "emailUpdatedBody": "Votre adresse e-mail a été changée avec succès. Redirection...",
+      "emailVerifiedBody": "Votre compte est maintenant actif. Redirection vers l'application...",
+      "expiredTitle": "Lien Expiré",
+      "expiredBody": "Les liens de vérification expirent après 24 heures. Entrez votre e-mail pour en obtenir un nouveau.",
+      "sendNewBtn": "Envoyer un nouveau lien de vérification",
+      "newSentSuccess": "✓ Nouveau lien de vérification envoyé ! Vérifiez votre boîte de réception.",
+      "failedTitle": "Vérification Échouée",
+      "noToken": "Aucun jeton de vérification trouvé dans le lien.",
+      "resendSuccess": "E-mail de vérification renvoyé ! Vérifiez votre boîte de réception.",
+      "resendFailed": "Échec du renvoi. Veuillez réessayer.",
+      "emailUpdatedToast": "Nouvel e-mail confirmé ! Votre adresse e-mail a été mise à jour.",
+      "emailVerifiedToast": "E-mail vérifié ! Bienvenue dans Paroles de Louange 🎉",
+      "verificationFailed": "Vérification échouée."
+    },
+    "google": {
+      "continueWith": "Continuer avec Google",
+      "linkAccount": "Lier le compte Google"
     },
     "errors": {
       "invalidCredentials": "Email ou mot de passe invalide",
@@ -391,6 +475,13 @@
     "saving": "Enregistrement...",
     "saved": "Paramètres enregistrés avec succès !",
     "saveFailed": "Échec de l'enregistrement des paramètres",
+    "translation": {
+      "title": "Traduction Biblique",
+      "label": "Version Biblique Préférée",
+      "saved": "Traduction enregistrée",
+      "saveFailed": "Impossible d'enregistrer la traduction",
+      "premiumNote": "🔒 Les traductions verrouillées sont disponibles avec un abonnement Words of Praise."
+    },
     "community": {
       "title": "Communauté",
       "milestone_posts": "Célébrations d'étapes",
@@ -445,7 +536,25 @@
     "followInstagram": "Suivez-nous sur Instagram :",
     "instagramUpdate": "📱 Restez informé des inspirations quotidiennes et des mises à jour de l'application",
     "inLovingMemory": "En Mémoire Aimante",
-    "devotedChild": "Un enfant dévoué de Dieu"
+    "devotedChild": "Un enfant dévoué de Dieu",
+    "faqTitle": "Questions Fréquentes",
+    "faqSubtitle": "Réponses rapides aux questions les plus courantes.",
+    "faq": {
+      "q1": "Pourquoi ma série s'est-elle interrompue ?",
+      "a1": "Votre série compte le nombre de jours consécutifs où vous avez ouvert le verset quotidien. Si vous manquez un jour sans utiliser un Jour de Grâce, votre série revient à zéro. Pour protéger votre série après un jour manqué, appuyez sur « Utiliser un Jour de Grâce » — vous recevez 2 Jours de Grâce par mois qui se rechargent automatiquement le 1er.",
+      "q2": "Comment fonctionnent les Jours de Grâce ?",
+      "a2": "Les Jours de Grâce vous permettent de compter rétroactivement un jour manqué comme lu, préservant ainsi votre série. Vous recevez 2 Jours de Grâce par mois calendaire. Ils ne sont pas reportés — les Jours de Grâce inutilisés expirent à la fin du mois. Vous pouvez également acheter un Pack de Jours de Grâce (3 jours supplémentaires pour 0,99 $) dans la Boutique.",
+      "q3": "Pourquoi ne reçois-je pas de notifications push ?",
+      "a3": "Les notifications push du navigateur sont prises en charge sur Chrome pour Android et Safari sur iPhone. Assurez-vous d'avoir autorisé les notifications lors de la demande — si vous les avez accidentellement refusées, allez dans les paramètres de votre navigateur et réactivez-les pour ce site. Les rappels par e-mail sont disponibles pour tous les utilisateurs indépendamment du navigateur.",
+      "q4": "Pourquoi ne puis-je faire que 4 tentatives dans Manna ?",
+      "a4": "Les comptes gratuits sont limités à 4 tentatives par puzzle Manna. Un abonnement premium augmente cela à 6 tentatives et débloque également l'indice scriptural complet dès le début, les pistes (qui révèlent une lettre pour 15 Bénédictions) et des statistiques de résolution détaillées.",
+      "q5": "Comment déverrouiller les traductions modernes comme NIV ou ESV ?",
+      "a5": "Les traductions modernes (NIV, ESV, NLT et plus) sont premium. Vous pouvez les déverrouiller avec un abonnement Premium (9,99 $ une fois, sans abonnement) ou un achat unique « Traductions Modernes » pour 3,99 $ dans la Boutique.",
+      "q6": "Que sont les Bénédictions et que puis-je en faire ?",
+      "a6": "Les Bénédictions (✦) sont la monnaie interne de l'application, gagnées en lisant le verset quotidien, en écrivant des réflexions, en tenant un journal, en jouant à Manna et en atteignant des jalons de série. Les membres premium gagnent 1,5× de Bénédictions sur chaque action. Dépensez-les dans la Boutique pour débloquer des thèmes. Elles n'expirent jamais.",
+      "q7": "Puis-je publier sur le Tableau Communautaire ?",
+      "a7": "Le Tableau Communautaire nécessite un abonnement premium (« Membre Dévoué ») pour publier. Le Mur de Prière est ouvert à tous les membres — gratuits et premium — y compris les demandes de prière anonymes. Les défis sont visibles par tous."
+    }
   },
   "account": {
     "setPassword": "Définir le Mot de passe",
@@ -530,7 +639,10 @@
     "contact": "Contact",
     "comment": "Ajouter une réflexion",
     "help": "Aide",
-    "comingSoon": "Bientôt disponible"
+    "comingSoon": "Bientôt disponible",
+    "goHome": "Accueil",
+    "somethingWentWrong": "Oups ! Quelque chose s'est mal passé",
+    "errorRefresh": "Nous sommes désolés pour la gêne occasionnée. Veuillez rafraîchir la page."
   },
   "visitor": {
     "title": "Restez dans la Parole",
@@ -787,10 +899,20 @@
     "this_weeks_challenge": "Le défi de cette semaine"
   },
   "streak": {
+    "tooltip": "Série de {{count}} jours",
+    "label": "Série",
+    "days": "jours",
+    "graceDays": "Jours de Grâce",
+    "recoverable": "La série peut être récupérée",
+    "useGraceDay": "Utiliser un Jour de Grâce",
+    "reset": "Votre série a été réinitialisée",
+    "resetMessage": "Ne vous inquiétez pas ! Recommencez aujourd'hui et construisez une nouvelle série.",
+    "firstEngagement": "Bienvenue dans votre voyage de foi !",
+    "firstEngagementMessage": "Vous avez commencé votre série de lecture quotidienne. Revenez chaque jour pour grandir dans votre fidélité.",
     "share_button": "Partager ma série",
     "share_generating": "Génération…",
     "share_subtitle": "jours dans la Parole",
-    "share_locked": "Passez à Premium pour partager votre parcours de série avec les autres."
+    "share_locked": "Passez à Premium pour partager votre parcours de série avec d'autres."
   },
   "premium": {
     "go_premium": "Passer Premium"
@@ -940,6 +1062,36 @@
     "tapToJournal": "Appuie pour écrire dans ton journal →",
     "notEnrolled": "Vous n'êtes pas inscrit à ce plan.",
     "loadError": "Impossible de charger la lecture du jour. Veuillez réessayer.",
-    "alreadyRead": "Vous avez lu ceci aujourd'hui"
+    "alreadyRead": "Vous avez lu ceci aujourd'hui",
+    "tutorial": {
+      "title": "Plans de Lecture",
+      "subtitle": "Un voyage guidé à travers les Écritures, un jour à la fois.",
+      "step1Title": "Votre chemin guidé",
+      "step1Body": "Les plans de lecture vous guident à travers les Écritures jour après jour. Chaque plan suit un thème — paix, gratitude, la croix et bien plus.",
+      "step2Title": "Lisez, réfléchissez, priez",
+      "step2Body": "Chaque jour présente un passage avec une réflexion, une prière et une question pour le journal. Prenez le temps qu'il vous faut — il n'y a pas de minuterie.",
+      "step3Title": "Suivez votre progression",
+      "step3Body": "Appuyez sur \"Marquer comme Lu\" quand vous avez terminé une journée. Votre progression est sauvegardée automatiquement.",
+      "step4Title": "Plans gratuits et Devoted",
+      "step4Body": "\"Marcher dans la Paix\" est gratuit pour tous. Les Membres Devoted débloquent la bibliothèque complète — y compris les parcours de l'Avent, du Carême et de la Semaine Sainte.",
+      "cta": "Explorer les Plans",
+      "reopenHint": "Appuyez sur ? à tout moment pour revoir ce guide."
+    }
+  },
+  "graceDay": {
+    "errors": {
+      "NO_GRACE_DAYS": "Vous n'avez plus de jours de grâce",
+      "STREAK_NOT_BROKEN": "Votre série n'est pas brisée",
+      "GRACE_PERIOD_EXPIRED": "La période de grâce a expiré",
+      "ALREADY_USED_TODAY": "Vous avez déjà utilisé un jour de grâce aujourd'hui"
+    },
+    "success": "Jour de Grâce utilisé — votre série est préservée.",
+    "banner": {
+      "message": "Vous avez manqué hier. Utiliser un Jour de Grâce pour préserver votre série de {{current_streak}} jours ?",
+      "useGraceDay": "Utiliser un Jour de Grâce",
+      "notNow": "Pas maintenant",
+      "processing": "Traitement…",
+      "remaining": "{{count}} restant(s)"
+    }
   }
 }

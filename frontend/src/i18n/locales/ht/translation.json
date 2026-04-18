@@ -95,23 +95,23 @@
     "hintNoBlessings": "Pa gen ase Benediksyon pou yon konsey.",
     "hintRevealed": "Pozisyon {{n}}: {{letter}}",
     "hintsRevealed": "Revele:",
-    "archive": "Archive",
-    "archiveSubtitle": "Play any past day's word puzzle.",
-    "archiveNotPlayed": "Not played",
-    "archiveSolved": "Solved in {{n}}",
-    "archiveFailed": "Failed",
-    "freeBanner": "Free Play",
-    "freeBannerDetail": "4 guesses · Upgrade for scripture clues, hints & more",
-    "freeUpgradeCta": "Upgrade to Premium",
-    "freeUpgradePostGame": "Upgrade to see the full scripture and track your streaks.",
-    "archiveLabel": "Archive",
-    "backToToday": "← Today",
-    "backToArchive": "← Archive",
-    "archiveInProgress": "In progress",
-    "archiveError": "Could not load history. Tap a date to play anyway.",
-    "archivePlay": "Play",
-    "solvedArchiveTitle": "You solved it!",
-    "failedArchiveTitle": "The word was:",
+    "archive": "Achiv",
+    "archiveSubtitle": "Jwe nenpòt puzzle mo jou pase.",
+    "archiveNotPlayed": "Pa jwe",
+    "archiveSolved": "Rezoud nan {{n}}",
+    "archiveFailed": "Echèk",
+    "freeBanner": "Jwèt Gratis",
+    "freeBannerDetail": "4 esè · Abòne pou jwenn konsey ekriti, pwen ak plis",
+    "freeUpgradeCta": "Pase Premium",
+    "freeUpgradePostGame": "Abòne pou wè ekriti a nèt ak swiv seri ou yo.",
+    "archiveLabel": "Achiv",
+    "backToToday": "← Jodi a",
+    "backToArchive": "← Achiv",
+    "archiveInProgress": "Ap jwe",
+    "archiveError": "Pa kapab chaje istwa. Touche yon dat pou jwe kanmenm.",
+    "archivePlay": "Jwe",
+    "solvedArchiveTitle": "Ou rezoud li!",
+    "failedArchiveTitle": "Mo a te:",
     "streakBonus": "+{{bonus}} bonus seri! (seri {{streak}} jou 🔥)"
   },
   "journal": {
@@ -173,7 +173,12 @@
     "share": "Pataje",
     "copied": "Vèsè kopye nan pres papye!",
     "comment": "Ajoute yon nòt",
-    "commentPlaceholder": "Ajoute refleksyon pèsonèl ou..."
+    "commentPlaceholder": "Ajoute refleksyon pèsonèl ou...",
+    "compareTranslations": "Konpare Tradiksyon yo",
+    "switchTranslation": "Chanje Tradiksyon",
+    "sessionOnly": "Sesyon sèlman — pa chanje paramèt ou yo",
+    "premiumTranslation": "Disponib ak yon manm Words of Praise",
+    "translationUnavailable": "Tradiksyon pa disponib"
   },
   "auth": {
     "browsingAsGuest": "Ap navige kòm Envite",
@@ -181,22 +186,32 @@
     "exitGuest": "Kite mòd Envite",
     "login": {
       "title": "Byenveni Ankò",
-      "subtitle": "Konekte nan kont ou",
+      "subtitle": "Konekte pou kontinye vwayaj espirityèl ou",
       "email": "Imèl",
       "password": "Modpas",
-      "rememberMe": "Sonje mwen",
+      "rememberMe": "Sonje mwen pou 30 jou",
       "forgotPassword": "Ou bliye modpas ou?",
       "submit": "Konekte",
       "noAccount": "Ou pa gen kont?",
       "signUp": "Enskri",
       "orContinueWith": "Oswa kontinye avèk",
       "google": "Konekte avèk Google",
-      "guest": "Kontinye kòm Envite"
+      "guest": "Kontinye kòm Envite",
+      "or": "OSWA",
+      "loginFailed": "Echèk Koneksyon",
+      "didntReceiveEmail": "Ou pa resevwa imèl la?",
+      "resendVerification": "Voye imèl verifikasyon ankò",
+      "sending": "Ap voye...",
+      "showPassword": "Montre modpas",
+      "hidePassword": "Kache modpas",
+      "verificationEmailSent": "Imèl verifikasyon voye! Verifye bwat imèl ou.",
+      "resendFailed": "Echèk pou voye ankò. Tanpri eseye ankò."
     },
     "signup": {
       "title": "Kreye Kont",
-      "subtitle": "Antre nan kominote nou an",
+      "subtitle": "Antre nan vwayaj espirityèl ou avèk nou",
       "username": "Non itilizatè",
+      "name": "Non (Opsyonèl)",
       "email": "Imèl",
       "password": "Modpas",
       "confirmPassword": "Konfime Modpas",
@@ -204,7 +219,76 @@
       "hasAccount": "Ou gen yon kont deja?",
       "signIn": "Konekte",
       "orContinueWith": "Oswa kontinye avèk",
-      "google": "Enskri avèk Google"
+      "google": "Enskri avèk Google",
+      "or": "OSWA",
+      "registrationFailed": "Echèk Enskripsyon",
+      "didYouMean": "Èske ou te vle di",
+      "submitFailed": "Echèk enskripsyon. Tanpri eseye ankò."
+    },
+    "validation": {
+      "emailRequired": "Imèl obligatwa",
+      "emailInvalid": "Imèl pa valid",
+      "usernameRequired": "Non itilizatè obligatwa",
+      "usernameTooShort": "Non itilizatè dwe gen omwen 3 karaktè",
+      "passwordRequired": "Modpas obligatwa",
+      "passwordsMustMatch": "Modpas yo pa menm"
+    },
+    "forgotPassword": {
+      "title": "Bliye Modpas",
+      "subtitle": "Antre imèl ou epi nou pral voye yon lyen reyinisyalizasyon.",
+      "emailLabel": "Adrès imèl",
+      "submit": "Voye Lyen",
+      "backToLogin": "Retounen nan koneksyon",
+      "checkEmailTitle": "Verifye imèl ou",
+      "checkEmailBody": "Si yon kont ak {{email}} egziste, nou voye yon lyen pou reyinisyalize modpas. Lyen an ekspire nan 1 èdtan.",
+      "genericError": "Yon bagay mal pase. Tanpri eseye ankò."
+    },
+    "resetPassword": {
+      "title": "Reyinisyalize Modpas",
+      "subtitle": "Antre nouvo modpas ou anba a.",
+      "submit": "Reyinisyalize",
+      "backToLogin": "Retounen nan koneksyon",
+      "successTitle": "Modpas Reyinisyalize!",
+      "successBody": "Modpas ou aktyalize. Ap redirije nan koneksyon...",
+      "invalidLinkTitle": "Lyen Envalid",
+      "invalidLinkBody": "Lyen reyinisyalizasyon modpas sa envalid oswa manke.",
+      "requestNewLink": "Mande yon nouvo lyen",
+      "resetSuccess": "Modpas reyinisyalize avèk siksè!",
+      "newPasswordLabel": "Nouvo modpas",
+      "confirmNewPasswordLabel": "Konfime nouvo modpas",
+      "failedDesc": "Echèk reyajisteman modpas. Lyen an ka ekspire."
+    },
+    "verifyEmail": {
+      "verifying": "Ap verifye imèl ou...",
+      "pendingTitle": "Verifye imèl ou",
+      "pendingBody": "Nou voye yon lyen verifikasyon nan {{email}}. Klike sou lyen an pou aktive kont ou.",
+      "pendingBodyNoEmail": "Nou voye yon lyen verifikasyon nan adrès imèl ou. Klike sou lyen an pou aktive kont ou.",
+      "expires24h": "Lyen an ekspire nan 24 èdtan.",
+      "didntReceive": "Ou pa resevwa li?",
+      "emailLabel": "Adrès imèl ou",
+      "resendBtn": "Voye imèl verifikasyon ankò",
+      "resentConfirm": "✓ Imèl verifikasyon voye ankò!",
+      "backToLogin": "Retounen nan koneksyon",
+      "invalidEmail": "Tanpri antre yon adrès imèl valid.",
+      "emailUpdatedTitle": "Imèl Aktyalize!",
+      "emailVerifiedTitle": "Imèl Verifye!",
+      "emailUpdatedBody": "Adrès imèl ou chanje avèk siksè. Ap redirije...",
+      "emailVerifiedBody": "Kont ou aktif kounye a. Ap redirije nan aplikasyon an...",
+      "expiredTitle": "Lyen Ekspire",
+      "expiredBody": "Lyen verifikasyon yo ekspire apre 24 èdtan. Antre imèl ou pou jwenn yon nouvo.",
+      "sendNewBtn": "Voye nouvo imèl verifikasyon",
+      "newSentSuccess": "✓ Nouvo imèl verifikasyon voye! Verifye bwat imèl ou.",
+      "failedTitle": "Verifikasyon Echèk",
+      "noToken": "Pa jwenn jeton verifikasyon nan lyen an.",
+      "resendSuccess": "Imèl verifikasyon voye ankò! Verifye bwat imèl ou.",
+      "resendFailed": "Echèk pou voye ankò. Tanpri eseye ankò.",
+      "emailUpdatedToast": "Nouvo imèl konfime! Adrès imèl ou a te mete ajou.",
+      "emailVerifiedToast": "Imèl verifye! Byenveni nan Pawòl Lwanj 🎉",
+      "verificationFailed": "Verifikasyon rate."
+    },
+    "google": {
+      "continueWith": "Kontinye avèk Google",
+      "linkAccount": "Konekte kont Google"
     },
     "errors": {
       "invalidCredentials": "Imèl oswa modpas envalid",
@@ -391,6 +475,13 @@
     "saving": "Ap anrejistre...",
     "saved": "Paramèt anrejistre avèk siksè!",
     "saveFailed": "Echèk pou anrejistre paramèt yo",
+    "translation": {
+      "title": "Tradiksyon Biblik",
+      "label": "Vèsyon Biblik Preferé",
+      "saved": "Tradiksyon sovgade",
+      "saveFailed": "Pa ka sovgade tradiksyon an",
+      "premiumNote": "🔒 Tradiksyon bloke yo disponib ak yon manm Words of Praise."
+    },
     "community": {
       "title": "Kominote",
       "milestone_posts": "Selebrasyon Etap",
@@ -445,7 +536,25 @@
     "followInstagram": "Swiv nou sou Instagram:",
     "instagramUpdate": "📱 Rete enfòme avèk enspirasyon chak jou ak mizajou aplikasyon",
     "inLovingMemory": "Nan Souvni Renmen",
-    "devotedChild": "Yon pitit Bondye devwe"
+    "devotedChild": "Yon pitit Bondye devwe",
+    "faqTitle": "Kesyon Souvan Poze",
+    "faqSubtitle": "Repons rapid pou kesyon ki pi komen yo.",
+    "faq": {
+      "q1": "Poukisa seri mwen kase?",
+      "a1": "Seri ou konte kantite jou konsekitif ou ouvri vèsè chak jou a. Si ou rate yon jou san itilize Jou Lagras, seri ou retounen nan zewo. Pou pwoteje seri ou apre yon jou manke, touche \"Itilize yon Jou Lagras\" — ou resevwa 2 Jou Lagras pa mwa ki rechaje otomatikman premye jou.",
+      "q2": "Kijan Jou Lagras travay?",
+      "a2": "Jou Lagras pèmèt ou konte yon jou manke retwoaktivman kòm li, konsa seri ou rete entakt. Ou resevwa 2 Jou Lagras chak mwa kalandriye. Yo pa reportes — Jou Lagras ki pa itilize ekspire nan fen mwa a. Ou ka achte tou yon Pakèt Jou Lagras (3 jou siplemantè pou $0.99) nan Boutik la.",
+      "q3": "Poukisa mwen pa resevwa notifikasyon push?",
+      "a3": "Notifikasyon push navigatè sipòte sou Chrome pou Android ak Safari sou iPhone. Asire ou otorize notifikasyon lè yo mande — si ou aksidantèlman refize yo, ale nan paramèt navigatè ou epi reaktive yo pou sit sa a. Raprèl imèl disponib pou tout itilizatè kèlkeswa navigatè.",
+      "q4": "Poukisa mwen ka sèlman fè 4 esè nan Manna?",
+      "a4": "Kont gratis limite a 4 esè pa puzzle Manna. Yon manm premium ogmante sa a 6 esè epi debloke tou konsey ekriti a nèt depi kòmansman, pwen (ki revele yon lèt pou 15 Benediksyon) ak estatistik detaye.",
+      "q5": "Kijan mwen debloke tradiksyon modèn tankou NIV oswa ESV?",
+      "a5": "Tradiksyon modèn (NIV, ESV, NLT ak plis) se premium. Ou ka debloke yo ak yon manm Premium ($9.99 yon fwa, san abònman) oswa yon acha inik \"Tradiksyon Modèn\" pou $3.99 nan Boutik la.",
+      "q6": "Kisa Benediksyon ye ak sa mwen ka fè avèk yo?",
+      "a6": "Benediksyon (✦) se monè entèn aplikasyon an, ou ka genyen lè ou li vèsè chak jou, ekri refleksyon, kenbe jounal, jwe Manna, ak rive nan jalòn seri. Manm premium genyen Benediksyon 1.5× sou chak aksyon. Depanse yo nan Boutik la pou debloke tèm. Yo pa ekspire janm.",
+      "q7": "Èske mwen ka poste sou Tablo Kominotè a?",
+      "a7": "Tablo Kominotè a bezwen yon manm premium (\"Manm Devwe\") pou poste. Mi Lapriyè a ouvè pou tout manm — gratis ak premium — enkli demann lapriyè anonim. Defi yo vizib pou tout moun."
+    }
   },
   "account": {
     "setPassword": "Mete Modpas",
@@ -787,10 +896,20 @@
     "this_weeks_challenge": "Defi semèn sa a"
   },
   "streak": {
+    "tooltip": "{{count}} jou seri",
+    "label": "Seri",
+    "days": "jou",
+    "graceDays": "Jou Lagras",
+    "recoverable": "Seri ka rekipere",
+    "useGraceDay": "Itilize yon Jou Lagras",
+    "reset": "Seri ou reyinisyalize",
+    "resetMessage": "Pa enkyete ou! Rekòmanse jodi a epi bati yon nouvo seri.",
+    "firstEngagement": "Byenveni nan vwayaj lafwa ou!",
+    "firstEngagementMessage": "Ou kòmanse seri lekti chak jou ou. Kontinye tounen chak jou pou grandi nan fidèlite ou.",
     "share_button": "Pataje seri mwen",
     "share_generating": "Ap jenere…",
     "share_subtitle": "jou nan Pawòl la",
-    "share_locked": "Vin Premium pou pataje vwayaj seri ou a ak lòt moun."
+    "share_locked": "Pase Premium pou pataje vwayaj seri ou ak lòt moun."
   },
   "premium": {
     "go_premium": "Vin Premium"
@@ -940,6 +1059,36 @@
     "tapToJournal": "Touche pou ekri nan jounal ou →",
     "notEnrolled": "Ou pa enskri nan plan sa a.",
     "loadError": "Pa kapab chaje lekti jodi a. Tanpri eseye ankò.",
-    "alreadyRead": "Ou deja li sa jodi a"
+    "alreadyRead": "Ou deja li sa jodi a",
+    "tutorial": {
+      "title": "Plan Lekti",
+      "subtitle": "Yon vwayaj gide nan Ekriti a, yon jou alafwa.",
+      "step1Title": "Wout gide ou a",
+      "step1Body": "Plan lekti yo mennen ou nan Ekriti a jou apre jou. Chak plan swiv yon tèm — lapè, rekonesans, lakwa ak plis.",
+      "step2Title": "Li, reflechi, priye",
+      "step2Body": "Chak jou montre yon pasaj ak refleksyon, priyè, ak yon kesyon pou jounal ou. Pran tan ou vle — pa gen minit.",
+      "step3Title": "Make pwogrè ou",
+      "step3Body": "Touche \"Make kòm Li\" lè ou fin yon jou. Pwogrè ou ap sove otomatikman pou ou ka kontinye kote ou te kite.",
+      "step4Title": "Plan gratis ak Devoted",
+      "step4Body": "\"Mache nan Lapè\" gratis pou tout moun. Manm Devoted debloke bibliyotèk konplè a — enkli vwayaj Advans, Karèm ak Semèn Sen.",
+      "cta": "Eksplore Plan yo",
+      "reopenHint": "Touche ? nenpòt ki lè pou wè gid sa a ankò."
+    }
+  },
+  "graceDay": {
+    "errors": {
+      "NO_GRACE_DAYS": "Ou pa gen okenn jou lagras ki rete",
+      "STREAK_NOT_BROKEN": "Seri ou pa kase",
+      "GRACE_PERIOD_EXPIRED": "Peryòd lagras la ekspire",
+      "ALREADY_USED_TODAY": "Ou deja itilize yon jou lagras jodi a"
+    },
+    "success": "Jou Lagras itilize — seri ou pwoteje.",
+    "banner": {
+      "message": "Ou manke yè. Itilize yon Jou Lagras pou konsève seri {{current_streak}} jou ou?",
+      "useGraceDay": "Itilize Jou Lagras",
+      "notNow": "Pa kounye a",
+      "processing": "Ap trete…",
+      "remaining": "{{count}} ki rete"
+    }
   }
 }

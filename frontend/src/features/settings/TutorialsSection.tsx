@@ -8,8 +8,9 @@ import { MannaHowToPlay, MANNA_TUTORIAL_KEY } from '../manna/MannaHowToPlay';
 import { GraceDayTutorial, GRACE_DAY_TUTORIAL_KEY } from './GraceDayTutorial';
 import { GamificationTutorial, GAMIFICATION_TUTORIAL_KEY } from '../streak/GamificationTutorial';
 import { ShopTutorial, SHOP_TUTORIAL_KEY } from '../shop/ShopTutorial';
+import { PlansTutorial, PLANS_TUTORIAL_KEY } from '../plans/PlansTutorial';
 
-type TutorialId = 'journal' | 'favorites' | 'search' | 'community' | 'manna' | 'graceDay' | 'gamification' | 'shop';
+type TutorialId = 'journal' | 'favorites' | 'search' | 'community' | 'manna' | 'graceDay' | 'gamification' | 'shop' | 'plans';
 
 const TUTORIALS: {
   id: TutorialId;
@@ -20,6 +21,15 @@ const TUTORIALS: {
   descFallback: string;
   storageKey: string;
 }[] = [
+  {
+    id: 'plans',
+    emoji: '🗺️',
+    labelKey: 'nav.plans',
+    fallback: 'Reading Plans',
+    descKey: 'plan.tutorial.subtitle',
+    descFallback: 'A guided journey through Scripture, one day at a time.',
+    storageKey: PLANS_TUTORIAL_KEY,
+  },
   {
     id: 'gamification',
     emoji: '✦',
@@ -112,6 +122,7 @@ export const TutorialsSection: React.FC = () => {
       {openTutorial === 'graceDay'       && <GraceDayTutorial onDismiss={handleClose} />}
       {openTutorial === 'gamification'   && <GamificationTutorial onDismiss={handleClose} />}
       {openTutorial === 'shop'           && <ShopTutorial onDismiss={handleClose} />}
+      {openTutorial === 'plans'          && <PlansTutorial onDismiss={handleClose} />}
 
       <div className="space-y-2">
         {TUTORIALS.map((tut) => {
