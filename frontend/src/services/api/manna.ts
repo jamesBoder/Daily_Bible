@@ -78,12 +78,16 @@ export interface MannaGameSummary {
 export interface GuestGameInfo {
   word_length: number;
   max_guesses: number; // always 3 for guests
+  scripture_reference: string;
+  scripture_clue: string;
+  testament: string;
 }
 
 export interface GuestGuessResult {
   result: ('correct' | 'present' | 'absent')[];
   answer?: string;              // returned on correct guess or last guess
   scripture_reference?: string; // returned when game ends
+  scripture_text?: string;      // full verse revealed on game end
 }
 
 export interface MannaStats {

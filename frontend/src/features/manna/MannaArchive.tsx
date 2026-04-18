@@ -72,7 +72,7 @@ export const MannaArchive: React.FC<MannaArchiveProps> = ({ onSelectDate, onClos
                 style={{ background: 'var(--panel-bg)', border: '1px solid var(--border-muted)' }}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">⬜</span>
+                  <span className="text-lg" aria-hidden="true">⬜</span>
                   <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{label}</p>
                 </div>
                 <span className="manna-muted text-xs">{t('manna.archivePlay', 'Play')}</span>
@@ -108,7 +108,7 @@ export const MannaArchive: React.FC<MannaArchiveProps> = ({ onSelectDate, onClos
                 style={{ background: 'var(--panel-bg)', border: '1px solid var(--border-muted)' }}
               >
                 <div className="flex items-center gap-3">
-                  <span className="text-lg">{statusIcon}</span>
+                  <span className="text-lg" aria-hidden="true">{statusIcon}</span>
                   <div>
                     <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>{label}</p>
                     {summary?.word && (summary.status === 'solved' || summary.status === 'failed') && (

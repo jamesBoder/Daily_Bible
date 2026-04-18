@@ -166,6 +166,7 @@
   content: '';
   position: absolute;
   inset: -80px -40px;
+  will-change: opacity, transform;
   background:
     radial-gradient(
       ellipse 70% 55% at 50% 38%,
@@ -188,6 +189,7 @@
 .manna-mote {
   position: absolute;
   border-radius: 50%;
+  will-change: transform, opacity;
   /* Mote color and glow track the theme's blessing-gold */
   background: color-mix(in srgb, var(--blessing-gold) 90%, transparent);
   box-shadow:
@@ -201,6 +203,7 @@
 /* ── Title glow ──────────────────────────────────────────────────────────── */
 
 .manna-title-glow {
+  will-change: opacity;
   text-shadow:
     0 0 14px color-mix(in srgb, var(--blessing-gold) 65%, transparent),
     0 0 32px color-mix(in srgb, var(--blessing-gold) 35%, transparent),
@@ -249,11 +252,13 @@
 
 /* Cursor: blinking amber border on the next-input tile */
 .manna-tile--cursor {
+  will-change: opacity;
   animation: cursorBlink 1s ease-in-out infinite;
 }
 
 /* Active tile: shimmer glow while typing — tracks candle-amber */
 .manna-tile--active {
+  will-change: opacity;
   border-color: var(--candle-amber);
   box-shadow:
     0 0  8px 2px color-mix(in srgb, var(--candle-amber) 45%, transparent),
@@ -345,6 +350,7 @@
 
 /* Flip — overrides state animations during the reveal */
 .manna-tile--flipping {
+  will-change: transform;
   animation: tileFlip 0.5s ease-in-out both !important;
   animation-delay: calc(var(--tile-index, 0) * 120ms) !important;
 }
@@ -361,6 +367,7 @@
 /* ── Grid card backdrop ───────────────────────────────────────────────────── */
 
 .manna-grid-wrap {
+  contain: layout style;
   background: color-mix(in srgb, var(--journal-surface) 95%, transparent);
   border: 1px solid color-mix(in srgb, var(--blessing-gold) 30%, transparent);
   border-radius: 18px;
@@ -445,6 +452,7 @@
 
 /* Ambient glow pool beneath the keys — uses candle-amber per theme */
 .manna-keyboard {
+  contain: layout style;
   position: relative;
 }
 

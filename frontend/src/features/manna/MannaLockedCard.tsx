@@ -76,6 +76,30 @@ export const MannaLockedCard: React.FC<MannaLockedCardProps> = ({ yesterday: ini
         </div>
       </div>
 
+      {/* Feature grid — explains what membership unlocks before the CTA */}
+      <div
+        className="w-full grid grid-cols-2 gap-2 text-xs"
+        style={{ position: 'relative', zIndex: 1 }}
+      >
+        {[
+          { icon: '🎯', label: t('manna.feature6Guesses', '6 guesses per puzzle') },
+          { icon: '📖', label: t('manna.featureScripture', 'Full scripture clue') },
+          { icon: '💡', label: t('manna.featureHints', 'Hints (15 Blessings each)') },
+          { icon: '📊', label: t('manna.featureStats', 'Stats & solve history') },
+          { icon: '📅', label: t('manna.featureArchive', 'Past puzzle archive') },
+          { icon: '✦', label: t('manna.featureBlessings', 'Earn Blessings daily') },
+        ].map(({ icon, label }) => (
+          <div
+            key={label}
+            className="flex items-center gap-1.5 px-2.5 py-2 rounded-lg"
+            style={{ background: 'color-mix(in srgb, var(--blessing-gold) 8%, transparent)', border: '1px solid color-mix(in srgb, var(--blessing-gold) 18%, transparent)' }}
+          >
+            <span aria-hidden="true">{icon}</span>
+            <span style={{ color: 'var(--foreground)', opacity: 0.85 }}>{label}</span>
+          </div>
+        ))}
+      </div>
+
       {/* CTA */}
       <button
         onClick={() => navigate('/shop')}

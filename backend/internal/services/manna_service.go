@@ -489,8 +489,11 @@ func (s *MannaService) GetArchiveHint(userID uint, date time.Time) (*HintRespons
 // GuestGameInfo is returned by GET /api/manna/guest/today.
 // No word is included — the frontend only learns the word when the game ends.
 type GuestGameInfo struct {
-	WordLength int `json:"word_length"`
-	MaxGuesses int `json:"max_guesses"`
+	WordLength         int    `json:"word_length"`
+	MaxGuesses         int    `json:"max_guesses"`
+	ScriptureReference string `json:"scripture_reference"`
+	ScriptureClue      string `json:"scripture_clue"`
+	Testament          string `json:"testament"`
 }
 
 // GuestGuessResult is returned by POST /api/manna/guest/guess.
@@ -498,11 +501,20 @@ type GuestGuessResult struct {
 	Result             []string `json:"result"`
 	Answer             *string  `json:"answer,omitempty"`              // only on correct guess or last guess
 	ScriptureReference *string  `json:"scripture_reference,omitempty"` // only on game end
+	ScriptureText      *string  `json:"scripture_text,omitempty"`      // full verse revealed on game end
 }
 
-// GetGuestGameInfo returns the guest game configuration (word length + max guesses).
+// GetGuestGameInfo returns the guest game configuration with today's scripture clue.
 func (s *MannaService) GetGuestGameInfo() *GuestGameInfo {
-	return &GuestGameInfo{WordLength: 5, MaxGuesses: guestMannaGuesses}
+	info := &GuestGameInfo{WordLength: 5, MaxGuesses: guestMannaGuesses}
+	word, err := s.GetTodayWord()
+	if err != nil {
+		return info
+	}
+	info.ScriptureReference = word.ScriptureReference
+	info.ScriptureClue = buildScriptureClue(word.ScriptureText, word.Word)
+	info.Testament = getTestament(word.ScriptureReference)
+	return info
 }
 
 // EvaluateGuestGuess validates and scores a guest guess against today's word.
@@ -540,6 +552,7 @@ func (s *MannaService) EvaluateGuestGuess(guess string, isLastGuess bool) (*Gues
 	if isSolved || isLastGuess {
 		resp.Answer = &word.Word
 		resp.ScriptureReference = &word.ScriptureReference
+		resp.ScriptureText = &word.ScriptureText
 	}
 	return resp, nil
 }

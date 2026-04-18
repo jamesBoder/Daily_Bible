@@ -89,14 +89,22 @@ function buildSubmittedWord(typedLetters: string, hintLetters: HintLetter[] | un
     .join('');
 }
 
+// Returns true when celebration animations should play — respects both the
+// in-app toggle and the OS-level prefers-reduced-motion setting.
+const celebrationEnabled = () =>
+  localStorage.getItem('celebrationAnimEnabled') !== 'false' &&
+  !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
 const GUEST_MAX_GUESSES = 3;
 const guestStateKey = () => 'manna-guest-' + new Date().toISOString().slice(0, 10);
+const guestInfoKey = () => 'manna-guest-info-' + new Date().toISOString().slice(0, 10);
 
 interface GuestState {
   guesses: GuessEntry[];
   status: 'in_progress' | 'solved' | 'failed';
   answer?: string;
   scripture_reference?: string;
+  scripture_text?: string;
 }
 
 function loadGuestState(): GuestState {
@@ -113,7 +121,7 @@ function saveGuestState(state: GuestState) {
   } catch { /* ignore */ }
 }
 
-function buildGuestGame(state: GuestState): MannaGameResponse {
+function buildGuestGame(state: GuestState, info?: { scripture_reference: string; scripture_clue: string; testament: string }): MannaGameResponse {
   return {
     locked: false,
     game_id: 0,
@@ -122,13 +130,13 @@ function buildGuestGame(state: GuestState): MannaGameResponse {
     max_guesses: GUEST_MAX_GUESSES,
     guesses: state.guesses,
     word_length: 5,
-    is_free_play: true, // drives the guest banner and upgrade CTAs
-    scripture_reference: '',
-    scripture_clue: '',
-    testament: '',
+    is_free_play: true,
+    scripture_reference: info?.scripture_reference ?? '',
+    scripture_clue: info?.scripture_clue ?? '',
+    testament: info?.testament ?? '',
     hints_used: 0,
     answer: state.answer,
-    scripture_text: undefined,
+    scripture_text: state.scripture_text,
     connection_note: undefined,
   };
 }
@@ -196,6 +204,9 @@ export const MannaPuzzle: React.FC = () => {
   const [yesterdayData, setYesterdayData] = useState<YesterdayResult | null>(null);
   const [game, setGame] = useState<MannaGameResponse | null>(null);
   const [hintLoading, setHintLoading] = useState(false);
+  const [hintConfirming, setHintConfirming] = useState(false);
+  const hintConfirmingRef = useRef(false);
+  const hintConfirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Archive state
   const [archiveDate, setArchiveDate] = useState<string | null>(null); // "YYYY-MM-DD" or null for today
@@ -218,7 +229,7 @@ export const MannaPuzzle: React.FC = () => {
     if (archiveDate) return;
     if (game?.status !== 'solved') return;
     if (isGuestMode) return; // guest users don't get the EOD modal
-    const today = new Date().toISOString().slice(0, 10);
+    const today = new Date().toLocaleDateString('sv-SE'); // YYYY-MM-DD in user's local timezone
     if (sessionStorage.getItem(EOD_SESSION_KEY_PREFIX + today)) return;
     if (streakData?.last_active_date !== today) return;
     // Both conditions met: puzzle solved + verse read. Show after animations settle.
@@ -285,14 +296,31 @@ export const MannaPuzzle: React.FC = () => {
 
     let cancelled = false;
 
-    // Guest path: load state from localStorage (no network call needed for setup).
+    // Guest path: load state from localStorage; get today's scripture clue from
+    // sessionStorage cache (same-day repeat visit) or fetch from the backend once.
     if (isGuestMode && !archiveDate) {
       const state = loadGuestState();
-      setGame(buildGuestGame(state));
-      if (!localStorage.getItem(MANNA_TUTORIAL_KEY)) {
-        setShowTutorial(true);
-      }
-      setLoading(false);
+      try {
+        const cached = sessionStorage.getItem(guestInfoKey());
+        if (cached) {
+          setGame(buildGuestGame(state, JSON.parse(cached)));
+          if (!localStorage.getItem(MANNA_TUTORIAL_KEY)) setShowTutorial(true);
+          setLoading(false);
+          return () => { cancelled = true; };
+        }
+      } catch { /* ignore parse errors */ }
+      mannaApi.getGuestGame()
+        .then(info => {
+          try { sessionStorage.setItem(guestInfoKey(), JSON.stringify(info)); } catch { /* ignore */ }
+          if (!cancelled) setGame(buildGuestGame(state, info));
+        })
+        .catch(() => { if (!cancelled) setGame(buildGuestGame(state)); })
+        .finally(() => {
+          if (!cancelled) {
+            if (!localStorage.getItem(MANNA_TUTORIAL_KEY)) setShowTutorial(true);
+            setLoading(false);
+          }
+        });
       return () => { cancelled = true; };
     }
 
@@ -317,7 +345,7 @@ export const MannaPuzzle: React.FC = () => {
           if (!gameResp) return; // locked path already handled
           setGame(gameResp);
           // Show confetti if already solved — once per session to avoid re-firing on reload
-          if (gameResp.status === 'solved' && !archiveDate && !sessionStorage.getItem(CONFETTI_SESSION_KEY)) {
+          if (gameResp.status === 'solved' && !archiveDate && !sessionStorage.getItem(CONFETTI_SESSION_KEY) && celebrationEnabled()) {
             setShowConfetti(true);
             sessionStorage.setItem(CONFETTI_SESSION_KEY, '1');
           }
@@ -342,6 +370,8 @@ export const MannaPuzzle: React.FC = () => {
   }, [archiveDate, fetchKey, isGuestMode, authLoading]);
 
   // ─── Hint handler ─────────────────────────────────────────────────────────
+  // Two-tap pattern: first tap enters confirming state (auto-cancels after 3s),
+  // second tap executes. Prevents accidental blessing spend.
   const handleHint = useCallback(async () => {
     const g = gameRef.current;
     if (!g || hintLoading || g.status !== 'in_progress') return;
@@ -350,6 +380,21 @@ export const MannaPuzzle: React.FC = () => {
       return;
     }
 
+    if (!hintConfirmingRef.current) {
+      setHintConfirming(true);
+      hintConfirmingRef.current = true;
+      if (hintConfirmTimer.current) clearTimeout(hintConfirmTimer.current);
+      hintConfirmTimer.current = setTimeout(() => {
+        setHintConfirming(false);
+        hintConfirmingRef.current = false;
+      }, 3000);
+      return;
+    }
+
+    // Second tap — confirmed
+    if (hintConfirmTimer.current) clearTimeout(hintConfirmTimer.current);
+    setHintConfirming(false);
+    hintConfirmingRef.current = false;
     setHintLoading(true);
     try {
       const result = await (archiveDate ? mannaApi.getArchiveHint(archiveDate) : mannaApi.getHint());
@@ -440,7 +485,7 @@ export const MannaPuzzle: React.FC = () => {
           guess_count: game.guess_count + 1,
           answer: guestResult.answer,
           scripture_reference: guestResult.scripture_reference,
-          scripture_text: undefined as string | undefined,
+          scripture_text: guestResult.scripture_text,
           blessings_awarded: undefined as number | undefined,
           streak_bonus: undefined as number | undefined,
           win_streak: undefined as number | undefined,
@@ -493,6 +538,7 @@ export const MannaPuzzle: React.FC = () => {
               status: result.status,
               answer: result.answer,
               scripture_reference: result.scripture_reference,
+              scripture_text: result.scripture_text,
             });
           }
           return updated;
@@ -522,18 +568,20 @@ export const MannaPuzzle: React.FC = () => {
           // U-02: positive haptic on win — two pulses (uplifting pattern)
           if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
           // M-17: after bounce animation finishes (~1.4s total), bloom the full grid
-          if (localStorage.getItem('celebrationAnimEnabled') !== 'false') {
+          if (celebrationEnabled()) {
             setTimeout(() => setBloomGrid(true), 1500);
           }
           setAnnouncement(t('manna.ariaSolved', 'Solved! The word was {{word}}.', { word: result.answer ?? '' }));
           // Trigger confetti once per session per game (archive games use a per-date key)
-          setTimeout(() => {
-            const confettiKey = archiveDate ? `manna-confetti-${archiveDate}` : CONFETTI_SESSION_KEY;
-            if (!sessionStorage.getItem(confettiKey)) {
-              setShowConfetti(true);
-              sessionStorage.setItem(confettiKey, '1');
-            }
-          }, 650);
+          if (celebrationEnabled()) {
+            setTimeout(() => {
+              const confettiKey = archiveDate ? `manna-confetti-${archiveDate}` : CONFETTI_SESSION_KEY;
+              if (!sessionStorage.getItem(confettiKey)) {
+                setShowConfetti(true);
+                sessionStorage.setItem(confettiKey, '1');
+              }
+            }, 650);
+          }
           if (result.blessings_awarded) {
             toast.success(
               t('manna.solved', '+{{n}} Blessings!', { n: result.blessings_awarded }),
@@ -551,7 +599,7 @@ export const MannaPuzzle: React.FC = () => {
               }, 800);
             }
             // M-14: trigger blessings burst animation over post-game panel
-            if (localStorage.getItem('celebrationAnimEnabled') !== 'false') {
+            if (celebrationEnabled()) {
               setBlessingsBurst(result.blessings_awarded);
               setTimeout(() => setBlessingsBurst(null), 1800);
             }
@@ -591,15 +639,20 @@ export const MannaPuzzle: React.FC = () => {
         toast.error(t('manna.errorChars', 'Guesses must contain only letters A–Z.'));
       } else if (msg.includes('complete')) {
         toast(t('manna.errorComplete', 'This game is already complete.'));
+      } else if (!err?.response) {
+        // No response at all — network error, not a server rejection
+        toast.error(t('manna.errorNetwork', 'No connection — check your internet and try again.'));
       } else {
-        toast.error(t('manna.errorSubmit', 'Failed to submit guess. Try again.'));
+        // Server responded with an unexpected error — suggest refresh
+        toast.error(t('manna.errorSubmit', 'Something went wrong. Try refreshing the page.'));
       }
     }
   };
 
-  // hintLoading ref — lets handleKey (which is memoised) see the latest value
+  // hintLoading / hintConfirming refs — let memoised callbacks see the latest values
   const hintLoadingRef = useRef(false);
   useEffect(() => { hintLoadingRef.current = hintLoading; }, [hintLoading]);
+  useEffect(() => { hintConfirmingRef.current = hintConfirming; }, [hintConfirming]);
 
   // ─── Keyboard handling ────────────────────────────────────────────────────
   const handleKey = useCallback((key: string) => {
@@ -837,7 +890,8 @@ export const MannaPuzzle: React.FC = () => {
               </button>
             </>
           )}
-          {/* Hint button — premium only, during active game */}
+          {/* Hint button — premium only, during active game. Two-tap: first tap
+              enters confirming state; second tap within 3s spends the blessing. */}
           {isPremium && !isOver && (
             <button
               className="manna-hint-btn"
@@ -846,20 +900,24 @@ export const MannaPuzzle: React.FC = () => {
               aria-label={
                 hintsLeft === 0
                   ? t('manna.hintMax', 'No hints remaining.')
-                  : t('manna.hintAriaLabel', 'Use a hint ({{n}} left, costs 15 Blessings)', { n: hintsLeft })
+                  : hintConfirming
+                    ? t('manna.hintConfirmAriaLabel', 'Confirm: spend 15 Blessings for a hint')
+                    : t('manna.hintAriaLabel', 'Use a hint ({{n}} left, costs 15 Blessings)', { n: hintsLeft })
               }
-              title={
-                hintsLeft === 0
-                  ? t('manna.hintMax', 'No hints remaining.')
-                  : t('manna.hintAriaLabel', 'Use a hint ({{n}} left, costs 15 Blessings)', { n: hintsLeft })
-              }
-              style={{ padding: '0.2rem 0.5rem', gap: '0.25rem', fontSize: '0.72rem' }}
+              style={{
+                padding: '0.2rem 0.5rem',
+                gap: '0.25rem',
+                fontSize: '0.72rem',
+                ...(hintConfirming ? { background: 'var(--candle-amber)', color: '#000' } : {}),
+              }}
             >
               {hintLoading
                 ? <span className="w-3 h-3 rounded-full border border-current border-t-transparent animate-spin inline-block" />
                 : hintsLeft === 0
                   ? <>{t('manna.noHints', 'No hints')}</>
-                  : <><LightbulbIcon /> {hintsLeft}</>
+                  : hintConfirming
+                    ? <>{t('manna.hintConfirm', '−15 ✦ Confirm?')}</>
+                    : <><LightbulbIcon /> {hintsLeft}</>
               }
             </button>
           )}
@@ -879,7 +937,7 @@ export const MannaPuzzle: React.FC = () => {
           <span style={{ color: 'var(--text-primary)' }}>
             <span className="font-semibold">{t('manna.guestBanner', 'Guest')}</span>
             {' · '}
-            <span className="opacity-70">{t('manna.guestBannerDetail', '3 guesses · Sign up free for scripture clues & more')}</span>
+            <span className="opacity-70">{t('manna.guestBannerDetail', '3 guesses · Sign up free for hints, stats & more')}</span>
           </span>
           <button
             className="manna-hint-btn shrink-0"
@@ -891,8 +949,8 @@ export const MannaPuzzle: React.FC = () => {
         </div>
       )}
 
-      {/* ── Scripture clue — premium only ── */}
-      {!isFreePlay && (
+      {/* ── Scripture clue — all users ── */}
+      {game.scripture_clue && (
         <ScriptureClue
           testament={game.testament}
           reference={game.scripture_reference}
@@ -1010,7 +1068,7 @@ export const MannaPuzzle: React.FC = () => {
             </p>
           )}
 
-          {!isFreePlay && game.scripture_text && (
+          {game.scripture_text && (
             <blockquote className="manna-scripture">
               <p>{game.scripture_text}</p>
               <cite className="not-italic font-semibold text-xs mt-1 block" style={{ color: 'var(--blessing-gold)' }}>
@@ -1040,7 +1098,7 @@ export const MannaPuzzle: React.FC = () => {
           {isFreePlay && (
             <div className="flex flex-col items-center gap-2 mt-2">
               <p className="manna-muted text-xs text-center">
-                {t('manna.guestPostGame', 'Sign up free to play with 6 guesses, see the full scripture, and more.')}
+                {t('manna.guestPostGame', 'Sign up free to play with 6 guesses, earn Blessings, and more.')}
               </p>
               <button
                 className="manna-hint-btn"
@@ -1366,6 +1424,8 @@ interface ShareResultProps {
 }
 
 const ShareResult: React.FC<ShareResultProps> = ({ guesses, solved, maxGuesses, answer, scriptureReference, t }) => {
+  const [isCopied, setIsCopied] = React.useState(false);
+
   const handleShare = () => {
     const grid = guesses
       .map(g => g.result.map(r => EMOJI[r] ?? '⬛').join(''))
@@ -1378,7 +1438,10 @@ const ShareResult: React.FC<ShareResultProps> = ({ guesses, solved, maxGuesses, 
       navigator.share({ text }).catch(() => {});
     } else {
       navigator.clipboard.writeText(text).then(
-        () => toast.success(t('manna.copied', 'Result copied!')),
+        () => {
+          setIsCopied(true);
+          setTimeout(() => setIsCopied(false), 2500);
+        },
         () => toast.error(t('manna.copyFailed', 'Could not copy.'))
       );
     }
@@ -1389,11 +1452,17 @@ const ShareResult: React.FC<ShareResultProps> = ({ guesses, solved, maxGuesses, 
       onClick={handleShare}
       className="mt-3 w-full py-2 rounded-lg text-sm font-semibold border transition-colors"
       style={{
-        borderColor: 'var(--candle-amber)',
-        color: 'var(--candle-amber)',
+        borderColor: isCopied ? 'var(--blessing-gold)' : 'var(--candle-amber)',
+        color: isCopied ? 'var(--blessing-gold)' : 'var(--candle-amber)',
       }}
     >
-      {t('manna.share', 'Share result')}
+      {isCopied
+        ? <span className="flex items-center justify-center gap-1.5">
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" /></svg>
+            {t('manna.copied', 'Copied!')}
+          </span>
+        : t('manna.share', 'Share result')
+      }
     </button>
   );
 };
