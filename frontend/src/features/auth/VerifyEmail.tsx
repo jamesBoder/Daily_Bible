@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
@@ -12,6 +13,7 @@ import { API_ENDPOINTS } from "../../utils/constants";
 type VerifyStatus = "verifying" | "success" | "expired" | "error";
 
 export const VerifyEmail: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { loginWithToken } = useAuth();
@@ -28,7 +30,7 @@ export const VerifyEmail: React.FC = () => {
     const token = searchParams.get("token");
     if (!token) {
       setStatus("error");
-      setErrorMessage("No verification token found in the link.");
+      setErrorMessage(t('auth.verifyEmail.noToken', 'No verification token found in the link.'));
       return;
     }
     const isPending = searchParams.get("type") === "pending";
@@ -49,8 +51,8 @@ export const VerifyEmail: React.FC = () => {
       setStatus("success");
       showToast.success(
         isPending
-          ? "New email confirmed! Your email address has been updated."
-          : "Email verified! Welcome to Words of Praise 🎉"
+          ? t('auth.verifyEmail.emailUpdatedToast', 'New email confirmed! Your email address has been updated.')
+          : t('auth.verifyEmail.emailVerifiedToast', 'Email verified! Welcome to Words of Praise 🎉')
       );
       // 2 seconds — gives users time to read the confirmation before redirect
       setTimeout(() => navigate("/", { replace: true }), 2000);
@@ -58,7 +60,7 @@ export const VerifyEmail: React.FC = () => {
       const msg =
         err.response?.data?.error ||
         err.response?.data?.message ||
-        "Verification failed.";
+        t('auth.verifyEmail.verificationFailed', 'Verification failed.');
       if (msg.toLowerCase().includes("expired")) {
         setStatus("expired");
       } else {
@@ -70,7 +72,7 @@ export const VerifyEmail: React.FC = () => {
 
   const handleResend = async () => {
     if (!/\S+@\S+\.\S+/.test(resendEmail)) {
-      setResendEmailError("Please enter a valid email address.");
+      setResendEmailError(t('auth.verifyEmail.invalidEmail', 'Please enter a valid email address.'));
       return;
     }
     setResendEmailError("");
@@ -78,12 +80,12 @@ export const VerifyEmail: React.FC = () => {
     try {
       await apiClient.post(API_ENDPOINTS.RESEND_VERIFICATION, { email: resendEmail });
       setResent(true);
-      showToast.success("Verification email resent! Check your inbox.");
+      showToast.success(t('auth.verifyEmail.resendSuccess', 'Verification email resent! Check your inbox.'));
     } catch (err: any) {
       const msg =
         err.response?.data?.error ||
         err.response?.data?.message ||
-        "Failed to resend. Please try again.";
+        t('auth.login.resendFailed', 'Failed to resend. Please try again.');
       showToast.error(msg);
     } finally {
       setIsResending(false);
@@ -98,7 +100,7 @@ export const VerifyEmail: React.FC = () => {
             <div className="text-center space-y-4 py-4">
               <Loading />
               <p className="text-gray-600 dark:text-gray-400">
-                Verifying your email...
+                {t('auth.verifyEmail.verifying', 'Verifying your email...')}
               </p>
             </div>
           </Card>
@@ -115,12 +117,14 @@ export const VerifyEmail: React.FC = () => {
             <div className="text-center space-y-4">
               <div className="text-6xl">✅</div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                {searchParams.get("type") === "pending" ? "Email Updated!" : "Email Verified!"}
+                {searchParams.get("type") === "pending"
+                  ? t('auth.verifyEmail.emailUpdatedTitle', 'Email Updated!')
+                  : t('auth.verifyEmail.emailVerifiedTitle', 'Email Verified!')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
                 {searchParams.get("type") === "pending"
-                  ? "Your email address has been changed successfully. Redirecting..."
-                  : "Your account is now active. Redirecting you to the app..."}
+                  ? t('auth.verifyEmail.emailUpdatedBody', 'Your email address has been changed successfully. Redirecting...')
+                  : t('auth.verifyEmail.emailVerifiedBody', 'Your account is now active. Redirecting you to the app...')}
               </p>
             </div>
           </Card>
@@ -137,10 +141,10 @@ export const VerifyEmail: React.FC = () => {
             <div className="text-center space-y-4">
               <div className="text-6xl">⏰</div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Link Expired
+                {t('auth.verifyEmail.expiredTitle', 'Link Expired')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Verification links expire after 24 hours. Enter your email below to get a new one.
+                {t('auth.verifyEmail.expiredBody', 'Verification links expire after 24 hours. Enter your email below to get a new one.')}
               </p>
 
               {!resent ? (
@@ -149,7 +153,7 @@ export const VerifyEmail: React.FC = () => {
                   className="space-y-3 text-left"
                 >
                   <Input
-                    label="Email address"
+                    label={t('auth.forgotPassword.emailLabel', 'Email address')}
                     type="email"
                     name="resendEmail"
                     value={resendEmail}
@@ -167,12 +171,12 @@ export const VerifyEmail: React.FC = () => {
                     disabled={isResending}
                     className="w-full"
                   >
-                    Send new verification email
+                    {t('auth.verifyEmail.sendNewBtn', 'Send new verification email')}
                   </Button>
                 </form>
               ) : (
                 <p className="text-sm text-green-600 dark:text-green-400 font-medium">
-                  ✓ New verification email sent! Check your inbox.
+                  {t('auth.verifyEmail.newSentSuccess', '✓ New verification email sent! Check your inbox.')}
                 </p>
               )}
 
@@ -181,7 +185,7 @@ export const VerifyEmail: React.FC = () => {
                 onClick={() => navigate("/login")}
                 className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
-                Back to login
+                {t('auth.forgotPassword.backToLogin', 'Back to login')}
               </button>
             </div>
           </Card>
@@ -198,11 +202,11 @@ export const VerifyEmail: React.FC = () => {
           <div className="text-center space-y-4">
             <div className="text-6xl">❌</div>
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-              Verification Failed
+              {t('auth.verifyEmail.failedTitle', 'Verification Failed')}
             </h2>
             <p className="text-gray-600 dark:text-gray-400 break-words">{errorMessage}</p>
             <Button type="button" onClick={() => navigate("/login")} className="w-full">
-              Back to Login
+              {t('auth.forgotPassword.backToLogin', 'Back to Login')}
             </Button>
           </div>
         </Card>

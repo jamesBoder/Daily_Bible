@@ -1,5 +1,6 @@
 import React, { Component, ErrorInfo, ReactNode } from 'react';
 import * as Sentry from "@sentry/react";
+import i18next from 'i18next';
 
 interface Props {
   children: ReactNode;
@@ -36,15 +37,17 @@ export class ErrorBoundary extends Component<Props, State> {
         return this.props.fallback;
       }
 
+      const t = i18next.t.bind(i18next);
+
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
           <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
             <div className="text-red-500 text-6xl mb-4">⚠️</div>
             <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
-              Oops! Something went wrong
+              {t('common.somethingWentWrong', 'Oops! Something went wrong')}
             </h1>
             <p className="text-gray-600 dark:text-gray-400 mb-6">
-              We're sorry for the inconvenience. Please try refreshing the page.
+              {t('common.errorRefresh', "We're sorry for the inconvenience. Please try refreshing the page.")}
             </p>
             {process.env.NODE_ENV === 'development' && this.state.error && (
               <pre className="text-left text-xs bg-gray-100 dark:bg-gray-900 p-4 rounded mb-4 overflow-auto">
@@ -56,13 +59,13 @@ export class ErrorBoundary extends Component<Props, State> {
                 onClick={this.handleReset}
                 className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
               >
-                Try Again
+                {t('common.retry', 'Try Again')}
               </button>
               <button
                 onClick={() => window.location.href = '/'}
                 className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
               >
-                Go Home
+                {t('common.goHome', 'Go Home')}
               </button>
             </div>
           </div>

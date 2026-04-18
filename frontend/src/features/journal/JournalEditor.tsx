@@ -31,14 +31,10 @@ type SaveState = "idle" | "saving" | "saved";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-const DAYS_LONG = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-
 function formatDateHeader(date: Date): string {
-  return `${MONTHS[date.getMonth()]} ${date.getDate()}, ${date.getFullYear()} · ${DAYS_LONG[date.getDay()]}`;
+  const datePart = date.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
+  const dayPart  = date.toLocaleDateString(undefined, { weekday: 'long' });
+  return `${datePart} · ${dayPart}`;
 }
 
 const AUTO_SAVE_DELAY_MS = 500;
@@ -69,6 +65,8 @@ export const JournalEditor: React.FC = () => {
   const [isDirty, setIsDirty] = useState(false);
   const [showVerseInput, setShowVerseInput] = useState(false);
   const [verseInputValue, setVerseInputValue] = useState("");
+  const [deleteConfirming, setDeleteConfirming] = useState(false);
+  const deleteConfirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const autoSaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -260,17 +258,24 @@ export const JournalEditor: React.FC = () => {
   }, [contentPlain, linkedVerse, t]);
 
   // ── Delete ─────────────────────────────────────────────────────────────────
+  // Two-tap pattern: first tap enters confirming state (auto-cancels after 3s),
+  // second tap executes the irreversible delete.
 
   const handleDelete = async () => {
     if (!entryId) {
-      // Never saved — just navigate back
       navigate("/journal");
       return;
     }
-    const confirmed = window.confirm(
-      t("journal.confirmDelete", "Delete this entry? This cannot be undone.")
-    );
-    if (!confirmed) return;
+
+    if (!deleteConfirming) {
+      setDeleteConfirming(true);
+      if (deleteConfirmTimer.current) clearTimeout(deleteConfirmTimer.current);
+      deleteConfirmTimer.current = setTimeout(() => setDeleteConfirming(false), 3000);
+      return;
+    }
+
+    if (deleteConfirmTimer.current) clearTimeout(deleteConfirmTimer.current);
+    setDeleteConfirming(false);
 
     try {
       await api.delete(`/api/journal/${entryId}`);
@@ -344,9 +349,16 @@ export const JournalEditor: React.FC = () => {
             <button
               className="journal-editor-delete-btn"
               onClick={handleDelete}
-              aria-label={t("journal.deleteEntry", "Delete this entry")}
+              aria-label={
+                deleteConfirming
+                  ? t("journal.confirmDeleteAriaLabel", "Tap again to permanently delete this entry")
+                  : t("journal.deleteEntry", "Delete this entry")
+              }
+              style={deleteConfirming ? { opacity: 1, fontWeight: 700 } : undefined}
             >
-              {t("journal.deleteEntry", "Delete Entry")}
+              {deleteConfirming
+                ? t("journal.confirmDeleteBtn", "Tap to confirm delete")
+                : t("journal.deleteEntry", "Delete Entry")}
             </button>
           )}
         </div>

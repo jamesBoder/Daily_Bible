@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, useLocation, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useAuth } from "../../hooks/useAuth";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
@@ -10,6 +11,7 @@ import { showToast } from "../../utils/toast";
 import { API_ENDPOINTS } from "../../utils/constants";
 
 export const Login: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { login } = useAuth();
@@ -55,10 +57,10 @@ export const Login: React.FC = () => {
     setIsResending(true);
     try {
       await apiClient.post(API_ENDPOINTS.RESEND_VERIFICATION, { email });
-      showToast.success("Verification email sent! Check your inbox.");
+      showToast.success(t('auth.login.verificationEmailSent', 'Verification email sent! Check your inbox.'));
       setShowResendLink(false);
     } catch {
-      showToast.error("Failed to resend. Please try again.");
+      showToast.error(t('auth.login.resendFailed', 'Failed to resend. Please try again.'));
     } finally {
       setIsResending(false);
     }
@@ -69,10 +71,10 @@ export const Login: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Welcome Back
+            {t('auth.login.title', 'Welcome Back')}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Sign in to continue your spiritual journey
+            {t('auth.login.subtitle', 'Sign in to continue your spiritual journey')}
           </p>
         </div>
 
@@ -80,7 +82,7 @@ export const Login: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {error && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
-                <p className="font-semibold">Login Failed</p>
+                <p className="font-semibold">{t('auth.login.loginFailed', 'Login Failed')}</p>
                 <p className="text-sm mt-1">{error}</p>
               </div>
             )}
@@ -88,21 +90,21 @@ export const Login: React.FC = () => {
             {showResendLink && (
               <div className="bg-yellow-50 dark:bg-yellow-900/20 border border-yellow-200 dark:border-yellow-800 text-yellow-800 dark:text-yellow-300 px-4 py-3 rounded-lg text-sm">
                 <p>
-                  Didn't receive the email?{" "}
+                  {t('auth.login.didntReceiveEmail', "Didn't receive the email?")}{" "}
                   <button
                     type="button"
                     onClick={handleResendVerification}
                     disabled={isResending}
                     className="font-semibold underline hover:no-underline disabled:opacity-50"
                   >
-                    {isResending ? "Sending..." : "Resend verification email"}
+                    {isResending ? t('auth.login.sending', 'Sending...') : t('auth.login.resendVerification', 'Resend verification email')}
                   </button>
                 </p>
               </div>
             )}
 
             <Input
-              label="Email"
+              label={t('auth.login.email', 'Email')}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -115,13 +117,13 @@ export const Login: React.FC = () => {
             <div>
               <div className="flex items-center justify-between mb-1">
                 <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  Password
+                  {t('auth.login.password', 'Password')}
                 </label>
                 <Link
                   to="/forgot-password"
                   className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
                 >
-                  Forgot password?
+                  {t('auth.login.forgotPassword', 'Forgot password?')}
                 </Link>
               </div>
               <div className="relative">
@@ -138,7 +140,7 @@ export const Login: React.FC = () => {
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
                   className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
+                  aria-label={showPassword ? t('auth.login.hidePassword', 'Hide password') : t('auth.login.showPassword', 'Show password')}
                 >
                   {showPassword ? (
                     <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -167,7 +169,7 @@ export const Login: React.FC = () => {
                 htmlFor="remember-me"
                 className="ml-2 block text-sm text-gray-900 dark:text-gray-300 cursor-pointer"
               >
-                Remember me for 30 days
+                {t('auth.login.rememberMe', 'Remember me for 30 days')}
               </label>
             </div>
 
@@ -177,12 +179,12 @@ export const Login: React.FC = () => {
               isLoading={isLoading}
               className="w-full"
             >
-              Sign In
+              {t('auth.login.submit', 'Sign In')}
             </Button>
           </form>
           <div className="my-6 flex items-center">
             <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-            <span className="mx-4 text-gray-500 dark:text-gray-400">OR</span>
+            <span className="mx-4 text-gray-500 dark:text-gray-400">{t('auth.login.or', 'OR')}</span>
             <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
           </div>
           <GoogleLoginButton
@@ -192,12 +194,12 @@ export const Login: React.FC = () => {
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Don't have an account?{" "}
+              {t('auth.login.noAccount', "Don't have an account?")}{" "}
               <Link
                 to="/signup"
                 className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
               >
-                Sign up
+                {t('auth.login.signUp', 'Sign up')}
               </Link>
             </p>
           </div>

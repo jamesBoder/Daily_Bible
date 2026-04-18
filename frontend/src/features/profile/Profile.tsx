@@ -134,7 +134,7 @@ export const Profile: React.FC = () => {
   const { useGraceDay: applyGraceDay } = useStreak();
   const qc = useQueryClient();
 
-  const { data, isLoading: loading, isError: sectionError } = useQuery<ProfileData>({
+  const { data, isLoading: loading, isError: sectionError, refetch } = useQuery<ProfileData>({
     queryKey: ['profile-aggregate'],
     queryFn: () => api.get('/api/profile/aggregate').then(r => r.data),
     staleTime: 5 * 60 * 1000,
@@ -282,10 +282,17 @@ export const Profile: React.FC = () => {
 
   if (!data) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8">
-        <p className="text-sm text-gray-400 dark:text-gray-500 text-center">
-          {t('profile.section_error', 'Could not load this section. Pull to refresh.')}
+      <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col items-center gap-3 text-center">
+        <p className="text-sm text-gray-400 dark:text-gray-500">
+          {t('profile.section_error', 'Could not load your profile.')}
         </p>
+        <button
+          onClick={() => refetch()}
+          className="px-5 py-2 rounded-xl text-sm font-semibold text-white transition-colors"
+          style={{ background: 'var(--blessing-gold)', color: '#000' }}
+        >
+          {t('common.retry', 'Retry')}
+        </button>
       </div>
     );
   }

@@ -44,13 +44,13 @@ export const Header: React.FC = () => {
 
   // Close dropdowns on outside click
   useEffect(() => {
-    const onMouseDown = (e: MouseEvent) => {
+    const onPointerDown = (e: PointerEvent) => {
       if (moreRef.current && !moreRef.current.contains(e.target as Node)) setMoreOpen(false);
       if (userMenuRef.current && !userMenuRef.current.contains(e.target as Node)) setUserMenuOpen(false);
       if (langRef.current && !langRef.current.contains(e.target as Node)) setLangOpen(false);
     };
-    document.addEventListener("mousedown", onMouseDown);
-    return () => document.removeEventListener("mousedown", onMouseDown);
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
   }, []);
 
   const { t } = useTranslation();
@@ -113,6 +113,7 @@ export const Header: React.FC = () => {
           {supportedLanguages.map((lang) => (
             <button
               key={lang.code}
+              onPointerDown={e => e.stopPropagation()}
               onClick={() => { changeLanguage(lang.code); setLangOpen(false); }}
               className={`${dropdownItem} ${currentLanguage === lang.code ? "text-amber-700 dark:text-amber-400 font-semibold" : ""}`}
             >

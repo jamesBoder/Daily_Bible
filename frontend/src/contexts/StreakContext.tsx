@@ -291,6 +291,8 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
   useEffect(() => {
     if (!isAuthenticated) return;
 
+    const latestTimer = { id: undefined as ReturnType<typeof setTimeout> | undefined };
+
     const scheduleNextRefresh = () => {
       const now = new Date();
       const tomorrow = new Date(now);
@@ -299,15 +301,14 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
       const msUntilMidnight = tomorrow.getTime() - now.getTime();
 
-      return setTimeout(() => {
+      latestTimer.id = setTimeout(() => {
         refreshStreak();
-        // Schedule next refresh
         scheduleNextRefresh();
       }, msUntilMidnight);
     };
 
-    const timeoutId = scheduleNextRefresh();
-    return () => clearTimeout(timeoutId);
+    scheduleNextRefresh();
+    return () => clearTimeout(latestTimer.id);
   }, [isAuthenticated, refreshStreak]);
 
   return (

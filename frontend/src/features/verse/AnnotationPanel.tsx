@@ -55,7 +55,7 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
     return (
       <>
         {/* Backdrop */}
-        <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={onClose} aria-hidden="true" />
+        <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} aria-hidden="true" />
         <div
           className="md:hidden fixed inset-x-0 bottom-0 z-50 rounded-t-2xl border-t border-amber-300/30 dark:border-amber-700/20 px-4 pt-4"
           style={{ background: 'var(--header-bg)', paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
@@ -81,8 +81,8 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
 
   return (
     <>
-      {/* Mobile backdrop */}
-      <div className="fixed inset-0 z-40 bg-black/40 md:hidden" onClick={onClose} aria-hidden="true" />
+      {/* Backdrop — mobile and desktop */}
+      <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} aria-hidden="true" />
 
       {/* Mobile bottom sheet */}
       <div
@@ -235,10 +235,11 @@ const PanelContent: React.FC<PanelContentProps> = ({
         <button
           onClick={onSave}
           disabled={!newNote.trim() || isSaving}
+          aria-busy={isSaving}
           className="w-full py-2.5 rounded-lg text-sm font-semibold text-white disabled:opacity-60 transition-colors"
           style={{ background: 'var(--blessing-gold)' }}
         >
-          {isSaving ? '…' : t('annotation.save', 'Save')}
+          {isSaving ? t('common.saving', 'Saving…') : t('annotation.save', 'Save')}
         </button>
       </div>
     </>

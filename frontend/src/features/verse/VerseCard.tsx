@@ -350,14 +350,6 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
         {/* ── Copy-paste block ── */}
         <div className="mb-4">
-          <div
-            className="rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800/60 px-4 py-3 text-sm text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap font-serif select-all cursor-pointer"
-            onClick={() => handleCopy()}
-            title="Tap to copy"
-            aria-label="Tap to copy verse"
-          >
-            {buildCopyBlock(verse)}
-          </div>
           <button
             onClick={() => handleCopy()}
             aria-label="Copy verse to clipboard"

@@ -126,7 +126,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
                     : 'text-gray-600 dark:text-gray-400'
                 }`}
               >
-                {req.met ? '✔️' : '❌'} {req.label}
+                <span aria-hidden="true">{req.met ? '✔️' : '❌'}</span> {req.label}
               </li>
             ))}
           </ul>

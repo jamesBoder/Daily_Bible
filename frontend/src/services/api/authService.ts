@@ -30,48 +30,31 @@ export interface SignupCredentials {
 export const authService = {
   // Login
   login: async (credentials: LoginCredentials): Promise<AuthResponse> => {
-    try {
-      const response = await apiClient.post<AuthResponse>(
-        '/api/auth/login',
-        credentials
-      );
-      
-      // Store token and user data
-      if (response.data.token) {
-        localStorage.setItem(TOKEN_KEY, response.data.token);
-        localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
-        
-        // Set token expiry based on rememberMe
-        const expiryDate = new Date();
-        if (credentials.rememberMe) {
-          expiryDate.setDate(expiryDate.getDate() + REMEMBER_ME_DAYS);
-        } else {
-          expiryDate.setHours(expiryDate.getHours() + DEFAULT_SESSION_HOURS);
-        }
-        localStorage.setItem(TOKEN_EXPIRY_KEY, expiryDate.toISOString());
+    const response = await apiClient.post<AuthResponse>('/api/auth/login', credentials);
+
+    if (response.data.token) {
+      localStorage.setItem(TOKEN_KEY, response.data.token);
+      localStorage.setItem(USER_KEY, JSON.stringify(response.data.user));
+
+      const expiryDate = new Date();
+      if (credentials.rememberMe) {
+        expiryDate.setDate(expiryDate.getDate() + REMEMBER_ME_DAYS);
+      } else {
+        expiryDate.setHours(expiryDate.getHours() + DEFAULT_SESSION_HOURS);
       }
-      
-      showToast.success('Welcome back!');
-      return response.data;
-    } catch (error: any) {
-      // throw error
-      throw error;
+      localStorage.setItem(TOKEN_EXPIRY_KEY, expiryDate.toISOString());
     }
+
+    showToast.success('Welcome back!');
+    return response.data;
   },
 
   // Signup — returns message only; user must verify email before logging in
   signup: async (credentials: SignupCredentials): Promise<{ message: string }> => {
-    try {
-      const response = await apiClient.post<{ message: string }>(
-        '/api/auth/register',
-        credentials
-      );
-      // DO NOT store token — user is not verified yet
-      // DO NOT show success toast — Signup.tsx navigates to /verify-email-pending
-      return response.data;
-    } catch (error: any) {
-      throw error;
-    }
+    const response = await apiClient.post<{ message: string }>('/api/auth/register', credentials);
+    // DO NOT store token — user is not verified yet
+    // DO NOT show success toast — Signup.tsx navigates to /verify-email-pending
+    return response.data;
   },
 
   // Logout

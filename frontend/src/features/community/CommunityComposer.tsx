@@ -129,6 +129,7 @@ export const CommunityComposer: React.FC<Props> = ({
           className="btn btn-primary btn-sm"
           onClick={handleSubmit}
           disabled={isSubmitting || !body.trim()}
+          aria-busy={isSubmitting}
           style={{ display: 'flex', alignItems: 'center', gap: '0.3rem' }}
         >
           <PaperPlaneRight size={14} weight="bold" />

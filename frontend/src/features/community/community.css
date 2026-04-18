@@ -76,6 +76,7 @@
   height: calc(100% - 0.5rem);
   background: var(--candle-amber);
   border-radius: 10px;
+  transition: left 0.18s ease, width 0.18s ease;
   transition: left 0.22s ease, width 0.22s ease;
   pointer-events: none;
   z-index: 0;

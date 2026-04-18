@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { authService } from "../../services/api/authService";
 import { Button } from "../../components/common/Button";
 import { Input } from "../../components/common/Input";
@@ -8,6 +9,7 @@ import GoogleLoginButton from "../../components/common/GoogleLoginButton";
 import { PasswordInput } from "../../components/common/PasswordInput";
 
 export const Signup: React.FC = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
@@ -25,23 +27,23 @@ export const Signup: React.FC = () => {
     const newErrors: Record<string, string> = {};
 
     if (!formData.email) {
-      newErrors.email = "Email is required";
+      newErrors.email = t('auth.validation.emailRequired', 'Email is required');
     } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
-      newErrors.email = "Email is invalid";
+      newErrors.email = t('auth.validation.emailInvalid', 'Email is invalid');
     }
 
     if (!formData.username) {
-      newErrors.username = "Username is required";
+      newErrors.username = t('auth.validation.usernameRequired', 'Username is required');
     } else if (formData.username.length < 3) {
-      newErrors.username = "Username must be at least 3 characters";
+      newErrors.username = t('auth.validation.usernameMinLength', 'Username must be at least 3 characters');
     }
 
     if (!formData.password) {
-      newErrors.password = "Password is required";
-    } 
+      newErrors.password = t('auth.validation.passwordRequired', 'Password is required');
+    }
 
     if (formData.password !== formData.confirmPassword) {
-      newErrors.confirmPassword = "Passwords do not match";
+      newErrors.confirmPassword = t('auth.validation.passwordsMustMatch', 'Passwords do not match');
     }
 
     setErrors(newErrors);
@@ -67,9 +69,9 @@ export const Signup: React.FC = () => {
       });
       navigate("/verify-email-pending", { state: { email: formData.email } });
     } catch (err: any) {
-      const errorMessage = err.response?.data?.details || 
-                     err.response?.data?.error || 
-                     "Signup failed. Please try again.";
+      const errorMessage = err.response?.data?.details ||
+                     err.response?.data?.error ||
+                     t('auth.signup.registrationFailed', 'Signup failed. Please try again.');
       const errorField = err.response?.data?.field;
       const suggestion = err.response?.data?.suggestion;
 
@@ -127,10 +129,10 @@ export const Signup: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Create Account
+            {t('auth.signup.title', 'Create Account')}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Join us on your spiritual journey
+            {t('auth.signup.subtitle', 'Join us on your spiritual journey')}
           </p>
         </div>
         <GoogleLoginButton
@@ -139,7 +141,7 @@ export const Signup: React.FC = () => {
         />
         <div className="my-6 flex items-center">
           <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-          <span className="mx-4 text-gray-500 dark:text-gray-400">OR</span>
+          <span className="mx-4 text-gray-500 dark:text-gray-400">{t('auth.signup.or', 'OR')}</span>
           <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
         </div>
 
@@ -147,7 +149,7 @@ export const Signup: React.FC = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {errors.general && (
               <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 px-4 py-3 rounded-lg">
-                <p className="font-semibold">Registration Failed</p>
+                <p className="font-semibold">{t('auth.signup.registrationFailed', 'Registration Failed')}</p>
                 <p className="text-sm mt-1">{errors.general}</p>
               </div>
             )}
@@ -155,7 +157,7 @@ export const Signup: React.FC = () => {
 
             <div>
               <Input
-                label="Email"
+                label={t('auth.signup.email', 'Email')}
                 type="email"
                 name="email"
                 value={formData.email}
@@ -168,7 +170,7 @@ export const Signup: React.FC = () => {
               {suggestions.email && (
                 <div className="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg">
                   <p className="text-sm text-blue-700 dark:text-blue-300">
-                    Did you mean{" "}
+                    {t('auth.signup.didYouMean', 'Did you mean')}{" "}
                     <button
                       type="button"
                       onClick={() => applySuggestion("email", suggestions.email)}
@@ -183,7 +185,7 @@ export const Signup: React.FC = () => {
             </div>
 
             <Input
-              label="Username"
+              label={t('auth.signup.username', 'Username')}
               type="text"
               name="username"
               value={formData.username}
@@ -195,7 +197,7 @@ export const Signup: React.FC = () => {
             />
 
             <Input
-              label="Name (Optional)"
+              label={t('auth.signup.name', 'Name (Optional)')}
               type="text"
               name="name"
               value={formData.name}
@@ -205,7 +207,7 @@ export const Signup: React.FC = () => {
             />
 
             <PasswordInput
-              label="Password"
+              label={t('auth.signup.password', 'Password')}
               name="password"
               value={formData.password}
               onChange={handleChange}
@@ -217,7 +219,7 @@ export const Signup: React.FC = () => {
             />
 
             <PasswordInput
-              label="Confirm Password"
+              label={t('auth.signup.confirmPassword', 'Confirm Password')}
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
@@ -234,18 +236,18 @@ export const Signup: React.FC = () => {
               isLoading={isLoading}
               className="w-full"
             >
-              Create Account
+              {t('auth.signup.submit', 'Create Account')}
             </Button>
           </form>
 
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600 dark:text-gray-400">
-              Already have an account?{" "}
+              {t('auth.signup.hasAccount', 'Already have an account?')}{" "}
               <Link
                 to="/login"
                 className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
               >
-                Sign in
+                {t('auth.signup.signIn', 'Sign in')}
               </Link>
             </p>
           </div>

@@ -27,7 +27,7 @@ export const SettingsToggle: React.FC<Props> = ({ label, description, checked, o
         onClick={() => onChange(!checked)}
       >
         <span className={styles.thumb} />
-        <span className="sr-only">{checked ? 'On' : 'Off'}</span>
+        <span className="sr-only">{label ? `${label}: ` : ''}{checked ? 'On' : 'Off'}</span>
       </button>
     </div>
   );

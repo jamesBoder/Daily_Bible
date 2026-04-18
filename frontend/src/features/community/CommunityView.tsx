@@ -41,6 +41,7 @@ export const CommunityView: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Tab>('board');
   // 'hidden' | 'visible' | 'dismissing'
   const [bannerState, setBannerState] = useState<'hidden' | 'visible' | 'dismissing'>('hidden');
+  const composerRef = useRef<HTMLDivElement>(null);
 
   const { posts, isLoading, hasMore, isAdmin, error, loadMore, createPost, deletePost, addReaction, removeReaction, reload } =
     useCommunity();
@@ -241,9 +242,25 @@ export const CommunityView: React.FC = () => {
           ) : boardPosts.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '2rem 0' }}>
               <div style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>🕯</div>
-              <p style={{ color: 'var(--grace-lavender)', margin: 0 }}>
+              <p style={{ color: 'var(--grace-lavender)', marginBottom: '1rem' }}>
                 {t('community.empty.board', 'No reflections yet — be the first to share.')}
               </p>
+              {user ? (
+                <button
+                  className="btn btn-ghost btn-sm"
+                  onClick={() => composerRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' })}
+                >
+                  {t('community.empty.shareReflection', '✍ Share your reflection')}
+                </button>
+              ) : (
+                <button
+                  onClick={() => navigate('/signup')}
+                  className="px-5 py-2 rounded-xl text-sm font-semibold text-white transition-colors"
+                  style={{ background: 'var(--blessing-gold)', color: '#000' }}
+                >
+                  {t('nav.signup', 'Sign Up Free')}
+                </button>
+              )}
             </div>
           ) : (
             boardPosts.map((post, i) => (
@@ -268,7 +285,7 @@ export const CommunityView: React.FC = () => {
             </button>
           )}
 
-          <div style={{ marginTop: '1rem' }}>
+          <div ref={composerRef} style={{ marginTop: '1rem' }}>
             {user ? (
               <CommunityComposer isPremium={isPremium} onSubmit={handleCreatePost} />
             ) : (

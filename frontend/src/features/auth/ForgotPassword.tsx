@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card } from "../../components/common/Card";
 import { Input } from "../../components/common/Input";
 import { Button } from "../../components/common/Button";
@@ -7,6 +8,7 @@ import apiClient from "../../services/api/api";
 import { API_ENDPOINTS } from "../../utils/constants";
 
 export const ForgotPassword: React.FC = () => {
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -22,7 +24,7 @@ export const ForgotPassword: React.FC = () => {
       setSubmitted(true);
     } catch {
       // Only show error for network/server failures
-      setError("Something went wrong. Please try again.");
+      setError(t('auth.forgotPassword.genericError', 'Something went wrong. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -36,21 +38,16 @@ export const ForgotPassword: React.FC = () => {
             <div className="text-center space-y-4">
               <div className="text-6xl">📬</div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Check your email
+                {t('auth.forgotPassword.checkEmailTitle', 'Check your email')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                If an account with{" "}
-                <strong className="text-gray-900 dark:text-gray-100">
-                  {email}
-                </strong>{" "}
-                exists, we've sent a password reset link. The link expires in 1
-                hour.
+                {t('auth.forgotPassword.checkEmailBody', "If an account with {{email}} exists, we've sent a password reset link. The link expires in 1 hour.", { email })}
               </p>
               <Link
                 to="/login"
                 className="block text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
-                Back to login
+                {t('auth.forgotPassword.backToLogin', 'Back to login')}
               </Link>
             </div>
           </Card>
@@ -64,10 +61,10 @@ export const ForgotPassword: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Forgot Password
+            {t('auth.forgotPassword.title', 'Forgot Password')}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Enter your email and we'll send you a reset link.
+            {t('auth.forgotPassword.subtitle', "Enter your email and we'll send you a reset link.")}
           </p>
         </div>
         <Card>
@@ -79,7 +76,7 @@ export const ForgotPassword: React.FC = () => {
             )}
 
             <Input
-              label="Email address"
+              label={t('auth.forgotPassword.emailLabel', 'Email address')}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -94,7 +91,7 @@ export const ForgotPassword: React.FC = () => {
               isLoading={isLoading}
               className="w-full"
             >
-              Send Reset Link
+              {t('auth.forgotPassword.submit', 'Send Reset Link')}
             </Button>
           </form>
 
@@ -103,7 +100,7 @@ export const ForgotPassword: React.FC = () => {
               to="/login"
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
-              Back to login
+              {t('auth.forgotPassword.backToLogin', 'Back to login')}
             </Link>
           </div>
         </Card>

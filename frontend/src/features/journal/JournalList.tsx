@@ -29,17 +29,11 @@ interface JournalListResponse {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
 function formatEntryDate(isoString: string): { full: string; day: string } {
   const d = new Date(isoString);
   return {
-    full: `${MONTHS[d.getMonth()]} ${d.getDate()}, ${d.getFullYear()}`,
-    day: DAYS[d.getDay()],
+    full: d.toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' }),
+    day: d.toLocaleDateString(undefined, { weekday: 'short' }),
   };
 }
 
@@ -54,8 +48,7 @@ function isToday(isoString: string): boolean {
 }
 
 function getTodayFormatted(): string {
-  const now = new Date();
-  return `${MONTHS[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+  return new Date().toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' });
 }
 
 // ── Skeleton ───────────────────────────────────────────────────────────────────

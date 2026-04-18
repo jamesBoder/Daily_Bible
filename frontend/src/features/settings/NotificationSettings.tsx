@@ -115,7 +115,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
     if (permission === 'denied')
       return t('settings.notifications.pushDenied', 'Notifications are blocked. Allow them in your browser settings, then try again.');
     if (subscribed)
-      return t('settings.notifications.pushActiveDesc', "You'll receive a reminder each morning.");
+      return t('settings.notifications.pushActiveDesc', "You'll receive a reminder at {{time}}.", { time: formatHour(pushReminderTime) });
     return t('settings.notifications.pushDesc', "Get a daily notification when the verse is ready.");
   };
 

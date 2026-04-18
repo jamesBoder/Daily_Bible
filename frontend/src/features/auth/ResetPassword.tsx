@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useSearchParams, useNavigate, Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
 import { PasswordInput } from "../../components/common/PasswordInput";
@@ -8,6 +9,7 @@ import apiClient from "../../services/api/api";
 import { API_ENDPOINTS } from "../../utils/constants";
 
 export const ResetPassword: React.FC = () => {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const token = searchParams.get("token") || "";
@@ -27,16 +29,16 @@ export const ResetPassword: React.FC = () => {
             <div className="text-center space-y-4">
               <div className="text-6xl">❌</div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Invalid Link
+                {t('auth.resetPassword.invalidLinkTitle', 'Invalid Link')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                This password reset link is invalid or missing.
+                {t('auth.resetPassword.invalidLinkBody', 'This password reset link is invalid or missing.')}
               </p>
               <Link
                 to="/forgot-password"
                 className="block text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
-                Request a new reset link
+                {t('auth.resetPassword.requestNewLink', 'Request a new reset link')}
               </Link>
             </div>
           </Card>
@@ -50,7 +52,7 @@ export const ResetPassword: React.FC = () => {
     setError("");
 
     if (newPassword !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError(t('auth.validation.passwordsMustMatch', 'Passwords do not match.'));
       return;
     }
 
@@ -61,13 +63,13 @@ export const ResetPassword: React.FC = () => {
         new_password: newPassword,
       });
       setSuccess(true);
-      showToast.success("Password reset successfully!");
+      showToast.success(t('auth.resetPassword.resetSuccess', 'Password reset successfully!'));
       setTimeout(() => navigate("/login"), 2500);
     } catch (err: any) {
       const msg =
         err.response?.data?.error ||
         err.response?.data?.details ||
-        "Failed to reset password. The link may have expired.";
+        t('auth.resetPassword.failedDesc', 'Failed to reset password. The link may have expired.');
       setError(msg);
     } finally {
       setIsLoading(false);
@@ -82,10 +84,10 @@ export const ResetPassword: React.FC = () => {
             <div className="text-center space-y-4">
               <div className="text-6xl">✅</div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
-                Password Reset!
+                {t('auth.resetPassword.successTitle', 'Password Reset!')}
               </h2>
               <p className="text-gray-600 dark:text-gray-400">
-                Your password has been updated. Redirecting to login...
+                {t('auth.resetPassword.successBody', 'Your password has been updated. Redirecting to login...')}
               </p>
             </div>
           </Card>
@@ -99,10 +101,10 @@ export const ResetPassword: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
-            Reset Password
+            {t('auth.resetPassword.title', 'Reset Password')}
           </h2>
           <p className="mt-2 text-gray-600 dark:text-gray-400">
-            Enter your new password below.
+            {t('auth.resetPassword.subtitle', 'Enter your new password below.')}
           </p>
         </div>
         <Card>
@@ -114,7 +116,7 @@ export const ResetPassword: React.FC = () => {
             )}
 
             <PasswordInput
-              label="New Password"
+              label={t('auth.resetPassword.newPasswordLabel', 'New Password')}
               name="newPassword"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
@@ -125,7 +127,7 @@ export const ResetPassword: React.FC = () => {
             />
 
             <PasswordInput
-              label="Confirm New Password"
+              label={t('auth.resetPassword.confirmNewPasswordLabel', 'Confirm New Password')}
               name="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
@@ -140,7 +142,7 @@ export const ResetPassword: React.FC = () => {
               isLoading={isLoading}
               className="w-full"
             >
-              Reset Password
+              {t('auth.resetPassword.submit', 'Reset Password')}
             </Button>
           </form>
 
@@ -149,7 +151,7 @@ export const ResetPassword: React.FC = () => {
               to="/login"
               className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
-              Back to login
+              {t('auth.forgotPassword.backToLogin', 'Back to login')}
             </Link>
           </div>
         </Card>

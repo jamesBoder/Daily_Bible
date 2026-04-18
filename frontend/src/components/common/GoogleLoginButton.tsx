@@ -1,25 +1,15 @@
-// GoogleLoginButton
-
-// A button component for Google OAuth login
-
-// features. -Beautiful google-branded button -loading state - error handling - redirects to Google OAuth login URL -dark mode support
-
-// imports
-
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { oauthService } from '../../services/api/oauth';
 
-
-
-// props
 interface GoogleLoginButtonProps {
     mode: 'login' | 'signup' | 'link';
     onSuccess?: () => void;
     onError?: (error: Error) => void;
 }
 
-// GoogleLoginButton component
 const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ mode, onSuccess, onError }) => {
+    const { t } = useTranslation();
     const [loading, setLoading] = useState(false);
 
     const handleClick = async () => {
@@ -35,9 +25,13 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ mode, onSuccess, 
         }
     };
 
+    const label = mode === 'link'
+        ? t('auth.google.linkAccount', 'Link Google Account')
+        : t('auth.google.continueWith', 'Continue with Google');
+
     return (
-        <button 
-            onClick={handleClick} 
+        <button
+            onClick={handleClick}
             disabled={loading}
             className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
@@ -53,8 +47,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ mode, onSuccess, 
             <path fill="#4285F4" d="M48 48L17 24l-4-3 35-10z"/>
         </g>
         </svg>
-            Continue with Google
-            
+            {label}
         </button>
     );
 };
