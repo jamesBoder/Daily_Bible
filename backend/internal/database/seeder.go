@@ -15,7 +15,7 @@ import (
 func execStatements(db *gorm.DB, sql string) error {
 	for _, stmt := range strings.Split(sql, ";\n") {
 		stmt = strings.TrimSpace(stmt)
-		if stmt == "" || strings.HasPrefix(stmt, "--") {
+		if stmt == "" {
 			continue
 		}
 		if err := db.Exec(stmt).Error; err != nil {
@@ -32,7 +32,7 @@ func execStatementsDebug(db *gorm.DB, label, sql string) error {
 	stmts := strings.Split(sql, ";\n")
 	active := 0
 	for _, s := range stmts {
-		if t := strings.TrimSpace(s); t != "" && !strings.HasPrefix(t, "--") {
+		if t := strings.TrimSpace(s); t != "" {
 			active++
 		}
 	}
@@ -41,7 +41,7 @@ func execStatementsDebug(db *gorm.DB, label, sql string) error {
 	idx := 0
 	for _, stmt := range stmts {
 		stmt = strings.TrimSpace(stmt)
-		if stmt == "" || strings.HasPrefix(stmt, "--") {
+		if stmt == "" {
 			continue
 		}
 		idx++
