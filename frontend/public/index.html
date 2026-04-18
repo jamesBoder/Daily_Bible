@@ -37,7 +37,7 @@
     <!-- Twitter Card Tags -->
 
     <!-- Security Meta Tags -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' http://localhost:8080 http://localhost:8888 http://localhost:18080 https://api.wordsofpraise.app https://wordsofpraise-backend.fly.dev https://accounts.google.com https://rest.api.bible/v1; frame-src https://apis.google.com https://accounts.google.com;" />
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://accounts.google.com https://js.stripe.com; style-src 'self' 'unsafe-inline'; font-src 'self'; img-src 'self' data: https:; connect-src 'self' http://localhost:8080 http://localhost:8888 http://localhost:18080 https://api.wordsofpraise.app https://wordsofpraise-backend.fly.dev https://accounts.google.com https://rest.api.bible/v1 https://us.i.posthog.com https://us.posthog.com https://api.stripe.com https://*.ingest.us.sentry.io; worker-src blob: 'self'; frame-src https://apis.google.com https://accounts.google.com https://js.stripe.com https://hooks.stripe.com;" />
 
     
     <!-- JSON-LD Structured Data -->
@@ -61,9 +61,31 @@
     </script>
 
     <!-- Self-hosted fonts — no external CDN round-trip, same-origin delivery -->
-    <!-- Preload the two most-used subsets so they're in-flight before CSS parses -->
+    <!-- Preload the two most-used subsets so they're in-flight before CSS parses.
+         The matching @font-face rules are inlined below so the browser connects
+         the preloaded resource to a CSS rule immediately, avoiding the
+         "preloaded resource not used within a few seconds" warning. -->
     <link rel="preload" href="/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/merriweather-400-latin.woff2" as="font" type="font/woff2" crossorigin />
+    <style>
+      @font-face {
+        font-family: 'Inter';
+        font-style: normal;
+        font-weight: 500 700;
+        font-display: swap;
+        src: url('/fonts/inter-latin.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+      @font-face {
+        font-family: 'Merriweather';
+        font-style: normal;
+        font-weight: 400;
+        font-stretch: 100%;
+        font-display: swap;
+        src: url('/fonts/merriweather-400-latin.woff2') format('woff2');
+        unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+      }
+    </style>
     <link rel="stylesheet" href="/fonts/fonts.css" />
 
     <!-- DNS prefetch removed for production - uncomment only for local development if needed -->
