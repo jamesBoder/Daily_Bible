@@ -73,6 +73,11 @@
     "hintConfirm": "−15 ✦ Konfime?",
     "hintConfirmAriaLabel": "Konfime: depanse 15 Benediksyon pou yon konsey",
     "hintError": "Pa t kapab jwenn konsey a. Eseye ankò.",
+    "forfeitBtn": "Abandone",
+    "forfeitConfirm": "Montre? Konfime",
+    "forfeitAriaLabel": "Abandone epi montre repons lan",
+    "forfeitConfirmAriaLabel": "Konfime: montre repons lan epi fini jwèt la",
+    "forfeitError": "Pa t kapab abandone. Eseye ankò.",
     "hintMax": "Pa gen konsey kè rete.",
     "hintNoBlessings": "Pa gen ase Benediksyon pou yon konsey.",
     "hintRevealed": "Pozisyon {{n}}: {{letter}}",
@@ -650,7 +655,10 @@
     "contact": "Kontak",
     "comment": "Ajoute yon refleksyon",
     "help": "Èd",
-    "comingSoon": "Byento disponib"
+    "comingSoon": "Byento disponib",
+    "errorRefresh": "Nou regrèt enkonvenyans lan. Tanpri eseye rechaje paj la.",
+    "goHome": "Ale lakay",
+    "somethingWentWrong": "Oups! Yon bagay mal pase"
   },
   "visitor": {
     "title": "Rete nan Pawòl la",
