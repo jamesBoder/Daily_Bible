@@ -22,8 +22,12 @@ const EOD_SESSION_KEY_PREFIX = 'eod-shown-';
 
 const WORD_LENGTH = 5;
 
+// Returns the UTC-10 effective date string (YYYY-MM-DD) — matches the backend's
+// daily puzzle rollover boundary so session/storage keys invalidate at the right moment.
+const effectiveDateStr = () => new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString().slice(0, 10);
+
 // Session key — confetti fires once per solved game per browser session
-const CONFETTI_SESSION_KEY = `manna-confetti-${new Date().toISOString().slice(0, 10)}`;
+const CONFETTI_SESSION_KEY = `manna-confetti-${effectiveDateStr()}`;
 
 type KeyState = 'unused' | 'correct' | 'present' | 'absent';
 
@@ -96,8 +100,8 @@ const celebrationEnabled = () =>
   !window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 const GUEST_MAX_GUESSES = 3;
-const guestStateKey = () => 'manna-guest-' + new Date().toISOString().slice(0, 10);
-const guestInfoKey = () => 'manna-guest-info-' + new Date().toISOString().slice(0, 10);
+const guestStateKey = () => 'manna-guest-' + effectiveDateStr();
+const guestInfoKey = () => 'manna-guest-info-' + effectiveDateStr();
 
 interface GuestState {
   guesses: GuessEntry[];
@@ -229,7 +233,7 @@ export const MannaPuzzle: React.FC = () => {
     if (archiveDate) return;
     if (game?.status !== 'solved') return;
     if (isGuestMode) return; // guest users don't get the EOD modal
-    const today = new Date().toLocaleDateString('sv-SE'); // YYYY-MM-DD in user's local timezone
+    const today = effectiveDateStr();
     if (sessionStorage.getItem(EOD_SESSION_KEY_PREFIX + today)) return;
     if (streakData?.last_active_date !== today) return;
     // Both conditions met: puzzle solved + verse read. Show after animations settle.
@@ -835,7 +839,7 @@ export const MannaPuzzle: React.FC = () => {
           onDismiss={() => {
             setShowEOD(false);
             sessionStorage.setItem(
-              EOD_SESSION_KEY_PREFIX + new Date().toISOString().slice(0, 10),
+              EOD_SESSION_KEY_PREFIX + effectiveDateStr(),
               '1',
             );
           }}
@@ -1105,7 +1109,7 @@ export const MannaPuzzle: React.FC = () => {
                 onClick={() => navigate('/signup')}
                 style={{ fontSize: '0.75rem' }}
               >
-                {t('manna.guestSignUpCta', 'Create Free Account')}
+                {t('manna.guestCreateAccountCta', 'Create Free Account')}
               </button>
             </div>
           )}
@@ -1315,14 +1319,14 @@ const Motes: React.FC = React.memo(() => (
 
 // ─── Next-puzzle countdown (M-08) ────────────────────────────────────────────
 
-function getSecondsUntilMidnightUTC(): number {
+function getSecondsUntilMannaReset(): number {
   const now = new Date();
-  const midnight = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate() + 1,
-  ));
-  return Math.max(0, Math.floor((midnight.getTime() - now.getTime()) / 1000));
+  // Manna resets at UTC-10 midnight = 10 AM UTC, matching the daily verse rollover.
+  const effective = new Date(now.getTime() - 10 * 60 * 60 * 1000);
+  const nextMidnight = new Date(effective);
+  nextMidnight.setUTCHours(24, 0, 0, 0);
+  const ms = nextMidnight.getTime() + 10 * 60 * 60 * 1000 - now.getTime();
+  return Math.max(0, Math.floor(ms / 1000));
 }
 
 function formatCountdown(seconds: number): string {
@@ -1335,14 +1339,14 @@ function formatCountdown(seconds: number): string {
 }
 
 const MannaCountdown: React.FC<{ t: TFunction }> = ({ t }) => {
-  const [secs, setSecs] = React.useState(getSecondsUntilMidnightUTC);
+  const [secs, setSecs] = React.useState(getSecondsUntilMannaReset);
 
   React.useEffect(() => {
     let id: ReturnType<typeof setInterval> | null = null;
 
     const start = () => {
-      setSecs(getSecondsUntilMidnightUTC()); // re-sync after tab was hidden
-      id = setInterval(() => setSecs(getSecondsUntilMidnightUTC()), 1000);
+      setSecs(getSecondsUntilMannaReset()); // re-sync after tab was hidden
+      id = setInterval(() => setSecs(getSecondsUntilMannaReset()), 1000);
     };
     const stop = () => {
       if (id !== null) { clearInterval(id); id = null; }

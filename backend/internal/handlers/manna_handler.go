@@ -246,7 +246,7 @@ func (h *MannaHandler) GetArchive(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format. Use YYYY-MM-DD."})
 		return
 	}
-	if !date.Before(time.Now().UTC().Truncate(24 * time.Hour)) {
+	if !date.Before(time.Now().UTC().Add(-10 * time.Hour).Truncate(24 * time.Hour)) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Archive date must be in the past."})
 		return
 	}
@@ -273,7 +273,7 @@ func (h *MannaHandler) SubmitArchiveGuess(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format."})
 		return
 	}
-	if !date.Before(time.Now().UTC().Truncate(24 * time.Hour)) {
+	if !date.Before(time.Now().UTC().Add(-10 * time.Hour).Truncate(24 * time.Hour)) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Archive date must be in the past."})
 		return
 	}
@@ -319,7 +319,7 @@ func (h *MannaHandler) GetArchiveHint(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format."})
 		return
 	}
-	if !date.Before(time.Now().UTC().Truncate(24 * time.Hour)) {
+	if !date.Before(time.Now().UTC().Add(-10 * time.Hour).Truncate(24 * time.Hour)) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Archive date must be in the past."})
 		return
 	}

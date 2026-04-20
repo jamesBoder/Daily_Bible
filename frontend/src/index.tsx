@@ -34,7 +34,7 @@ const renderApp = async () => {
     try {
       const data = await prefetch;
       if (data?.verse) {
-        const today = new Date().toISOString().split('T')[0];
+        const today = new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString().split('T')[0];
         // Seed with the same query key used by useVerse('en', undefined)
         queryClient.setQueryData(['dailyVerse', today, 'en', ''], data);
       }

@@ -21,6 +21,17 @@ const guestMannaGuesses = 3
 const maxMannaHints = 3
 const hintCost = 15
 
+// mannaEffectiveNow returns the current time adjusted to UTC-10, aligning Manna's
+// daily boundary with the daily verse rollover (both reset at UTC-10 midnight = 10 AM UTC).
+func mannaEffectiveNow() time.Time {
+	return time.Now().UTC().Add(-10 * time.Hour)
+}
+
+// mannaEffectiveToday returns the start of the current UTC-10 "day" as a UTC time.
+func mannaEffectiveToday() time.Time {
+	return mannaEffectiveNow().Truncate(24 * time.Hour)
+}
+
 // wordCache caches today's selected MannaWord and yesterday's, avoiding the
 // full-table scan of manna_words on every GET /api/manna/today request.
 // Both entries are keyed by "YYYYMMDD" date string and invalidate automatically
@@ -135,12 +146,12 @@ type MannaGameSummary struct {
 // GetTodayWord returns the word for today using a date-seeded PRNG.
 // Deterministic: same UTC date always returns the same word across all instances.
 func (s *MannaService) GetTodayWord() (*models.MannaWord, error) {
-	return s.getWordForDate(time.Now().UTC())
+	return s.getWordForDate(mannaEffectiveNow())
 }
 
 // GetYesterdayWord returns the word for yesterday.
 func (s *MannaService) GetYesterdayWord() (*models.MannaWord, error) {
-	return s.getWordForDate(time.Now().UTC().AddDate(0, 0, -1))
+	return s.getWordForDate(mannaEffectiveNow().AddDate(0, 0, -1))
 }
 
 func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
@@ -168,8 +179,8 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 	word := &words[rng.Intn(len(words))]
 
 	// Populate cache. Evict stale keys (yesterday and older) to keep memory bounded.
-	today := time.Now().UTC().Format("20060102")
-	yesterday := time.Now().UTC().AddDate(0, 0, -1).Format("20060102")
+	today := mannaEffectiveNow().Format("20060102")
+	yesterday := mannaEffectiveNow().AddDate(0, 0, -1).Format("20060102")
 	s.wordCache.mu.Lock()
 	for k := range s.wordCache.entries {
 		if k != today && k != yesterday {
@@ -254,7 +265,7 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time) (*Man
 // GetOrCreateGame returns the user's game for today, creating one if absent.
 // All authenticated users (free and premium) get the full game.
 func (s *MannaService) GetOrCreateGame(userID uint) (*MannaGameResponse, error) {
-	return s.getOrCreateGameForDate(userID, time.Now().UTC().Truncate(24*time.Hour))
+	return s.getOrCreateGameForDate(userID, mannaEffectiveToday())
 }
 
 // GetOrCreateArchiveGame returns a game for a past date, creating one if absent (premium-gated in handler).
@@ -364,7 +375,7 @@ func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremi
 			resp.BlessingsAwarded = &blessings
 
 			// Streak bonus: only for today's solved game (not archive plays).
-			today := time.Now().UTC().Truncate(24 * time.Hour)
+			today := mannaEffectiveToday()
 			if game.Status == "solved" && date.Equal(today) {
 				winStreak := s.computeMannaWinStreak(userID, date)
 				bonusBase := mannaStreakBonusBase(winStreak)
@@ -392,7 +403,7 @@ func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremi
 
 // SubmitGuess validates a guess and advances today's game state.
 func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool) (*GuessResult, error) {
-	return s.submitGuessForDate(userID, guessWord, isPremium, time.Now().UTC().Truncate(24*time.Hour))
+	return s.submitGuessForDate(userID, guessWord, isPremium, mannaEffectiveToday())
 }
 
 // SubmitArchiveGuess validates a guess for an archive (past) game.
@@ -476,7 +487,7 @@ func (s *MannaService) getHintForDate(userID uint, date time.Time) (*HintRespons
 
 // GetHint reveals one unrevealed letter position for today's game.
 func (s *MannaService) GetHint(userID uint) (*HintResponse, error) {
-	return s.getHintForDate(userID, time.Now().UTC().Truncate(24*time.Hour))
+	return s.getHintForDate(userID, mannaEffectiveToday())
 }
 
 // GetArchiveHint reveals one unrevealed letter position for an archive game.
@@ -572,7 +583,7 @@ func (s *MannaService) GetYesterdayResult() (*YesterdayResult, error) {
 
 // GetHistory returns all past game summaries for a premium user.
 func (s *MannaService) GetHistory(userID uint) ([]MannaGameSummary, error) {
-	today := time.Now().UTC().Truncate(24 * time.Hour)
+	today := mannaEffectiveToday()
 
 	var games []models.MannaGame
 	if err := s.db.Where("user_id = ? AND game_date < ?", userID, today).
@@ -774,10 +785,10 @@ func (s *MannaService) GetStats(userID uint) (*MannaStats, error) {
 		stats.AvgGuesses = totalGuessesWon / float64(stats.Won)
 	}
 
-	// Streak calculation: consecutive calendar days (UTC) with any completed game.
+	// Streak calculation: consecutive UTC-10 calendar days with any completed game.
 	// Walk backwards from today; a game on today counts even if still in_progress
 	// (but we only fetched solved/failed above — that's intentional: streak breaks on missed days).
-	today := time.Now().UTC().Truncate(24 * time.Hour)
+	today := mannaEffectiveToday()
 	dateSet := map[string]bool{}
 	for _, g := range games {
 		dateSet[g.GameDate.UTC().Truncate(24*time.Hour).Format("2006-01-02")] = true

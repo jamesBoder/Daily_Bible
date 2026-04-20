@@ -125,19 +125,21 @@ export const DailyVerse: React.FC = () => {
 
   const [historyIndex, setHistoryIndex] = useState(0);
 
-  // Build today's date string in UTC (YYYY-MM-DD) to match the backend's daily cap reset boundary.
+  // Use the same UTC-10 effective date the backend uses so "today" is consistent
+  // across history filtering and past-date navigation.
   const now = new Date();
-  const todayStr = now.toISOString().split('T')[0];
+  const effectiveNow = new Date(now.getTime() - 10 * 60 * 60 * 1000);
+  const todayStr = effectiveNow.toISOString().split('T')[0];
 
-  // Virtual list of past dates (yesterday, day-before, …) in local timezone.
+  // Virtual list of past dates (yesterday, day-before, …) relative to UTC-10 today.
   // Every user can navigate back up to MAX_DAYS_BACK days regardless of whether
   // they viewed the verse on those days.
   const pastDates = useMemo<string[]>(() => {
     const dates: string[] = [];
     for (let i = 1; i <= MAX_DAYS_BACK; i++) {
-      const d = new Date(now.getFullYear(), now.getMonth(), now.getDate() - i);
+      const d = new Date(effectiveNow.getTime() - i * 24 * 60 * 60 * 1000);
       dates.push(
-        `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`
+        `${d.getUTCFullYear()}-${String(d.getUTCMonth() + 1).padStart(2, "0")}-${String(d.getUTCDate()).padStart(2, "0")}`
       );
     }
     return dates;
@@ -190,8 +192,8 @@ export const DailyVerse: React.FC = () => {
     // (StreakContext fetches streak on mount, ~0ms; verse arrives ~200-800ms later).
     // The backend now writes milestones synchronously before the verse response
     // returns, so a 1.5s delay is more than enough to pick them up.
-    const t = setTimeout(() => refreshStreak().catch(() => {}), 1500);
-    return () => clearTimeout(t);
+    const tid = setTimeout(() => refreshStreak().catch(() => {}), 1500);
+    return () => clearTimeout(tid);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verse, blessingsCredited]);
 

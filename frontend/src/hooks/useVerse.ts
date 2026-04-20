@@ -5,7 +5,9 @@ import { msUntilDailyReset } from '../lib/queryClient';
 export const useVerse = (language: string = 'en', version?: string) => {
   // Include today's date, language, and version in the query key.
   // When language or version changes, React Query fetches the new one.
-  const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD format
+  // Use the same UTC-10 effective date the backend uses so the query key changes
+  // at the same moment the backend starts serving the new verse.
+  const today = new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString().split('T')[0];
 
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['dailyVerse', today, language, version ?? ''],
