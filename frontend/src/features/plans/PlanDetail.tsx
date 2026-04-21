@@ -177,7 +177,7 @@ const PlanDetail: React.FC = () => {
 
       {/* Confirm unenroll modal */}
       {confirmUnenroll && (
-        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4 pb-6">
+        <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
           <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-sm space-y-4">
             <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
               {t('plans.unenrollConfirm', 'Leave "{{title}}"? Your progress will be lost.', { title: plan.title })}
@@ -232,9 +232,9 @@ const PlanDetail: React.FC = () => {
                   <p className={`text-sm font-medium ${isDone ? 'text-gray-500 dark:text-gray-400 line-through decoration-green-400/60' : 'text-gray-700 dark:text-gray-200'}`}>
                     {entry.verse_ref}
                   </p>
-                  {entry.reflection && (
+                  {(entry.day_title || entry.reflection) && (
                     <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 leading-snug italic">
-                      {entry.reflection}
+                      {entry.day_title || entry.reflection}
                     </p>
                   )}
                 </div>

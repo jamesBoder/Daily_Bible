@@ -73,6 +73,11 @@
     "hintConfirm": "−15 ✦ ¿Confirmar?",
     "hintConfirmAriaLabel": "Confirmar: gastar 15 Bendiciones por una pista",
     "hintError": "No se pudo obtener la pista. Inténtalo de nuevo.",
+    "forfeitBtn": "Rendirse",
+    "forfeitConfirm": "¿Revelar? Confirmar",
+    "forfeitAriaLabel": "Rendirse y revelar la respuesta",
+    "forfeitConfirmAriaLabel": "Confirmar: revelar la respuesta y terminar el juego",
+    "forfeitError": "No se pudo rendirse. Inténtalo de nuevo.",
     "hintMax": "No quedan pistas.",
     "hintNoBlessings": "No tienes suficientes Bendiciones para una pista.",
     "hintRevealed": "Posición {{n}}: {{letter}}",
@@ -1090,6 +1095,31 @@
     "notEnrolled": "No estás inscrito en este plan.",
     "loadError": "No se pudo cargar la lectura de hoy. Por favor, inténtalo de nuevo.",
     "alreadyRead": "Ya leíste esto hoy",
+    "markReadError": "No se pudo guardar el progreso. Por favor, inténtalo de nuevo.",
+    "relatedPassages": "Relacionados",
+    "lastTime": "La última vez",
+    "yourNote": "Tu nota",
+    "flashcard": {
+      "title": "Versículo de Memoria",
+      "recallPrompt": "¿Puedes recordar este versículo?",
+      "tapForHint": "Toca para ver una pista",
+      "tapForFull": "Toca para revelar el versículo completo",
+      "ratePrompt": "¿Qué tan bien lo sabías?",
+      "knew": "Lo sabía",
+      "almost": "Casi",
+      "notYet": "Todavía no",
+      "skip": "Omitir"
+    },
+    "check": {
+      "title": "Verificación Rápida",
+      "explanation": "Sobre este pasaje"
+    },
+    "wordStudy": {
+      "tapHint": "Toca las palabras subrayadas para explorar el idioma original",
+      "definition": "Significado",
+      "alsoIn": "También en",
+      "sheetLabel": "Estudio de palabra: {{word}}"
+    },
     "tutorial": {
       "title": "Planes de Lectura",
       "subtitle": "Un viaje guiado por las Escrituras, un día a la vez.",

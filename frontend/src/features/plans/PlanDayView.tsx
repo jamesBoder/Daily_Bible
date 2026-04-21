@@ -1,11 +1,18 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, CheckCircle, Confetti, BookOpen, HandsPraying, Lightning, Question, Star } from '@phosphor-icons/react';
+import { ArrowLeft, CheckCircle, Confetti, BookOpen, HandsPraying, Lightning, Question, Star, ArrowSquareOut } from '@phosphor-icons/react';
 import plansApi from '../../services/api/plans';
+import type { WordStudy } from '../../services/api/plans';
+import { showToast } from '../../utils/toast';
 import { msUntilDailyReset } from '../../lib/queryClient';
 import { SoundService } from '../../services/SoundService';
 import { useNavigate } from 'react-router-dom';
+import PassageBlock from './PassageBlock';
+import ComprehensionCheck from './ComprehensionCheck';
+import MemoryVerseFlashcard from './MemoryVerseFlashcard';
+import WordStudySheet from './WordStudySheet';
+import PrevDayStrip from './PrevDayStrip';
 
 interface PlanDayViewProps {
   slug: string;
@@ -19,6 +26,8 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
   const [justCompleted, setJustCompleted] = useState(false);
   const [blessingsEarned, setBlessingsEarned] = useState(0);
   const [contextExpanded, setContextExpanded] = useState(false);
+  const [flashcardOpen, setFlashcardOpen] = useState(false);
+  const [studiedWord, setStudiedWord] = useState<{ word: string; study: WordStudy } | null>(null);
 
   const { data: plan } = useQuery({
     queryKey: ['plan', slug],
@@ -34,6 +43,9 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
 
   const advanceMutation = useMutation({
     mutationFn: () => plansApi.advance(slug),
+    onError: () => {
+      showToast.error(t('plan.markReadError', 'Could not save progress. Please try again.'));
+    },
     onSuccess: (data) => {
       if (navigator.vibrate) navigator.vibrate(8);
       qc.invalidateQueries({ queryKey: ['plan-today', slug] });
@@ -52,7 +64,26 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
   });
 
   const progress = plan?.user_progress;
-  const alreadyRead = progress && entry ? progress.last_read_day >= entry.day_number : false;
+  // undefined while plan is still loading — prevents the Mark as Read button from
+  // flashing on for users who already read today (entry resolves before plan).
+  const alreadyRead: boolean | undefined = plan === undefined
+    ? undefined
+    : progress && entry
+      ? progress.last_read_day >= entry.day_number
+      : false;
+
+  const handleFlashcardDone = () => {
+    setFlashcardOpen(false);
+    advanceMutation.mutate();
+  };
+
+  const handleMarkRead = () => {
+    if (entry?.is_memory_verse && alreadyRead === false && entry.verse_text) {
+      setFlashcardOpen(true);
+    } else {
+      advanceMutation.mutate();
+    }
+  };
 
   if (isLoading) {
     return (
@@ -93,12 +124,24 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         {plan?.title ?? 'Back'}
       </button>
 
+      {/* Previous day recap strip — only shown before the user marks today as read */}
+      {alreadyRead === false && entry.prev_day && (
+        <PrevDayStrip prevDay={entry.prev_day} />
+      )}
+
       {/* Day indicator */}
-      <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">
+      <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-0.5">
         {t('plan.dayLabel', 'Day {{day}}', { day: entry.day_number })}
         {' '}{t('plan.ofLabel', 'of')}{' '}
         {plan?.length_days ?? '?'}
       </p>
+
+      {/* Day title */}
+      {entry.day_title && (
+        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3 leading-snug">
+          {entry.day_title}
+        </h2>
+      )}
 
       {/* Memory verse banner */}
       {entry.is_memory_verse && (
@@ -111,16 +154,23 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         </div>
       )}
 
-      {/* Verse reference — label style */}
-      <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 tracking-wide">
-        {entry.verse_ref}
-      </p>
-
-      {/* Verse text — large, readable. Falls back to bold ref if not in local DB */}
-      {entry.verse_text ? (
-        <p className="text-xl font-serif leading-relaxed text-gray-800 dark:text-gray-100 mb-6">
-          "{entry.verse_text}"
-        </p>
+      {/* Passage block */}
+      {entry.verse_text && (entry.content_type === 'passage' || entry.content_type === 'psalm' || entry.content_type === 'chapter') ? (
+        <PassageBlock
+          verseRef={entry.verse_ref}
+          verseText={entry.verse_text}
+          wordStudiesJson={entry.word_studies}
+          onWordTap={(word, study) => setStudiedWord({ word, study })}
+        />
+      ) : entry.verse_text ? (
+        <div className="mb-6">
+          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 tracking-wide">
+            {entry.verse_ref}
+          </p>
+          <p className="text-xl font-serif leading-relaxed text-gray-800 dark:text-gray-100">
+            &ldquo;{entry.verse_text}&rdquo;
+          </p>
+        </div>
       ) : (
         <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">{entry.verse_ref}</h2>
       )}
@@ -133,6 +183,16 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         >
           {entry.reflection}
         </blockquote>
+      )}
+
+      {/* Comprehension check — key resets state when entry changes between days */}
+      {entry.quiz_question && (
+        <ComprehensionCheck
+          key={entry.id}
+          question={entry.quiz_question}
+          optionsJson={entry.quiz_options}
+          explanation={entry.quiz_explanation}
+        />
       )}
 
       {/* Context note — collapsible */}
@@ -210,12 +270,38 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         </button>
       )}
 
+      {/* Related passages */}
+      {entry.passage_refs && entry.passage_refs !== '[]' && (() => {
+        let refs: string[] = [];
+        try { refs = JSON.parse(entry.passage_refs); } catch { /* ignore */ }
+        return refs.length > 0 ? (
+          <div className="flex flex-wrap items-center gap-2 mb-5">
+            <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+              {t('plan.relatedPassages', 'Related')}
+            </span>
+            {refs.map(ref => (
+              <span
+                key={ref}
+                className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium"
+                style={{
+                  background: 'color-mix(in srgb, var(--candle-amber) 10%, transparent)',
+                  color: 'var(--candle-amber)',
+                }}
+              >
+                <ArrowSquareOut size={11} weight="bold" />
+                {ref}
+              </span>
+            ))}
+          </div>
+        ) : null;
+      })()}
+
       {/* Mark as Read button */}
-      {!alreadyRead && !justCompleted && (
+      {alreadyRead === false && !justCompleted && (
         <button
-          onClick={() => advanceMutation.mutate()}
+          onClick={handleMarkRead}
           disabled={advanceMutation.isPending}
-          className="w-full py-3.5 rounded-xl font-semibold text-white text-sm transition-colors active:scale-[0.98] transition-transform disabled:opacity-60 mb-3"
+          className="w-full py-3.5 rounded-xl font-semibold text-white text-sm transition-all active:scale-[0.98] disabled:opacity-60 mb-3"
           style={{ background: 'var(--blessing-gold)' }}
         >
           {advanceMutation.isPending ? '…' : t('plan.markRead', 'Mark as Read')}
@@ -223,7 +309,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
       )}
 
       {/* Already read indicator */}
-      {alreadyRead && !justCompleted && (
+      {alreadyRead === true && !justCompleted && (
         <div
           className="flex items-center gap-2.5 py-3 px-4 rounded-2xl border border-green-200/60 dark:border-green-800/40"
           style={{ background: 'color-mix(in srgb, #22c55e 6%, transparent)' }}
@@ -258,6 +344,24 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         <p className="text-xs text-center font-medium mt-2" style={{ color: 'var(--blessing-gold)' }}>
           {t('plans.blessingsEarned', '+{{count}} Blessings', { count: blessingsEarned })}
         </p>
+      )}
+
+      {/* Memory verse flashcard — rendered over the whole screen */}
+      {flashcardOpen && (
+        <MemoryVerseFlashcard
+          verseRef={entry.verse_ref}
+          verseText={entry.verse_text}
+          onDone={handleFlashcardDone}
+        />
+      )}
+
+      {/* Word study bottom sheet */}
+      {studiedWord && (
+        <WordStudySheet
+          word={studiedWord.word}
+          study={studiedWord.study}
+          onClose={() => setStudiedWord(null)}
+        />
       )}
     </div>
   );

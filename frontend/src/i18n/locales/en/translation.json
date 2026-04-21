@@ -73,6 +73,11 @@
     "hintConfirm": "−15 ✦ Confirm?",
     "hintConfirmAriaLabel": "Confirm: spend 15 Blessings for a hint",
     "hintError": "Could not get hint. Try again.",
+    "forfeitBtn": "Give Up",
+    "forfeitConfirm": "Reveal? Confirm",
+    "forfeitAriaLabel": "Give up and reveal the answer",
+    "forfeitConfirmAriaLabel": "Confirm: reveal the answer and end the game",
+    "forfeitError": "Could not forfeit. Try again.",
     "hintMax": "No hints remaining.",
     "hintNoBlessings": "Not enough Blessings for a hint.",
     "hintRevealed": "Position {{n}}: {{letter}}",
@@ -1090,6 +1095,31 @@
     "notEnrolled": "You are not enrolled in this plan.",
     "loadError": "Unable to load today's reading. Please try again.",
     "alreadyRead": "You've read this today",
+    "markReadError": "Could not save progress. Please try again.",
+    "relatedPassages": "Related",
+    "lastTime": "Last time",
+    "yourNote": "Your note",
+    "flashcard": {
+      "title": "Memory Verse",
+      "recallPrompt": "Can you recall this verse?",
+      "tapForHint": "Tap for a hint",
+      "tapForFull": "Tap to reveal the full verse",
+      "ratePrompt": "How well did you know it?",
+      "knew": "Knew it",
+      "almost": "Almost",
+      "notYet": "Not yet",
+      "skip": "Skip"
+    },
+    "check": {
+      "title": "Quick Check",
+      "explanation": "About this passage"
+    },
+    "wordStudy": {
+      "tapHint": "Tap underlined words to explore the original language",
+      "definition": "Meaning",
+      "alsoIn": "Also in",
+      "sheetLabel": "Word study: {{word}}"
+    },
     "tutorial": {
       "title": "Reading Plans",
       "subtitle": "A guided journey through Scripture, one day at a time.",

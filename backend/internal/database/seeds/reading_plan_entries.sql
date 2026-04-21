@@ -254,3 +254,148 @@ FROM reading_plans p,
 WHERE p.slug = 'strength-in-the-storm'
   AND e.plan_id = p.id
   AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Part 1c — Walking in Peace: passage text, day titles,
+-- expanded verse refs, cross-references, enriched reflections,
+-- and content_type = 'passage'.
+-- Fully idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET
+  verse_ref    = v.verse_ref,
+  day_title    = v.day_title,
+  passage_text = v.passage_text,
+  passage_refs = v.passage_refs,
+  reflection   = v.reflection,
+  content_type = 'passage'
+FROM reading_plans p,
+(VALUES
+  (1,
+   'John 14:23-27',
+   'The Peace That Passes Understanding',
+   'Jesus answered and said unto him, If a man love me, he will keep my words: and my Father will love him, and we will come unto him, and make our abode with him. He that loveth me not keepeth not my sayings: and the word which ye hear is not mine, but the Father''s which sent me. These things have I spoken unto you, being yet present with you. But the Comforter, which is the Holy Ghost, whom the Father will send in my name, he shall teach you all things, and bring all things to your remembrance, whatsoever I have said unto you. Peace I leave with you, my peace I give unto you: not as the world giveth, give I unto you. Let not your heart be troubled, neither let it be afraid.',
+   '["John 14:1", "Colossians 3:15"]',
+   'Jesus spoke these words on the night He would be betrayed, hours before the cross. He knew exactly what was coming — and He gave His peace anyway. This is not the peace of a man who has escaped trouble; it is the peace of One walking directly into it. The word "give" here is used elsewhere for an inheritance — something permanent, not conditional. The Comforter He promises is the very presence of God in the believer. Whatever you are carrying today, this peace is not a reward to be earned. It is already yours.'
+  ),
+  (2,
+   'Psalm 23:1-6',
+   'Still Waters',
+   'The LORD is my shepherd; I shall not want. He maketh me to lie down in green pastures: he leadeth me beside the still waters. He restoreth my soul: he leadeth me in the paths of righteousness for his name''s sake. Yea, though I walk through the valley of the shadow of death, I will fear no evil: for thou art with me; thy rod and thy staff they comfort me. Thou preparest a table before me in the presence of mine enemies: thou anointest my head with oil; my cup runneth over. Surely goodness and mercy shall follow me all the days of my life: and I will dwell in the house of the LORD for ever.',
+   '["Psalm 62:1", "Isaiah 40:11"]',
+   'David wrote this psalm as a shepherd himself — he knew what it meant to search out quiet water for anxious sheep. The Hebrew *me menuhot* (still waters) describes resting, restoring water — not stagnant pools but calm places of refreshment. But notice: God does not force the sheep. He leads. You can resist the leading and stay in the dry place, or you can follow. The promise is not a life without valleys — verse four places still waters just before the shadow of death. The Shepherd does not reroute you around the hard path. He walks every step of it with you.'
+  ),
+  (3,
+   'Isaiah 26:3-4',
+   'The Steadfast Mind',
+   'Thou wilt keep him in perfect peace, whose mind is stayed on thee: because he trusteth in thee. Trust ye in the LORD for ever: for in the LORD JEHOVAH is everlasting strength.',
+   '["Philippians 4:7", "Psalm 112:7"]',
+   'In the Hebrew, "perfect peace" is *shalom shalom* — peace doubled, peace upon peace. It is not a diminished calm but an overflowing abundance. And the condition is striking: not perfect obedience, not a season without hardship, but a mind that is *stayed* — leaned, supported, resting its full weight on God. When the mind is the problem, willpower is not the solution. Re-anchoring is. Every anxious thought is an invitation to lean again. The peace is waiting on the other side of that choice.'
+  ),
+  (4,
+   'Philippians 4:4-8',
+   'The Peace That Guards',
+   'Rejoice in the Lord alway: and again I say, Rejoice. Let your moderation be known unto all men. The Lord is at hand. Be careful for nothing; but in every thing by prayer and supplication with thanksgiving let your requests be made known unto God. And the peace of God, which passeth all understanding, shall keep your hearts and minds through Christ Jesus. Finally, brethren, whatsoever things are true, whatsoever things are honest, whatsoever things are just, whatsoever things are pure, whatsoever things are lovely, whatsoever things are of good report; if there be any virtue, and if there be any praise, think on these things.',
+   '["Isaiah 26:3", "Colossians 3:15"]',
+   'Paul wrote these words from a Roman prison cell, likely around AD 61. He opens with a command that sounds almost flippant in that context: "Rejoice always." What he is describing is not a feeling that comes when circumstances improve — it is a discipline of re-orientation. The instruction is specific: bring everything to God by prayer, with thanksgiving, and let your requests be made known. The result is not that God fixes everything. The result is that a peace which *surpasses understanding* guards your heart like a soldier posted at the gate. And then Paul names what to fill the mind with instead: the true, the honest, the just, the pure, the lovely. This is the practical path.'
+  ),
+  (5,
+   'Matthew 11:28-30',
+   'The Easy Yoke',
+   'Come unto me, all ye that labour and are heavy laden, and I will give you rest. Take my yoke upon you, and learn of me; for I am meek and lowly in heart: and ye shall find rest unto your souls. For my yoke is easy, and my burden is light.',
+   '["Psalm 55:22", "1 Peter 5:7"]',
+   'In first-century Jewish culture, a rabbi''s "yoke" was his interpretation of the law — the particular set of demands he placed on his disciples. The scribes and Pharisees had made the yoke impossibly heavy, piling regulation upon regulation. Jesus offers a different yoke: not the absence of demand, but a burden carried alongside Him. "Learn of me," He says — this is not a transaction but a relationship. The rest He promises is not the rest of having nothing to carry. It is the rest of carrying it with someone who is meek and lowly in heart, who will never crush you under what He asks.'
+  ),
+  (6,
+   'Psalm 46:1-11',
+   'Be Still and Know',
+   'God is our refuge and strength, a very present help in trouble. Therefore will not we fear, though the earth be removed, and though the mountains be carried into the midst of the sea; Though the waters thereof roar and be troubled, though the mountains shake with the swelling thereof. Selah. There is a river, the streams whereof shall make glad the city of God, the holy place of the tabernacles of the most High. God is in the midst of her; she shall not be moved: God shall help her, and that right early. The heathen raged, the kingdoms were moved: he uttered his voice, the earth melted. The LORD of hosts is with us; the God of Jacob is our refuge. Selah. Come, behold the works of the LORD, what desolations he hath made in the earth. He maketh wars to cease unto the end of the earth; he breaketh the bow, and cutteth the spear in sunder; he burneth the chariot in the fire. Be still, and know that I am God: I will be exalted among the heathen, I will be exalted in the earth. The LORD of hosts is with us; the God of Jacob is our refuge. Selah.',
+   '["Psalm 62:5", "Zephaniah 3:17"]',
+   'This psalm was likely written in the shadow of war — possibly the Assyrian siege that threatened to annihilate Jerusalem. The Psalmist does not deny the mountains shaking or the waters roaring. He names them directly. But then, in the middle of the storm, comes the anchor: "God is in the midst of her; she shall not be moved." The turning point is not a change in circumstances but a change in attention. "Be still" (*raphah* in Hebrew) does not mean passive. It means to let go of your grip, to stop striving, to release your clenched effort to control the outcome. The reason given is not that things will improve — it is that God is God. And that has always been enough.'
+  ),
+  (7,
+   'Romans 15:9-13',
+   'The God of Hope',
+   'And that the Gentiles might glorify God for his mercy; as it is written, For this cause I will confess to thee among the Gentiles, and sing unto thy name. And again he saith, Rejoice, ye Gentiles, with his people. And again, Praise the Lord, all ye Gentiles; and laud him, all ye people. And again, Esaias saith, There shall be a root of Jesse, and he that shall rise to reign over the Gentiles; in him shall the Gentiles trust. Now the God of hope fill you with all joy and peace in believing, that ye may abound in hope, through the power of the Holy Ghost.',
+   '["Philippians 4:7", "Romans 5:1"]',
+   'Paul closes fifteen chapters of dense theological argument not with a formula but a benediction — a gift. He does not say "understand peace" or "achieve peace." He says "be filled with all joy and peace *in believing*." The believing is the engine; the filling is God''s work. This is not a one-time act but a sustained posture: trusting the God who has proven Himself faithful across the whole sweep of Scripture Paul has just traced. And the result is not quiet contentment but overflowing hope — abundance spilling outward. Peace is not where this journey ends. It is where the next one begins.'
+  )
+) AS v(day_number, verse_ref, day_title, passage_text, passage_refs, reflection)
+WHERE p.slug = 'walking-in-peace'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Part 2a — Walking in Peace: comprehension check questions.
+-- Idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET
+  quiz_question    = v.question,
+  quiz_options     = v.options,
+  quiz_explanation = v.explanation
+FROM reading_plans p,
+(VALUES
+  (1,
+   'What does Jesus say He leaves with His disciples in verse 27?',
+   '[{"label":"A","text":"His teaching","correct":false},{"label":"B","text":"His peace","correct":true},{"label":"C","text":"His Spirit","correct":false}]',
+   'Verse 27 says "Peace I leave with you, my peace I give unto you" — a parting gift before the cross, distinct from anything the world can offer.'
+  ),
+  (2,
+   'What does the shepherd-psalmist say God does for the soul in verse 3?',
+   '[{"label":"A","text":"Strengthens it","correct":false},{"label":"B","text":"Restores it","correct":true},{"label":"C","text":"Judges it","correct":false}]',
+   'Verse 3 says "He restoreth my soul" — the Hebrew nephesh means the whole person, breath and being. Restoration here means renewed vitality after deep exhaustion.'
+  ),
+  (3,
+   'What does Isaiah say is the condition for God keeping someone in "perfect peace"?',
+   '[{"label":"A","text":"A mind stayed on God","correct":true},{"label":"B","text":"A life without trials","correct":false},{"label":"C","text":"Faithful obedience to the law","correct":false}]',
+   '"Whose mind is stayed on thee: because he trusteth in thee." The condition is not perfect behavior — it is a mind leaned on God, a posture of trust rather than achievement.'
+  ),
+  (4,
+   'Paul says the peace of God will "keep" the heart and mind. What does the Greek word phroureō mean?',
+   '[{"label":"A","text":"To sustain and nourish","correct":false},{"label":"B","text":"To guard like a soldier at a gate","correct":true},{"label":"C","text":"To fill and overflow","correct":false}]',
+   'Phroureō is a military term — to garrison, to post soldiers at a gate. Paul says the peace of God stands watch over the heart and mind like a sentinel.'
+  ),
+  (5,
+   'According to Jesus, where will those who take His yoke find rest?',
+   '[{"label":"A","text":"In better circumstances","correct":false},{"label":"B","text":"In their souls","correct":true},{"label":"C","text":"At the end of life","correct":false}]',
+   'Jesus says "ye shall find rest unto your souls" — not rest from all difficulty, but rest at the deepest level of the person. It comes from learning His ways and sharing the burden with Him.'
+  ),
+  (6,
+   'The psalmist commands "Be still." What does the Hebrew word raphah actually mean?',
+   '[{"label":"A","text":"To be silent in prayer","correct":false},{"label":"B","text":"To release your grip and stop striving","correct":true},{"label":"C","text":"To wait patiently for rescue","correct":false}]',
+   'Raphah means to let go, to release your grip, to cease striving — an active choice to stop fighting for control. It is surrender to the One who is God.'
+  ),
+  (7,
+   'In verse 13, what does Paul say believers will "abound in" through the power of the Holy Ghost?',
+   '[{"label":"A","text":"Peace","correct":false},{"label":"B","text":"Joy","correct":false},{"label":"C","text":"Hope","correct":true}]',
+   'Paul says "that ye may abound in hope, through the power of the Holy Ghost." Joy and peace are the means; hope is the overflow — the abundance the Spirit produces in the believing heart.'
+  )
+) AS v(day_number, question, options, explanation)
+WHERE p.slug = 'walking-in-peace'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Part 2c — Walking in Peace: word studies for memory verse
+-- days (days 1 and 4). Keys are lowercase, punctuation-stripped
+-- forms of the word as it appears in the passage text.
+-- Idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (1,
+   '{"peace":{"original":"εἰρήνη","transliteration":"eirēnē","definition":"Wholeness and wellbeing — the NT equivalent of shalom. Not merely the absence of conflict but the presence of all good.","refs":["Numbers 6:26","Colossians 3:15"]},"comforter":{"original":"παράκλητος","transliteration":"paraklētos","definition":"One called alongside to help — an advocate, helper, or counselor. Used of the Holy Spirit and of Christ interceding for believers.","refs":["John 15:26","1 John 2:1"]},"troubled":{"original":"ταράσσω","transliteration":"tarassō","definition":"To stir up, agitate, or disturb — used of waves churned by wind. Jesus uses this same word in John 14:1.","refs":["John 14:1"]}}'
+  ),
+  (4,
+   '{"peace":{"original":"εἰρήνη","transliteration":"eirēnē","definition":"Wholeness and wellbeing that transcends rational explanation. Paul says it passes all understanding — it cannot be produced by the mind, only received.","refs":["Isaiah 26:3","Colossians 3:15"]},"keep":{"original":"φρουρέω","transliteration":"phroureo","definition":"A military term — to guard or garrison. Used of soldiers posted at a city gate. This is the metaphor Paul uses for how the peace of God protects the heart.","refs":["1 Peter 1:5"]},"understanding":{"original":"νοῦς","transliteration":"nous","definition":"The rational mind or human comprehension. Paul says the peace of God surpasses it — it is received through prayer and trust, not produced by reason.","refs":["Romans 12:2"]}}'
+  )
+) AS v(day_number, ws)
+WHERE p.slug = 'walking-in-peace'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;

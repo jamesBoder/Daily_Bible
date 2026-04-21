@@ -47,6 +47,15 @@ type ReadingPlanDetail struct {
 	Entries []ReadingPlanEntryResponse `json:"entries"`
 }
 
+// PrevDaySummary is the previous day's recap included in the today-entry response
+// when the user has at least one day already read. JournalExcerpt is the first
+// 80 chars of the user's journal entry for that verse ref; empty when none exists.
+type PrevDaySummary struct {
+	VerseRef       string `json:"verse_ref"`
+	DayTitle       string `json:"day_title"`
+	JournalExcerpt string `json:"journal_excerpt"`
+}
+
 // ReadingPlanEntryResponse is the JSON shape for a single plan day entry.
 // Enriched fields (prayer, application, question, context_note, content_type,
 // is_memory_verse) are included when populated; they default to empty/false for
@@ -54,18 +63,24 @@ type ReadingPlanDetail struct {
 // VerseText is resolved from the local verses table in GetPlanForToday so the
 // client never needs a second round-trip to /api/verses/search.
 type ReadingPlanEntryResponse struct {
-	ID            uint   `json:"id"`
-	DayNumber     int    `json:"day_number"`
-	VerseRef      string `json:"verse_ref"`
-	VerseText     string `json:"verse_text"`     // resolved locally; empty when ref not in DB
-	Reflection    string `json:"reflection"`
-	PassageRefs   string `json:"passage_refs"`
-	Prayer        string `json:"prayer"`
-	Application   string `json:"application"`
-	Question      string `json:"question"`
-	ContextNote   string `json:"context_note"`
-	ContentType   string `json:"content_type"`
-	IsMemoryVerse bool   `json:"is_memory_verse"`
+	ID              uint            `json:"id"`
+	DayNumber       int             `json:"day_number"`
+	DayTitle        string          `json:"day_title"`
+	VerseRef        string          `json:"verse_ref"`
+	VerseText       string          `json:"verse_text"`       // passage_text when seeded; otherwise resolved from local DB
+	Reflection      string          `json:"reflection"`
+	PassageRefs     string          `json:"passage_refs"`
+	Prayer          string          `json:"prayer"`
+	Application     string          `json:"application"`
+	Question        string          `json:"question"`
+	ContextNote     string          `json:"context_note"`
+	ContentType     string          `json:"content_type"`
+	IsMemoryVerse   bool            `json:"is_memory_verse"`
+	QuizQuestion    string          `json:"quiz_question"`
+	QuizOptions     string          `json:"quiz_options"`     // JSON array
+	QuizExplanation string          `json:"quiz_explanation"`
+	WordStudies     string          `json:"word_studies"`     // JSON object keyed by word
+	PrevDay         *PrevDaySummary `json:"prev_day,omitempty"` // previous day recap; nil on day 1
 }
 
 // UserPlanProgressDetail includes plan metadata alongside progress.
@@ -87,17 +102,23 @@ func entryToResponse(e models.ReadingPlanEntry) ReadingPlanEntryResponse {
 		ct = "verse"
 	}
 	return ReadingPlanEntryResponse{
-		ID:            e.ID,
-		DayNumber:     e.DayNumber,
-		VerseRef:      e.VerseRef,
-		Reflection:    e.Reflection,
-		PassageRefs:   e.PassageRefs,
-		Prayer:        e.Prayer,
-		Application:   e.Application,
-		Question:      e.Question,
-		ContextNote:   e.ContextNote,
-		ContentType:   ct,
-		IsMemoryVerse: e.IsMemoryVerse,
+		ID:              e.ID,
+		DayNumber:       e.DayNumber,
+		DayTitle:        e.DayTitle,
+		VerseRef:        e.VerseRef,
+		VerseText:       e.PassageText, // pre-seeded passage text; GetPlanForToday falls back to verse lookup if empty
+		Reflection:      e.Reflection,
+		PassageRefs:     e.PassageRefs,
+		Prayer:          e.Prayer,
+		Application:     e.Application,
+		Question:        e.Question,
+		ContextNote:     e.ContextNote,
+		ContentType:     ct,
+		IsMemoryVerse:   e.IsMemoryVerse,
+		QuizQuestion:    e.QuizQuestion,
+		QuizOptions:     e.QuizOptions,
+		QuizExplanation: e.QuizExplanation,
+		WordStudies:     e.WordStudies,
 	}
 }
 
@@ -379,12 +400,37 @@ func (s *ReadingPlanService) GetPlanForToday(userID uint, slug string) (*Reading
 
 	resp := entryToResponse(entry)
 
-	// Resolve verse text from the local DB — no external API call needed.
-	// This eliminates the second round-trip that Option A required on the client.
-	// Best-effort: if the reference isn't in the DB (multi-verse range, unknown
-	// formatting), VerseText stays empty and the frontend falls back gracefully.
-	if verse, err := s.verseRepo.GetByReference(entry.VerseRef); err == nil && verse != nil {
-		resp.VerseText = verse.Text
+	// entryToResponse already sets VerseText from PassageText when it is seeded.
+	// Fall back to a local DB lookup only for legacy entries that have no stored passage text.
+	if resp.VerseText == "" {
+		if verse, err := s.verseRepo.GetByReference(entry.VerseRef); err == nil && verse != nil {
+			resp.VerseText = verse.Text
+		}
+	}
+
+	// Build the previous-day recap when the user has already read at least one day.
+	if prog.LastReadDay > 0 {
+		var prevEntry models.ReadingPlanEntry
+		if err := s.db.Where("plan_id = ? AND day_number = ?", plan.ID, prog.LastReadDay).
+			First(&prevEntry).Error; err == nil {
+			prev := &PrevDaySummary{
+				VerseRef: prevEntry.VerseRef,
+				DayTitle: prevEntry.DayTitle,
+			}
+			// Try to attach the first 80 chars of any journal entry the user wrote for that verse.
+			var je models.JournalEntry
+			if err := s.db.Where("user_id = ? AND linked_verse = ? AND deleted_at IS NULL", userID, prevEntry.VerseRef).
+				Order("created_at DESC").
+				First(&je).Error; err == nil && je.ContentPlain != "" {
+				excerpt := je.ContentPlain
+				if len([]rune(excerpt)) > 80 {
+					runes := []rune(excerpt)
+					excerpt = string(runes[:80]) + "…"
+				}
+				prev.JournalExcerpt = excerpt
+			}
+			resp.PrevDay = prev
+		}
 	}
 
 	return &resp, nil

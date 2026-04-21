@@ -1079,6 +1079,31 @@
     "notEnrolled": "Ou pa enskri nan plan sa a.",
     "loadError": "Pa kapab chaje lekti jodi a. Tanpri eseye ankò.",
     "alreadyRead": "Ou deja li sa jodi a",
+    "markReadError": "Pa ka sove pwogrè ou. Tanpri eseye ankò.",
+    "relatedPassages": "Pasaj ki gen rapò",
+    "lastTime": "Dènye fwa",
+    "yourNote": "Nòt ou",
+    "flashcard": {
+      "title": "Vèsè pou Sonje",
+      "recallPrompt": "Èske ou ka sonje vèsè sa a ?",
+      "tapForHint": "Touche pou wè yon indis",
+      "tapForFull": "Touche pou montre vèsè a nèt",
+      "ratePrompt": "Konbyen ou te konnen li ?",
+      "knew": "Mwen te konnen l",
+      "almost": "Prèske",
+      "notYet": "Pako",
+      "skip": "Sote"
+    },
+    "check": {
+      "title": "Tchèk Rapid",
+      "explanation": "Sou pasaj sa a"
+    },
+    "wordStudy": {
+      "tapHint": "Touche mo ki souliyen yo pou eksplore lang orijinal la",
+      "definition": "Siyifikasyon",
+      "alsoIn": "Tou nan",
+      "sheetLabel": "Etid mo: {{word}}"
+    },
     "tutorial": {
       "title": "Plan Lekti",
       "subtitle": "Yon vwayaj gide nan Ekriti a, yon jou alafwa.",

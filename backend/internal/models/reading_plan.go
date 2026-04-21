@@ -43,7 +43,14 @@ type ReadingPlanEntry struct {
 	ContextNote  string `gorm:"type:text"`       // brief historical or literary context
 	ContentType  string `gorm:"size:30;default:'verse'"` // verse | passage | psalm | chapter | meditation
 	IsMemoryVerse bool  `gorm:"default:false"`   // highlight as the week's memory verse
-	CreatedAt    time.Time
+	PassageText    string `gorm:"type:text"`     // full passage text stored in seed; avoids verse-lookup for ranges
+	DayTitle       string `gorm:"size:200"`      // e.g. "The Peace That Passes Understanding"
+	// Interactive features (Part 2)
+	QuizQuestion   string `gorm:"type:text"`     // comprehension check question; empty = skip
+	QuizOptions    string `gorm:"type:text"`     // JSON: [{"label":"A","text":"...","correct":false}, ...]
+	QuizExplanation string `gorm:"type:text"`    // shown after any answer selection
+	WordStudies    string `gorm:"type:text"`     // JSON: {"word": {"original":"...","transliteration":"...","definition":"...","refs":[...]}}
+	CreatedAt      time.Time
 }
 
 // UserPlanProgress tracks a user's enrollment and progress through a ReadingPlan.

@@ -73,6 +73,11 @@
     "hintConfirm": "−15 ✦ Confirmer ?",
     "hintConfirmAriaLabel": "Confirmer : dépenser 15 Bénédictions pour un indice",
     "hintError": "Impossible d’obtenir l’indice. Réessayez.",
+    "forfeitBtn": "Abandonner",
+    "forfeitConfirm": "Révéler ? Confirmer",
+    "forfeitAriaLabel": "Abandonner et révéler la réponse",
+    "forfeitConfirmAriaLabel": "Confirmer : révéler la réponse et terminer la partie",
+    "forfeitError": "Impossible d’abandonner. Réessayez.",
     "hintMax": "Aucun indice restant.",
     "hintNoBlessings": "Pas assez de Bénédictions pour un indice.",
     "hintRevealed": "Position {{n}} : {{letter}}",
@@ -1074,6 +1079,31 @@
     "notEnrolled": "Vous n'êtes pas inscrit à ce plan.",
     "loadError": "Impossible de charger la lecture du jour. Veuillez réessayer.",
     "alreadyRead": "Vous avez lu ceci aujourd'hui",
+    "markReadError": "Impossible de sauvegarder la progression. Veuillez réessayer.",
+    "relatedPassages": "Connexes",
+    "lastTime": "La dernière fois",
+    "yourNote": "Votre note",
+    "flashcard": {
+      "title": "Verset à Mémoriser",
+      "recallPrompt": "Pouvez-vous rappeler ce verset ?",
+      "tapForHint": "Appuyez pour un indice",
+      "tapForFull": "Appuyez pour révéler le verset complet",
+      "ratePrompt": "Comment le connaissiez-vous ?",
+      "knew": "Je le savais",
+      "almost": "Presque",
+      "notYet": "Pas encore",
+      "skip": "Passer"
+    },
+    "check": {
+      "title": "Vérification Rapide",
+      "explanation": "À propos de ce passage"
+    },
+    "wordStudy": {
+      "tapHint": "Touchez les mots soulignés pour explorer la langue originale",
+      "definition": "Signification",
+      "alsoIn": "Aussi dans",
+      "sheetLabel": "Étude du mot : {{word}}"
+    },
     "tutorial": {
       "title": "Plans de Lecture",
       "subtitle": "Un voyage guidé à travers les Écritures, un jour à la fois.",

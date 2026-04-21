@@ -1,5 +1,24 @@
 import apiClient from './client';
 
+export interface WordStudy {
+  original: string;
+  transliteration: string;
+  definition: string;
+  refs: string[];
+}
+
+export interface PrevDaySummary {
+  verse_ref: string;
+  day_title: string;
+  journal_excerpt: string; // may be empty string
+}
+
+export interface QuizOption {
+  label: string;
+  text: string;
+  correct: boolean;
+}
+
 export interface PlanProgressSummary {
   last_read_day: number;
   completed_at: string | null;
@@ -22,8 +41,9 @@ export interface ReadingPlanSummary {
 export interface ReadingPlanEntry {
   id: number;
   day_number: number;
+  day_title: string;         // e.g. "The Peace That Passes Understanding"; empty for legacy entries
   verse_ref: string;
-  verse_text: string;        // resolved server-side from local DB; empty when ref not found
+  verse_text: string;        // seeded passage_text when present; falls back to verse DB lookup
   reflection: string;
   passage_refs: string;      // JSON array of extra refs, empty string when absent
   prayer: string;
@@ -32,6 +52,11 @@ export interface ReadingPlanEntry {
   context_note: string;
   content_type: string;      // "verse" | "passage" | "psalm" | "chapter" | "meditation"
   is_memory_verse: boolean;
+  quiz_question: string;     // empty string when no check for this day
+  quiz_options: string;      // JSON QuizOption[]
+  quiz_explanation: string;
+  word_studies: string;      // JSON Record<string, WordStudy>; empty string when none
+  prev_day?: PrevDaySummary; // previous day recap; absent on day 1 or if backend omits
 }
 
 export interface ReadingPlanDetail extends ReadingPlanSummary {
