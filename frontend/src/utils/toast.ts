@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 export const showToast = {
     success: (message: string) => {
         toast.success(message, {
-            duration: 3000,
+            duration: 2000,
             style: {
                 background: '#4BB543',
                 color: '#fff',
@@ -20,7 +20,7 @@ export const showToast = {
     // create a utility function to show error toast
     error: (message: string) => {
         toast.error(message, {
-            duration: 4000,
+            duration: 2000,
             style: {
                 background: '#FF3333',
                 color: '#fff',
@@ -51,7 +51,7 @@ export const showToast = {
     // info toast
     info: (message: string) => {
         toast(message, {
-            duration: 3000,
+            duration: 2000,
             icon: 'ℹ️',
             style: {
                 background: '#3b82f6',

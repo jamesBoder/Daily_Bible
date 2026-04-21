@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useStreak } from '../../contexts/StreakContext';
 import { CalendarCheck, ShieldStar } from '@phosphor-icons/react';
 import { GraceDayTutorial } from './GraceDayTutorial';
+import { showToast } from '../../utils/toast';
 import styles from './GraceDaySettings.module.css';
 
 // Free users can hold up to 5 grace days (3 from natural accrual, up to 5 with purchases).
@@ -27,7 +28,12 @@ export const GraceDaySettings: React.FC = () => {
     }
     setIsLoading(true);
     try {
-      await applyGraceDay();
+      const result = await applyGraceDay();
+      if (result.success) {
+        showToast.success(t('settings.graceDays.usedSuccess', 'Grace Day used — streak protected!'));
+      } else {
+        showToast.error(result.error ?? t('settings.graceDays.errorGeneric', 'Could not use Grace Day.'));
+      }
     } finally {
       setConfirming(false);
       setIsLoading(false);
