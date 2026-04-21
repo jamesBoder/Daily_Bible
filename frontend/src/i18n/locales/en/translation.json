@@ -91,7 +91,6 @@
     "keyboard": "Keyboard",
     "nextPuzzle": "Next word in",
     "noHints": "No hints",
-    "notAWord": "Not a recognized biblical word",
     "notEnoughLetters": "Not enough letters",
     "share": "Share result",
     "socialProof": "{{n}} devotees are solving today's word",
@@ -194,7 +193,8 @@
     "switchTranslation": "Switch Translation",
     "sessionOnly": "Session only — won't change your settings",
     "premiumTranslation": "Available with a Words of Praise membership",
-    "translationUnavailable": "Translation unavailable"
+    "translationUnavailable": "Translation unavailable",
+    "premiumTranslationHint": "Locked translations are available with Words of Praise Premium"
   },
   "auth": {
     "browsingAsGuest": "Browsing as Guest",
@@ -450,7 +450,9 @@
       "available": "available",
       "exhausted": "Your grace days have been used this period.",
       "use": "Use a Grace Day",
-      "confirm": "Confirm — use a Grace Day?"
+      "confirm": "Confirm — use a Grace Day?",
+      "errorGeneric": "Could not use Grace Day.",
+      "usedSuccess": "Grace Day used — streak protected!"
     },
     "notifications": {
       "title": "Notifications",
@@ -1133,6 +1135,18 @@
       "step4Body": "\"Walking in Peace\" is free for everyone. Devoted Members unlock the full library — including seasonal Advent, Lent, and Holy Week journeys.",
       "cta": "Explore Plans",
       "reopenHint": "Tap ? anytime to see this guide again."
+    },
+    "digDeeper": "Dig deeper",
+    "digDeeperStudy": "Further study",
+    "certificate": {
+      "title": "Certificate of Completion",
+      "days": "days",
+      "blessings": "blessings",
+      "completedOn": "Completed on {{date}}",
+      "share": "Share your achievement",
+      "backToLibrary": "Back to Library",
+      "dismiss": "Dismiss",
+      "shareText": "I just completed \"{{title}}\" — a {{days}}-day reading plan on Words of Praise! 🙏"
     }
   }
 }

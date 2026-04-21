@@ -56,6 +56,8 @@ export interface ReadingPlanEntry {
   quiz_options: string;      // JSON QuizOption[]
   quiz_explanation: string;
   word_studies: string;      // JSON Record<string, WordStudy>; empty string when none
+  deep_dive_text: string;    // extended commentary; empty string when section is hidden
+  deep_dive_refs: string;    // JSON string[]; empty string when none
   prev_day?: PrevDaySummary; // previous day recap; absent on day 1 or if backend omits
 }
 

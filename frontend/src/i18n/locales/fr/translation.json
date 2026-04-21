@@ -91,7 +91,6 @@
     "keyboard": "Clavier",
     "nextPuzzle": "Prochain mot dans",
     "noHints": "Plus d'indices",
-    "notAWord": "Mot biblique non reconnu",
     "notEnoughLetters": "Pas assez de lettres",
     "share": "Partager le résultat",
     "socialProof": "{{n}} fidèles résolvent le mot d'aujourd'hui",
@@ -194,7 +193,8 @@
     "switchTranslation": "Changer de Traduction",
     "sessionOnly": "Session uniquement — ne change pas vos paramètres",
     "premiumTranslation": "Disponible avec un abonnement Words of Praise",
-    "translationUnavailable": "Traduction non disponible"
+    "translationUnavailable": "Traduction non disponible",
+    "premiumTranslationHint": "Les traductions verrouillées sont disponibles avec Words of Praise Premium"
   },
   "auth": {
     "browsingAsGuest": "Navigation en tant qu'Invité",
@@ -450,7 +450,9 @@
       "available": "disponibles",
       "exhausted": "Vos jours de grâce ont été utilisés ce période.",
       "use": "Utiliser un Jour de Grâce",
-      "confirm": "Confirmer — utiliser un Jour de Grâce ?"
+      "confirm": "Confirmer — utiliser un Jour de Grâce ?",
+      "errorGeneric": "Impossible d'utiliser le Jour de Grâce.",
+      "usedSuccess": "Jour de Grâce utilisé — série protégée !"
     },
     "notifications": {
       "title": "Notifications",
@@ -1117,6 +1119,18 @@
       "step4Body": "\"Marcher dans la Paix\" est gratuit pour tous. Les Membres Devoted débloquent la bibliothèque complète — y compris les parcours de l'Avent, du Carême et de la Semaine Sainte.",
       "cta": "Explorer les Plans",
       "reopenHint": "Appuyez sur ? à tout moment pour revoir ce guide."
+    },
+    "digDeeper": "Approfondir",
+    "digDeeperStudy": "Étude complémentaire",
+    "certificate": {
+      "title": "Certificat de réussite",
+      "days": "jours",
+      "blessings": "bénédictions",
+      "completedOn": "Complété le {{date}}",
+      "share": "Partagez votre réussite",
+      "backToLibrary": "Retour à la bibliothèque",
+      "dismiss": "Fermer",
+      "shareText": "Je viens de terminer « {{title}} » — un plan de lecture de {{days}} jours sur Words of Praise ! 🙏"
     }
   },
   "graceDay": {

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { ArrowLeft, CheckCircle, Confetti, BookOpen, HandsPraying, Lightning, Question, Star, ArrowSquareOut } from '@phosphor-icons/react';
+import {
+  ArrowLeft, CheckCircle, BookOpen, HandsPraying,
+  Lightning, Question, Star, ArrowSquareOut, CaretDown, CaretUp,
+} from '@phosphor-icons/react';
 import plansApi from '../../services/api/plans';
 import type { WordStudy } from '../../services/api/plans';
 import { showToast } from '../../utils/toast';
@@ -13,6 +16,8 @@ import ComprehensionCheck from './ComprehensionCheck';
 import MemoryVerseFlashcard from './MemoryVerseFlashcard';
 import WordStudySheet from './WordStudySheet';
 import PrevDayStrip from './PrevDayStrip';
+import CompletionCertificate from './CompletionCertificate';
+import DeepDive from './DeepDive';
 
 interface PlanDayViewProps {
   slug: string;
@@ -24,6 +29,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
   const qc = useQueryClient();
   const navigate = useNavigate();
   const [justCompleted, setJustCompleted] = useState(false);
+  const [completedAt, setCompletedAt] = useState<Date | null>(null);
   const [blessingsEarned, setBlessingsEarned] = useState(0);
   const [contextExpanded, setContextExpanded] = useState(false);
   const [flashcardOpen, setFlashcardOpen] = useState(false);
@@ -58,6 +64,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
 
       if (data.just_completed) {
         setJustCompleted(true);
+        setCompletedAt(new Date());
         SoundService.play('milestone');
       }
     },
@@ -204,7 +211,12 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
           >
             <BookOpen size={14} />
             {t('plan.historicalContext', 'Historical context')}
-            <span className="ml-auto">{contextExpanded ? '▲' : '▼'}</span>
+            <span className="ml-auto">
+              {contextExpanded
+                ? <CaretUp size={12} />
+                : <CaretDown size={12} />
+              }
+            </span>
           </button>
           {contextExpanded && (
             <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-relaxed pl-5">
@@ -296,6 +308,14 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         ) : null;
       })()}
 
+      {/* Dig deeper */}
+      {entry.deep_dive_text && (
+        <DeepDive
+          deepDiveText={entry.deep_dive_text}
+          deepDiveRefsJson={entry.deep_dive_refs ?? '[]'}
+        />
+      )}
+
       {/* Mark as Read button */}
       {alreadyRead === false && !justCompleted && (
         <button
@@ -321,24 +341,6 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         </div>
       )}
 
-      {/* Completion overlay */}
-      {justCompleted && (
-        <div className="text-center py-6">
-          <Confetti size={48} weight="fill" className="mx-auto mb-3" style={{ color: 'var(--blessing-gold)' }} />
-          <h3 className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1">
-            {t('plan.planComplete', 'Path Complete')}
-          </h3>
-          <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
-            {t('plan.planCompleteDesc', 'You have completed {{title}}. Well done.', { title: plan?.title ?? '' })}
-          </p>
-          {blessingsEarned > 0 && (
-            <p className="text-sm font-semibold" style={{ color: 'var(--blessing-gold)' }}>
-              {t('plans.blessingsEarned', '+{{count}} Blessings', { count: blessingsEarned })}
-            </p>
-          )}
-        </div>
-      )}
-
       {/* Blessings earned inline (non-completion advance) */}
       {!justCompleted && blessingsEarned > 0 && (
         <p className="text-xs text-center font-medium mt-2" style={{ color: 'var(--blessing-gold)' }}>
@@ -361,6 +363,19 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
           word={studiedWord.word}
           study={studiedWord.study}
           onClose={() => setStudiedWord(null)}
+        />
+      )}
+
+      {/* Completion certificate overlay */}
+      {justCompleted && completedAt && (
+        <CompletionCertificate
+          planTitle={plan?.title ?? ''}
+          coverVerseRef={entry.verse_ref}
+          totalDays={plan?.length_days ?? 0}
+          blessingsEarned={blessingsEarned}
+          completedAt={completedAt}
+          onBackToLibrary={onBack}
+          onDismiss={() => setJustCompleted(false)}
         />
       )}
     </div>

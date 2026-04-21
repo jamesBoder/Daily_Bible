@@ -399,3 +399,32 @@ FROM reading_plans p,
 WHERE p.slug = 'walking-in-peace'
   AND e.plan_id = p.id
   AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Part 2h — Dig deeper: extended commentary + further-study
+-- refs for Walking in Peace days 1, 4, and 6.
+-- Idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET
+  deep_dive_text = v.text,
+  deep_dive_refs = v.refs
+FROM reading_plans p,
+(VALUES
+  (1,
+   'The word Jesus uses for "Comforter" is παράκλητος (Paraklétos) — literally "one called alongside." In ancient Greek courts this was the word for an advocate who stands beside the accused and speaks on their behalf. Jesus was not promising a distant spiritual force but a constant personal Presence: a divine companion posted at the side of every believer in every moment. After the ascension, believers would have their own heavenly advocate — not just for judgment day, but for every ordinary Tuesday. The peace He leaves is therefore not a one-time gift but an ongoing reality sustained by this Presence. When peace feels absent, the Paraclete has not departed; our awareness of Him has dimmed. The deeper question is not "where is God?" but "how do I attend to the One who is already here?" Practicing that attention — pausing to acknowledge the Spirit''s presence before you react, before you speak, before you decide — is the discipline that keeps the gift open.',
+   '["John 16:7-11", "Romans 8:26-27"]'
+  ),
+  (4,
+   'Paul uses φρουρέω (phroureō) — typically translated "keep" or "guard" — but the word''s root is a military garrison standing watch over a city gate. The peace of God, Paul says, will garrison your heart and mind. This is a startlingly active image: peace is not an emotion that descends on passive recipients. It is a standing army that repels the enemy at the gate of thought. The gate is the mind. What we allow through that threshold determines the security of the inner life. Paul''s list in verse 8 — true, honest, just, pure, lovely, of good report — is not a moral checklist but an entry protocol: criteria the mind can apply to any incoming thought before it crosses the threshold. Train the mind to ask these questions at the gate, and the garrison has allies on the inside. The harder practice is not finding better thoughts but noticing the exact moment anxiety first appears — and posting the watch there, before it takes ground.',
+   '["Isaiah 26:3", "2 Corinthians 10:5"]'
+  ),
+  (6,
+   'The command "Be still" (*raphah* in Hebrew) appears only a handful of times in the Old Testament, and its meaning is stronger than the English suggests. Raphah means to release your grip, to let go, to stop striving — the same word used elsewhere for hands that go slack or a sword that drops. It is an active surrender, not a passive waiting. Psalm 46 was almost certainly written in a military context — possibly the Assyrian siege of Jerusalem in 701 BC (2 Kings 19), when the city faced annihilation and God miraculously intervened. The instruction to release follows a scene of absolute catastrophe: mountains removed, seas roaring, kingdoms raging. God does not wait for the chaos to settle before commanding stillness. He commands it in the middle of the storm, and gives the reason: "I am God." That fact — not the resolution of the crisis — is the ground of the stillness. The practical invitation is to practice releasing one thing per day that you have been trying to control, and to name the specific truth about God that makes the release possible.',
+   '["Psalm 62:5-8", "Hebrews 4:9-11"]'
+  )
+) AS v(day_number, text, refs)
+WHERE p.slug = 'walking-in-peace'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;

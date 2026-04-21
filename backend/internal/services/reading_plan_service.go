@@ -80,6 +80,8 @@ type ReadingPlanEntryResponse struct {
 	QuizOptions     string          `json:"quiz_options"`     // JSON array
 	QuizExplanation string          `json:"quiz_explanation"`
 	WordStudies     string          `json:"word_studies"`     // JSON object keyed by word
+	DeepDiveText    string          `json:"deep_dive_text"`   // extended commentary; empty = section hidden
+	DeepDiveRefs    string          `json:"deep_dive_refs"`   // JSON array of further-study refs
 	PrevDay         *PrevDaySummary `json:"prev_day,omitempty"` // previous day recap; nil on day 1
 }
 
@@ -119,6 +121,8 @@ func entryToResponse(e models.ReadingPlanEntry) ReadingPlanEntryResponse {
 		QuizOptions:     e.QuizOptions,
 		QuizExplanation: e.QuizExplanation,
 		WordStudies:     e.WordStudies,
+		DeepDiveText:    e.DeepDiveText,
+		DeepDiveRefs:    e.DeepDiveRefs,
 	}
 }
 

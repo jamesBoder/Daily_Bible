@@ -91,7 +91,6 @@
     "keyboard": "Teclado",
     "nextPuzzle": "Próxima palabra en",
     "noHints": "Sin pistas",
-    "notAWord": "No es una palabra bíblica reconocida",
     "notEnoughLetters": "No hay suficientes letras",
     "share": "Compartir resultado",
     "socialProof": "{{n}} devotos están resolviendo la palabra de hoy",
@@ -194,7 +193,8 @@
     "switchTranslation": "Cambiar Traducción",
     "sessionOnly": "Solo esta sesión — no cambia tu configuración",
     "premiumTranslation": "Disponible con una membresía de Words of Praise",
-    "translationUnavailable": "Traducción no disponible"
+    "translationUnavailable": "Traducción no disponible",
+    "premiumTranslationHint": "Las traducciones bloqueadas están disponibles con Words of Praise Premium"
   },
   "auth": {
     "browsingAsGuest": "Navegando como Invitado",
@@ -450,7 +450,9 @@
       "available": "disponibles",
       "exhausted": "Tus días de gracia han sido utilizados este período.",
       "use": "Usar un Día de Gracia",
-      "confirm": "Confirmar — ¿usar un Día de Gracia?"
+      "confirm": "Confirmar — ¿usar un Día de Gracia?",
+      "errorGeneric": "No se pudo usar el Día de Gracia.",
+      "usedSuccess": "Día de Gracia usado — ¡racha protegida!"
     },
     "notifications": {
       "title": "Notificaciones",
@@ -1133,6 +1135,18 @@
       "step4Body": "\"Caminando en Paz\" es gratis para todos. Los Miembros Devoted desbloquean la biblioteca completa — incluyendo los recorridos de Adviento, Cuaresma y Semana Santa.",
       "cta": "Explorar Planes",
       "reopenHint": "Toca ? en cualquier momento para ver esta guía de nuevo."
+    },
+    "digDeeper": "Profundizar",
+    "digDeeperStudy": "Estudio adicional",
+    "certificate": {
+      "title": "Certificado de finalización",
+      "days": "días",
+      "blessings": "bendiciones",
+      "completedOn": "Completado el {{date}}",
+      "share": "Comparte tu logro",
+      "backToLibrary": "Volver a la biblioteca",
+      "dismiss": "Cerrar",
+      "shareText": "Acabo de completar \"{{title}}\" — ¡un plan de lectura de {{days}} días en Words of Praise! 🙏"
     }
   }
 }

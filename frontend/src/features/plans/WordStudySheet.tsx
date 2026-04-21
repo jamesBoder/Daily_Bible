@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { X } from '@phosphor-icons/react';
 import type { WordStudy } from '../../services/api/plans';
@@ -11,6 +11,12 @@ interface WordStudySheetProps {
 
 const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose }) => {
   const { t } = useTranslation();
+
+  useEffect(() => {
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = prev; };
+  }, []);
 
   return (
     <>

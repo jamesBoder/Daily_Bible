@@ -91,7 +91,6 @@
     "keyboard": "Klavye",
     "nextPuzzle": "Pwochen mo nan",
     "noHints": "Pa gen endis",
-    "notAWord": "Pa yon mo biblik yo rekonèt",
     "notEnoughLetters": "Pa ase lèt",
     "share": "Pataje rezilta",
     "socialProof": "{{n}} devoto ap rezoud mo jodi a",
@@ -194,7 +193,8 @@
     "switchTranslation": "Chanje Tradiksyon",
     "sessionOnly": "Sesyon sèlman — pa chanje paramèt ou yo",
     "premiumTranslation": "Disponib ak yon manm Words of Praise",
-    "translationUnavailable": "Tradiksyon pa disponib"
+    "translationUnavailable": "Tradiksyon pa disponib",
+    "premiumTranslationHint": "Tradiksyon ki bloke yo disponib ak Words of Praise Premium"
   },
   "auth": {
     "browsingAsGuest": "Ap navige kòm Envite",
@@ -450,7 +450,9 @@
       "available": "disponib",
       "exhausted": "Jou gras ou yo te itilize pou peryòd sa a.",
       "use": "Itilize yon Jou Gras",
-      "confirm": "Konfime — itilize yon Jou Gras?"
+      "confirm": "Konfime — itilize yon Jou Gras?",
+      "errorGeneric": "Pa t kapab itilize Jou Gras la.",
+      "usedSuccess": "Jou Gras itilize — seri pwoteje!"
     },
     "notifications": {
       "title": "Notifikasyon",
@@ -1117,6 +1119,18 @@
       "step4Body": "\"Mache nan Lapè\" gratis pou tout moun. Manm Devoted debloke bibliyotèk konplè a — enkli vwayaj Advans, Karèm ak Semèn Sen.",
       "cta": "Eksplore Plan yo",
       "reopenHint": "Touche ? nenpòt ki lè pou wè gid sa a ankò."
+    },
+    "digDeeper": "Fouye pi fon",
+    "digDeeperStudy": "Etid siplemantè",
+    "certificate": {
+      "title": "Sètifika Akonplisman",
+      "days": "jou",
+      "blessings": "benediksyon",
+      "completedOn": "Fini nan {{date}}",
+      "share": "Pataje akonplisman ou",
+      "backToLibrary": "Retounen nan bibliyotèk",
+      "dismiss": "Fèmen",
+      "shareText": "Mwen fini « {{title}} » — yon plan lekti {{days}} jou sou Words of Praise! 🙏"
     }
   },
   "graceDay": {

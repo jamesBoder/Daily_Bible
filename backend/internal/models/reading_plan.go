@@ -50,6 +50,9 @@ type ReadingPlanEntry struct {
 	QuizOptions    string `gorm:"type:text"`     // JSON: [{"label":"A","text":"...","correct":false}, ...]
 	QuizExplanation string `gorm:"type:text"`    // shown after any answer selection
 	WordStudies    string `gorm:"type:text"`     // JSON: {"word": {"original":"...","transliteration":"...","definition":"...","refs":[...]}}
+	// Dig deeper (2h)
+	DeepDiveText   string `gorm:"type:text"`     // extended commentary; empty = section hidden
+	DeepDiveRefs   string `gorm:"type:text"`     // JSON array of further-study verse refs
 	CreatedAt      time.Time
 }
 
