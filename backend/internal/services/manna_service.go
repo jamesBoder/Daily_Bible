@@ -285,16 +285,6 @@ func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremi
 		}
 	}
 
-	// M-01: Validate the guess is a recognized word in the word bank.
-	// The manna_words.word column has a unique index; this lookup is fast.
-	var wordCount int64
-	if err := s.db.Model(&models.MannaWord{}).Where("word = ?", guessWord).Count(&wordCount).Error; err != nil {
-		return nil, fmt.Errorf("validate word: %w", err)
-	}
-	if wordCount == 0 {
-		return nil, errors.New("not_a_word: Not a recognized biblical word")
-	}
-
 	var game models.MannaGame
 	if err := s.db.Where("user_id = ? AND game_date = ?", userID, date).First(&game).Error; err != nil {
 		return nil, fmt.Errorf("game not found: %w", err)
@@ -409,6 +399,89 @@ func (s *MannaService) SubmitGuess(userID uint, guessWord string, isPremium bool
 // SubmitArchiveGuess validates a guess for an archive (past) game.
 func (s *MannaService) SubmitArchiveGuess(userID uint, guessWord string, date time.Time) (*GuessResult, error) {
 	return s.submitGuessForDate(userID, guessWord, true, date)
+}
+
+// forfeitGameForDate marks an in-progress game as failed and returns the full game state
+// with the answer revealed. Hint blessings are not refunded. Participation blessings
+// (10 base) are awarded the same as a natural failure, preventing double-credit.
+func (s *MannaService) forfeitGameForDate(userID uint, date time.Time, isPremium bool) (*MannaGameResponse, error) {
+	var game models.MannaGame
+	if err := s.db.Where("user_id = ? AND game_date = ?", userID, date).First(&game).Error; err != nil {
+		return nil, errors.New("forfeit_no_game: no active game found")
+	}
+	if game.Status != "in_progress" {
+		return nil, errors.New("forfeit_over: this game is already complete")
+	}
+
+	var word models.MannaWord
+	if err := s.db.First(&word, game.WordID).Error; err != nil {
+		return nil, fmt.Errorf("load word: %w", err)
+	}
+
+	game.Status = "failed"
+	if err := s.db.Save(&game).Error; err != nil {
+		return nil, fmt.Errorf("update game: %w", err)
+	}
+
+	// Award participation blessings once (same as natural failure).
+	if !game.BlessingsAwarded {
+		award := s.db.Model(&game).
+			Where("blessings_awarded = ?", false).
+			Update("blessings_awarded", true)
+		if award.RowsAffected > 0 {
+			multiplier := 1.0
+			if isPremium {
+				multiplier = 1.5
+			}
+			go func() {
+				defer func() { recover() }()
+				s.blessingsService.Credit(userID, 10, "manna_played", multiplier)
+			}()
+		}
+	}
+
+	guesses, err := s.loadGuesses(game.ID)
+	if err != nil {
+		return nil, err
+	}
+
+	effectiveMax := game.MaxGuesses
+	if effectiveMax == 0 {
+		effectiveMax = maxMannaGuesses
+	}
+
+	resp := &MannaGameResponse{
+		Locked:             false,
+		GameID:             game.ID,
+		Status:             "failed",
+		GuessCount:         game.GuessCount,
+		MaxGuesses:         effectiveMax,
+		Guesses:            guesses,
+		WordLength:         5,
+		IsFreePlay:         false,
+		HintsUsed:          game.HintsUsed,
+		HintLetters:        parseHintLetters(game.HintLetters),
+		ScriptureReference: word.ScriptureReference,
+		ScriptureClue:      buildScriptureClue(word.ScriptureText, word.Word),
+		Testament:          getTestament(word.ScriptureReference),
+		Answer:             &word.Word,
+		ScriptureText:      &word.ScriptureText,
+	}
+	if word.ConnectionNote != "" {
+		resp.ConnectionNote = &word.ConnectionNote
+	}
+
+	return resp, nil
+}
+
+// ForfeitToday forfeits the current in-progress game for today.
+func (s *MannaService) ForfeitToday(userID uint, isPremium bool) (*MannaGameResponse, error) {
+	return s.forfeitGameForDate(userID, mannaEffectiveToday(), isPremium)
+}
+
+// ForfeitArchiveGame forfeits an in-progress archive game for the given date.
+func (s *MannaService) ForfeitArchiveGame(userID uint, date time.Time) (*MannaGameResponse, error) {
+	return s.forfeitGameForDate(userID, date, true)
 }
 
 // getHintForDate reveals one unrevealed letter position for a game on the given date,
@@ -541,14 +614,6 @@ func (s *MannaService) EvaluateGuestGuess(guess string, isLastGuess bool) (*Gues
 		if ch < 'A' || ch > 'Z' {
 			return nil, errors.New("guess_chars: Guesses must contain only letters A–Z")
 		}
-	}
-
-	var wordCount int64
-	if err := s.db.Model(&models.MannaWord{}).Where("word = ?", guess).Count(&wordCount).Error; err != nil {
-		return nil, fmt.Errorf("validate word: %w", err)
-	}
-	if wordCount == 0 {
-		return nil, errors.New("not_a_word: Not a recognized biblical word")
 	}
 
 	word, err := s.GetTodayWord()

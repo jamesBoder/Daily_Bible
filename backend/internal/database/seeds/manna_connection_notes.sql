@@ -27,3 +27,20 @@ UPDATE manna_words SET connection_note = 'Jacob fled to Bethel after deceiving h
 UPDATE manna_words SET connection_note = 'Nahum was a 7th-century BC prophet from Judah. His book proclaims God''s coming judgment on Nineveh, the capital of Assyria, while offering this assurance to those who trust in God.' WHERE word = 'NAHUM';
 
 UPDATE manna_words SET connection_note = 'Micah was a prophet in Judah during the 8th century BC, a contemporary of Isaiah. Micah 6:8 is one of the Bible''s most beloved one-verse summaries of the life God calls His people to live.' WHERE word = 'MICAH';
+
+-- Scripture text corrections: fix entries where the word only appeared in a
+-- possessive or hyphenated compound form, producing a clue with no clean blank.
+UPDATE manna_words
+  SET scripture_reference = '1 Thessalonians 5:6',
+      scripture_text = 'So then, let us not be like others, who are asleep, but let us be awake and sober.'
+  WHERE word = 'SOBER';
+
+UPDATE manna_words
+  SET scripture_reference = 'Deuteronomy 33:24',
+      scripture_text = 'About Asher he said: ''Most blessed of sons is Asher; let him be favored by his brothers, and let him bathe his feet in oil.'''
+  WHERE word = 'ASHER';
+
+UPDATE manna_words
+  SET scripture_reference = 'Psalm 120:5',
+      scripture_text = 'Woe to me that I dwell in Meshek, that I live among the tents of Kedar!'
+  WHERE word = 'KEDAR';

@@ -212,6 +212,10 @@ export const MannaPuzzle: React.FC = () => {
   const hintConfirmingRef = useRef(false);
   const hintConfirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  const [forfeitConfirming, setForfeitConfirming] = useState(false);
+  const forfeitConfirmingRef = useRef(false);
+  const forfeitConfirmTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   // Archive state
   const [archiveDate, setArchiveDate] = useState<string | null>(null); // "YYYY-MM-DD" or null for today
   const [showArchive, setShowArchive] = useState(false); // show archive browser
@@ -630,14 +634,7 @@ export const MannaPuzzle: React.FC = () => {
       submitting.current = false;
       setSubmittingUI(false);
       const msg = err?.response?.data?.error ?? '';
-      if (msg === 'not_a_word') {
-        // M-01/M-05: word not in the biblical word bank — shake the row and keep input intact
-        setShakeRow(rowIdx);
-        setTimeout(() => setShakeRow(null), 400);
-        SoundService.play('manna-invalid');
-        if (navigator.vibrate) navigator.vibrate(30); // M-19
-        toast(t('manna.notAWord', 'Not a recognized biblical word'), { icon: '📖' });
-      } else if (msg.includes('5 letters')) {
+      if (msg.includes('5 letters')) {
         toast.error(t('manna.errorLength', 'Guesses must be exactly 5 letters.'));
       } else if (msg.includes('letters A')) {
         toast.error(t('manna.errorChars', 'Guesses must contain only letters A–Z.'));
@@ -653,10 +650,50 @@ export const MannaPuzzle: React.FC = () => {
     }
   };
 
-  // hintLoading / hintConfirming refs — let memoised callbacks see the latest values
+  // hintLoading / hintConfirming / forfeitConfirming refs — let memoised callbacks see the latest values
   const hintLoadingRef = useRef(false);
   useEffect(() => { hintLoadingRef.current = hintLoading; }, [hintLoading]);
   useEffect(() => { hintConfirmingRef.current = hintConfirming; }, [hintConfirming]);
+  useEffect(() => { forfeitConfirmingRef.current = forfeitConfirming; }, [forfeitConfirming]);
+
+  // ─── Forfeit handler ──────────────────────────────────────────────────────
+  // Two-tap: first tap enters confirming state (auto-cancels after 3s), second tap executes.
+  const handleForfeit = useCallback(async () => {
+    const g = gameRef.current;
+    if (!g || g.status !== 'in_progress' || submitting.current) return;
+
+    if (!forfeitConfirmingRef.current) {
+      setForfeitConfirming(true);
+      forfeitConfirmingRef.current = true;
+      if (forfeitConfirmTimer.current) clearTimeout(forfeitConfirmTimer.current);
+      forfeitConfirmTimer.current = setTimeout(() => {
+        setForfeitConfirming(false);
+        forfeitConfirmingRef.current = false;
+      }, 3000);
+      return;
+    }
+
+    // Second tap — confirmed
+    if (forfeitConfirmTimer.current) clearTimeout(forfeitConfirmTimer.current);
+    setForfeitConfirming(false);
+    forfeitConfirmingRef.current = false;
+
+    try {
+      const result = await (archiveDate ? mannaApi.forfeitArchive(archiveDate) : mannaApi.forfeit());
+      setGame(result);
+      setCurrentWord('');
+      SoundService.play('manna-fail');
+      refreshStreak().catch(() => {});
+    } catch (err: any) {
+      const msg = err?.response?.data?.error ?? '';
+      if (msg.includes('complete')) {
+        toast(t('manna.errorComplete', 'This game is already complete.'));
+      } else {
+        toast.error(t('manna.forfeitError', 'Could not forfeit. Try again.'));
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [archiveDate, t]);
 
   // ─── Keyboard handling ────────────────────────────────────────────────────
   const handleKey = useCallback((key: string) => {
@@ -1042,6 +1079,29 @@ export const MannaPuzzle: React.FC = () => {
             title={t('manna.archiveLabel', 'Archive')}
           >
             <CalendarIcon />
+          </button>
+        )}
+        {/* Give Up — available to all signed-in users during an active game.
+            Two-tap confirm prevents accidental forfeits. */}
+        {!isOver && !isFreePlay && (
+          <button
+            className="manna-hint-btn ml-auto"
+            onClick={handleForfeit}
+            aria-label={
+              forfeitConfirming
+                ? t('manna.forfeitConfirmAriaLabel', 'Confirm: reveal the answer and end the game')
+                : t('manna.forfeitAriaLabel', 'Give up and reveal the answer')
+            }
+            style={{
+              fontSize: '0.72rem',
+              padding: '0.2rem 0.55rem',
+              opacity: 0.75,
+              ...(forfeitConfirming ? { background: '#ef4444', color: '#fff', opacity: 1 } : {}),
+            }}
+          >
+            {forfeitConfirming
+              ? t('manna.forfeitConfirm', 'Reveal? Confirm')
+              : t('manna.forfeitBtn', 'Give Up')}
           </button>
         )}
       </div>

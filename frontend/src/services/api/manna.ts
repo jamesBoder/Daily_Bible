@@ -145,4 +145,12 @@ export const mannaApi = {
   submitGuestGuess(guess: string, isLastGuess: boolean): Promise<GuestGuessResult> {
     return apiClient.post<GuestGuessResult>('/api/manna/guest/guess', { guess, is_last_guess: isLastGuess }).then(r => r.data);
   },
+
+  forfeit(): Promise<MannaGameResponse> {
+    return apiClient.post<MannaGameResponse>('/api/manna/forfeit').then(r => r.data);
+  },
+
+  forfeitArchive(date: string): Promise<MannaGameResponse> {
+    return apiClient.post<MannaGameResponse>(`/api/manna/archive/${date}/forfeit`).then(r => r.data);
+  },
 };

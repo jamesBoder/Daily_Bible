@@ -98,8 +98,6 @@ func (h *MannaHandler) SubmitGuestGuess(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must be exactly 5 letters."})
 		case strings.HasPrefix(msg, "guess_chars:"):
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must contain only letters A–Z."})
-		case strings.HasPrefix(msg, "not_a_word:"):
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "not_a_word"})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to submit guess"})
 		}
@@ -132,8 +130,6 @@ func (h *MannaHandler) SubmitGuess(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must be exactly 5 letters."})
 		case strings.HasPrefix(msg, "guess_chars:"):
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must contain only letters A–Z."})
-		case strings.HasPrefix(msg, "not_a_word:"):
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "not_a_word"})
 		case strings.HasPrefix(msg, "game_over:"):
 			c.JSON(http.StatusConflict, gin.H{"error": "This game is already complete."})
 		default:
@@ -292,8 +288,6 @@ func (h *MannaHandler) SubmitArchiveGuess(c *gin.Context) {
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must be exactly 5 letters."})
 		case strings.HasPrefix(msg, "guess_chars:"):
 			c.JSON(http.StatusBadRequest, gin.H{"error": "Guesses must contain only letters A–Z."})
-		case strings.HasPrefix(msg, "not_a_word:"):
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "not_a_word"})
 		case strings.HasPrefix(msg, "game_over:"):
 			c.JSON(http.StatusConflict, gin.H{"error": "This game is already complete."})
 		default:
@@ -342,6 +336,70 @@ func (h *MannaHandler) GetArchiveHint(c *gin.Context) {
 		}
 		return
 	}
+	c.JSON(http.StatusOK, result)
+}
+
+// Forfeit forfeits today's in-progress game, revealing the answer without awarding solve blessings.
+// Hint blessings are not refunded. Participation blessings (10 base) are still awarded.
+// POST /api/manna/forfeit
+func (h *MannaHandler) Forfeit(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	uid := userID.(uint)
+
+	isPremium := h.subscriptionChecker.IsPremium(uid)
+	result, err := h.mannaService.ForfeitToday(uid, isPremium)
+	if err != nil {
+		msg := err.Error()
+		switch {
+		case strings.HasPrefix(msg, "forfeit_no_game:"):
+			c.JSON(http.StatusNotFound, gin.H{"error": "No active game found for today."})
+		case strings.HasPrefix(msg, "forfeit_over:"):
+			c.JSON(http.StatusConflict, gin.H{"error": "This game is already complete."})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to forfeit game"})
+		}
+		return
+	}
+
+	c.JSON(http.StatusOK, result)
+}
+
+// ForfeitArchive forfeits an in-progress archive game for the given date.
+// POST /api/manna/archive/:date/forfeit
+func (h *MannaHandler) ForfeitArchive(c *gin.Context) {
+	userID, _ := c.Get("userID")
+	uid := userID.(uint)
+
+	if !h.subscriptionChecker.IsPremium(uid) {
+		c.JSON(http.StatusForbidden, gin.H{"error": "Archive is a premium feature."})
+		return
+	}
+
+	dateStr := c.Param("date")
+	date, err := time.Parse("2006-01-02", dateStr)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid date format. Use YYYY-MM-DD."})
+		return
+	}
+	if !date.Before(time.Now().UTC().Add(-10 * time.Hour).Truncate(24 * time.Hour)) {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Archive date must be in the past."})
+		return
+	}
+
+	result, err := h.mannaService.ForfeitArchiveGame(uid, date)
+	if err != nil {
+		msg := err.Error()
+		switch {
+		case strings.HasPrefix(msg, "forfeit_no_game:"):
+			c.JSON(http.StatusNotFound, gin.H{"error": "No active game found for that date."})
+		case strings.HasPrefix(msg, "forfeit_over:"):
+			c.JSON(http.StatusConflict, gin.H{"error": "This game is already complete."})
+		default:
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to forfeit game"})
+		}
+		return
+	}
+
 	c.JSON(http.StatusOK, result)
 }
 
