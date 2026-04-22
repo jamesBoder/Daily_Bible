@@ -199,7 +199,7 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 // All signed-in users (free and premium alike) get the full daily game: 6 guesses + scripture clue.
 // Premium-only features (hints, history, archive) are gated in the handler layer.
 func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time) (*MannaGameResponse, error) {
-	word, err := s.getWordForDate(date)
+	prngWord, err := s.getWordForDate(date)
 	if err != nil {
 		return nil, fmt.Errorf("getWordForDate: %w", err)
 	}
@@ -208,7 +208,7 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time) (*Man
 	newGame := models.MannaGame{
 		UserID:     userID,
 		GameDate:   date,
-		WordID:     word.ID,
+		WordID:     prngWord.ID,
 		Status:     "in_progress",
 		MaxGuesses: maxMannaGuesses,
 	}
@@ -216,11 +216,24 @@ func (s *MannaService) getOrCreateGameForDate(userID uint, date time.Time) (*Man
 	if ins.Error != nil {
 		return nil, fmt.Errorf("create game: %w", ins.Error)
 	}
+
+	// word is the authoritative answer for this game. For new games it matches the
+	// PRNG selection. For existing games we must re-fetch by game.WordID because the
+	// word bank may have grown since the game was created, which shifts the PRNG index
+	// and causes getWordForDate to return a different word than the one stored in the game.
+	word := prngWord
 	if ins.RowsAffected > 0 {
 		game = newGame
 	} else {
 		if err := s.db.Where("user_id = ? AND game_date = ?", userID, date).First(&game).Error; err != nil {
 			return nil, fmt.Errorf("refetch game: %w", err)
+		}
+		if game.WordID != prngWord.ID {
+			var storedWord models.MannaWord
+			if err := s.db.First(&storedWord, game.WordID).Error; err != nil {
+				return nil, fmt.Errorf("load stored word: %w", err)
+			}
+			word = &storedWord
 		}
 	}
 

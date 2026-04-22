@@ -4,6 +4,8 @@
 
 UPDATE manna_words SET connection_note = 'David wrote Psalm 51 as a prayer of repentance. Its heading reads: "A psalm of David. When the prophet Nathan came to him after David had committed adultery with Bathsheba" (2 Samuel 11–12).' WHERE word = 'DAVID';
 
+-- HOSEA and ELIAS are in the manna_words_cleanup.sql deletion list; these UPDATEs
+-- are intentionally kept here as documentation but affect 0 rows at runtime.
 UPDATE manna_words SET connection_note = 'Hosea was a prophet in Israel''s northern kingdom whose life mirrored God''s faithfulness to an unfaithful people. This verse is from the book he authored.' WHERE word = 'HOSEA';
 
 UPDATE manna_words SET connection_note = 'Elias is the Greek and Latin form of the prophet''s name — the same figure called "Elijah" throughout the Old Testament. James uses this form in the New Testament.' WHERE word = 'ELIAS';
@@ -44,3 +46,94 @@ UPDATE manna_words
   SET scripture_reference = 'Psalm 120:5',
       scripture_text = 'Woe to me that I dwell in Meshek, that I live among the tents of Kedar!'
   WHERE word = 'KEDAR';
+
+-- Restore words whose DB scripture text was changed by a migration and no longer
+-- contains the target word, causing an invisible blank in the clue.
+UPDATE manna_words
+  SET scripture_reference = 'Isaiah 25:6',
+      scripture_text = 'On this mountain the LORD Almighty will prepare a feast of rich food for all peoples.'
+  WHERE word = 'FEAST';
+
+UPDATE manna_words
+  SET scripture_reference = 'Hebrews 1:7',
+      scripture_text = 'He makes his angels winds, and his ministers a flame of fire.'
+  WHERE word = 'FLAME';
+
+UPDATE manna_words
+  SET scripture_reference = 'James 1:5',
+      scripture_text = 'If any of you lacks wisdom, you should ask God, who gives generously to all without finding fault.'
+  WHERE word = 'GIVES';
+
+UPDATE manna_words
+  SET scripture_reference = 'Romans 8:26',
+      scripture_text = 'The Spirit helps us in our weakness. We do not know what we ought to pray for, but the Spirit himself intercedes for us.'
+  WHERE word = 'HELPS';
+
+UPDATE manna_words
+  SET scripture_reference = 'Psalm 95:6',
+      scripture_text = 'Come, let us bow down in worship, let us kneel before the LORD our Maker.'
+  WHERE word = 'KNEEL';
+
+UPDATE manna_words
+  SET scripture_reference = 'Galatians 2:20',
+      scripture_text = 'I have been crucified with Christ and I no longer live, but Christ lives in me.'
+  WHERE word = 'LIVES';
+
+UPDATE manna_words
+  SET scripture_reference = 'Job 9:15',
+      scripture_text = 'Though I were innocent, I could not answer him; I could only plead with my Judge for mercy.'
+  WHERE word = 'PLEAD';
+
+UPDATE manna_words
+  SET scripture_reference = 'Numbers 22:38',
+      scripture_text = 'I must speak only what God puts in my mouth.'
+  WHERE word = 'SPEAK';
+
+UPDATE manna_words
+  SET scripture_reference = 'Matthew 5:34',
+      scripture_text = 'But I tell you, do not swear an oath at all: either by heaven, for it is God''s throne.'
+  WHERE word = 'SWEAR';
+
+UPDATE manna_words
+  SET scripture_reference = 'Psalm 56:8',
+      scripture_text = 'You have kept count of my tossings; put my tears in your bottle.'
+  WHERE word = 'TEARS';
+
+UPDATE manna_words
+  SET scripture_reference = 'Matthew 18:20',
+      scripture_text = 'For where two or three gather in my name, there am I with them.'
+  WHERE word = 'THREE';
+
+-- MIGHT: DB stored the NIV "strength" translation; switch to KJV so the target
+-- word actually appears in the clue text.
+UPDATE manna_words
+  SET scripture_text = 'And thou shalt love the LORD thy God with all thine heart, and with all thy soul, and with all thy might.'
+  WHERE word = 'MIGHT' AND scripture_reference = 'Deuteronomy 6:5';
+
+-- ROOTS: update to Hosea 14:5 where the word appears literally.
+UPDATE manna_words
+  SET scripture_reference = 'Hosea 14:5',
+      scripture_text = 'I will be like the dew to Israel; he will blossom like a lily. Like a cedar of Lebanon he will send down his roots.'
+  WHERE word = 'ROOTS';
+
+-- GRANT: update to Matthew 20:21 where the word appears literally.
+UPDATE manna_words
+  SET scripture_reference = 'Matthew 20:21',
+      scripture_text = 'She said, Grant that one of these two sons of mine may sit at your right hand and the other at your left in your kingdom.'
+  WHERE word = 'GRANT';
+
+-- Words whose target is a concept rather than a word in the verse — connection
+-- notes explain the biblical link for players after the game ends.
+UPDATE manna_words
+  SET connection_note = 'The word "Bible" derives from the Greek "biblia" (books) and does not appear in scripture itself. Psalm 119, the longest chapter in the entire Bible, is a sweeping meditation on God''s living Word — the very collection we call the Bible today.'
+  WHERE word = 'BIBLE';
+
+UPDATE manna_words
+  SET connection_note = 'Romans 8:17 describes believers as co-heirs with Christ — joined together as children of God. The Greek term (sunkleronómos) literally means "joint heir," capturing the idea of being united and joined to Christ.'
+  WHERE word = 'JOINS';
+
+UPDATE manna_words
+  SET scripture_reference = 'Colossians 3:12',
+      scripture_text = 'Therefore, as God''s chosen people, holy and dearly loved, clothe yourselves with compassion, kindness, humility, gentleness and patience.',
+      connection_note = 'Paul''s image of "clothing yourselves" with virtues is a vivid picture of what one wears spiritually. The Greek word (enduo) means to put on or dress — the daily choice of what a believer wears in character before God and others.'
+  WHERE word = 'WEARS';
