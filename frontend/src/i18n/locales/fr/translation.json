@@ -1052,7 +1052,9 @@
     "save": "Enregistrer",
     "edit": "Modifier",
     "deleteConfirm": "Supprimer cette annotation?",
-    "delete": "Supprimer"
+    "delete": "Supprimer",
+    "saveError": "Impossible d'enregistrer l'annotation. Veuillez réessayer.",
+    "deleteError": "Impossible de supprimer l'annotation. Veuillez réessayer."
   },
   "plan": {
     "libraryTitle": "Plans de Lecture",
@@ -1134,7 +1136,9 @@
       "backToLibrary": "Retour à la bibliothèque",
       "dismiss": "Fermer",
       "shareText": "Je viens de terminer « {{title}} » — un plan de lecture de {{days}} jours sur Words of Praise ! 🙏"
-    }
+    },
+    "enrollError": "Impossible de démarrer ce plan. Veuillez réessayer.",
+    "unenrollError": "Impossible de quitter ce plan. Veuillez réessayer."
   },
   "graceDay": {
     "errors": {

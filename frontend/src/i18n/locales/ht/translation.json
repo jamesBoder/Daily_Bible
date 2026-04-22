@@ -1052,7 +1052,9 @@
     "save": "Sove",
     "edit": "Modifye",
     "deleteConfirm": "Efase anotasyon sa a?",
-    "delete": "Efase"
+    "delete": "Efase",
+    "saveError": "Pa ka sove anotasyon an. Tanpri eseye ankò.",
+    "deleteError": "Pa ka efase anotasyon an. Tanpri eseye ankò."
   },
   "plan": {
     "libraryTitle": "Plan Lekti",
@@ -1134,7 +1136,9 @@
       "backToLibrary": "Retounen nan bibliyotèk",
       "dismiss": "Fèmen",
       "shareText": "Mwen fini « {{title}} » — yon plan lekti {{days}} jou sou Words of Praise! 🙏"
-    }
+    },
+    "enrollError": "Pa ka kòmanse plan sa a. Tanpri eseye ankò.",
+    "unenrollError": "Pa ka kite plan sa a. Tanpri eseye ankò."
   },
   "graceDay": {
     "errors": {

@@ -7,6 +7,7 @@ import AnnotationEditor from './AnnotationEditor';
 import { useStreak } from '../../contexts/StreakContext';
 import { usePricingModal } from '../../hooks/usePricingModal';
 import { useSwipe } from '../../hooks/useSwipe';
+import { showToast } from '../../utils/toast';
 
 interface AnnotationPanelProps {
   verseReference: string;
@@ -46,6 +47,9 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
       qc.invalidateQueries({ queryKey: ['annotations-verse', verseReference] });
       setNewPhrase('');
       setNewNote('');
+    },
+    onError: () => {
+      showToast.error(t('annotation.saveError', 'Could not save annotation. Please try again.'));
     },
   });
 

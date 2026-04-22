@@ -6,6 +6,7 @@ import { ArrowLeft, LockSimple, CheckCircle, Warning } from '@phosphor-icons/rea
 import plansApi from '../../services/api/plans';
 import { useStreak } from '../../contexts/StreakContext';
 import { usePricingModal } from '../../hooks/usePricingModal';
+import { showToast } from '../../utils/toast';
 import PlanDayView from './PlanDayView';
 
 const PlanDetail: React.FC = () => {
@@ -33,6 +34,9 @@ const PlanDetail: React.FC = () => {
       qc.invalidateQueries({ queryKey: ['plans-my'] });
       setShowDayView(true);
     },
+    onError: () => {
+      showToast.error(t('plan.enrollError', 'Could not start this plan. Please try again.'));
+    },
   });
 
   const unenrollMutation = useMutation({
@@ -42,6 +46,9 @@ const PlanDetail: React.FC = () => {
       qc.invalidateQueries({ queryKey: ['plans-library'] });
       qc.invalidateQueries({ queryKey: ['plans-my'] });
       setConfirmUnenroll(false);
+    },
+    onError: () => {
+      showToast.error(t('plan.unenrollError', 'Could not leave this plan. Please try again.'));
     },
   });
 

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Pencil, Trash } from '@phosphor-icons/react';
 import annotationsApi, { type VerseAnnotation } from '../../services/api/annotations';
+import { showToast } from '../../utils/toast';
 
 interface AnnotationEditorProps {
   annotation: VerseAnnotation;
@@ -25,6 +26,9 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({ annotation, verseRe
       qc.invalidateQueries({ queryKey: ['annotations-verse', verseReference] });
       onDone();
     },
+    onError: () => {
+      showToast.error(t('annotation.saveError', 'Could not save annotation. Please try again.'));
+    },
   });
 
   const deleteMutation = useMutation({
@@ -32,6 +36,9 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({ annotation, verseRe
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['annotations-verse', verseReference] });
       onDone();
+    },
+    onError: () => {
+      showToast.error(t('annotation.deleteError', 'Could not delete annotation. Please try again.'));
     },
   });
 

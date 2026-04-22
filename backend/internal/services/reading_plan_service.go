@@ -171,6 +171,7 @@ func (s *ReadingPlanService) GetLibrary(userID uint, isPremium bool) ([]ReadingP
 					LastReadDay: prog.LastReadDay,
 					CompletedAt: prog.CompletedAt,
 					IsActive:    prog.IsActive,
+					PlanStreak:  prog.PlanStreak,
 				}
 			}
 		}

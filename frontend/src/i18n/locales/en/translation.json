@@ -1068,7 +1068,9 @@
     "save": "Save",
     "edit": "Edit",
     "deleteConfirm": "Delete this annotation?",
-    "delete": "Delete"
+    "delete": "Delete",
+    "saveError": "Could not save annotation. Please try again.",
+    "deleteError": "Could not delete annotation. Please try again."
   },
   "plan": {
     "libraryTitle": "Reading Plans",
@@ -1150,6 +1152,8 @@
       "backToLibrary": "Back to Library",
       "dismiss": "Dismiss",
       "shareText": "I just completed \"{{title}}\" — a {{days}}-day reading plan on Words of Praise! 🙏"
-    }
+    },
+    "enrollError": "Could not start this plan. Please try again.",
+    "unenrollError": "Could not leave this plan. Please try again."
   }
 }

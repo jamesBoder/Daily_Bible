@@ -1068,7 +1068,9 @@
     "save": "Guardar",
     "edit": "Editar",
     "deleteConfirm": "¿Eliminar esta anotación?",
-    "delete": "Eliminar"
+    "delete": "Eliminar",
+    "saveError": "No se pudo guardar la anotación. Por favor, inténtalo de nuevo.",
+    "deleteError": "No se pudo eliminar la anotación. Por favor, inténtalo de nuevo."
   },
   "plan": {
     "libraryTitle": "Planes de Lectura",
@@ -1150,6 +1152,8 @@
       "backToLibrary": "Volver a la biblioteca",
       "dismiss": "Cerrar",
       "shareText": "Acabo de completar \"{{title}}\" — ¡un plan de lectura de {{days}} días en Words of Praise! 🙏"
-    }
+    },
+    "enrollError": "No se pudo iniciar este plan. Por favor, inténtalo de nuevo.",
+    "unenrollError": "No se pudo salir de este plan. Por favor, inténtalo de nuevo."
   }
 }
