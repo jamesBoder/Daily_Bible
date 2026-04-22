@@ -49,6 +49,14 @@ func NewSearchService(db *gorm.DB) *SearchService {
 	return &SearchService{db: db}
 }
 
+// escapeLike escapes SQL LIKE wildcard characters in user-supplied query strings.
+func escapeLike(q string) string {
+	q = strings.ReplaceAll(q, `\`, `\\`)
+	q = strings.ReplaceAll(q, "%", `\%`)
+	q = strings.ReplaceAll(q, "_", `\_`)
+	return q
+}
+
 // SearchReflections performs a case-insensitive keyword search on the user's reflections.
 func (s *SearchService) SearchReflections(userID uint, query string) ([]ReflectionSearchResult, error) {
 	type row struct {
@@ -57,7 +65,7 @@ func (s *SearchService) SearchReflections(userID uint, query string) ([]Reflecti
 		CreatedAt      time.Time
 	}
 
-	like := "%" + strings.ToLower(query) + "%"
+	like := "%" + escapeLike(strings.ToLower(query)) + "%"
 	var rows []row
 	if err := s.db.Table("comments").
 		Select("verse_reference, comment_text, created_at").
@@ -82,7 +90,7 @@ func (s *SearchService) SearchReflections(userID uint, query string) ([]Reflecti
 
 // SearchJournal performs a case-insensitive keyword search on the user's journal entries.
 func (s *SearchService) SearchJournal(userID uint, query string) ([]JournalSearchResult, error) {
-	like := "%" + strings.ToLower(query) + "%"
+	like := "%" + escapeLike(strings.ToLower(query)) + "%"
 	var entries []models.JournalEntry
 	if err := s.db.Where("user_id = ? AND deleted_at IS NULL AND LOWER(content_plain) LIKE ?", userID, like).
 		Order("created_at DESC").

@@ -107,11 +107,9 @@ func (h *SubscriberHandler) Unsubscribe(c *gin.Context) {
 	result := h.db.Where("unsubscribe_token = ?", token).Delete(&models.EmailSubscriber{})
 	if result.Error != nil {
 		log.Printf("SubscriberHandler.Unsubscribe: DB error: %v", result.Error)
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Something went wrong."})
-		return
 	}
 
-	// Token not found — still return 200 to avoid token enumeration
+	// Always return 200 to avoid token enumeration regardless of DB outcome.
 	c.JSON(http.StatusOK, gin.H{"message": "You've been unsubscribed."})
 }
 

@@ -1138,6 +1138,9 @@
     },
     "digDeeper": "Dig deeper",
     "digDeeperStudy": "Further study",
+    "streakBadge": "{{count}}-day streak",
+    "streakStarted": "Streak started — keep reading!",
+    "streakMilestone": "{{count}}-day reading streak!",
     "certificate": {
       "title": "Certificate of Completion",
       "days": "days",

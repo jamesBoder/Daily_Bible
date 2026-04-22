@@ -4,6 +4,7 @@ import (
 	"dailybible/internal/models"
 	"dailybible/internal/repository"
 	"errors"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
@@ -39,6 +40,7 @@ type PlanProgressSummary struct {
 	LastReadDay int        `json:"last_read_day"`
 	CompletedAt *time.Time `json:"completed_at"`
 	IsActive    bool       `json:"is_active"`
+	PlanStreak  int        `json:"plan_streak"`
 }
 
 // ReadingPlanDetail includes the full entry list.
@@ -94,6 +96,7 @@ type UserPlanProgressDetail struct {
 	LastReadDay int        `json:"last_read_day"`
 	CompletedAt *time.Time `json:"completed_at"`
 	EnrolledAt  time.Time  `json:"enrolled_at"`
+	PlanStreak  int        `json:"plan_streak"`
 }
 
 // entryToResponse maps a ReadingPlanEntry model to its JSON response shape.
@@ -156,7 +159,7 @@ func (s *ReadingPlanService) GetLibrary(userID uint, isPremium bool) ([]ReadingP
 		return nil, err
 	}
 
-	now := time.Now().UTC()
+	now := time.Now().UTC().Add(-10 * time.Hour)
 	summaries := make([]ReadingPlanSummary, 0, len(plans))
 	for _, p := range plans {
 		sum := planToSummary(p, now)
@@ -194,7 +197,7 @@ func (s *ReadingPlanService) GetPlan(slug string, userID uint, isPremium bool) (
 		return nil, err
 	}
 
-	now := time.Now().UTC()
+	now := time.Now().UTC().Add(-10 * time.Hour)
 	detail := &ReadingPlanDetail{
 		ReadingPlanSummary: planToSummary(plan, now),
 		Entries:            make([]ReadingPlanEntryResponse, 0, len(entries)),
@@ -208,6 +211,7 @@ func (s *ReadingPlanService) GetPlan(slug string, userID uint, isPremium bool) (
 				LastReadDay: prog.LastReadDay,
 				CompletedAt: prog.CompletedAt,
 				IsActive:    prog.IsActive,
+				PlanStreak:  prog.PlanStreak,
 			}
 		}
 	}
@@ -247,10 +251,12 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 	if err := s.db.Where("user_id = ? AND plan_id = ? AND is_active = false", userID, plan.ID).
 		First(&inactive).Error; err == nil {
 		// Reactivate with reset progress.
-		inactive.IsActive    = true
-		inactive.LastReadDay = 0
-		inactive.CompletedAt = nil
-		inactive.EnrolledAt  = time.Now().UTC()
+		inactive.IsActive         = true
+		inactive.LastReadDay      = 0
+		inactive.CompletedAt      = nil
+		inactive.EnrolledAt       = time.Now().UTC()
+		inactive.PlanStreak       = 0
+		inactive.LastPlanReadDate = nil
 		if err := s.db.Save(&inactive).Error; err != nil {
 			return nil, err
 		}
@@ -312,23 +318,37 @@ func (s *ReadingPlanService) AdvanceDay(userID uint, slug string) (*models.UserP
 		now := time.Now().UTC()
 		prog.CompletedAt = &now
 	}
+
+	// Compute per-plan streak using UTC-10 date boundary.
+	utc10 := time.Now().UTC().Add(-10 * time.Hour)
+	todayStr := utc10.Format("2006-01-02")
+	yesterdayStr := utc10.AddDate(0, 0, -1).Format("2006-01-02")
+	switch {
+	case prog.LastPlanReadDate == nil:
+		prog.PlanStreak = 1
+	case *prog.LastPlanReadDate == todayStr:
+		// Already counted today — leave streak unchanged.
+	case *prog.LastPlanReadDate == yesterdayStr:
+		prog.PlanStreak++
+	default:
+		prog.PlanStreak = 1
+	}
+	dateStr := todayStr
+	prog.LastPlanReadDate = &dateStr
+
 	if err := s.db.Save(&prog).Error; err != nil {
 		return nil, false, err
 	}
 
-	blessings := s.blessingsService
-	uid := userID
-	completed := justCompleted
-	go func() {
-		defer func() { recover() }() //nolint:errcheck
-		amount := 10
-		reason := "read_plan_entry"
-		if completed {
-			amount = 50
-			reason = "complete_reading_plan"
-		}
-		_ , _ = blessings.Credit(uid, amount, reason, 1.0)
-	}()
+	amount := 10
+	reason := "read_plan_entry"
+	if justCompleted {
+		amount = 50
+		reason = "complete_reading_plan"
+	}
+	if _, err := s.blessingsService.Credit(userID, amount, reason, 1.0); err != nil {
+		log.Printf("blessings credit failed for user %d reason %s: %v", userID, reason, err)
+	}
 
 	return &prog, justCompleted, nil
 }
@@ -343,11 +363,12 @@ func (s *ReadingPlanService) GetActiveEnrollments(userID uint) ([]UserPlanProgre
 		LastReadDay int
 		CompletedAt *time.Time
 		EnrolledAt  time.Time
+		PlanStreak  int
 	}
 
 	var rows []row
 	if err := s.db.Table("user_plan_progresses upp").
-		Select("upp.plan_id, rp.slug, rp.title, rp.length_days, upp.last_read_day, upp.completed_at, upp.enrolled_at").
+		Select("upp.plan_id, rp.slug, rp.title, rp.length_days, upp.last_read_day, upp.completed_at, upp.enrolled_at, upp.plan_streak").
 		Joins("JOIN reading_plans rp ON rp.id = upp.plan_id").
 		Where("upp.user_id = ? AND upp.is_active = true", userID).
 		Order("upp.enrolled_at DESC").
@@ -365,6 +386,7 @@ func (s *ReadingPlanService) GetActiveEnrollments(userID uint) ([]UserPlanProgre
 			LastReadDay: r.LastReadDay,
 			CompletedAt: r.CompletedAt,
 			EnrolledAt:  r.EnrolledAt,
+			PlanStreak:  r.PlanStreak,
 		})
 	}
 	return out, nil
@@ -442,7 +464,7 @@ func (s *ReadingPlanService) GetPlanForToday(userID uint, slug string) (*Reading
 
 // GetCurrentSeasonalPlan returns the seasonal plan whose season dates include today.
 func (s *ReadingPlanService) GetCurrentSeasonalPlan() (*ReadingPlanSummary, error) {
-	now := time.Now().UTC()
+	now := time.Now().UTC().Add(-10 * time.Hour)
 	var plan models.ReadingPlan
 	err := s.db.Where(
 		"is_seasonal = true AND is_active = true AND season_start <= ? AND season_end >= ?",

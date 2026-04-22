@@ -1122,6 +1122,9 @@
     },
     "digDeeper": "Approfondir",
     "digDeeperStudy": "Étude complémentaire",
+    "streakBadge": "Série de {{count}} jours",
+    "streakStarted": "Série commencée — continuez à lire !",
+    "streakMilestone": "Série de {{count}} jours de lecture !",
     "certificate": {
       "title": "Certificat de réussite",
       "days": "jours",

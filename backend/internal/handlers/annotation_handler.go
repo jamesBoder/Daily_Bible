@@ -75,7 +75,7 @@ func (h *AnnotationHandler) Create(c *gin.Context) {
 
 	var body struct {
 		VerseReference string `json:"verse_reference" binding:"required"`
-		PhraseText     string `json:"phrase_text"`
+		PhraseText     string `json:"phrase_text" binding:"required"`
 		AnnotationText string `json:"annotation_text" binding:"required"`
 	}
 	if err := c.ShouldBindJSON(&body); err != nil {

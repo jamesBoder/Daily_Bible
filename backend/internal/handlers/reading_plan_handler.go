@@ -161,6 +161,7 @@ func (h *ReadingPlanHandler) Advance(c *gin.Context) {
 		"progress":         prog,
 		"just_completed":   justCompleted,
 		"blessings_earned": blessingsEarned,
+		"plan_streak":      prog.PlanStreak,
 	})
 }
 

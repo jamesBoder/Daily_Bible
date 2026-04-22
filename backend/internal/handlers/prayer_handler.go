@@ -49,7 +49,7 @@ func (h *PrayerHandler) CompleteRosary(c *gin.Context) {
 		return
 	}
 
-	today := time.Now().UTC().Truncate(24 * time.Hour)
+	today := time.Now().UTC().Add(-10 * time.Hour).Truncate(24 * time.Hour)
 
 	// Idempotency check: only credit once per calendar day
 	var existing models.RosaryCompletion
@@ -80,19 +80,17 @@ func (h *PrayerHandler) CompleteRosary(c *gin.Context) {
 		return
 	}
 
-	// Credit Blessings in background goroutine
-	bs := h.blessingsService
-	uid := userID
-	go func() {
-		defer func() { recover() }() //nolint:errcheck
-		_, _ = bs.Credit(uid, rosaryBlessings, "complete_rosary", 1.0)
-	}()
+	credited, err := h.blessingsService.Credit(userID, rosaryBlessings, "complete_rosary", 1.0)
+	if err != nil {
+		// Roll back the completion row so the idempotency guard doesn't block a retry.
+		h.db.Delete(&completion)
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to credit blessings"})
+		return
+	}
 
-	// Fetch updated balance for the response (slight race with the goroutine is
-	// acceptable — the frontend will refetch via React Query on focus).
 	balance, _ := h.blessingsService.GetBalance(userID)
 	c.JSON(http.StatusOK, gin.H{
-		"blessings_earned": rosaryBlessings,
+		"blessings_earned": credited,
 		"total_blessings":  balance,
 	})
 }

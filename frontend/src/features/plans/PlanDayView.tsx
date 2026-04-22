@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   ArrowLeft, CheckCircle, BookOpen, HandsPraying,
-  Lightning, Question, Star, ArrowSquareOut, CaretDown, CaretUp,
+  Lightning, Question, Star, ArrowSquareOut, CaretDown, CaretUp, Fire,
 } from '@phosphor-icons/react';
 import plansApi from '../../services/api/plans';
 import type { WordStudy } from '../../services/api/plans';
@@ -66,6 +66,10 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         setJustCompleted(true);
         setCompletedAt(new Date());
         SoundService.play('milestone');
+      } else if (data.plan_streak === 1) {
+        showToast.success(t('plan.streakStarted', 'Streak started — keep reading!'));
+      } else if (data.plan_streak > 0 && data.plan_streak % 7 === 0) {
+        showToast.success(t('plan.streakMilestone', '{{count}}-day reading streak!', { count: data.plan_streak }));
       }
     },
   });
@@ -137,11 +141,22 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
       )}
 
       {/* Day indicator */}
-      <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-0.5">
-        {t('plan.dayLabel', 'Day {{day}}', { day: entry.day_number })}
-        {' '}{t('plan.ofLabel', 'of')}{' '}
-        {plan?.length_days ?? '?'}
-      </p>
+      <div className="flex items-center justify-between mb-0.5">
+        <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400">
+          {t('plan.dayLabel', 'Day {{day}}', { day: entry.day_number })}
+          {' '}{t('plan.ofLabel', 'of')}{' '}
+          {plan?.length_days ?? '?'}
+        </p>
+        {(progress?.plan_streak ?? 0) >= 2 && (
+          <span
+            aria-label={t('plan.streakBadge', '{{count}}-day streak', { count: progress!.plan_streak })}
+            className="flex items-center gap-1 text-xs font-semibold text-orange-500 dark:text-orange-400"
+          >
+            <Fire size={14} weight="fill" aria-hidden />
+            {progress!.plan_streak}
+          </span>
+        )}
+      </div>
 
       {/* Day title */}
       {entry.day_title && (

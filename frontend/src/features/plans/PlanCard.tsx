@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { CheckCircle } from '@phosphor-icons/react';
+import { CheckCircle, Fire } from '@phosphor-icons/react';
 import type { UserPlanProgressDetail } from '../../services/api/plans';
 
 interface PlanCardProps {
@@ -33,14 +33,24 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onClick }) => {
     >
       <div className="flex items-start justify-between gap-2 mb-2">
         <span className="font-semibold text-sm text-gray-800 dark:text-gray-100 leading-snug">{plan.title}</span>
-        {isComplete && (
-          <CheckCircle
-            size={18}
-            weight="fill"
-            className="flex-shrink-0 mt-0.5"
-            style={{ color: 'var(--blessing-gold)' }}
-          />
-        )}
+        <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
+          {plan.plan_streak >= 2 && (
+            <span
+              aria-label={t('plan.streakBadge', '{{count}}-day streak', { count: plan.plan_streak })}
+              className="flex items-center gap-0.5 text-xs font-semibold text-orange-500 dark:text-orange-400"
+            >
+              <Fire size={14} weight="fill" aria-hidden />
+              {plan.plan_streak}
+            </span>
+          )}
+          {isComplete && (
+            <CheckCircle
+              size={18}
+              weight="fill"
+              style={{ color: 'var(--blessing-gold)' }}
+            />
+          )}
+        </div>
       </div>
 
       <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">

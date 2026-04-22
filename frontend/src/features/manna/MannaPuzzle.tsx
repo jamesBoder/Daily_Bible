@@ -114,7 +114,17 @@ interface GuestState {
 function loadGuestState(): GuestState {
   try {
     const stored = localStorage.getItem(guestStateKey());
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (
+        parsed &&
+        typeof parsed === 'object' &&
+        Array.isArray(parsed.guesses) &&
+        typeof parsed.status === 'string'
+      ) {
+        return parsed as GuestState;
+      }
+    }
   } catch { /* ignore */ }
   return { guesses: [], status: 'in_progress' };
 }
@@ -203,6 +213,7 @@ export const MannaPuzzle: React.FC = () => {
 
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
+  const [loadErrorMsg, setLoadErrorMsg] = useState<string | null>(null);
   const [fetchKey, setFetchKey] = useState(0);
   const [locked, setLocked] = useState(false);
   const [yesterdayData, setYesterdayData] = useState<YesterdayResult | null>(null);
@@ -366,12 +377,19 @@ export const MannaPuzzle: React.FC = () => {
 
     setLoading(true);
     setLoadError(false);
+    setLoadErrorMsg(null);
 
     // Attempt fetch — if it fails, wait 3 seconds and retry once automatically
     // before showing the error screen. Covers the backend restart window (~2–5s).
     attemptFetch()
       .catch(() => new Promise<void>(resolve => setTimeout(resolve, 3000)).then(attemptFetch))
-      .catch(() => { if (!cancelled) setLoadError(true); })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setLoadError(true);
+          const msg = (err as { response?: { data?: { error?: unknown } } })?.response?.data?.error;
+          setLoadErrorMsg(typeof msg === 'string' ? msg : null);
+        }
+      })
       .finally(() => { if (!cancelled) setLoading(false); });
 
     return () => { cancelled = true; };
@@ -837,7 +855,7 @@ export const MannaPuzzle: React.FC = () => {
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
         <div className="text-5xl" aria-hidden>🌾</div>
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          {t('manna.errorLoading', "Failed to load today's puzzle.")}
+          {loadErrorMsg ?? t('manna.errorLoading', "Failed to load today's puzzle.")}
         </p>
         <button
           onClick={() => { setGame(null); setLocked(false); setLoadError(false); setFetchKey(k => k + 1); }}

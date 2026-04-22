@@ -82,7 +82,7 @@ const EndOfDayModal: React.FC<EndOfDayModalProps> = ({ streak, onDismiss }) => {
               <button
                 onClick={onDismiss}
                 className="w-full py-3 px-4 bg-gradient-to-r from-amber-500 to-yellow-500 hover:from-amber-600 hover:to-yellow-600 text-white font-semibold rounded-2xl transition-all duration-200 hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-amber-400 focus:ring-offset-2 shadow-lg shadow-amber-200/50 dark:shadow-amber-900/30"
-                autoFocus
+                autoFocus={window.matchMedia('(hover: hover)').matches}
               >
                 {t('endOfDay.cta', 'See you tomorrow')}
               </button>

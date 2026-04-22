@@ -61,14 +61,18 @@ type ReadingPlanEntry struct {
 // LastReadDay = N means day N was the last day completed.
 // CompletedAt is set when LastReadDay == plan.LengthDays.
 // IsActive = false when the user has unenrolled.
+// PlanStreak counts consecutive UTC-10 days the user has read this plan.
+// LastPlanReadDate is "YYYY-MM-DD" in UTC-10 — stored as string to avoid timezone ambiguity.
 type UserPlanProgress struct {
-	ID          uint       `gorm:"primaryKey;autoIncrement"`
-	UserID      uint       `gorm:"index;uniqueIndex:idx_user_plan_progress"`
-	PlanID      uint       `gorm:"uniqueIndex:idx_user_plan_progress"`
-	EnrolledAt  time.Time
-	LastReadDay int        `gorm:"default:0"`
-	CompletedAt *time.Time
-	IsActive    bool       `gorm:"default:true"`
-	CreatedAt   time.Time
-	UpdatedAt   time.Time
+	ID                uint       `gorm:"primaryKey;autoIncrement"`
+	UserID            uint       `gorm:"index;uniqueIndex:idx_user_plan_progress"`
+	PlanID            uint       `gorm:"uniqueIndex:idx_user_plan_progress"`
+	EnrolledAt        time.Time
+	LastReadDay       int        `gorm:"default:0"`
+	CompletedAt       *time.Time
+	IsActive          bool       `gorm:"default:true"`
+	PlanStreak        int        `gorm:"default:0"`
+	LastPlanReadDate  *string    `gorm:"type:varchar(10)"` // "YYYY-MM-DD" in UTC-10
+	CreatedAt         time.Time
+	UpdatedAt         time.Time
 }

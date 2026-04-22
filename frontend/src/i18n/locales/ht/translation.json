@@ -1122,6 +1122,9 @@
     },
     "digDeeper": "Fouye pi fon",
     "digDeeperStudy": "Etid siplemantè",
+    "streakBadge": "Seri {{count}} jou",
+    "streakStarted": "Seri kòmanse — kontinye li!",
+    "streakMilestone": "Seri {{count}} jou lekti!",
     "certificate": {
       "title": "Sètifika Akonplisman",
       "days": "jou",

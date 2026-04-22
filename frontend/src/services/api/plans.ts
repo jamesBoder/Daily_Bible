@@ -23,6 +23,7 @@ export interface PlanProgressSummary {
   last_read_day: number;
   completed_at: string | null;
   is_active: boolean;
+  plan_streak: number;
 }
 
 export interface ReadingPlanSummary {
@@ -73,6 +74,7 @@ export interface UserPlanProgressDetail {
   last_read_day: number;
   completed_at: string | null;
   enrolled_at: string;
+  plan_streak: number;
 }
 
 export interface AdvanceResponse {
@@ -86,6 +88,7 @@ export interface AdvanceResponse {
   };
   just_completed: boolean;
   blessings_earned: number;
+  plan_streak: number;
 }
 
 const plansApi = {
