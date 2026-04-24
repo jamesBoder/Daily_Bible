@@ -102,8 +102,8 @@ func (s *SearchService) SearchJournal(userID uint, query string) ([]JournalSearc
 	results := make([]JournalSearchResult, 0, len(entries))
 	for _, e := range entries {
 		preview := e.ContentPlain
-		if len(preview) > 200 {
-			preview = preview[:200] + "…"
+		if pr := []rune(preview); len(pr) > 200 {
+			preview = string(pr[:200]) + "…"
 		}
 		results = append(results, JournalSearchResult{
 			ID:             e.ID,
@@ -184,29 +184,33 @@ func (s *SearchService) DeleteSavedSearch(userID uint, searchID uint) error {
 }
 
 // buildExcerpt returns a snippet of text around the first occurrence of query.
+// Operates on rune slices to avoid splitting multi-byte UTF-8 characters.
 func buildExcerpt(text, query string, maxLen int) string {
+	runes := []rune(text)
 	lower := strings.ToLower(text)
 	lq := strings.ToLower(query)
-	idx := strings.Index(lower, lq)
-	if idx == -1 {
-		if len(text) > maxLen {
-			return text[:maxLen] + "…"
+	byteIdx := strings.Index(lower, lq)
+	if byteIdx == -1 {
+		if len(runes) > maxLen {
+			return string(runes[:maxLen]) + "…"
 		}
 		return text
 	}
-	start := idx - 30
+	// Convert byte index to rune index.
+	runeIdx := len([]rune(text[:byteIdx]))
+	start := runeIdx - 30
 	if start < 0 {
 		start = 0
 	}
 	end := start + maxLen
-	if end > len(text) {
-		end = len(text)
+	if end > len(runes) {
+		end = len(runes)
 	}
-	excerpt := text[start:end]
+	excerpt := string(runes[start:end])
 	if start > 0 {
 		excerpt = "…" + excerpt
 	}
-	if end < len(text) {
+	if end < len(runes) {
 		excerpt = excerpt + "…"
 	}
 	return excerpt

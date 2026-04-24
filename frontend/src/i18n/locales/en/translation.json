@@ -638,7 +638,21 @@
     "saveThisSearch": "Save this search",
     "searchName": "Name (optional)",
     "saved": "Save",
-    "noSavedSearches": "No saved searches yet."
+    "noSavedSearches": "No saved searches yet.",
+    "tutorial": {
+      "title": "Search Scripture",
+      "subtitle": "Find any verse, word, or passage in the Bible instantly.",
+      "step1Title": "Search by keyword or reference",
+      "step1Body": "Type a word, phrase, or reference like \"John 3:16\" to find matching verses across the Bible.",
+      "step2Title": "Browse results",
+      "step2Body": "Each result shows the verse text and reference. Tap a verse to see full details and actions.",
+      "step3Title": "Save what speaks to you",
+      "step3Body": "Tap the heart icon on any result to add it to your Favorites for later.",
+      "step4Title": "Multiple translations",
+      "step4Body": "Results pull from all supported Bible translations. Premium members can also save and revisit their search history.",
+      "cta": "Start Searching",
+      "reopenHint": "Tap ? anytime to see this guide again."
+    }
   },
   "common": {
     "loading": "Loading...",
@@ -647,6 +661,7 @@
     "cancel": "Cancel",
     "confirm": "Confirm",
     "save": "Save",
+    "saving": "Saving…",
     "delete": "Delete",
     "edit": "Edit",
     "close": "Close",
@@ -1155,5 +1170,21 @@
     },
     "enrollError": "Could not start this plan. Please try again.",
     "unenrollError": "Could not leave this plan. Please try again."
+  },
+  "plans": {
+    "title": "Reading Plans",
+    "seasonal": "Seasonal",
+    "library": "Plan Library",
+    "premiumLabel": "Devoted Member",
+    "nDays": "{{count}} days",
+    "freeLabel": "Free",
+    "complete": "Path Complete",
+    "dayOf": "Day {{day}} of {{total}}",
+    "continueReading": "Continue Reading",
+    "enroll": "Begin this Path",
+    "unenroll": "Leave",
+    "unenrollConfirm": "Leave \"{{title}}\"? Your progress will be lost.",
+    "blessingsEarned": "+{{count}} Blessings",
+    "seasonalBannerSub": "A reading path is available for this season"
   }
 }

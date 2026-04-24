@@ -638,7 +638,21 @@
     "saveThisSearch": "Sove rechèch sa a",
     "searchName": "Non (opsyonèl)",
     "saved": "Sove",
-    "noSavedSearches": "Pa gen rechèch sove pou kounye a."
+    "noSavedSearches": "Pa gen rechèch sove pou kounye a.",
+    "tutorial": {
+      "title": "Chèche nan Ekriti Yo",
+      "subtitle": "Jwenn nenpòt vèsè, mo, oswa pasaj nan Bib la imedyatman.",
+      "step1Title": "Chèche pa mo kle oswa referans",
+      "step1Body": "Tape yon mo, fraz, oswa referans tankou \"Jan 3:16\" pou jwenn vèsè yo nan tout Bib la.",
+      "step2Title": "Navige rezilta yo",
+      "step2Body": "Chak rezilta montre tèks ak referans vèsè a. Peze sou yon vèsè pou wè detay ak aksyon yo.",
+      "step3Title": "Sovgade sa ki pale ak ou",
+      "step3Body": "Peze ikòn kè a sou nenpòt rezilta pou ajoute li nan Favoris ou yo.",
+      "step4Title": "Plizyè tradiksyon",
+      "step4Body": "Rezilta yo soti nan tout tradiksyon Bib ki sipòte yo. Manm premium yo ka tou sovgade epi revize istwa rechèch yo.",
+      "cta": "Kòmanse Chèche",
+      "reopenHint": "Peze ? nenpòt ki lè pou wè gid sa a ankò."
+    }
   },
   "common": {
     "loading": "Ap chaje...",
@@ -647,6 +661,7 @@
     "cancel": "Anile",
     "confirm": "Konfime",
     "save": "Anrejistre",
+    "saving": "Ap sovgade…",
     "delete": "Efase",
     "edit": "Modifye",
     "close": "Fèmen",
@@ -1139,6 +1154,22 @@
     },
     "enrollError": "Pa ka kòmanse plan sa a. Tanpri eseye ankò.",
     "unenrollError": "Pa ka kite plan sa a. Tanpri eseye ankò."
+  },
+  "plans": {
+    "title": "Plan Lekti",
+    "seasonal": "Sezon",
+    "library": "Bibliyotèk Plan Yo",
+    "premiumLabel": "Manm Devot",
+    "nDays": "{{count}} jou",
+    "freeLabel": "Gratis",
+    "complete": "Chemen Konplète",
+    "dayOf": "Jou {{day}} nan {{total}}",
+    "continueReading": "Kontinye Lekti",
+    "enroll": "Kòmanse Chemen Sa a",
+    "unenroll": "Kite",
+    "unenrollConfirm": "Kite \"{{title}}\"? Pwogrè ou ap pèdu.",
+    "blessingsEarned": "+{{count}} Benediksyon",
+    "seasonalBannerSub": "Gen yon plan lekti disponib pou sezon sa a"
   },
   "graceDay": {
     "errors": {

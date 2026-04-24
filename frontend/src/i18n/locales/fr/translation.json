@@ -638,7 +638,21 @@
     "saveThisSearch": "Sauvegarder cette recherche",
     "searchName": "Nom (facultatif)",
     "saved": "Sauvegarder",
-    "noSavedSearches": "Aucune recherche sauvegardée."
+    "noSavedSearches": "Aucune recherche sauvegardée.",
+    "tutorial": {
+      "title": "Chercher dans les Écritures",
+      "subtitle": "Trouvez n'importe quel verset, mot ou passage de la Bible instantanément.",
+      "step1Title": "Recherche par mot-clé ou référence",
+      "step1Body": "Tapez un mot, une phrase ou une référence comme \"Jean 3:16\" pour trouver des versets dans toute la Bible.",
+      "step2Title": "Parcourir les résultats",
+      "step2Body": "Chaque résultat affiche le texte et la référence du verset. Appuyez sur un verset pour voir les détails et les actions.",
+      "step3Title": "Sauvegardez ce qui vous touche",
+      "step3Body": "Appuyez sur l'icône cœur sur n'importe quel résultat pour l'ajouter à vos Favoris.",
+      "step4Title": "Plusieurs traductions",
+      "step4Body": "Les résultats proviennent de toutes les traductions bibliques supportées. Les membres premium peuvent également enregistrer et revoir leur historique de recherche.",
+      "cta": "Commencer la Recherche",
+      "reopenHint": "Appuyez sur ? à tout moment pour revoir ce guide."
+    }
   },
   "common": {
     "loading": "Chargement...",
@@ -647,6 +661,7 @@
     "cancel": "Annuler",
     "confirm": "Confirmer",
     "save": "Enregistrer",
+    "saving": "Enregistrement…",
     "delete": "Supprimer",
     "edit": "Modifier",
     "close": "Fermer",
@@ -1139,6 +1154,22 @@
     },
     "enrollError": "Impossible de démarrer ce plan. Veuillez réessayer.",
     "unenrollError": "Impossible de quitter ce plan. Veuillez réessayer."
+  },
+  "plans": {
+    "title": "Plans de Lecture",
+    "seasonal": "Saisonnier",
+    "library": "Bibliothèque des Plans",
+    "premiumLabel": "Membre Dévoué",
+    "nDays": "{{count}} jours",
+    "freeLabel": "Gratuit",
+    "complete": "Chemin Terminé",
+    "dayOf": "Jour {{day}} sur {{total}}",
+    "continueReading": "Continuer la Lecture",
+    "enroll": "Commencer ce Chemin",
+    "unenroll": "Quitter",
+    "unenrollConfirm": "Quitter \"{{title}}\" ? Votre progression sera perdue.",
+    "blessingsEarned": "+{{count}} Bénédictions",
+    "seasonalBannerSub": "Un plan de lecture est disponible pour cette saison"
   },
   "graceDay": {
     "errors": {

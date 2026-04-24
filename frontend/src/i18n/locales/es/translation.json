@@ -638,7 +638,21 @@
     "saveThisSearch": "Guardar esta búsqueda",
     "searchName": "Nombre (opcional)",
     "saved": "Guardar",
-    "noSavedSearches": "Sin búsquedas guardadas aún."
+    "noSavedSearches": "Sin búsquedas guardadas aún.",
+    "tutorial": {
+      "title": "Buscar en las Escrituras",
+      "subtitle": "Encuentra cualquier versículo, palabra o pasaje en la Biblia al instante.",
+      "step1Title": "Busca por palabra clave o referencia",
+      "step1Body": "Escribe una palabra, frase o referencia como \"Juan 3:16\" para encontrar versículos en toda la Biblia.",
+      "step2Title": "Examina los resultados",
+      "step2Body": "Cada resultado muestra el texto y la referencia del versículo. Toca un versículo para ver detalles y acciones.",
+      "step3Title": "Guarda lo que te inspira",
+      "step3Body": "Toca el ícono de corazón en cualquier resultado para añadirlo a tus Favoritos.",
+      "step4Title": "Varias traducciones",
+      "step4Body": "Los resultados provienen de todas las traducciones bíblicas disponibles. Los miembros premium también pueden guardar y revisar su historial de búsqueda.",
+      "cta": "Comenzar a Buscar",
+      "reopenHint": "Toca ? en cualquier momento para ver esta guía de nuevo."
+    }
   },
   "common": {
     "loading": "Cargando...",
@@ -647,6 +661,7 @@
     "cancel": "Cancelar",
     "confirm": "Confirmar",
     "save": "Guardar",
+    "saving": "Guardando…",
     "delete": "Eliminar",
     "edit": "Editar",
     "close": "Cerrar",
@@ -1155,5 +1170,21 @@
     },
     "enrollError": "No se pudo iniciar este plan. Por favor, inténtalo de nuevo.",
     "unenrollError": "No se pudo salir de este plan. Por favor, inténtalo de nuevo."
+  },
+  "plans": {
+    "title": "Planes de Lectura",
+    "seasonal": "Temporada",
+    "library": "Biblioteca de Planes",
+    "premiumLabel": "Miembro Devoto",
+    "nDays": "{{count}} días",
+    "freeLabel": "Gratis",
+    "complete": "Camino Completado",
+    "dayOf": "Día {{day}} de {{total}}",
+    "continueReading": "Continuar Leyendo",
+    "enroll": "Comenzar este Camino",
+    "unenroll": "Salir",
+    "unenrollConfirm": "¿Salir de \"{{title}}\"? Tu progreso se perderá.",
+    "blessingsEarned": "+{{count}} Bendiciones",
+    "seasonalBannerSub": "Hay un plan de lectura disponible para esta temporada"
   }
 }
