@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { BookOpen, Scroll, Palette, CalendarCheck, Sparkle, Heart } from '@phosphor-icons/react';
+import { CalendarCheck, Sparkle, Heart } from '@phosphor-icons/react';
 import { useStreak } from '../../contexts/StreakContext';
 import { showToast } from '../../utils/toast';
 
@@ -14,53 +14,11 @@ interface OTPProduct {
 
 const PRODUCTS: OTPProduct[] = [
   {
-    key: 'journal_unlock',
-    icon: <BookOpen size={24} weight="duotone" />,
-    titleKey: 'otp.journal_unlock.title',
-    descKey: 'otp.journal_unlock.desc',
-    priceKey: 'otp.journal_unlock.price',
-  },
-  {
-    key: 'reflection_archive',
-    icon: <Scroll size={24} weight="duotone" />,
-    titleKey: 'otp.reflection_archive.title',
-    descKey: 'otp.reflection_archive.desc',
-    priceKey: 'otp.reflection_archive.price',
-  },
-  {
-    key: 'modern_translations',
-    icon: <Scroll size={24} weight="duotone" />,
-    titleKey: 'otp.modern_translations.title',
-    descKey: 'otp.modern_translations.desc',
-    priceKey: 'otp.modern_translations.price',
-  },
-  {
-    key: 'grace_day_pack',
-    icon: <CalendarCheck size={24} weight="duotone" />,
-    titleKey: 'otp.grace_day_pack.title',
-    descKey: 'otp.grace_day_pack.desc',
-    priceKey: 'otp.grace_day_pack.price',
-  },
-  {
-    key: 'theme_sanctuary',
-    icon: <Palette size={24} weight="duotone" />,
-    titleKey: 'otp.theme_sanctuary.title',
-    descKey: 'otp.theme_sanctuary.desc',
-    priceKey: 'otp.theme_sanctuary.price',
-  },
-  {
-    key: 'theme_desert_sand',
-    icon: <Palette size={24} weight="duotone" />,
-    titleKey: 'otp.theme_desert_sand.title',
-    descKey: 'otp.theme_desert_sand.desc',
-    priceKey: 'otp.theme_desert_sand.price',
-  },
-  {
-    key: 'theme_celestial',
-    icon: <Palette size={24} weight="duotone" />,
-    titleKey: 'otp.theme_celestial.title',
-    descKey: 'otp.theme_celestial.desc',
-    priceKey: 'otp.theme_celestial.price',
+    key: 'support_developer',
+    icon: <Heart size={24} weight="fill" style={{ color: 'var(--candle-amber)' }} />,
+    titleKey: 'otp.support_developer.title',
+    descKey: 'otp.support_developer.desc',
+    priceKey: 'otp.support_developer.price',
   },
   {
     key: 'full_theme_library',
@@ -70,11 +28,11 @@ const PRODUCTS: OTPProduct[] = [
     priceKey: 'otp.full_theme_library.price',
   },
   {
-    key: 'support_developer',
-    icon: <Heart size={24} weight="fill" style={{ color: 'var(--candle-amber)' }} />,
-    titleKey: 'otp.support_developer.title',
-    descKey: 'otp.support_developer.desc',
-    priceKey: 'otp.support_developer.price',
+    key: 'grace_day_pack',
+    icon: <CalendarCheck size={24} weight="duotone" />,
+    titleKey: 'otp.grace_day_pack.title',
+    descKey: 'otp.grace_day_pack.desc',
+    priceKey: 'otp.grace_day_pack.price',
   },
 ];
 
@@ -82,16 +40,11 @@ export const OneTimePurchaseSection: React.FC<{ ownedKeys?: string[]; hideHeader
   const { t } = useTranslation();
   const { startOneTimePurchase } = useStreak();
   const [loadingKey, setLoadingKey] = useState<string | null>(null);
-  const [thankYouVisible, setThankYouVisible] = useState(false);
 
   const handlePurchase = async (key: string) => {
     setLoadingKey(key);
     try {
       await startOneTimePurchase(key);
-      // For the Support product show a thank-you overlay before redirect
-      if (key === 'support_developer') {
-        setThankYouVisible(true);
-      }
     } catch (err: any) {
       setLoadingKey(null);
       const msg = err?.response?.data?.error ?? t('otp.purchase_error', 'Could not start checkout. Please try again.');
@@ -145,28 +98,6 @@ export const OneTimePurchaseSection: React.FC<{ ownedKeys?: string[]; hideHeader
         })}
       </div>
 
-      {/* Full-screen thank-you overlay for Support purchases */}
-      {thankYouVisible && (
-        <div
-          className="otp-thankyou-overlay"
-          role="dialog"
-          aria-modal="true"
-          aria-label={t('otp.support_developer.thankyou_label', 'Thank you')}
-          onClick={() => setThankYouVisible(false)}
-        >
-          <div className="otp-thankyou-overlay__content">
-            <Heart size={64} weight="fill" style={{ color: 'var(--candle-amber)' }} />
-            <h2>{t('otp.support_developer.thankyou_title', 'Thank You!')}</h2>
-            <p>{t('otp.support_developer.thankyou_body', 'Your support means the world.')}</p>
-            <button
-              className="subscription-cta-btn subscription-cta-btn--primary"
-              onClick={() => setThankYouVisible(false)}
-            >
-              {t('common.close', 'Close')}
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 };
