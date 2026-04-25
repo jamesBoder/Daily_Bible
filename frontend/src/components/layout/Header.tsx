@@ -12,7 +12,6 @@ import {
   HandsPraying,
   Sun,
   Moon,
-  UsersThree,
   Heart,
   NotePencil,
   Storefront,
@@ -161,11 +160,6 @@ export const Header: React.FC = () => {
               <HandsPraying size={14} weight="duotone" className="shrink-0" />
               {t("nav.prayer", "Prayer")}
             </NavLink>
-            <NavLink to="/community" className={navLinkDesktop}>
-              <UsersThree size={14} weight="duotone" className="shrink-0" />
-              {t("nav.leaderboard", "Community")}
-            </NavLink>
-
             {/* ── More dropdown ──────────────────────────────────────────── */}
             <div className="relative" ref={moreRef}>
               <button

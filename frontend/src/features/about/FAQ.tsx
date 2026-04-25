@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 interface FAQItem {
   qKey: string;
   aKey: string;
+  sectionKey?: string;
 }
 
 const FAQ_ITEMS: FAQItem[] = [
@@ -15,6 +16,11 @@ const FAQ_ITEMS: FAQItem[] = [
   { qKey: 'about.faq.q6', aKey: 'about.faq.a6' },
   { qKey: 'about.faq.q7', aKey: 'about.faq.a7' },
   { qKey: 'about.faq.q8', aKey: 'about.faq.a8' },
+  { qKey: 'about.faq.q9',  aKey: 'about.faq.a9',  sectionKey: 'about.faq.troubleshootingSection' },
+  { qKey: 'about.faq.q10', aKey: 'about.faq.a10' },
+  { qKey: 'about.faq.q11', aKey: 'about.faq.a11' },
+  { qKey: 'about.faq.q12', aKey: 'about.faq.a12' },
+  { qKey: 'about.faq.q13', aKey: 'about.faq.a13' },
 ];
 
 export const FAQ: React.FC = () => {
@@ -33,50 +39,60 @@ export const FAQ: React.FC = () => {
       </p>
 
       <div className="space-y-3">
-        {FAQ_ITEMS.map(({ qKey, aKey }, i) => {
+        {FAQ_ITEMS.map(({ qKey, aKey, sectionKey }, i) => {
           const isOpen = openIndex === i;
           return (
-            <div
-              key={qKey}
-              className={[
-                'rounded-2xl border transition-all duration-200',
-                isOpen
-                  ? 'border-primary-300 dark:border-primary-700 bg-primary-50/60 dark:bg-primary-900/20'
-                  : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60',
-              ].join(' ')}
-            >
-              <button
-                onClick={() => toggle(i)}
-                className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
-                aria-expanded={isOpen}
-              >
-                <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
-                  {t(qKey)}
-                </span>
-                <svg
-                  className={[
-                    'shrink-0 w-5 h-5 text-primary-500 dark:text-primary-400 transition-transform duration-200',
-                    isOpen ? 'rotate-180' : '',
-                  ].join(' ')}
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                </svg>
-              </button>
-
+            <React.Fragment key={qKey}>
+              {sectionKey && (
+                <div className="flex items-center gap-3 pt-4 pb-1">
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 shrink-0">
+                    {t(sectionKey)}
+                  </span>
+                  <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                </div>
+              )}
               <div
                 className={[
-                  'overflow-hidden transition-all duration-200',
-                  isOpen ? 'max-h-96' : 'max-h-0',
+                  'rounded-2xl border transition-all duration-200',
+                  isOpen
+                    ? 'border-primary-300 dark:border-primary-700 bg-primary-50/60 dark:bg-primary-900/20'
+                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60',
                 ].join(' ')}
               >
-                <p className="px-6 pb-5 text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
-                  {t(aKey)}
-                </p>
+                <button
+                  onClick={() => toggle(i)}
+                  className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
+                  aria-expanded={isOpen}
+                >
+                  <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
+                    {t(qKey)}
+                  </span>
+                  <svg
+                    className={[
+                      'shrink-0 w-5 h-5 text-primary-500 dark:text-primary-400 transition-transform duration-200',
+                      isOpen ? 'rotate-180' : '',
+                    ].join(' ')}
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+
+                <div
+                  className={[
+                    'overflow-hidden transition-all duration-200',
+                    isOpen ? 'max-h-[32rem]' : 'max-h-0',
+                  ].join(' ')}
+                >
+                  <p className="px-6 pb-5 text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                    {t(aKey)}
+                  </p>
+                </div>
               </div>
-            </div>
+            </React.Fragment>
           );
         })}
       </div>

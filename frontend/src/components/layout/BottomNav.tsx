@@ -5,7 +5,6 @@ import { useAuth } from '../../hooks/useAuth';
 import {
   House,
   TextT,
-  Users,
   Crown,
   List,
   Heart,
@@ -66,8 +65,8 @@ const BottomNav: React.FC = () => {
   };
 
   // Pill indicator position — derived from current route / sheet state
-  const tabPaths = ['/daily', '/manna', '/community', '/shop'];
-  const moreRoutes = ['/favorites', '/journal', '/search', '/plans', '/prayer', '/settings', '/profile', '/account'];
+  const tabPaths = ['/daily', '/manna', '/plans', '/shop'];
+  const moreRoutes = ['/favorites', '/journal', '/search', '/prayer', '/settings', '/profile', '/account'];
   const isMoreRoute = moreRoutes.some(p => location.pathname === p || location.pathname.startsWith(p + '/'));
   const activePillIndex = sheetOpen || isMoreRoute
     ? 4
@@ -157,19 +156,19 @@ const BottomNav: React.FC = () => {
             )}
           </NavLink>
 
-          {/* Community — open to all visitors */}
+          {/* Reading Plans */}
           <NavLink
-            to="/community"
+            to="/plans"
             onClick={haptic}
             className={({ isActive }) =>
               `${tabBase} ${isActive ? tabActive : tabInactive}`
             }
-            aria-label={t('nav.leaderboard', 'Community')}
+            aria-label={t('nav.plans', 'Plans')}
           >
             {({ isActive }) => (
               <>
-                <Users size={22} weight={isActive ? 'fill' : 'regular'} />
-                <span className="truncate w-full text-center">{t('nav.leaderboard', 'Community')}</span>
+                <Path size={22} weight={isActive ? 'fill' : 'regular'} />
+                <span className="truncate w-full text-center">{t('nav.plansTab', 'Plans')}</span>
               </>
             )}
           </NavLink>
@@ -331,20 +330,6 @@ const BottomNav: React.FC = () => {
               <MagnifyingGlass size={20} weight="duotone" />
               <span className="flex-1">{t('nav.search', 'Search')}</span>
               {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
-            </NavLink>
-
-            <NavLink
-              to="/plans"
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
-                  isActive
-                    ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
-                }`
-              }
-            >
-              <Path size={20} weight="duotone" />
-              {t('nav.plans', 'Reading Plans')}
             </NavLink>
 
             <NavLink
