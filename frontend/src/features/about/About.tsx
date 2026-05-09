@@ -8,12 +8,12 @@ import EmailCapture from '../../components/EmailCapture';
 export const AboutContent: React.FC = () => {
   const { t } = useTranslation();
 
-  const features = [
+  const features: { emoji: string; titleKey: string; descKey: string; comingSoon?: boolean }[] = [
     { emoji: '📖', titleKey: 'about.feature1Title', descKey: 'about.feature1Desc' },
     { emoji: '✍️', titleKey: 'about.feature2Title', descKey: 'about.feature2Desc' },
     { emoji: '🔤', titleKey: 'about.feature3Title', descKey: 'about.feature3Desc' },
     { emoji: '🔥', titleKey: 'about.feature4Title', descKey: 'about.feature4Desc' },
-    { emoji: '👥', titleKey: 'about.feature5Title', descKey: 'about.feature5Desc' },
+    { emoji: '👥', titleKey: 'about.feature5Title', descKey: 'about.feature5Desc', comingSoon: true },
     { emoji: '📚', titleKey: 'about.feature6Title', descKey: 'about.feature6Desc' },
     { emoji: '🎨', titleKey: 'about.feature7Title', descKey: 'about.feature7Desc' },
     { emoji: '🌐', titleKey: 'about.feature8Title', descKey: 'about.feature8Desc' },
@@ -60,11 +60,20 @@ export const AboutContent: React.FC = () => {
           {t('about.features')}
         </h2>
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 max-w-6xl mx-auto">
-          {features.map(({ emoji, titleKey, descKey }) => (
+          {features.map(({ emoji, titleKey, descKey, comingSoon }) => (
             <div
               key={titleKey}
-              className="group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600 text-center"
+              className={`group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border text-center relative ${
+                comingSoon
+                  ? 'border-dashed border-gray-300 dark:border-gray-600 opacity-75'
+                  : 'border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600'
+              }`}
             >
+              {comingSoon && (
+                <span className="absolute top-3 right-3 text-xs font-semibold px-2 py-0.5 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400">
+                  {t('common.comingSoon')}
+                </span>
+              )}
               <div className="text-4xl mb-4 transform group-hover:scale-110 transition-transform duration-200">
                 {emoji}
               </div>

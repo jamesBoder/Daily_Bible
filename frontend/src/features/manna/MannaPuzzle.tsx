@@ -306,6 +306,7 @@ export const MannaPuzzle: React.FC = () => {
     mannaApi.getStats()
       .then(s => setPostGameStreak(s.current_streak))
       .catch(() => {}); // non-critical — panel renders without streak on error
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game?.status, isPremium, archiveDate]);
 
   // ─── Load today's game (or archive game) ──────────────────────────────────
@@ -760,6 +761,7 @@ export const MannaPuzzle: React.FC = () => {
   // ALL useMemo hooks must be before any conditional return — Rules of Hooks require
   // that hook call count never varies between renders. Use `game?.` null-safe access
   // and empty defaults when game is null (loading / locked states).
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const keyStates = useMemo(() => (game ? buildKeyStates(game.guesses) : {}), [game?.guesses]);
 
   const hintMap = useMemo<Record<number, string>>(
@@ -771,6 +773,7 @@ export const MannaPuzzle: React.FC = () => {
   const cursorTileIdx = useMemo(() => {
     if (!game || game.status !== 'in_progress') return -1;
     return currentWord.length < freePositions.length ? freePositions[currentWord.length] : -1;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [game?.status, currentWord, freePositions]);
 
   const rows = useMemo(() => {

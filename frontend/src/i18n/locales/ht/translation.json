@@ -19,6 +19,7 @@
     "leaderboard": "Kominote",
     "manna": "Manna",
     "plans": "Plan Lekti",
+    "plansTab": "Lekti",
     "prayer": "Priyè",
     "more": "Plis",
     "mainNavigation": "Navigasyon prensipal",
@@ -434,7 +435,11 @@
       "myJourney": "Vwayaj Mwen",
       "devotion": "Devotion ak Notifikasyon",
       "appearance": "Aparans",
-      "manna": "Jwèt Manna"
+      "manna": "Jwèt Manna",
+      "help": "Èd ak Tutoryèl",
+      "helpDesc": "Touche nenpòt fonksyon pou wè gid li ankò.",
+      "feedback": "Kòmantè ak Kontak",
+      "feedbackDesc": "Ou jwenn yon bug oswa ou gen yon sijesyon? Nou ta renmen tande ou."
     },
     "manna": {
       "hardMode": "Mòd Difisil",
@@ -479,6 +484,7 @@
       }
     },
     "account": {
+      "signUpPrompt": "Kreye yon kont gratis pou jere pwofil ou, seri ou, ak preferans ou.",
       "changePassword": "Chanje Modpas",
       "currentPassword": "Modpas Aktyèl",
       "newPassword": "Nouvo Modpas",
@@ -559,19 +565,32 @@
     "faqSubtitle": "Repons rapid pou kesyon ki pi komen yo.",
     "faq": {
       "q1": "Poukisa seri mwen kase?",
-      "a1": "Seri ou konte kantite jou konsekitif ou ouvri vèsè chak jou a. Si ou rate yon jou san itilize Jou Lagras, seri ou retounen nan zewo. Pou pwoteje seri ou apre yon jou manke, touche \"Itilize yon Jou Lagras\" — ou resevwa 2 Jou Lagras pa mwa ki rechaje otomatikman premye jou.",
+      "a1": "Seri ou konte kantite jou konsekitif ou ouvri vèsè chak jou a. Si ou rate yon jou san itilize yon Jou Lagras, seri ou reinisyalize a zewo. Pou pwoteje seri ou apre yon jou rate, tape \"Itilize yon Jou Lagras\" — ou resevwa 2 Jou Lagras chak mwa ki rechaje otomatikman premye jou.",
       "q2": "Kijan Jou Lagras travay?",
-      "a2": "Jou Lagras pèmèt ou konte yon jou manke retwoaktivman kòm li, konsa seri ou rete entakt. Ou resevwa 2 Jou Lagras chak mwa kalandriye. Yo pa reportes — Jou Lagras ki pa itilize ekspire nan fen mwa a. Ou ka achte tou yon Pakèt Jou Lagras (3 jou siplemantè pou $0.99) nan Boutik la.",
+      "a2": "Jou Lagras pèmèt ou konte yon jou manke retwoaktivman kòm li, konsa seri ou rete entakt. Ou resevwa 2 Jou Lagras chak mwa kalandriye. Yo pa akimile — Jou Lagras ki pa itilize yo ekspire nan fen mwa a. Ou ka achte tou yon Pak Jou Lagras (3 jou anplis pou $0.99) nan Boutik la.",
       "q3": "Poukisa mwen pa resevwa notifikasyon push?",
-      "a3": "Notifikasyon push navigatè sipòte sou Chrome pou Android ak Safari sou iPhone. Asire ou otorize notifikasyon lè yo mande — si ou aksidantèlman refize yo, ale nan paramèt navigatè ou epi reaktive yo pou sit sa a. Raprèl imèl disponib pou tout itilizatè kèlkeswa navigatè.",
+      "a3": "Notifikasyon push navigatè sipòte sou Chrome pou Android ak Safari sou iPhone. Asire ou te pèmèt notifikasyon lè yo te mande — si ou te refize yo aksidantèlman, ale nan paramèt navigatè ou epi reaktive yo pou sit sa a. Rapèl pa imèl disponib pou tout itilizatè kòm altènatif.",
       "q4": "Poukisa mwen ka sèlman fè 4 esè nan Manna?",
-      "a4": "Kont gratis limite a 4 esè pa puzzle Manna. Yon manm premium ogmante sa a 6 esè epi debloke tou konsey ekriti a nèt depi kòmansman, pwen (ki revele yon lèt pou 15 Benediksyon) ak estatistik detaye.",
+      "a4": "Kont gratis limite a 4 esè pa puzzle Manna. Yon manm premium ogmante sa a 6 esè epi debloke tou endis konplè a depi kòmansman, konsèy (ki revele yon lèt pou 15 Benediksyon), ak estatistik detaye.",
       "q5": "Kijan mwen debloke tradiksyon modèn tankou NIV oswa ESV?",
-      "a5": "Tradiksyon modèn (NIV, ESV, NLT ak plis) se premium. Ou ka debloke yo ak yon manm Premium ($9.99 yon fwa, san abònman) oswa yon acha inik \"Tradiksyon Modèn\" pou $3.99 nan Boutik la.",
+      "a5": "Tradiksyon modèn (NIV, ESV, NLT ak plis) se premium. Ou ka debloke yo ak yon manm Premium ($9.99 yon fwa, san abònman) oswa yon acha innik \"Tradiksyon Modèn\" pou $3.99 nan Boutik la.",
       "q6": "Kisa Benediksyon ye ak sa mwen ka fè avèk yo?",
-      "a6": "Benediksyon (✦) se monè entèn aplikasyon an, ou ka genyen lè ou li vèsè chak jou, ekri refleksyon, kenbe jounal, jwe Manna, ak rive nan jalòn seri. Manm premium genyen Benediksyon 1.5× sou chak aksyon. Depanse yo nan Boutik la pou debloke tèm. Yo pa ekspire janm.",
-      "q7": "Èske mwen ka poste sou Tablo Kominotè a?",
-      "a7": "Tablo Kominotè a bezwen yon manm premium (\"Manm Devwe\") pou poste. Mi Lapriyè a ouvè pou tout manm — gratis ak premium — enkli demann lapriyè anonim. Defi yo vizib pou tout moun."
+      "a6": "Benediksyon (✦) se monè entèn aplikasyon an, ou ka genyen lè ou li vèsè chak jou, ekri refleksyon, kenbe jounal, jwe Manna, ak rive nan etap seri. Manm premium yo touche 1.5× Benediksyon pou chak aksyon. Depanse yo nan Boutik la pou debloke tèm. Yo pa janm ekspire.",
+      "q7": "Kisa Plan Lekti ye?",
+      "a7": "Plan Lekti yo se vwayaj biblik plizyè jou ak yon vèsè oswa pasaj, lapriyè gide, yon etap aksyon chak jou, yon kesyon refleksyon, ak yon kiz konpreyansyon pou chak jou. Eksplore bibliyotèk Plan yo pou jwenn youn ki koresponn ak kote ou ye espiritèlman — gratis pou tout moun. Kreye yon kont gratis pèmèt ou enskri epi swiv pwogresyon ou jou pa jou.",
+      "q8": "Èske mwen ka itilize Words of Praise san kreye yon kont?",
+      "a8": "Wi — vèsè chak jou, puzzle Manna, ak bibliyotèk Plan Lekti yo disponib san enskripsyon. Kreye yon kont gratis debloke seri ou, jounal, favori, mi lapriyè, ak pwogresyon sove sou tout aparèy ou yo.",
+      "troubleshootingSection": "Depanaj",
+      "q9": "Yon paj pa chaje oswa bagay parèt kase — kisa mwen ta dwe fè?",
+      "a9": "Kòmanse ak rafraîchi paj la — sa rezoud pifò pwoblèm. Sou òdinatè peze Ctrl + R (Cmd + R sou Mac); sou mobil, glise desann sou paj la pou rechaje oswa fèmen epi rouvri onglè a. Pou pwoblèm ki pèsiste, eseye yon rafraîchiseman fò (Ctrl + Shift + R sou òdinatè) oswa efase kach ak done sit nan paramèt navigatè ou. Si yon fonksyon kontinye echwe, kontakte nou pa imèl epi nou pral envestige.",
+      "q10": "Vèsè chak jou a toujou montre yèsè a — poukisa li pa chanje?",
+      "a10": "Vèsè a reinisyalize a minwi UTC-10 (lè Hawai), ki ka pi ta pase minwi lokal ou. Si lè sa a fin pase epi li pa chanje toujou, eseye rafraîchi paj la. Sou mobil, glise desann sou kat vèsè a pou fòse rechajman an.",
+      "q11": "Mwen dekonekte inopineman — èske sa nòmal?",
+      "a11": "Sesyon yo ekspire apre yon long peryòd enaktivite pou sekirite. Jis rekonekte — seri ou, favori, jounal, ak pwogresyon ou tout sove nan kont ou. Si sa rive souvan, verifye si navigatè ou a konfigire pou efase kooki lè li fèmen.",
+      "q12": "Mwen peye pou premium men fonksyon yo toujou bloke — kisa ki pase?",
+      "a12": "Apre ou fin peye, rechaje aplikasyon an pou senkronize kont ou. Si fonksyon yo toujou bloke apre yon rechajman konplè, dekonekte epi rekonekte. Toujou pa rezoud? Voye nou yon imèl avèk adrès imèl peman ou epi nou pral verifye tranzaksyon an manyèlman.",
+      "q13": "Aplikasyon an lent oswa li glase sou telefòn mwen",
+      "a13": "Eseye fèmen epi rouvri onglè navigatè a. Efase kach navigatè a (Safari: Paramèt → Safari → Efase Istwa; Chrome: Paramèt → Vi Prive → Efase Done) souvan rezoud lentè pèsistan. Sou iPhone, aktive Redwi Mouvman nan Aksesibilite ka ede tou avèk paj ki gen anpil animasyon."
     }
   },
   "account": {

@@ -12,7 +12,6 @@ export const SubscriptionSection: React.FC = () => {
   const checkoutInFlight = useRef(false);
 
   const isPremium = subscription?.is_premium ?? false;
-  const ownedKeys = subscription?.owned_purchase_keys ?? [];
 
   const handleCheckout = async () => {
     if (checkoutInFlight.current) return;

@@ -14,16 +14,16 @@ const rosaryBlessings = 50
 
 // PrayerHandler handles all /api/prayer endpoints.
 type PrayerHandler struct {
-	db               *gorm.DB
-	blessingsService *services.BlessingsService
+	db                  *gorm.DB
+	blessingsService    *services.BlessingsService
 	subscriptionChecker services.SubscriptionChecker
 }
 
 // NewPrayerHandler creates a new PrayerHandler.
 func NewPrayerHandler(db *gorm.DB, blessingsService *services.BlessingsService, subscriptionChecker services.SubscriptionChecker) *PrayerHandler {
 	return &PrayerHandler{
-		db:               db,
-		blessingsService: blessingsService,
+		db:                  db,
+		blessingsService:    blessingsService,
 		subscriptionChecker: subscriptionChecker,
 	}
 }

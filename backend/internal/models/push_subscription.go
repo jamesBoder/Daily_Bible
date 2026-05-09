@@ -1,8 +1,8 @@
 package models
 
 import (
-	"time"
 	"gorm.io/gorm"
+	"time"
 )
 
 // PushSubscription stores a Web Push API subscription for a single browser/device.

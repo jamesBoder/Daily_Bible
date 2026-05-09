@@ -48,9 +48,5 @@ func (s *StripeSubscriptionChecker) IsPremium(userID uint) bool {
 	s.db.Model(&models.UserUnlock{}).
 		Where("user_id = ? AND unlock_type = 'purchase' AND unlock_key = 'premium_lifetime'", userID).
 		Count(&count)
-	if count > 0 {
-		return true
-	}
-
-	return false
+	return count > 0
 }

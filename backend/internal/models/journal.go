@@ -12,11 +12,11 @@ import (
 // LinkedVerse is an optional scripture reference (premium only).
 // PromptID links an entry to the weekly JournalPrompt that inspired it (nullable).
 type JournalEntry struct {
-	ID           uint           `gorm:"primaryKey;autoIncrement"`
-	UserID       uint           `gorm:"index"`
-	ContentPlain string         `gorm:"type:text"`
-	ContentRich  string         `gorm:"type:text"`
-	LinkedVerse  string         `gorm:"size:100"`
+	ID           uint   `gorm:"primaryKey;autoIncrement"`
+	UserID       uint   `gorm:"index"`
+	ContentPlain string `gorm:"type:text"`
+	ContentRich  string `gorm:"type:text"`
+	LinkedVerse  string `gorm:"size:100"`
 	PromptID     *uint
 	CreatedAt    time.Time
 	UpdatedAt    time.Time

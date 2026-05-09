@@ -1,10 +1,10 @@
 package routes
 
 import (
-	"github.com/gin-gonic/gin"
 	"dailybible/internal/handlers"
 	"dailybible/internal/middleware"
 	"dailybible/internal/services"
+	"github.com/gin-gonic/gin"
 )
 
 // SetupRoutes - Initialize and organize API routes
@@ -40,9 +40,9 @@ func SetupRoutes(
 	pushHandler *handlers.PushHandler,
 	// Phase 12
 	readingPlanHandler *handlers.ReadingPlanHandler,
-	annotationHandler  *handlers.AnnotationHandler,
-	searchHandler      *handlers.SearchHandler,
-	prayerHandler      *handlers.PrayerHandler,
+	annotationHandler *handlers.AnnotationHandler,
+	searchHandler *handlers.SearchHandler,
+	prayerHandler *handlers.PrayerHandler,
 	// Email capture
 	subscriberHandler *handlers.SubscriberHandler,
 ) {
@@ -213,20 +213,20 @@ func SetupRoutes(
 			// Phase 10: Manna puzzle (auth-required; premium gate inside handler)
 			manna := protected.Group("/manna")
 			{
-				manna.GET("/today",    mannaHandler.GetToday)
-				manna.POST("/guess",   mannaHandler.SubmitGuess)
-				manna.POST("/hint",    mannaHandler.GetHint)
+				manna.GET("/today", mannaHandler.GetToday)
+				manna.POST("/guess", mannaHandler.SubmitGuess)
+				manna.POST("/hint", mannaHandler.GetHint)
 				manna.POST("/forfeit", mannaHandler.Forfeit)
-				manna.GET("/stats",    mannaHandler.GetStats)
-				manna.GET("/history",  mannaHandler.GetHistory)
+				manna.GET("/stats", mannaHandler.GetStats)
+				manna.GET("/history", mannaHandler.GetHistory)
 			}
 
 			// Phase 10: Manna archive (premium only; gate inside handler)
 			mannaArchive := protected.Group("/manna/archive")
 			{
-				mannaArchive.GET("/:date",          mannaHandler.GetArchive)
-				mannaArchive.POST("/:date/guess",   mannaHandler.SubmitArchiveGuess)
-				mannaArchive.POST("/:date/hint",    mannaHandler.GetArchiveHint)
+				mannaArchive.GET("/:date", mannaHandler.GetArchive)
+				mannaArchive.POST("/:date/guess", mannaHandler.SubmitArchiveGuess)
+				mannaArchive.POST("/:date/hint", mannaHandler.GetArchiveHint)
 				mannaArchive.POST("/:date/forfeit", mannaHandler.ForfeitArchive)
 			}
 

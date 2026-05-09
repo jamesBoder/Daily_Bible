@@ -401,6 +401,151 @@ WHERE p.slug = 'walking-in-peace'
   AND e.day_number = v.day_number;
 
 -- ============================================================
+-- Part 1c — Strength in the Storm: passage text, day titles,
+-- expanded verse refs, cross-references, enriched reflections,
+-- and content_type = 'passage'.
+-- Fully idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET
+  verse_ref    = v.verse_ref,
+  day_title    = v.day_title,
+  passage_text = v.passage_text,
+  passage_refs = v.passage_refs,
+  reflection   = v.reflection,
+  content_type = 'passage'
+FROM reading_plans p,
+(VALUES
+  (1,
+   'Psalm 46:1-3',
+   'God in the Midst of the Storm',
+   'God is our refuge and strength, a very present help in trouble. Therefore will not we fear, though the earth be removed, and though the mountains be carried into the midst of the sea; Though the waters thereof roar and be troubled, though the mountains shake with the swelling thereof. Selah.',
+   '["Isaiah 41:10", "Deuteronomy 31:6"]',
+   'The opening of Psalm 46 does not minimize the storm — it names it. Mountains removed, seas roaring, the whole world in upheaval. Into that chaos comes a single declaration: God is our refuge and strength. Not was, not will be — is. The present tense is the psalm''s whole argument: the refuge is not waiting on the other side of the storm; it is already occupied, and you are already inside it. Whatever waters are roaring around you today, you are standing on ground that cannot be moved.'
+  ),
+  (2,
+   'Isaiah 41:10-13',
+   'Fear Not, I Am With You',
+   'Fear thou not; for I am with thee: be not dismayed; for I am thy God: I will strengthen thee; yea, I will help thee; yea, I will uphold thee with the right hand of my righteousness. Behold, all they that were incensed against thee shall be ashamed and confounded: they shall be as nothing; and they that strive with thee shall perish. Thou shalt seek them, and shalt not find them, even them that contended with thee: they that war against thee shall be as nothing, and as a thing of nought. For I the LORD thy God will hold thy right hand, saying unto thee, Fear not; I will help thee.',
+   '["Psalm 46:1", "Joshua 1:9"]',
+   '"Fear not" is the most repeated command in the Bible — spoken over and over because God knows fear never truly stops whispering. Here He does not merely command the fear to stop; He gives five reasons in a single verse: I am with you, I am your God, I will strengthen you, I will help you, I will uphold you. The image that closes verse 13 is intimate: God takes your right hand. Not the hand you extend in formal greeting, but the working hand, the trembling hand, the hand that signals how afraid you really are. The One holding it is not troubled by what He feels there. You do not have to hide your fear from the One whose hand is wrapped around it.'
+  ),
+  (3,
+   'James 1:2-8',
+   'The Making of Steadfastness',
+   'My brethren, count it all joy when ye fall into divers temptations; Knowing this, that the trying of your faith worketh patience. But let patience have her perfect work, that ye may be perfect and entire, wanting nothing. If any of you lack wisdom, let him ask of God, that giveth to all men liberally, and upbraideth not; and it shall be given him. But let him ask in faith, nothing wavering. For he that wavereth is like a wave of the sea driven with the wind and tossed. For let not that man think that he shall receive any thing of the Lord. A double minded man is unstable in all his ways.',
+   '["Romans 5:3-4", "1 Peter 1:6-7"]',
+   'James begins with a command that sounds like a provocation: count it all joy when trials come. He is not telling us to pretend the pain isn''t real — the word "fall into" (Greek: peripiptō) means to stumble into unexpectedly, to be surrounded on all sides. He knows the trials are real. What he insists on is the reframe: the test of faith is not destroying you; it is producing something in you that nothing else can produce. Steadfastness — the patience that holds its shape under pressure — is not a personality trait you either have or don''t. It is forged. And for the moments when you don''t know how to hold on, James gives you an invitation in verse five: ask for wisdom, and God will give it without making you feel ashamed for needing it.'
+  ),
+  (4,
+   '2 Corinthians 4:14-18',
+   'Light and Momentary',
+   'Knowing that he which raised up the Lord Jesus shall raise up us also by Jesus, and shall present us with you. For all things are for your sakes, that the abundant grace might through the thanksgiving of many redound to the glory of God. For which cause we faint not; but though our outward man perish, yet the inward man is renewed day by day. For our light affliction, which is but for a moment, worketh for us a far more exceeding and eternal weight of glory; While we look not at the things which are seen, but at the things which are not seen: for the things which are seen are temporal; but the things which are unseen are eternal.',
+   '["Romans 8:18", "1 Peter 5:10"]',
+   'Paul calls his suffering "light and momentary" — and this is the man who was beaten with rods three times, shipwrecked three times, imprisoned, stoned, and left for dead. This is not denial; it is calibration. He has placed his suffering next to something so massive that the ratio collapses: "an eternal weight of glory beyond all comparison." The key to his perspective is revealed in verse 18: he is not looking at the visible. He is looking at the invisible. Whatever you can see — the diagnosis, the loss, the broken relationship — is temporal. What is being built for you is not. The outward man perishes, he says, but the inward man is renewed every single day.'
+  ),
+  (5,
+   'Romans 8:26-30',
+   'Working All Things Together',
+   'Likewise the Spirit also helpeth our infirmities: for we know not what we should pray for as we ought: but the Spirit itself maketh intercession for us with groanings which cannot be uttered. And he that searcheth the hearts knoweth what is the mind of the Spirit, because he maketh intercession for the saints according to the will of God. And we know that all things work together for good to them that love God, to them who are the called according to his purpose. For whom he did foreknow, he also did predestinate to be conformed to the image of his Son, that he might be the firstborn among many brethren. Moreover whom he did predestinate, them he also called: and whom he called, them he also justified: and whom he justified, them he also glorified.',
+   '["Jeremiah 29:11", "Genesis 50:20"]',
+   'The famous promise of verse 28 is embedded in a passage about the Spirit interceding for us with groanings too deep for words. Paul is not describing a tidy theology of everything-works-out; he is describing a God who groans with us in the suffering, whose Spirit carries our prayers when we don''t have the language for them. "All things" in verse 28 is not a promise of comfort — it is a promise of purpose. The good that God is working toward is not our ease or our restoration to a prior state; it is conformity to the image of His Son. The suffering is part of the shaping. You are not a problem to be solved. You are a life being formed.'
+  ),
+  (6,
+   'Psalm 34:15-19',
+   'Close to the Brokenhearted',
+   'The eyes of the LORD are upon the righteous, and his ears are open unto their cry. The face of the LORD is against them that do evil, to cut off the remembrance of them from the earth. The righteous cry, and the LORD heareth, and delivereth them out of all their troubles. The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit. Many are the afflictions of the righteous: but the LORD delivereth him out of them all.',
+   '["Isaiah 61:1", "Psalm 51:17"]',
+   'The psalmist does not promise freedom from affliction — he promises companionship in it. Verse 19 is startlingly honest: "Many are the afflictions of the righteous." The righteous do not get fewer troubles; they get a God who is close. The Hebrew word translated "nigh" (qarov) means near, present, not distant — and it is used elsewhere for the nearness of God at the temple, at the moment of prayer, in the holy of holies. The God who fills the universe draws particularly close to the brokenhearted and the crushed in spirit — not to the proud or the self-sufficient, but to the ones who know they need Him. If you are there today, you are not at the edge of His attention. You are at the center of it.'
+  ),
+  (7,
+   'Nahum 1:6-7',
+   'He Knows Those Who Hide in Him',
+   'Who can stand before his indignation? and who can abide in the fierceness of his anger? his fury is poured out like fire, and the rocks are thrown down by him. The LORD is good, a strong hold in the day of trouble; and he knoweth them that trust in him.',
+   '["Psalm 46:1", "Psalm 91:1-2"]',
+   'Nahum is rarely opened — it is an oracle of judgment against Nineveh, the brutal capital of the empire that had terrorized Israel. Verse 7 is a sudden pivot in the middle of that oracle, and its position makes it more powerful: against the backdrop of a God before whom rocks are thrown down and no enemy can stand, God is also good. The contrast is not softened. The same God before whom no enemy survives is a stronghold to those who run to Him. And then the detail that no other passage in this plan quite captures: "He knoweth them that trust in Him." Not knows about — knows. Personally. By name. In the trouble. You are not anonymous to God in your storm. You are the one He is close to.'
+  )
+) AS v(day_number, verse_ref, day_title, passage_text, passage_refs, reflection)
+WHERE p.slug = 'strength-in-the-storm'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Part 2b — Strength in the Storm: comprehension check questions.
+-- Idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET
+  quiz_question    = v.question,
+  quiz_options     = v.options,
+  quiz_explanation = v.explanation
+FROM reading_plans p,
+(VALUES
+  (1,
+   'What does Psalm 46 call God in its opening verse?',
+   '[{"label":"A","text":"Our shepherd and guide","correct":false},{"label":"B","text":"Our refuge and strength","correct":true},{"label":"C","text":"Our tower and fortress","correct":false}]',
+   'Verse 1 declares "God is our refuge and strength, a very present help in trouble." The double description — refuge for shelter, strength for power — says God is both protection and resource in the storm.'
+  ),
+  (2,
+   'In verse 13, what does God say He will do with your hand?',
+   '[{"label":"A","text":"Lift you up high","correct":false},{"label":"B","text":"Lead you forward","correct":false},{"label":"C","text":"Hold your right hand","correct":true}]',
+   '"For I the LORD thy God will hold thy right hand, saying unto thee, Fear not; I will help thee." God does not point the way from a distance — He takes your hand personally and walks with you.'
+  ),
+  (3,
+   'What does "the trying of your faith" produce, according to verse 3?',
+   '[{"label":"A","text":"Joy","correct":false},{"label":"B","text":"Patience","correct":true},{"label":"C","text":"Wisdom","correct":false}]',
+   '"Knowing this, that the trying of your faith worketh patience." The Greek hupomonē means steadfast endurance under pressure — not passive waiting but active holding. It is forged in the trial, not given before it.'
+  ),
+  (4,
+   'In verse 18, what does Paul say we must NOT look at?',
+   '[{"label":"A","text":"Our own weakness","correct":false},{"label":"B","text":"The things which are seen","correct":true},{"label":"C","text":"Our enemies","correct":false}]',
+   '"While we look not at the things which are seen, but at the things which are not seen: for the things which are seen are temporal; but the things which are unseen are eternal." Perspective shifts when we stop fixing our gaze on the visible and train it on the eternal.'
+  ),
+  (5,
+   'What does the Spirit do for believers when they do not know what to pray?',
+   '[{"label":"A","text":"Teaches them the right words","correct":false},{"label":"B","text":"Reminds them of Scripture","correct":false},{"label":"C","text":"Intercedes with groanings that cannot be uttered","correct":true}]',
+   '"The Spirit itself maketh intercession for us with groanings which cannot be uttered." When suffering robs us of language, the Spirit does not wait for us to find the right words — He carries the prayer Himself.'
+  ),
+  (6,
+   'To whom does verse 18 say the LORD is "nigh" (close)?',
+   '[{"label":"A","text":"Those who serve Him faithfully","correct":false},{"label":"B","text":"The brokenhearted and those crushed in spirit","correct":true},{"label":"C","text":"Those who study His word","correct":false}]',
+   '"The LORD is nigh unto them that are of a broken heart; and saveth such as be of a contrite spirit." Brokenness is not a disqualification from God''s presence — it is the condition He draws closest to.'
+  ),
+  (7,
+   'Beyond being good and a stronghold, what does Nahum 1:7 say God does?',
+   '[{"label":"A","text":"He hears every prayer","correct":false},{"label":"B","text":"He delivers them from all trouble","correct":false},{"label":"C","text":"He knoweth them that trust in Him","correct":true}]',
+   '"And he knoweth them that trust in him." This is not general oversight — it is personal knowledge. God knows by name each person who takes refuge in Him, in the middle of the trouble, not just after it.'
+  )
+) AS v(day_number, question, options, explanation)
+WHERE p.slug = 'strength-in-the-storm'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Part 2c — Strength in the Storm: word studies for memory
+-- verse days (days 1 and 4). Keys are lowercase, punctuation-
+-- stripped forms of the word as it appears in the passage text.
+-- Idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (1,
+   '{"refuge":{"original":"מַחְסֶה","transliteration":"machseh","definition":"A shelter or place of protection — often used for the shadow of a rock or cave. Not a distant fortress but an immediate cover. The word implies close concealment, not just proximity.","refs":["Psalm 91:2","Isaiah 25:4"]},"strength":{"original":"עֹז","transliteration":"oz","definition":"Might, force, power. Used of God''s inherent power that He lends to those who trust in Him. In the Psalms it is often paired with refuge — shelter plus capacity.","refs":["Psalm 28:7","Isaiah 40:31"]},"present":{"original":"נִמְצָא","transliteration":"nimtsa","definition":"To be found, to be available, to be right there. God is described as very findable — accessible in trouble, not waiting to be located after the crisis passes.","refs":["Psalm 145:18","Acts 17:27"]}}'
+  ),
+  (4,
+   '{"affliction":{"original":"θλῖψις","transliteration":"thlipsis","definition":"Pressing, squeezing, pressure — like grapes under a wine press. Paul uses it to describe suffering that comes from all sides. He calls his thlipsis light compared to the eternal weight of glory.","refs":["John 16:33","Romans 8:35"]},"eternal":{"original":"αἰώνιος","transliteration":"aiōnios","definition":"Of the age to come — not merely long-lasting but belonging to a different quality of existence altogether. The weight of glory Paul describes is not more of this life, but life of a different kind.","refs":["John 17:3","2 Corinthians 5:1"]},"glory":{"original":"δόξα","transliteration":"doxa","definition":"Splendor, radiance, honor — in the OT context, the kabod of God, His weighty and manifest presence. Paul''s eternal weight of glory is conformity to the radiant image of Christ.","refs":["Romans 8:30","2 Corinthians 3:18"]}}'
+  )
+) AS v(day_number, ws)
+WHERE p.slug = 'strength-in-the-storm'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
 -- Part 2h — Dig deeper: extended commentary + further-study
 -- refs for Walking in Peace days 1, 4, and 6.
 -- Idempotent UPDATEs keyed on (plan_slug, day_number).
@@ -426,5 +571,34 @@ FROM reading_plans p,
   )
 ) AS v(day_number, text, refs)
 WHERE p.slug = 'walking-in-peace'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Part 2h — Strength in the Storm: dig deeper commentary +
+-- further-study refs for days 1, 4, and 6.
+-- Idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+UPDATE reading_plan_entries e
+SET
+  deep_dive_text = v.text,
+  deep_dive_refs = v.refs
+FROM reading_plans p,
+(VALUES
+  (1,
+   'The word "refuge" (Hebrew: machseh) appears repeatedly in the Psalms, but in Psalm 46 it is paired with something unusual: oz, translated "strength." Most refuge imagery in Scripture is passive — a rock to hide behind, a shadow to shelter under. Here the refuge is also power. God is not just the place you go when you cannot fight anymore; He is also the capacity that enables you to stand back up. The third descriptor in verse 1 is equally precise: "very present help" translates a phrase built on the Hebrew nimtsa — "found," "available." This is not the language of a God who shows up when He feels like it. It is the language of a God who is already there when you arrive, findable in the chaos rather than waiting on the other side of it. The three words of verse 1 map onto three kinds of need: refuge for fear, strength for exhaustion, presence for loneliness. Whatever form your storm takes today, verse 1 has named its provision.',
+   '["Isaiah 25:4", "Psalm 91:1-2"]'
+  ),
+  (4,
+   'Paul uses θλῖψις (thlipsis) — translated "affliction" — a word that carries the image of pressing and compression: grapes under a wine press, a body crushed in a crowd. Paul calls his thlipsis "light." The counterweight he sets against it is βάρος δόξης — the weight of glory — and he calls that one "far more exceeding and eternal." He is making a deliberate reversal: what is pressing you is the light thing; what is being built for you is the heavy thing. The Greek word for glory (doxa) echoes the OT kavod — the weighty, substantial, manifest presence of God. What Paul is describing is not a more comfortable future but a more fully God-shaped self. Verse 18 is the key to the whole passage: he is not looking at the visible. The affliction is visible; the glory is not. The practice he is describing is not optimism but trained attention — deliberately turning the eyes from the temporal to the eternal, not once but as a repeated daily discipline.',
+   '["Romans 8:17-18", "1 Peter 4:12-13"]'
+  ),
+  (6,
+   'Psalm 34 is an acrostic poem in which each verse begins with the next letter of the Hebrew alphabet — a form reserved in Scripture for subjects worth meditating through completely, letter by letter. It was written by David after he feigned madness before Abimelech, a moment of acute fear, humiliation, and desperate improvisation. The psalm is not abstract theology; it is field testimony from a man who discovered what was true in the middle of an undignified moment. The Hebrew word translated "nigh" (qarov) is used elsewhere in the Psalms for the nearness of God in the sanctuary — in the holy of holies, at the moment of deepest prayer. David is not saying God will eventually make His way to the brokenhearted. He is saying God is where the brokenhearted are — that the sanctuary nearness belongs most fully to them. The word translated "contrite" (dakah) means pulverized, ground down. The person who has been reduced that far is not furthest from God. They are standing where His presence is most concentrated.',
+   '["Isaiah 57:15", "Psalm 51:17"]'
+  )
+) AS v(day_number, text, refs)
+WHERE p.slug = 'strength-in-the-storm'
   AND e.plan_id = p.id
   AND e.day_number = v.day_number;

@@ -19,6 +19,7 @@
     "leaderboard": "Comunidad",
     "manna": "Maná",
     "plans": "Planes de Lectura",
+    "plansTab": "Planes",
     "prayer": "Oración",
     "more": "Más",
     "mainNavigation": "Navegación principal",
@@ -434,7 +435,11 @@
       "myJourney": "Mi Camino",
       "devotion": "Devoción y Notificaciones",
       "appearance": "Apariencia",
-      "manna": "Puzzle Maná"
+      "manna": "Puzzle Maná",
+      "help": "Ayuda y Tutoriales",
+      "helpDesc": "Toca cualquier función para ver su guía de nuevo.",
+      "feedback": "Comentarios y Contacto",
+      "feedbackDesc": "¿Encontraste un error o tienes una sugerencia? Nos encantaría escucharte."
     },
     "manna": {
       "hardMode": "Modo Difícil",
@@ -486,6 +491,7 @@
       "premiumNote": "🔒 Las traducciones bloqueadas están disponibles con una membresía de Words of Praise."
     },
     "account": {
+      "signUpPrompt": "Crea una cuenta gratuita para administrar tu perfil, racha y preferencias.",
       "changePassword": "Cambiar Contraseña",
       "currentPassword": "Contraseña Actual",
       "newPassword": "Nueva Contraseña",
@@ -561,17 +567,30 @@
       "q1": "¿Por qué se rompió mi racha?",
       "a1": "Tu racha cuenta el número de días consecutivos que abriste el versículo diario. Si pierdes un día sin usar un Día de Gracia, tu racha se reinicia a cero. Para proteger tu racha después de un día perdido, toca \"Usar un Día de Gracia\" — recibes 2 Días de Gracia por mes que se recargan automáticamente el día 1.",
       "q2": "¿Cómo funcionan los Días de Gracia?",
-      "a2": "Los Días de Gracia te permiten contar retroactivamente un día perdido como leído, manteniendo tu racha intacta. Recibes 2 Días de Gracia cada mes calendario. No se acumulan — los Días de Gracia no utilizados expiran al final del mes. También puedes comprar un Paquete de Días de Gracia (3 días extra por $0.99) en la Tienda.",
+      "a2": "Los Días de Gracia te permiten contar retroactivamente un día perdido como leído, para que tu racha se mantenga intacta. Recibes 2 Días de Gracia cada mes del calendario. No se acumulan — los Días de Gracia no utilizados expiran al final del mes. También puedes comprar un Paquete de Días de Gracia (3 días extra por $0.99) en la Tienda.",
       "q3": "¿Por qué no recibo notificaciones push?",
-      "a3": "Las notificaciones push del navegador son compatibles con Chrome en Android y Safari en iPhone. Asegúrate de haber permitido las notificaciones cuando se te solicite — si las rechazaste accidentalmente, ve a la configuración de tu navegador y vuelve a habilitarlas para este sitio. Los recordatorios por correo están disponibles para todos los usuarios independientemente del navegador.",
+      "a3": "Las notificaciones push del navegador son compatibles con Chrome en Android y Safari en iPhone. Asegúrate de haber permitido las notificaciones cuando se te solicitó — si las denegaste accidentalmente, ve a la configuración de tu navegador y vuelve a activarlas para este sitio. Los recordatorios por correo electrónico están disponibles para todos los usuarios como alternativa.",
       "q4": "¿Por qué solo puedo hacer 4 intentos en Manna?",
-      "a4": "Las cuentas gratuitas están limitadas a 4 intentos por puzzle Manna. Una membresía premium aumenta esto a 6 intentos y también desbloquea la pista de escritura completa desde el inicio, pistas (que revelan una letra por 15 Bendiciones) y estadísticas detalladas.",
+      "a4": "Las cuentas gratuitas están limitadas a 4 intentos por puzzle Manna. Una membresía premium aumenta esto a 6 intentos y también desbloquea la pista completa de las Escrituras desde el principio, pistas (que revelan una letra por 15 Bendiciones) y estadísticas detalladas de resolución.",
       "q5": "¿Cómo desbloqueo traducciones modernas como NIV o ESV?",
-      "a5": "Las traducciones modernas (NIV, ESV, NLT y más) son premium. Puedes desbloquearlas con una membresía Premium ($9.99 una vez, sin suscripción) o una compra única \"Traducciones Modernas\" por $3.99 en la Tienda.",
+      "a5": "Las traducciones modernas (NIV, ESV, NLT y más) son premium. Puedes desbloquearlas con una membresía Premium ($9.99 una vez, sin suscripción) o una compra única de \"Traducciones Modernas\" por $3.99 en la Tienda.",
       "q6": "¿Qué son las Bendiciones y qué puedo hacer con ellas?",
-      "a6": "Las Bendiciones (✦) son la moneda interna de la aplicación, ganadas leyendo el versículo diario, escribiendo reflexiones, llevando un diario, jugando Manna y alcanzando hitos de racha. Los miembros premium ganan 1.5× de Bendiciones en cada acción. Gástalas en la Tienda para desbloquear temas. Nunca expiran.",
-      "q7": "¿Puedo publicar en el Tablero Comunitario?",
-      "a7": "El Tablero Comunitario requiere una membresía premium (\"Miembro Devoto\") para publicar. El Muro de Oración está abierto a todos los miembros — gratuitos y premium — incluyendo solicitudes de oración anónimas. Los desafíos son visibles para todos."
+      "a6": "Las Bendiciones (✦) son la moneda interna de la aplicación, ganadas leyendo el versículo diario, escribiendo reflexiones, llevando un diario, jugando Manna y alcanzando hitos de racha. Los miembros premium ganan 1.5× Bendiciones en cada acción. Gástalas en la Tienda para desbloquear temas. Nunca caducan.",
+      "q7": "¿Qué son los Planes de Lectura?",
+      "a7": "Los Planes de Lectura son viajes bíblicos de varios días con un versículo o pasaje, oración guiada, un paso de acción diario, una pregunta de reflexión y un cuestionario de comprensión para cada día. Explora la biblioteca de Planes para encontrar uno que se adapte a donde estás espiritualmente — disponible gratuitamente para todos. Crear una cuenta gratuita te permite inscribirte y seguir tu progreso día a día.",
+      "q8": "¿Puedo usar Words of Praise sin crear una cuenta?",
+      "a8": "Sí — el versículo diario, el puzzle Manna y la biblioteca de Planes de Lectura están disponibles sin registrarse. Crear una cuenta gratuita desbloquea tu racha, diario, favoritos, muro de oración y progreso guardado en todos tus dispositivos.",
+      "troubleshootingSection": "Solución de problemas",
+      "q9": "¿Una página no carga o algo se ve mal — qué debo hacer?",
+      "a9": "Empieza actualizando la página — esto soluciona la mayoría de los problemas. En escritorio presiona Ctrl + R (Cmd + R en Mac); en móvil, desliza hacia abajo en la página para recargar o cierra y vuelve a abrir la pestaña. Para problemas persistentes, prueba una actualización forzada (Ctrl + Shift + R en escritorio) o borra el caché y los datos del sitio en la configuración de tu navegador. Si una función sigue fallando, escríbenos por correo y lo investigaremos.",
+      "q10": "El versículo diario sigue mostrando el de ayer — ¿por qué no ha cambiado?",
+      "a10": "El versículo se actualiza a medianoche UTC-10 (hora de Hawái), que puede ser más tarde que tu medianoche local. Si esa hora ya pasó y no se ha actualizado, intenta recargar la página. En móvil, desliza hacia abajo en la tarjeta del versículo para forzar la recarga.",
+      "q11": "Me desconectaron inesperadamente — ¿es normal?",
+      "a11": "Las sesiones expiran después de un período prolongado de inactividad por seguridad. Solo vuelve a iniciar sesión — tu racha, favoritos, diario y progreso están guardados en tu cuenta. Si esto ocurre con frecuencia, verifica que tu navegador no esté configurado para borrar las cookies al cerrarse.",
+      "q12": "Pagué por premium pero las funciones siguen bloqueadas — ¿qué pasó?",
+      "a12": "Después de completar el pago, recarga la aplicación para sincronizar tu cuenta. Si las funciones siguen bloqueadas después de una recarga completa, cierra sesión y vuelve a iniciarla. ¿Sigue sin aparecer? Escríbenos con tu correo de pago y verificaremos la transacción manualmente.",
+      "q13": "La aplicación se siente lenta o se congela en mi teléfono",
+      "a13": "Intenta cerrar y volver a abrir la pestaña del navegador. Borrar el caché del navegador (Safari: Configuración → Safari → Borrar historial; Chrome: Configuración → Privacidad → Borrar datos de navegación) suele resolver la lentitud persistente. En iPhone, activar Reducir movimiento en Accesibilidad también puede ayudar con las páginas con muchas animaciones."
     }
   },
   "account": {

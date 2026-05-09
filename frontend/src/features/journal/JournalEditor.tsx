@@ -159,7 +159,7 @@ export const JournalEditor: React.FC = () => {
       // Save failure: revert to idle so the user can try again manually
       setSaveState("idle");
     }
-  }, [entryId]);
+  }, [entryId, refreshStreak]);
 
   // ── Debounced auto-save ────────────────────────────────────────────────────
 

@@ -19,6 +19,7 @@
     "leaderboard": "Communauté",
     "manna": "Manne",
     "plans": "Plans de Lecture",
+    "plansTab": "Plans",
     "prayer": "Prière",
     "more": "Plus",
     "mainNavigation": "Navigation principale",
@@ -434,7 +435,11 @@
       "myJourney": "Mon Chemin",
       "devotion": "Dévotion et Notifications",
       "appearance": "Apparence",
-      "manna": "Puzzle Manne"
+      "manna": "Puzzle Manne",
+      "help": "Aide et Tutoriels",
+      "helpDesc": "Appuyez sur une fonctionnalité pour revoir son guide.",
+      "feedback": "Commentaires et Contact",
+      "feedbackDesc": "Vous avez trouvé un bug ou une suggestion ? Nous aimerions vous entendre."
     },
     "manna": {
       "hardMode": "Mode Difficile",
@@ -479,6 +484,7 @@
       }
     },
     "account": {
+      "signUpPrompt": "Créez un compte gratuit pour gérer votre profil, votre série et vos préférences.",
       "changePassword": "Changer le Mot de passe",
       "currentPassword": "Mot de passe Actuel",
       "newPassword": "Nouveau Mot de passe",
@@ -559,19 +565,32 @@
     "faqSubtitle": "Réponses rapides aux questions les plus courantes.",
     "faq": {
       "q1": "Pourquoi ma série s'est-elle interrompue ?",
-      "a1": "Votre série compte le nombre de jours consécutifs où vous avez ouvert le verset quotidien. Si vous manquez un jour sans utiliser un Jour de Grâce, votre série revient à zéro. Pour protéger votre série après un jour manqué, appuyez sur « Utiliser un Jour de Grâce » — vous recevez 2 Jours de Grâce par mois qui se rechargent automatiquement le 1er.",
+      "a1": "Votre série compte le nombre de jours consécutifs où vous avez ouvert le verset quotidien. Si vous manquez un jour sans utiliser un Jour de Grâce, votre série est remise à zéro. Pour protéger votre série après un jour manqué, appuyez sur « Utiliser un Jour de Grâce » — vous recevez 2 Jours de Grâce par mois qui se rechargent automatiquement le 1er.",
       "q2": "Comment fonctionnent les Jours de Grâce ?",
-      "a2": "Les Jours de Grâce vous permettent de compter rétroactivement un jour manqué comme lu, préservant ainsi votre série. Vous recevez 2 Jours de Grâce par mois calendaire. Ils ne sont pas reportés — les Jours de Grâce inutilisés expirent à la fin du mois. Vous pouvez également acheter un Pack de Jours de Grâce (3 jours supplémentaires pour 0,99 $) dans la Boutique.",
+      "a2": "Les Jours de Grâce vous permettent de compter rétroactivement un jour manqué comme lu, afin que votre série reste intacte. Vous recevez 2 Jours de Grâce chaque mois civil. Ils ne s'accumulent pas — les Jours de Grâce inutilisés expirent à la fin du mois. Vous pouvez également acheter un Pack de Jours de Grâce (3 jours supplémentaires pour 0,99 $) dans la Boutique.",
       "q3": "Pourquoi ne reçois-je pas de notifications push ?",
-      "a3": "Les notifications push du navigateur sont prises en charge sur Chrome pour Android et Safari sur iPhone. Assurez-vous d'avoir autorisé les notifications lors de la demande — si vous les avez accidentellement refusées, allez dans les paramètres de votre navigateur et réactivez-les pour ce site. Les rappels par e-mail sont disponibles pour tous les utilisateurs indépendamment du navigateur.",
+      "a3": "Les notifications push du navigateur sont prises en charge sur Chrome pour Android et Safari sur iPhone. Assurez-vous d'avoir autorisé les notifications lorsqu'on vous l'a demandé — si vous les avez refusées par erreur, accédez aux paramètres de votre navigateur et réactivez-les pour ce site. Les rappels par e-mail sont disponibles pour tous les utilisateurs comme alternative.",
       "q4": "Pourquoi ne puis-je faire que 4 tentatives dans Manna ?",
-      "a4": "Les comptes gratuits sont limités à 4 tentatives par puzzle Manna. Un abonnement premium augmente cela à 6 tentatives et débloque également l'indice scriptural complet dès le début, les pistes (qui révèlent une lettre pour 15 Bénédictions) et des statistiques de résolution détaillées.",
+      "a4": "Les comptes gratuits sont limités à 4 tentatives par puzzle Manna. Un abonnement premium augmente cela à 6 tentatives et débloque également l'indice complet des Écritures dès le début, des indices (qui révèlent une lettre pour 15 Bénédictions) et des statistiques détaillées de résolution.",
       "q5": "Comment déverrouiller les traductions modernes comme NIV ou ESV ?",
-      "a5": "Les traductions modernes (NIV, ESV, NLT et plus) sont premium. Vous pouvez les déverrouiller avec un abonnement Premium (9,99 $ une fois, sans abonnement) ou un achat unique « Traductions Modernes » pour 3,99 $ dans la Boutique.",
+      "a5": "Les traductions modernes (NIV, ESV, NLT et plus) sont premium. Vous pouvez les déverrouiller avec un abonnement Premium (9,99 $ une fois, sans abonnement mensuel) ou un achat unique « Traductions Modernes » pour 3,99 $ dans la Boutique.",
       "q6": "Que sont les Bénédictions et que puis-je en faire ?",
-      "a6": "Les Bénédictions (✦) sont la monnaie interne de l'application, gagnées en lisant le verset quotidien, en écrivant des réflexions, en tenant un journal, en jouant à Manna et en atteignant des jalons de série. Les membres premium gagnent 1,5× de Bénédictions sur chaque action. Dépensez-les dans la Boutique pour débloquer des thèmes. Elles n'expirent jamais.",
-      "q7": "Puis-je publier sur le Tableau Communautaire ?",
-      "a7": "Le Tableau Communautaire nécessite un abonnement premium (« Membre Dévoué ») pour publier. Le Mur de Prière est ouvert à tous les membres — gratuits et premium — y compris les demandes de prière anonymes. Les défis sont visibles par tous."
+      "a6": "Les Bénédictions (✦) sont la monnaie interne de l'application, gagnées en lisant le verset quotidien, en écrivant des réflexions, en tenant un journal, en jouant à Manna et en atteignant des jalons de série. Les membres premium gagnent 1,5× de Bénédictions pour chaque action. Dépensez-les dans la Boutique pour débloquer des thèmes. Elles n'expirent jamais.",
+      "q7": "Que sont les Plans de Lecture ?",
+      "a7": "Les Plans de Lecture sont des parcours bibliques sur plusieurs jours avec un verset ou un passage, une prière guidée, une action quotidienne, une question de réflexion et un quiz de compréhension pour chaque jour. Parcourez la bibliothèque de Plans pour trouver celui qui correspond à votre cheminement spirituel — gratuit pour tous. Créer un compte gratuit vous permet de vous inscrire et de suivre votre progression jour après jour.",
+      "q8": "Puis-je utiliser Words of Praise sans créer un compte ?",
+      "a8": "Oui — le verset quotidien, le puzzle Manna et la bibliothèque des Plans de Lecture sont disponibles sans inscription. Créer un compte gratuit débloque votre série, journal, favoris, mur de prière et votre progression enregistrée sur tous vos appareils.",
+      "troubleshootingSection": "Résolution de problèmes",
+      "q9": "Une page ne se charge pas ou quelque chose semble cassé — que faire ?",
+      "a9": "Commencez par actualiser la page — cela résout la plupart des problèmes. Sur bureau, appuyez sur Ctrl + R (Cmd + R sur Mac) ; sur mobile, tirez vers le bas sur la page pour recharger ou fermez et rouvrez l'onglet. Pour les problèmes persistants, essayez une actualisation forcée (Ctrl + Maj + R sur bureau) ou videz le cache et les données du site dans les paramètres de votre navigateur. Si une fonctionnalité continue de ne pas fonctionner, envoyez-nous un e-mail et nous examinerons le problème.",
+      "q10": "Le verset quotidien affiche toujours celui d'hier — pourquoi n'a-t-il pas changé ?",
+      "a10": "Le verset se réinitialise à minuit UTC-10 (heure d'Hawaï), ce qui peut être plus tard que votre minuit local. Si cette heure est passée et qu'il n'a toujours pas changé, essayez d'actualiser la page. Sur mobile, tirez vers le bas sur la carte du verset pour forcer le rechargement.",
+      "q11": "J'ai été déconnecté de façon inattendue — est-ce normal ?",
+      "a11": "Les sessions expirent après une longue période d'inactivité pour des raisons de sécurité. Reconnectez-vous simplement — votre série, favoris, journal et progression sont tous sauvegardés sur votre compte. Si cela arrive fréquemment, vérifiez que votre navigateur n'est pas configuré pour effacer les cookies à la fermeture.",
+      "q12": "J'ai payé pour le premium mais les fonctionnalités sont encore bloquées — que s'est-il passé ?",
+      "a12": "Après avoir finalisé le paiement, rechargez l'application pour synchroniser votre compte. Si les fonctionnalités sont toujours bloquées après un rechargement complet, déconnectez-vous et reconnectez-vous. Toujours pas résolu ? Envoyez-nous un e-mail avec votre adresse de paiement et nous vérifierons la transaction manuellement.",
+      "q13": "L'application est lente ou se fige sur mon téléphone",
+      "a13": "Essayez de fermer et de rouvrir l'onglet du navigateur. Vider le cache du navigateur (Safari : Réglages → Safari → Effacer l'historique ; Chrome : Paramètres → Confidentialité → Effacer les données) résout souvent les lenteurs persistantes. Sur iPhone, activer Réduire les animations dans Accessibilité peut également aider avec les pages riches en animations."
     }
   },
   "account": {

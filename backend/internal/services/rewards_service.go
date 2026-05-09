@@ -92,7 +92,7 @@ func (s *RewardsService) CheckMilestones(userID uint, currentStreak int) []strin
 
 		if result.RowsAffected > 0 {
 			// Only credit Blessings if this process won the insert race.
-			s.blessingsService.Credit(userID, def.BlessingsAwarded, "milestone_"+def.Key, 1.0)
+			_, _ = s.blessingsService.Credit(userID, def.BlessingsAwarded, "milestone_"+def.Key, 1.0) // #nosec G104
 			granted = append(granted, def.Key)
 		}
 	}

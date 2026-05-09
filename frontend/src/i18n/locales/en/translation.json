@@ -20,6 +20,7 @@
     "leaderboard": "Community",
     "manna": "Manna",
     "plans": "Reading Plans",
+    "plansTab": "Plans",
     "prayer": "Prayer",
     "more": "More",
     "mainNavigation": "Main navigation",
@@ -434,7 +435,11 @@
       "myJourney": "My Journey",
       "devotion": "Devotion & Notifications",
       "appearance": "Appearance",
-      "manna": "Manna Puzzle"
+      "manna": "Manna Puzzle",
+      "help": "Help & Tutorials",
+      "helpDesc": "Tap any feature to view its guide again.",
+      "feedback": "Feedback & Contact",
+      "feedbackDesc": "Found a bug or have a suggestion? We would love to hear from you."
     },
     "manna": {
       "hardMode": "Hard Mode",
@@ -486,6 +491,7 @@
       "premiumNote": "🔒 Locked translations are available with a Words of Praise membership."
     },
     "account": {
+      "signUpPrompt": "Create a free account to manage your profile, streak, and preferences.",
       "changePassword": "Change Password",
       "currentPassword": "Current Password",
       "newPassword": "New Password",
@@ -570,8 +576,21 @@
       "a5": "Modern translations (NIV, ESV, NLT, and more) are premium. You can unlock them with a Premium membership ($9.99 once, no subscription) or a one-time \"Modern Translations\" purchase for $3.99 in the Shop.",
       "q6": "What are Blessings and what can I do with them?",
       "a6": "Blessings (✦) are the app's in-app currency, earned by reading the daily verse, writing reflections, journaling, playing Manna, and reaching streak milestones. Premium members earn 1.5× Blessings on every action. Spend them in the Shop to unlock themes. They never expire.",
-      "q7": "Can I post on the Community Board?",
-      "a7": "The Community Board requires a premium (\"Devoted Member\") membership to post. The Prayer Wall is open to all members — free and premium — including anonymous prayer requests. Challenges are visible to everyone."
+      "q7": "What are Reading Plans?",
+      "a7": "Reading Plans are multi-day Scripture journeys with a verse or passage, guided prayer, a daily action step, a reflection prompt, and a comprehension quiz for each day. Browse the Plans library to find one that fits where you are spiritually — free to explore for everyone. Creating a free account lets you enroll and track your day-by-day progress.",
+      "q8": "Can I use Words of Praise without creating an account?",
+      "a8": "Yes — the daily verse, Manna puzzle, and Reading Plans library are available without signing up. Creating a free account unlocks your streak, journal, favorites, prayer wall, and progress saved across all your devices.",
+      "troubleshootingSection": "Troubleshooting",
+      "q9": "A page isn't loading or something looks broken — what should I do?",
+      "a9": "Start with a refresh — this fixes most issues. On desktop press Ctrl + R (Cmd + R on Mac); on mobile, pull down on the page to reload or close and reopen the tab. For persistent problems, try a hard refresh (Ctrl + Shift + R on desktop) or clear your browser's cache and site data in browser settings. If a specific feature keeps failing, email us and we'll look into it.",
+      "q10": "The daily verse still shows yesterday's — why hasn't it changed?",
+      "a10": "The verse resets at midnight UTC-10 (Hawaii time), which may be later than your local midnight. If that time has passed and it still hasn't changed, try refreshing the page. On mobile, pull down on the verse card to force a reload.",
+      "q11": "I was logged out unexpectedly — is that normal?",
+      "a11": "Sessions expire after a long period of inactivity for security. Just sign back in — your streak, favorites, journal, and progress are all saved to your account. If this happens frequently, check that your browser isn't set to clear cookies when it closes.",
+      "q12": "I paid for premium but features are still locked — what happened?",
+      "a12": "After completing checkout, reload the app to sync your account. If features are still locked after a full page reload, sign out and sign back in. Still missing? Email us with your payment email address and we'll verify the transaction manually.",
+      "q13": "The app feels slow or is freezing on my phone",
+      "a13": "Try closing and reopening the browser tab. Clearing your browser cache (Safari: Settings → Safari → Clear History; Chrome: Settings → Privacy → Clear Browsing Data) often resolves persistent slowness. On iPhone, enabling Reduce Motion in Accessibility settings can also help with animation-heavy pages."
     }
   },
   "account": {

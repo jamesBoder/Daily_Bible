@@ -94,7 +94,7 @@ type MannaGameResponse struct {
 	// This is the key differentiator from Wordle: the player sees context first.
 	ScriptureReference string `json:"scripture_reference"`
 	ScriptureClue      string `json:"scripture_clue"` // text with word → _____
-	Testament          string `json:"testament"`       // "Old Testament" | "New Testament"
+	Testament          string `json:"testament"`      // "Old Testament" | "New Testament"
 
 	// Free play indicator — true for free (non-premium) users
 	IsFreePlay bool `json:"is_free_play"`
@@ -104,8 +104,8 @@ type MannaGameResponse struct {
 	HintLetters []HintLetter `json:"hint_letters,omitempty"`
 
 	// Revealed only on solved/failed:
-	Answer         *string `json:"answer,omitempty"`
-	ScriptureText  *string `json:"scripture_text,omitempty"`
+	Answer        *string `json:"answer,omitempty"`
+	ScriptureText *string `json:"scripture_text,omitempty"`
 	// ConnectionNote explains how the answer word connects to the scripture when
 	// the relationship is not obvious (e.g. the word is the author or book name).
 	// Only populated when a note exists; omitted otherwise.
@@ -121,7 +121,7 @@ type GuessResult struct {
 	ScriptureReference *string  `json:"scripture_reference,omitempty"`
 	ScriptureText      *string  `json:"scripture_text,omitempty"`
 	BlessingsAwarded   *int     `json:"blessings_awarded,omitempty"`
-	StreakBonus        *int     `json:"streak_bonus,omitempty"`  // extra blessings awarded for win streak
+	StreakBonus        *int     `json:"streak_bonus,omitempty"` // extra blessings awarded for win streak
 	WinStreak          *int     `json:"win_streak,omitempty"`   // current consecutive-solve streak
 }
 
@@ -175,7 +175,7 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 	}
 	// Seed format: YYYYMMDD as int64. Same seed = same word across all server instances.
 	seed, _ := strconv.ParseInt(dateStr, 10, 64)
-	rng := rand.New(rand.NewSource(seed))
+	rng := rand.New(rand.NewSource(seed)) // #nosec G404
 	word := &words[rng.Intn(len(words))]
 
 	// Populate cache. Evict stale keys (yesterday and older) to keep memory bounded.
@@ -371,7 +371,7 @@ func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremi
 
 			go func() {
 				defer func() { recover() }()
-				s.blessingsService.Credit(userID, base, reason, multiplier)
+				s.blessingsService.Credit(userID, base, reason, multiplier) // #nosec G104
 			}()
 
 			blessings := int(float64(base) * multiplier)
@@ -386,7 +386,7 @@ func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremi
 					bonus := int(float64(bonusBase) * multiplier)
 					go func() {
 						defer func() { recover() }()
-						s.blessingsService.Credit(userID, bonusBase, "manna_streak_bonus", multiplier)
+						s.blessingsService.Credit(userID, bonusBase, "manna_streak_bonus", multiplier) // #nosec G104
 					}()
 					resp.StreakBonus = &bonus
 					resp.WinStreak = &winStreak
@@ -448,7 +448,7 @@ func (s *MannaService) forfeitGameForDate(userID uint, date time.Time, isPremium
 			}
 			go func() {
 				defer func() { recover() }()
-				s.blessingsService.Credit(userID, 10, "manna_played", multiplier)
+				s.blessingsService.Credit(userID, 10, "manna_played", multiplier) // #nosec G104
 			}()
 		}
 	}
@@ -542,7 +542,7 @@ func (s *MannaService) getHintForDate(userID uint, date time.Time) (*HintRespons
 	}
 
 	// Determine which position to reveal before the transaction
-	pos := unrevealed[rand.Intn(len(unrevealed))]
+	pos := unrevealed[rand.Intn(len(unrevealed))] // #nosec G404
 	letter := string(word.Word[pos])
 	existing := parseHintLetters(game.HintLetters)
 	existing = append(existing, HintLetter{Position: pos, Letter: letter})
@@ -824,10 +824,10 @@ func evaluateGuess(answer, guess string) []string {
 type MannaStats struct {
 	Played        int            `json:"played"`
 	Won           int            `json:"won"`
-	WinRate       float64        `json:"win_rate"`        // 0–100
-	AvgGuesses    float64        `json:"avg_guesses"`     // for solved games only
-	CurrentStreak int            `json:"current_streak"`  // consecutive days played (solved or failed)
-	MaxStreak     int            `json:"max_streak"`      // all-time max consecutive days played
+	WinRate       float64        `json:"win_rate"`           // 0–100
+	AvgGuesses    float64        `json:"avg_guesses"`        // for solved games only
+	CurrentStreak int            `json:"current_streak"`     // consecutive days played (solved or failed)
+	MaxStreak     int            `json:"max_streak"`         // all-time max consecutive days played
 	GuessDist     map[string]int `json:"guess_distribution"` // "1"–"6" → solved-game count per guess number
 }
 

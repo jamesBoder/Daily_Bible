@@ -38,13 +38,13 @@ func (h *JournalHandler) SetSubscriptionService(s *services.SubscriptionService)
 
 // journalEntryResponse is the JSON shape returned for a single entry.
 type journalEntryResponse struct {
-	ID           uint    `json:"id"`
-	ContentPlain string  `json:"content_plain"`
-	ContentRich  string  `json:"content_rich"`
-	LinkedVerse  string  `json:"linked_verse"`
-	PromptID     *uint   `json:"prompt_id"`
-	CreatedAt    string  `json:"created_at"`
-	UpdatedAt    string  `json:"updated_at"`
+	ID           uint   `json:"id"`
+	ContentPlain string `json:"content_plain"`
+	ContentRich  string `json:"content_rich"`
+	LinkedVerse  string `json:"linked_verse"`
+	PromptID     *uint  `json:"prompt_id"`
+	CreatedAt    string `json:"created_at"`
+	UpdatedAt    string `json:"updated_at"`
 }
 
 // GetEntries handles GET /api/journal
@@ -93,10 +93,10 @@ func (h *JournalHandler) GetEntries(c *gin.Context) {
 	}
 
 	c.JSON(http.StatusOK, gin.H{
-		"entries":       dtos,
-		"total_stored":  total,
-		"view_limit":    viewLimit,
-		"is_premium":    hasAccess,
+		"entries":      dtos,
+		"total_stored": total,
+		"view_limit":   viewLimit,
+		"is_premium":   hasAccess,
 	})
 }
 

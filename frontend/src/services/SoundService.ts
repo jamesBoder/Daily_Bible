@@ -275,7 +275,7 @@ class SoundServiceClass {
   // §8.18.3: Lighter reward chime — C5→G5, distinct from subscription sound
   private playPurchaseSuccess(): void {
     const ctx = this.getCtx();
-    [[523, 0], [784, 0.18]] .forEach(([freq, delay]) => {
+    [[523, 0], [784, 0.18]].forEach(([freq, delay]) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
       osc.connect(gain);

@@ -165,6 +165,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
 
     prevIsPremiumRef.current = isPremium;
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [subscription?.is_premium, t]);
 
   // §8.18.4: Cancel in-flight checkout

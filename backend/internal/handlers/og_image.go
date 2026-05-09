@@ -36,7 +36,7 @@ var (
 
 // Fonts are parsed once at startup via sync.Once — OTF parsing is expensive.
 var (
-	ogOnce    sync.Once
+	ogOnce     sync.Once
 	ogBoldSFNT *sfnt.Font
 	ogRegSFNT  *sfnt.Font
 	ogInitErr  error

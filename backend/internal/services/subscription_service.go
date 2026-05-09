@@ -100,12 +100,12 @@ func (s *SubscriptionService) SyncFromWebhook(stripeSubID, stripeStatus, stripeP
 		return 0, fmt.Errorf("no local user found for Stripe customer %s", customerID)
 	}
 
-	existing.Status               = status
-	existing.Plan                 = plan
+	existing.Status = status
+	existing.Plan = plan
 	existing.StripeSubscriptionID = stripeSubID
-	existing.CurrentPeriodEnd     = periodEnd
-	existing.CanceledAt           = canceledAt
-	existing.UpdatedAt            = time.Now()
+	existing.CurrentPeriodEnd = periodEnd
+	existing.CanceledAt = canceledAt
+	existing.UpdatedAt = time.Now()
 	// Clear pending checkout tracking on completion.
 	existing.PendingCheckoutSessionID = ""
 	existing.PendingCheckoutExpiresAt = nil
@@ -285,9 +285,9 @@ func (s *SubscriptionService) fulfillIndividualThemeWithTx(tx *gorm.DB, userID u
 	// Strip "theme_" prefix and convert underscore to the canonical theme ID format.
 	// "theme_sanctuary" → "sanctuary", "theme_desert_sand" → "desert-sand"
 	themeIDMap := map[string]string{
-		"theme_sanctuary":   "sanctuary",
-		"theme_desert_sand": "desert-sand",
-		"theme_celestial":   "celestial",
+		"theme_sanctuary":     "sanctuary",
+		"theme_desert_sand":   "desert-sand",
+		"theme_celestial":     "celestial",
 		"theme_scarlet_grace": "scarlet-grace",
 	}
 	themeID, ok := themeIDMap[productKey]
@@ -331,12 +331,18 @@ func planFromPriceID(priceID string) string {
 // mapStripeStatus converts Stripe's subscription status strings to our internal vocabulary.
 func mapStripeStatus(stripeStatus string) string {
 	switch stripeStatus {
-	case "active":   return "active"
-	case "trialing": return "trialing"
-	case "past_due": return "past_due"
-	case "canceled": return "canceled"
-	case "unpaid":   return "past_due" // treat unpaid as past_due for UX
-	default:         return "none"
+	case "active":
+		return "active"
+	case "trialing":
+		return "trialing"
+	case "past_due":
+		return "past_due"
+	case "canceled":
+		return "canceled"
+	case "unpaid":
+		return "past_due" // treat unpaid as past_due for UX
+	default:
+		return "none"
 	}
 }
 
