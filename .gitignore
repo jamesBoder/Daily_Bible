@@ -48,9 +48,6 @@ frontend/.env
 *.log
 .DS_Store
 
-# Any file or folder with test in its name
-*test*
- 
 
 # sh files
 *.sh
