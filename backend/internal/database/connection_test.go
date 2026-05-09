@@ -1,7 +1,6 @@
 package database
 
 import (
-	"os"
 	"testing"
 
 	"dailybible/internal/config"
@@ -9,13 +8,12 @@ import (
 )
 
 func TestConnect(t *testing.T) {
-	// Set environment variables for test
-	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_PORT", "5433")
-	os.Setenv("DB_USER", "dailybible_user")
-	os.Setenv("DB_PASSWORD", "test123")
-	os.Setenv("DB_NAME", "daily_bible_dev")
-	os.Setenv("DB_SSLMODE", "disable")
+	setDefaultEnv("DB_HOST", "localhost")
+	setDefaultEnv("DB_PORT", "5433")
+	setDefaultEnv("DB_USER", "dailybible_user")
+	setDefaultEnv("DB_PASSWORD", "test123")
+	setDefaultEnv("DB_NAME", "daily_bible_dev")
+	setDefaultEnv("DB_SSLMODE", "disable")
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -84,13 +82,12 @@ func TestConnect(t *testing.T) {
 }
 
 func TestConnectionPool(t *testing.T) {
-	// Set environment variables for test
-	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_PORT", "5433")
-	os.Setenv("DB_USER", "dailybible_user")
-	os.Setenv("DB_PASSWORD", "test123")
-	os.Setenv("DB_NAME", "daily_bible_dev")
-	os.Setenv("DB_SSLMODE", "disable")
+	setDefaultEnv("DB_HOST", "localhost")
+	setDefaultEnv("DB_PORT", "5433")
+	setDefaultEnv("DB_USER", "dailybible_user")
+	setDefaultEnv("DB_PASSWORD", "test123")
+	setDefaultEnv("DB_NAME", "daily_bible_dev")
+	setDefaultEnv("DB_SSLMODE", "disable")
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -123,13 +120,12 @@ func TestConnectionPool(t *testing.T) {
 }
 
 func TestTablesExist(t *testing.T) {
-	// Set environment variables for test
-	os.Setenv("DB_HOST", "localhost")
-	os.Setenv("DB_PORT", "5433")
-	os.Setenv("DB_USER", "dailybible_user")
-	os.Setenv("DB_PASSWORD", "test123")
-	os.Setenv("DB_NAME", "daily_bible_dev")
-	os.Setenv("DB_SSLMODE", "disable")
+	setDefaultEnv("DB_HOST", "localhost")
+	setDefaultEnv("DB_PORT", "5433")
+	setDefaultEnv("DB_USER", "dailybible_user")
+	setDefaultEnv("DB_PASSWORD", "test123")
+	setDefaultEnv("DB_NAME", "daily_bible_dev")
+	setDefaultEnv("DB_SSLMODE", "disable")
 
 	cfg, err := config.Load()
 	if err != nil {
@@ -146,11 +142,11 @@ func TestTablesExist(t *testing.T) {
 	for _, table := range tables {
 		var exists bool
 		query := `SELECT EXISTS (
-			SELECT FROM information_schema.tables 
-			WHERE table_schema = 'public' 
+			SELECT FROM information_schema.tables
+			WHERE table_schema = 'public'
 			AND table_name = ?
 		)`
-		
+
 		err := db.Raw(query, table).Scan(&exists).Error
 		if err != nil {
 			t.Fatalf("Failed to check if table %s exists: %v", table, err)
