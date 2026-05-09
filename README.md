@@ -4,6 +4,9 @@
 
 🌐 **Live:** [wordsofpraise-frontend.fly.dev](https://wordsofpraise-frontend.fly.dev)
 
+[![Backend CI](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-backend.yml)
+[![Frontend CI](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-frontend.yml/badge.svg)](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-frontend.yml)
+
 ---
 
 ## ✨ Features
@@ -31,6 +34,7 @@
 | **Email** | Resend (verification & password reset) |
 | **Bible API** | API.Bible (language-specific version IDs) |
 | **Deployment** | Fly.io (frontend + backend), Docker Compose (local dev) |
+| **CI/CD** | GitHub Actions — tests + security scan on every PR, auto-deploy to Fly.io on merge to `main` |
 | **Infra** | Nginx, Docker multi-stage builds, PostgreSQL Cloud |
 
 ---
@@ -167,7 +171,17 @@ The app is deployed on **Fly.io** as two separate apps:
 | Frontend | https://wordsofpraise-frontend.fly.dev |
 | Backend | https://wordsofpraise-backend.fly.dev |
 
-**Deploy commands:**
+### Automated (normal path)
+
+Merging a PR into `main` triggers the CD pipeline automatically:
+
+1. `ci-backend.yml` and `ci-frontend.yml` must pass on the PR before it can merge
+2. On merge, `cd.yml` deploys the backend first, waits 30s for migrations to complete, then deploys the frontend
+
+No manual steps required.
+
+### Manual (emergency / hotfix only)
+
 ```bash
 cd backend && fly deploy
 cd frontend && fly deploy
@@ -185,15 +199,20 @@ Database migrations run automatically on backend startup via GORM `AutoMigrate`.
 
 ## 🧪 Testing
 
+CI runs automatically on every PR. To run locally:
+
 ```bash
-# Backend unit & integration tests
-cd backend && go test ./...
+# Backend — unit + integration tests (requires Docker DB container running)
+cd backend && go test ./internal/... -cover -count=1
+
+# Backend — smoke tests
+cd backend && go test ./test/... -run TestSmoke -v
 
 # Frontend tests
 cd frontend && npm test
 
 # TypeScript type check
-cd frontend && npx tsc --noEmit
+cd frontend && npm run typecheck
 ```
 
 Tested across Chrome, Firefox, Safari, Edge, iOS Safari, and Android Chrome.
