@@ -25,7 +25,7 @@ type SubscriptionHandler struct {
 	subscriptionService *services.SubscriptionService
 	subscriptionChecker services.SubscriptionChecker
 	cachedChecker       *services.CachedSubscriptionChecker // nil when caching is not configured
-	userRepo repository.UserRepository
+	userRepo            repository.UserRepository
 	// Per-user rate limiters: max 3 checkout requests per 5 minutes.
 	limiters   map[uint]*rate.Limiter
 	limitersMu sync.Mutex
