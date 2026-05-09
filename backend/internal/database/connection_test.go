@@ -44,7 +44,7 @@ func TestConnect(t *testing.T) {
 		user := models.User{
 			Email:    "test@example.com",
 			Username: "testuser",
-			Password: "hashedpassword",
+			Password: "TestPass1!",
 		}
 
 		result := db.Create(&user)

@@ -379,16 +379,7 @@ func (s *ReadingPlanService) GetActiveEnrollments(userID uint) ([]UserPlanProgre
 
 	out := make([]UserPlanProgressDetail, 0, len(rows))
 	for _, r := range rows {
-		out = append(out, UserPlanProgressDetail{
-			PlanID:      r.PlanID,
-			Slug:        r.Slug,
-			Title:       r.Title,
-			LengthDays:  r.LengthDays,
-			LastReadDay: r.LastReadDay,
-			CompletedAt: r.CompletedAt,
-			EnrolledAt:  r.EnrolledAt,
-			PlanStreak:  r.PlanStreak,
-		})
+		out = append(out, UserPlanProgressDetail(r))
 	}
 	return out, nil
 }
