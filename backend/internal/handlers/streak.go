@@ -61,10 +61,10 @@ func (h *StreakHandler) GetStreakSummary(c *gin.Context) {
 	// Fan out: streak, balance, milestones, and undismissed milestone are all
 	// independent after settings resolve. Run them concurrently.
 	var (
-		streak            *models.UserStreak
-		streakRecoverable bool
-		streakErr         error
-		balance           int
+		streak             *models.UserStreak
+		streakRecoverable  bool
+		streakErr          error
+		balance            int
 		achievedMilestones []models.UserMilestone
 		undismissed        models.UserMilestone
 		hasUndismissed     bool

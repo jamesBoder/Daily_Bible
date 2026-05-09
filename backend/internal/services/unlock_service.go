@@ -17,9 +17,9 @@ var (
 // ThemeCosts maps theme IDs to their Blessings cost.
 // Free themes (parchment, midnight) are not in this map.
 var ThemeCosts = map[string]int{
-	"sanctuary":    500,
-	"desert-sand":  500,
-	"celestial":    750,
+	"sanctuary":     500,
+	"desert-sand":   500,
+	"celestial":     750,
 	"scarlet-grace": 750,
 }
 

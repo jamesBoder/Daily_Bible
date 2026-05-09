@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"time"
 
-	webpush "github.com/SherClockHolmes/webpush-go"
 	"dailybible/internal/models"
+	webpush "github.com/SherClockHolmes/webpush-go"
 	"gorm.io/gorm"
 )
 

@@ -26,7 +26,9 @@ type SubscriptionHandler struct {
 	subscriptionChecker services.SubscriptionChecker
 	cachedChecker       *services.CachedSubscriptionChecker // nil when caching is not configured
 	userRepo            repository.UserRepository
-	db                  interface{ Transaction(func(interface{}) error) error } // unused — tx handled inside service
+	db                  interface {
+		Transaction(func(interface{}) error) error
+	} // unused — tx handled inside service
 	// Per-user rate limiters: max 3 checkout requests per 5 minutes.
 	limiters   map[uint]*rate.Limiter
 	limitersMu sync.Mutex
@@ -219,4 +221,3 @@ func (h *SubscriptionHandler) CreateCheckout(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"url": session.URL})
 }
-

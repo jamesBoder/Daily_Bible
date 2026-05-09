@@ -16,17 +16,17 @@ import (
 
 // PostResponse is the API shape for a single community post.
 type PostResponse struct {
-	ID          uint              `json:"id"`
-	PostType    string            `json:"post_type"`
-	Body        string            `json:"body"`
-	IsPinned    bool              `json:"is_pinned"`
-	Username    string            `json:"username"`
-	IsAdmin     bool              `json:"is_admin"`
-	IsSelf      bool              `json:"is_self"`
-	CreatedAt   string            `json:"created_at"`
-	ExpiresAt   *string           `json:"expires_at,omitempty"`
-	Reactions   map[string]int    `json:"reactions"`
-	UserReacted []string          `json:"user_reacted"`
+	ID          uint           `json:"id"`
+	PostType    string         `json:"post_type"`
+	Body        string         `json:"body"`
+	IsPinned    bool           `json:"is_pinned"`
+	Username    string         `json:"username"`
+	IsAdmin     bool           `json:"is_admin"`
+	IsSelf      bool           `json:"is_self"`
+	CreatedAt   string         `json:"created_at"`
+	ExpiresAt   *string        `json:"expires_at,omitempty"`
+	Reactions   map[string]int `json:"reactions"`
+	UserReacted []string       `json:"user_reacted"`
 }
 
 // walkingCache holds the cached WalkingToday count.
@@ -40,10 +40,10 @@ const walkingTTL = 5 * time.Minute
 
 // milestonePostBodies maps milestone keys to auto-post body templates.
 var milestonePostBodies = map[string]string{
-	"seven_day_faithful":        "%s completed a week in the Word 🕯",
-	"thirty_day_faithful":       "%s reached 30 days of faithfulness",
-	"ninety_day_faithful":       "%s walked 90 days — a Season of Devotion",
-	"one_eighty_day_faithful":   "%s reached 180 days in the Word",
+	"seven_day_faithful":            "%s completed a week in the Word 🕯",
+	"thirty_day_faithful":           "%s reached 30 days of faithfulness",
+	"ninety_day_faithful":           "%s walked 90 days — a Season of Devotion",
+	"one_eighty_day_faithful":       "%s reached 180 days in the Word",
 	"three_sixty_five_day_faithful": "%s completed a full year in the Word",
 }
 

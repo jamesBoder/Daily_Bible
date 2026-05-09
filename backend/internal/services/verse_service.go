@@ -22,7 +22,7 @@ func (s *VerseService) GetDailyVerse() (*models.Verse, error) {
 }
 
 func (s *VerseService) GetVerseByReference(reference string) (*models.Verse, error) {
-	
+
 	return nil, nil
 }
 

@@ -1,74 +1,72 @@
 package services
 
-
 import (
-    "encoding/json"
-    "fmt"
-    "net/http"
-    "regexp"
-    "strings"
-    "sync"
-    "time"
-    "dailybible/internal/config"
+	"dailybible/internal/config"
+	"encoding/json"
+	"fmt"
+	"net/http"
+	"regexp"
+	"strings"
+	"sync"
+	"time"
 )
 
 // bookNameToID maps English book names (lowercase) to Bible API book IDs
 var bookNameToID = map[string]string{
-    // Old Testament
-    "genesis": "GEN", "exodus": "EXO", "leviticus": "LEV", "numbers": "NUM",
-    "deuteronomy": "DEU", "joshua": "JOS", "judges": "JDG", "ruth": "RUT",
-    "1 samuel": "1SA", "2 samuel": "2SA", "1 kings": "1KI", "2 kings": "2KI",
-    "1 chronicles": "1CH", "2 chronicles": "2CH", "ezra": "EZR", "nehemiah": "NEH",
-    "esther": "EST", "job": "JOB", "psalm": "PSA", "psalms": "PSA",
-    "proverbs": "PRO", "ecclesiastes": "ECC", "song of solomon": "SNG",
-    "isaiah": "ISA", "jeremiah": "JER", "lamentations": "LAM", "ezekiel": "EZK",
-    "daniel": "DAN", "hosea": "HOS", "joel": "JOL", "amos": "AMO",
-    "obadiah": "OBA", "jonah": "JON", "micah": "MIC", "nahum": "NAH",
-    "habakkuk": "HAB", "zephaniah": "ZEP", "haggai": "HAG", "zechariah": "ZEC",
-    "malachi": "MAL",
-    // New Testament
-    "matthew": "MAT", "mark": "MRK", "luke": "LUK", "john": "JHN",
-    "acts": "ACT", "romans": "ROM", "1 corinthians": "1CO", "2 corinthians": "2CO",
-    "galatians": "GAL", "ephesians": "EPH", "philippians": "PHP", "colossians": "COL",
-    "1 thessalonians": "1TH", "2 thessalonians": "2TH", "1 timothy": "1TI",
-    "2 timothy": "2TI", "titus": "TIT", "philemon": "PHM", "hebrews": "HEB",
-    "james": "JAS", "1 peter": "1PE", "2 peter": "2PE", "1 john": "1JN",
-    "2 john": "2JN", "3 john": "3JN", "jude": "JUD", "revelation": "REV",
+	// Old Testament
+	"genesis": "GEN", "exodus": "EXO", "leviticus": "LEV", "numbers": "NUM",
+	"deuteronomy": "DEU", "joshua": "JOS", "judges": "JDG", "ruth": "RUT",
+	"1 samuel": "1SA", "2 samuel": "2SA", "1 kings": "1KI", "2 kings": "2KI",
+	"1 chronicles": "1CH", "2 chronicles": "2CH", "ezra": "EZR", "nehemiah": "NEH",
+	"esther": "EST", "job": "JOB", "psalm": "PSA", "psalms": "PSA",
+	"proverbs": "PRO", "ecclesiastes": "ECC", "song of solomon": "SNG",
+	"isaiah": "ISA", "jeremiah": "JER", "lamentations": "LAM", "ezekiel": "EZK",
+	"daniel": "DAN", "hosea": "HOS", "joel": "JOL", "amos": "AMO",
+	"obadiah": "OBA", "jonah": "JON", "micah": "MIC", "nahum": "NAH",
+	"habakkuk": "HAB", "zephaniah": "ZEP", "haggai": "HAG", "zechariah": "ZEC",
+	"malachi": "MAL",
+	// New Testament
+	"matthew": "MAT", "mark": "MRK", "luke": "LUK", "john": "JHN",
+	"acts": "ACT", "romans": "ROM", "1 corinthians": "1CO", "2 corinthians": "2CO",
+	"galatians": "GAL", "ephesians": "EPH", "philippians": "PHP", "colossians": "COL",
+	"1 thessalonians": "1TH", "2 thessalonians": "2TH", "1 timothy": "1TI",
+	"2 timothy": "2TI", "titus": "TIT", "philemon": "PHM", "hebrews": "HEB",
+	"james": "JAS", "1 peter": "1PE", "2 peter": "2PE", "1 john": "1JN",
+	"2 john": "2JN", "3 john": "3JN", "jude": "JUD", "revelation": "REV",
 }
 
 // referenceToPassageID converts an English reference like "John 3:16" to
 // the Bible API passage ID format "JHN.3.16" (or "JHN.3.16-JHN.3.17" for ranges).
 func referenceToPassageID(reference string) (string, error) {
-    parts := strings.Fields(reference)
-    if len(parts) < 2 {
-        return "", fmt.Errorf("invalid reference: %s", reference)
-    }
+	parts := strings.Fields(reference)
+	if len(parts) < 2 {
+		return "", fmt.Errorf("invalid reference: %s", reference)
+	}
 
-    // Last token is the chapter:verse part (e.g. "3:16" or "3:16-17")
-    chapterVerse := parts[len(parts)-1]
-    bookName := strings.ToLower(strings.Join(parts[:len(parts)-1], " "))
+	// Last token is the chapter:verse part (e.g. "3:16" or "3:16-17")
+	chapterVerse := parts[len(parts)-1]
+	bookName := strings.ToLower(strings.Join(parts[:len(parts)-1], " "))
 
-    bookID, ok := bookNameToID[bookName]
-    if !ok {
-        return "", fmt.Errorf("unknown book: %s", bookName)
-    }
+	bookID, ok := bookNameToID[bookName]
+	if !ok {
+		return "", fmt.Errorf("unknown book: %s", bookName)
+	}
 
-    if strings.Contains(chapterVerse, ":") {
-        cv := strings.SplitN(chapterVerse, ":", 2)
-        chapter := cv[0]
-        verseRange := cv[1]
+	if strings.Contains(chapterVerse, ":") {
+		cv := strings.SplitN(chapterVerse, ":", 2)
+		chapter := cv[0]
+		verseRange := cv[1]
 
-        if strings.Contains(verseRange, "-") {
-            vp := strings.SplitN(verseRange, "-", 2)
-            return fmt.Sprintf("%s.%s.%s-%s.%s.%s", bookID, chapter, vp[0], bookID, chapter, vp[1]), nil
-        }
-        return fmt.Sprintf("%s.%s.%s", bookID, chapter, verseRange), nil
-    }
+		if strings.Contains(verseRange, "-") {
+			vp := strings.SplitN(verseRange, "-", 2)
+			return fmt.Sprintf("%s.%s.%s-%s.%s.%s", bookID, chapter, vp[0], bookID, chapter, vp[1]), nil
+		}
+		return fmt.Sprintf("%s.%s.%s", bookID, chapter, verseRange), nil
+	}
 
-    // Chapter only (no verse)
-    return fmt.Sprintf("%s.%s", bookID, chapterVerse), nil
+	// Chapter only (no verse)
+	return fmt.Sprintf("%s.%s", bookID, chapterVerse), nil
 }
-
 
 // BibleAPIVerse interface represents a verse fetched from the Bible API
 type BibleAPIService interface {
@@ -82,8 +80,8 @@ type BibleAPIService interface {
 }
 
 type translationCacheEntry struct {
-    text      string
-    cachedAt  time.Time
+	text     string
+	cachedAt time.Time
 }
 
 type bibleApiService struct {
@@ -113,89 +111,88 @@ func NewBibleAPIService(apiKey, baseURL, versionID string) BibleAPIService {
 // BibleAPIVerse represents a verse fetched from the Bible API
 type BibleAPIVerse struct {
 	ID        string `json:"id"`
-    Reference string `json:"reference"`
-    Text      string `json:"text"`
-	Content	  string `json:"content"`
-    BookID    string `json:"bookId"`
-    ChapterID string `json:"chapterId"`
+	Reference string `json:"reference"`
+	Text      string `json:"text"`
+	Content   string `json:"content"`
+	BookID    string `json:"bookId"`
+	ChapterID string `json:"chapterId"`
 }
 
 // Pre-compiled regexes for stripHTML — compiled once at startup, not per call.
 var (
-    reHTMLTag        = regexp.MustCompile(`<[^>]*>`)
-    reLeadingVerseNum = regexp.MustCompile(`^\d+\s*`)
-    reInlineVerseNum  = regexp.MustCompile(`\d+([A-Z])`)
-    reMidVerseNum     = regexp.MustCompile(`([.;!?:\)])\s*\d+\s*`)
-    reMultiSpace      = regexp.MustCompile(`\s+`)
+	reHTMLTag         = regexp.MustCompile(`<[^>]*>`)
+	reLeadingVerseNum = regexp.MustCompile(`^\d+\s*`)
+	reInlineVerseNum  = regexp.MustCompile(`\d+([A-Z])`)
+	reMidVerseNum     = regexp.MustCompile(`([.;!?:\)])\s*\d+\s*`)
+	reMultiSpace      = regexp.MustCompile(`\s+`)
 )
 
 // stripHTML removes HTML tags and embedded verse numbers from a string.
 // The Bible API sometimes returns verse numbers inline even when
 // include-verse-numbers=false is set, so we strip them here.
 func stripHTML(html string) string {
-    text := reHTMLTag.ReplaceAllString(html, "")
-    text = reLeadingVerseNum.ReplaceAllString(text, "")
-    text = reInlineVerseNum.ReplaceAllString(text, "$1")
-    text = reMidVerseNum.ReplaceAllString(text, "$1 ")
-    text = strings.TrimSpace(text)
-    text = reMultiSpace.ReplaceAllString(text, " ")
-    return text
+	text := reHTMLTag.ReplaceAllString(html, "")
+	text = reLeadingVerseNum.ReplaceAllString(text, "")
+	text = reInlineVerseNum.ReplaceAllString(text, "$1")
+	text = reMidVerseNum.ReplaceAllString(text, "$1 ")
+	text = strings.TrimSpace(text)
+	text = reMultiSpace.ReplaceAllString(text, " ")
+	return text
 }
 
 // BibleAPIPassageResponse represents the API response for a single passage
 // GET /v1/bibles/{bibleId}/passages/{passageId}?content-type=text
 type BibleAPIPassageResponse struct {
-    Data struct {
-        ID        string `json:"id"`
-        BibleID   string `json:"bibleId"`
-        OrgID     string `json:"orgId"`
-        Content   string `json:"content"`
-        Reference string `json:"reference"`
-        VerseCount int   `json:"verseCount"`
-        Copyright string `json:"copyright"`
-    } `json:"data"`
+	Data struct {
+		ID         string `json:"id"`
+		BibleID    string `json:"bibleId"`
+		OrgID      string `json:"orgId"`
+		Content    string `json:"content"`
+		Reference  string `json:"reference"`
+		VerseCount int    `json:"verseCount"`
+		Copyright  string `json:"copyright"`
+	} `json:"data"`
 }
 
 // BibleAPIResponse represents the API response for passage search (kept for SearchVersesWithLanguage)
 type BibleAPIResponse struct {
-    Data struct {
-        Query      string `json:"query"`
-        Limit      int    `json:"limit"`
-        Offset     int    `json:"offset"`
-        Total      int    `json:"total"`
-        VerseCount int    `json:"verseCount"`
-        Passages []struct {
-            ID        string `json:"id"`
-            OrgID     string `json:"orgId"`
-            BibleID   string `json:"bibleId"`
-            BookID    string `json:"bookId"`
-            ChapterID string `json:"chapterId"`
-            Content   string `json:"content"`
-            Reference string `json:"reference"`
-        } `json:"passages"`
-    } `json:"data"`
+	Data struct {
+		Query      string `json:"query"`
+		Limit      int    `json:"limit"`
+		Offset     int    `json:"offset"`
+		Total      int    `json:"total"`
+		VerseCount int    `json:"verseCount"`
+		Passages   []struct {
+			ID        string `json:"id"`
+			OrgID     string `json:"orgId"`
+			BibleID   string `json:"bibleId"`
+			BookID    string `json:"bookId"`
+			ChapterID string `json:"chapterId"`
+			Content   string `json:"content"`
+			Reference string `json:"reference"`
+		} `json:"passages"`
+	} `json:"data"`
 }
 
 // BibleAPISearchResponse represents the API response for verse search
 type BibleAPISearchResponse struct {
-    Data struct {
-        Query      string `json:"query"`
-        Limit      int    `json:"limit"`
-        Offset     int    `json:"offset"`
-        Total      int    `json:"total"`
-        VerseCount int    `json:"verseCount"`
-        Verses []struct {
-            ID        string `json:"id"`
-            OrgID     string `json:"orgId"`
-            BookID    string `json:"bookId"`
-            BibleID   string `json:"bibleId"`
-            ChapterID string `json:"chapterId"`
-            Reference string `json:"reference"`
-            Text      string `json:"text"`
-        } `json:"verses"`
-    } `json:"data"`
+	Data struct {
+		Query      string `json:"query"`
+		Limit      int    `json:"limit"`
+		Offset     int    `json:"offset"`
+		Total      int    `json:"total"`
+		VerseCount int    `json:"verseCount"`
+		Verses     []struct {
+			ID        string `json:"id"`
+			OrgID     string `json:"orgId"`
+			BookID    string `json:"bookId"`
+			BibleID   string `json:"bibleId"`
+			ChapterID string `json:"chapterId"`
+			Reference string `json:"reference"`
+			Text      string `json:"text"`
+		} `json:"verses"`
+	} `json:"data"`
 }
-
 
 // GetVerse fetches a verse by reference using the default KJV version.
 func (s *bibleApiService) GetVerse(reference string) (*BibleAPIVerse, error) {
@@ -287,7 +284,6 @@ func (s *bibleApiService) GetVerseWithVersionID(reference string, versionID stri
 	}, nil
 }
 
-
 // SearchVerses searches for verses using the default version
 func (s *bibleApiService) SearchVerses(query string, limit int) ([]BibleAPIVerse, error) {
 	return s.SearchVersesWithLanguage(query, limit, "en")
@@ -301,7 +297,7 @@ func (s *bibleApiService) SearchVersesWithLanguage(query string, limit int, lang
 		version = config.BibleVersions["kjv"]
 	}
 	versionID := version.ID
-	
+
 	url := fmt.Sprintf("%s/bibles/%s/search?query=%s&limit=%d", s.baseURL, versionID, query, limit)
 	if query == "" {
 		return nil, fmt.Errorf("query cannot be empty")
@@ -344,15 +340,15 @@ func (s *bibleApiService) SearchVersesWithLanguage(query string, limit int, lang
 
 	// map to slice of BibleAPIVerse
 	verses := make([]BibleAPIVerse, 0, len(apiResp.Data.Verses))
-    for _, v := range apiResp.Data.Verses {
-        verses = append(verses, BibleAPIVerse{
-            ID:        v.ID,
-            Reference: v.Reference,
-            Text:      v.Text,
-            BookID:    v.BookID,
-            ChapterID: v.ChapterID,
+	for _, v := range apiResp.Data.Verses {
+		verses = append(verses, BibleAPIVerse{
+			ID:        v.ID,
+			Reference: v.Reference,
+			Text:      v.Text,
+			BookID:    v.BookID,
+			ChapterID: v.ChapterID,
 		})
-    }
+	}
 
 	return verses, nil
 }

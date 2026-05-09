@@ -344,23 +344,23 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	}
 	response := gin.H{
 		"verse": gin.H{
-			"id":           verse.ID,
-			"reference":    verse.Reference,
-			"text":         verseText,
-			"book":         verse.Book,
-			"chapter":      verse.Chapter,
-			"verse":        verse.VerseNumber,
-			"version":      resolvedVersion.Abbreviation,
-			"language":     language,
-			"daily_date":   dailyDate,
+			"id":         verse.ID,
+			"reference":  verse.Reference,
+			"text":       verseText,
+			"book":       verse.Book,
+			"chapter":    verse.Chapter,
+			"verse":      verse.VerseNumber,
+			"version":    resolvedVersion.Abbreviation,
+			"language":   language,
+			"daily_date": dailyDate,
 		},
 	}
-	
+
 	// Add blessings_credited to response if any were credited
 	if blessingsCredited > 0 {
 		response["blessings_credited"] = blessingsCredited
 	}
-	
+
 	c.JSON(http.StatusOK, response)
 }
 

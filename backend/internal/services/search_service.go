@@ -11,7 +11,7 @@ import (
 
 const maxSavedSearches = 10
 
-var ErrMaxSavedSearches  = errors.New("maximum saved searches reached")
+var ErrMaxSavedSearches = errors.New("maximum saved searches reached")
 var ErrSavedSearchNotFound = errors.New("saved search not found")
 
 // ReflectionSearchResult is a single result from searching the user's reflections.

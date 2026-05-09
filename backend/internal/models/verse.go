@@ -1,29 +1,29 @@
 package models
 
 import (
-    "time"
-    "gorm.io/gorm"
+	"gorm.io/gorm"
+	"time"
 )
 
 type Verse struct {
-    // GORM base fields
-    ID        uint           `gorm:"primaryKey" json:"id"`
-    CreatedAt time.Time      `json:"created_at"`
-    UpdatedAt time.Time      `json:"updated_at"`
-    DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
-    
-    // Verse fields
-    Reference   string `gorm:"uniqueIndex;not null" json:"reference"`  // e.g., "John 3:16"
-    Text        string `gorm:"type:text;not null" json:"text"`
-    Book        string `gorm:"size:50;not null" json:"book"`
-    Chapter     int    `gorm:"not null" json:"chapter"`
-    VerseNumber int    `gorm:"not null" json:"verse_number"`
-    Version     string `gorm:"size:20;default:'KJV'" json:"version"`
-    Verse       string `gorm:"-" json:"verse,omitempty"` // Deprecated: use VerseNumber instead
-    Translation string `gorm:"size:10;default:'KJV'" json:"translation"`
-    DailyDate  *string `gorm:"uniqueIndex;type:date" json:"daily_date,omitempty"` // Date when used as daily verse
-    
-    // Relationships
-    Favorites []Favorite `gorm:"foreignKey:VerseID" json:"favorites,omitempty"`
-    History   []History  `gorm:"foreignKey:VerseID" json:"history,omitempty"`
+	// GORM base fields
+	ID        uint           `gorm:"primaryKey" json:"id"`
+	CreatedAt time.Time      `json:"created_at"`
+	UpdatedAt time.Time      `json:"updated_at"`
+	DeletedAt gorm.DeletedAt `gorm:"index" json:"-"`
+
+	// Verse fields
+	Reference   string  `gorm:"uniqueIndex;not null" json:"reference"` // e.g., "John 3:16"
+	Text        string  `gorm:"type:text;not null" json:"text"`
+	Book        string  `gorm:"size:50;not null" json:"book"`
+	Chapter     int     `gorm:"not null" json:"chapter"`
+	VerseNumber int     `gorm:"not null" json:"verse_number"`
+	Version     string  `gorm:"size:20;default:'KJV'" json:"version"`
+	Verse       string  `gorm:"-" json:"verse,omitempty"` // Deprecated: use VerseNumber instead
+	Translation string  `gorm:"size:10;default:'KJV'" json:"translation"`
+	DailyDate   *string `gorm:"uniqueIndex;type:date" json:"daily_date,omitempty"` // Date when used as daily verse
+
+	// Relationships
+	Favorites []Favorite `gorm:"foreignKey:VerseID" json:"favorites,omitempty"`
+	History   []History  `gorm:"foreignKey:VerseID" json:"history,omitempty"`
 }

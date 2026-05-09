@@ -69,7 +69,7 @@ type ReadingPlanEntryResponse struct {
 	DayNumber       int             `json:"day_number"`
 	DayTitle        string          `json:"day_title"`
 	VerseRef        string          `json:"verse_ref"`
-	VerseText       string          `json:"verse_text"`       // passage_text when seeded; otherwise resolved from local DB
+	VerseText       string          `json:"verse_text"` // passage_text when seeded; otherwise resolved from local DB
 	Reflection      string          `json:"reflection"`
 	PassageRefs     string          `json:"passage_refs"`
 	Prayer          string          `json:"prayer"`
@@ -79,11 +79,11 @@ type ReadingPlanEntryResponse struct {
 	ContentType     string          `json:"content_type"`
 	IsMemoryVerse   bool            `json:"is_memory_verse"`
 	QuizQuestion    string          `json:"quiz_question"`
-	QuizOptions     string          `json:"quiz_options"`     // JSON array
+	QuizOptions     string          `json:"quiz_options"` // JSON array
 	QuizExplanation string          `json:"quiz_explanation"`
-	WordStudies     string          `json:"word_studies"`     // JSON object keyed by word
-	DeepDiveText    string          `json:"deep_dive_text"`   // extended commentary; empty = section hidden
-	DeepDiveRefs    string          `json:"deep_dive_refs"`   // JSON array of further-study refs
+	WordStudies     string          `json:"word_studies"`       // JSON object keyed by word
+	DeepDiveText    string          `json:"deep_dive_text"`     // extended commentary; empty = section hidden
+	DeepDiveRefs    string          `json:"deep_dive_refs"`     // JSON array of further-study refs
 	PrevDay         *PrevDaySummary `json:"prev_day,omitempty"` // previous day recap; nil on day 1
 }
 
@@ -252,11 +252,11 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 	if err := s.db.Where("user_id = ? AND plan_id = ? AND is_active = false", userID, plan.ID).
 		First(&inactive).Error; err == nil {
 		// Reactivate with reset progress.
-		inactive.IsActive         = true
-		inactive.LastReadDay      = 0
-		inactive.CompletedAt      = nil
-		inactive.EnrolledAt       = time.Now().UTC()
-		inactive.PlanStreak       = 0
+		inactive.IsActive = true
+		inactive.LastReadDay = 0
+		inactive.CompletedAt = nil
+		inactive.EnrolledAt = time.Now().UTC()
+		inactive.PlanStreak = 0
 		inactive.LastPlanReadDate = nil
 		if err := s.db.Save(&inactive).Error; err != nil {
 			return nil, err

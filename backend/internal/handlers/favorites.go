@@ -1,18 +1,17 @@
 package handlers
 
 import (
+	"dailybible/internal/services"
+	"dailybible/internal/utils"
+	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
 	"strings"
 	"sync"
-	"dailybible/internal/services"
-	"dailybible/internal/utils"
-	"github.com/gin-gonic/gin"
 )
 
-
-// init FavoriteHandler struct 
+// init FavoriteHandler struct
 type FavoriteHandler struct {
 	favoriteService  *services.FavoriteService
 	bibleAPIService  services.BibleAPIService
@@ -45,11 +44,11 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
 
 	// get favorites from service
 	favorites, total, err := h.favoriteService.GetUserFavoritesPaginated(
-        userID.(uint),
+		userID.(uint),
 		search,
-        page,
-        pageSize,
-    )
+		page,
+		pageSize,
+	)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to get favorites"})
 		return
@@ -76,7 +75,7 @@ func (h *FavoriteHandler) GetFavorites(c *gin.Context) {
 	// prepare response
 	paginationParams := utils.NewPaginationParams(page, pageSize)
 	c.JSON(http.StatusOK, gin.H{
-		"favorites": favorites,
+		"favorites":  favorites,
 		"pagination": utils.CalculatePaginationMeta(total, paginationParams),
 	})
 
@@ -168,6 +167,3 @@ func (h *FavoriteHandler) RemoveFavorite(c *gin.Context) {
 
 	c.JSON(http.StatusOK, gin.H{"message": "Favorite removed successfully"})
 }
-
-	
-

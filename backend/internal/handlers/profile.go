@@ -142,7 +142,7 @@ func (h *ProfileHandler) CheckAvailability(c *gin.Context) {
 // GetProfile handler
 func (h *ProfileHandler) GetProfile(c *gin.Context) {
 	// extract userID from context (set by auth middleware)
-	userID, exists := c.Get("userID") 
+	userID, exists := c.Get("userID")
 	if !exists {
 		c.JSON(http.StatusUnauthorized, gin.H{"error": "Unauthorized"})
 		return
@@ -703,7 +703,7 @@ func (h *ProfileHandler) SetPassword(c *gin.Context) {
 	// check if user already has a password
 	if user.Password != "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Password already set",
+			"error":   "Password already set",
 			"details": "Use the change password feature to update your existing password",
 		})
 		return
@@ -713,7 +713,7 @@ func (h *ProfileHandler) SetPassword(c *gin.Context) {
 	validPassword, err := password.ValidatePasswordStrength(req.NewPassword)
 	if !validPassword {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Password does not meet requirements",
+			"error":   "Password does not meet requirements",
 			"details": err.Error(),
 		})
 		return
@@ -787,7 +787,7 @@ func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 	// check if user is OAuth-only (no password set)
 	if user.Password == "" {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "Cannot change password for OAuth-only accounts",
+			"error":   "Cannot change password for OAuth-only accounts",
 			"details": "Please set a password first or continue using Google login",
 		})
 		return
@@ -803,7 +803,7 @@ func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 	validPassword, err := password.ValidatePasswordStrength(req.NewPassword)
 	if !validPassword {
 		c.JSON(http.StatusBadRequest, gin.H{
-			"error": "New password does not meet requirements",
+			"error":   "New password does not meet requirements",
 			"details": err.Error(),
 		})
 		return
@@ -827,7 +827,7 @@ func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 	for _, historyEntry := range recentPasswords {
 		if password.CheckPasswordHash(req.NewPassword, historyEntry.PasswordHash) {
 			c.JSON(http.StatusBadRequest, gin.H{
-				"error": "Cannot reuse recent passwords",
+				"error":   "Cannot reuse recent passwords",
 				"details": "This password was used recently. Please choose a different password.",
 			})
 			return
