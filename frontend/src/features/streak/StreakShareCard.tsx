@@ -1,8 +1,6 @@
 import React, { useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ShareNetwork, DownloadSimple, Lock } from '@phosphor-icons/react';
-import { useStreak } from '../../contexts/StreakContext';
-import { useAuth } from '../../hooks/useAuth';
+import { ShareNetwork } from '@phosphor-icons/react';
 import { LockedFeatureCard } from '../../components/common/LockedFeatureCard';
 
 const CARD_WIDTH = 600;

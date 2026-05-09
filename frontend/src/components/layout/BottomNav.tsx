@@ -14,8 +14,6 @@ import {
   SignOut,
   X,
   LockSimple,
-  UserPlus,
-  SignIn,
   Path,
   HandsPraying,
 } from '@phosphor-icons/react';

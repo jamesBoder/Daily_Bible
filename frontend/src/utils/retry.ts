@@ -3,14 +3,13 @@ export async function retryWithBackoff<T>(
   maxRetries: number = 3,
   baseDelay: number = 1000
 ): Promise<T> {
-  let lastError: Error;
+  let lastError: Error = new Error('retryWithBackoff: no attempts made');
 
   for (let i = 0; i < maxRetries; i++) {
     try {
       return await fn();
     } catch (error) {
-      lastError = error as Error;
-      
+      lastError = error instanceof Error ? error : new Error(String(error));
       if (i < maxRetries - 1) {
         const delay = baseDelay * Math.pow(2, i);
         await new Promise(resolve => setTimeout(resolve, delay));
@@ -18,7 +17,5 @@ export async function retryWithBackoff<T>(
     }
   }
 
-  throw lastError!;
-
-  
+  throw lastError;
 }

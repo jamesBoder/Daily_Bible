@@ -18,7 +18,7 @@ const PlansLibrary: React.FC = () => {
   const { openModal } = usePricingModal();
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(PLANS_TUTORIAL_KEY);
 
-  const { data: plans = [], isLoading, refetch, isRefetching } = useQuery({
+  const { data: plans = [], isLoading } = useQuery({
     queryKey: ['plans-library'],
     queryFn: plansApi.getLibrary,
     staleTime: msUntilDailyReset(),

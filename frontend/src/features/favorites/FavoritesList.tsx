@@ -15,7 +15,6 @@ import { FavoritesTutorial, FAVORITES_TUTORIAL_KEY } from "./FavoritesTutorial";
 type SortField = "date" | "reference" | "book" | "translation" | "chapter" | "verseNumber";
 type SortDirection = "asc" | "desc";
 
-const SORT_FIELDS: SortField[] = ["date", "book", "reference", "translation", "chapter", "verseNumber"];
 
 // ── Share helpers ────────────────────────────────────────────────────────────
 interface VerseData {

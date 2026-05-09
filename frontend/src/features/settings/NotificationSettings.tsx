@@ -54,6 +54,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
       next.delete('unsubscribed');
       setSearchParams(next, { replace: true });
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Only fetch independently when parent didn't provide initial values

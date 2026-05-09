@@ -65,6 +65,7 @@ export const PasswordInput: React.FC<PasswordInputProps> = ({
       met: req.test(value),
     }));
     setRequirements(updatedRequirements);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value]);
 
   return (
