@@ -240,7 +240,7 @@ func (s *DailyVerseService) selectVerseForDate(date string) string {
 
 	// Convert first 8 chars of hash to number
 	var num int
-	_ = fmt.Sscanf(hashStr[:8], "%x", &num)
+	_, _ = fmt.Sscanf(hashStr[:8], "%x", &num) // #nosec G104
 
 	index := num % len(availableVerses)
 	return availableVerses[index]
@@ -253,7 +253,7 @@ func (s *DailyVerseService) selectVerseSimple(date string) string {
 
 	// Convert first 8 chars of hash to number
 	var num int
-	_ = fmt.Sscanf(hashStr[:8], "%x", &num)
+	_, _ = fmt.Sscanf(hashStr[:8], "%x", &num) // #nosec G104
 
 	index := num % len(s.curatedList)
 	return s.curatedList[index]
