@@ -37,16 +37,21 @@ go.work.sum
 backend/.env
 backend/tmp/
 backend/api
+backend/test_*.go
+backend/cmd/test_*/
 
 # Frontend
 frontend/node_modules/
 frontend/build/
 frontend/.env.local
 frontend/.env
+frontend/src/test-i18n.js
 
 # General
 *.log
 .DS_Store
+kubectl
+kubectl.sha256
 
 
 # sh files
