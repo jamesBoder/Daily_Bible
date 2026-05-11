@@ -5,9 +5,10 @@
  * - Mobile menu closes on route change (useEffect on location.pathname)
  */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
+import { Header } from '../components/layout/Header';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 jest.mock('react-i18next', () => ({
@@ -60,9 +61,6 @@ jest.mock('../contexts/StreakContext', () => ({
 jest.mock('../services/SoundService', () => ({
   SoundService: { play: jest.fn(), setEnabled: jest.fn(), isEnabled: jest.fn(), loadPreference: jest.fn() },
 }));
-
-// ── Import after mocks ────────────────────────────────────────────────────────
-import { Header } from '../components/layout/Header';
 
 const renderAt = (initialPath: string) =>
   render(

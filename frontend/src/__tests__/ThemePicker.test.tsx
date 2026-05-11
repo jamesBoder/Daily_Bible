@@ -13,8 +13,9 @@
  * - Loading state shows loading message instead of grid
  */
 import React from 'react';
-import { render, screen, fireEvent, waitFor } from '@testing-library/react';
+import { render, screen, fireEvent, waitFor, within } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { ThemePicker } from '../features/settings/ThemePicker';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -77,9 +78,6 @@ jest.mock('@phosphor-icons/react', () => ({
   Sparkle: ({ size }: any) => <span data-testid="icon-sparkle" data-size={size} />,
 }));
 
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import { ThemePicker } from '../features/settings/ThemePicker';
-
 const renderPicker = () => render(<ThemePicker />);
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
@@ -116,7 +114,7 @@ describe('ThemePicker — rendering', () => {
     renderPicker();
     // No lock badge visible next to free theme names (they are owned)
     const parchmentBtn = screen.getByRole('button', { name: /Parchment/i });
-    expect(parchmentBtn.querySelector('[data-testid="icon-lock"]')).toBeNull();
+    expect(within(parchmentBtn).queryByTestId('icon-lock')).toBeNull();
   });
 
   it('shows check icon on the active theme (parchment)', () => {
@@ -217,9 +215,6 @@ describe('ThemePicker — error display', () => {
 
 describe('ThemePicker — loading state', () => {
   it('shows loading message when isLoading=true', () => {
-    const { useUnlocks } = jest.requireMock('../hooks/useUnlocks');
-    const original = useUnlocks;
-    // Override temporarily
     jest.spyOn(require('../hooks/useUnlocks'), 'useUnlocks').mockReturnValueOnce({
       unlocks: [],
       balance: 0,

@@ -50,6 +50,7 @@ const MockAudioContext = jest.fn().mockImplementation(() => mockCtx);
 (global as any).webkitAudioContext = MockAudioContext;
 
 // ── Import after AudioContext mock ────────────────────────────────────────────
+// eslint-disable-next-line import/first
 import { SoundService } from '../services/SoundService';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────

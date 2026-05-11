@@ -16,6 +16,9 @@ import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
+import { Settings } from '../features/profile/Settings';
+import { useTheme } from '../contexts/ThemeContext';
+import { settingsService } from '../services/api/settings';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -100,11 +103,6 @@ jest.mock('../features/settings/AppearanceSettings', () => ({
 jest.mock('../features/settings/ThemePicker', () => ({
   ThemePicker: () => <div data-testid="theme-picker" />,
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import { Settings } from '../features/profile/Settings';
-import { useTheme } from '../contexts/ThemeContext';
-import { settingsService } from '../services/api/settings';
 
 // Typed references to the jest.fn() stubs created inside the factories above.
 // Assigned once at module level (safe — mock factories already ran by import time).
@@ -223,10 +221,11 @@ describe('Settings — Phase 7: initTheme sync on load', () => {
   it('calls initTheme with each of the 6 valid themes', async () => {
     const themes = ['parchment', 'midnight', 'sanctuary', 'desert-sand', 'celestial', 'scarlet-grace'];
     for (const theme of themes) {
-      mockInitTheme.mockClear();
+      const capturedInitTheme = mockInitTheme;
+      capturedInitTheme.mockClear();
       mockGetSettings.mockResolvedValue({ active_theme: theme });
       const { unmount } = renderSettings();
-      await waitFor(() => expect(mockInitTheme).toHaveBeenCalledWith(theme));
+      await waitFor(() => expect(capturedInitTheme).toHaveBeenCalledWith(theme));
       unmount();
     }
   });

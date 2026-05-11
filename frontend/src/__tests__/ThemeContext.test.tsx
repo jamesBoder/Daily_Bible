@@ -13,19 +13,17 @@
  * - Legacy toggleTheme switches between parchment and midnight only
  * - isDarkMode derived correctly from active theme
  */
-// ThemeContext now calls apiClient.put for debounced backend sync.
-// Mock it before importing ThemeContext to prevent the axios ESM parse error.
-// Note: jest.mock() is hoisted above const declarations — never reference outer
-// const/let variables inside the factory (TDZ).  Use jest.fn() inline instead.
-jest.mock('../services/api/client', () => ({
-  default: { put: jest.fn().mockResolvedValue({}) },
-}));
-
 import React from 'react';
 import { render, screen, act } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { ThemeProvider, useTheme, THEMES } from '../contexts/ThemeContext';
 import apiClient from '../services/api/client';
+
+// jest.mock() is hoisted above imports by Babel-Jest, so this runs before
+// ThemeContext is imported regardless of source order.
+jest.mock('../services/api/client', () => ({
+  default: { put: jest.fn().mockResolvedValue({}) },
+}));
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

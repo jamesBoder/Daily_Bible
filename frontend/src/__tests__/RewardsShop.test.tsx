@@ -11,6 +11,7 @@ import React from 'react';
 import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
+import { RewardsShop } from '../features/shop/RewardsShop';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -36,9 +37,6 @@ jest.mock('../components/BlessingsChip', () => ({
   __esModule: true,
   default: () => <div data-testid="blessings-chip" />,
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import { RewardsShop } from '../features/shop/RewardsShop';
 
 const renderShop = () =>
   render(
@@ -73,6 +71,7 @@ describe('RewardsShop — rendering', () => {
   it('ThemePicker is inside a section element', () => {
     renderShop();
     const picker = screen.getByTestId('theme-picker');
+    // eslint-disable-next-line testing-library/no-node-access
     expect(picker.closest('section')).not.toBeNull();
   });
 });

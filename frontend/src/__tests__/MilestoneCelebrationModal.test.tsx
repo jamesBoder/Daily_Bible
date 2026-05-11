@@ -23,6 +23,9 @@
 import React from 'react';
 import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import MilestoneCelebrationModal from '../features/streak/MilestoneCelebrationModal';
+import { SoundService } from '../services/SoundService';
+import { useStreak } from '../contexts/StreakContext';
 
 // ── matchMedia mock ───────────────────────────────────────────────────────────
 
@@ -68,11 +71,6 @@ jest.mock('../contexts/StreakContext', () => ({
   StreakProvider: ({ children }: any) => children,
 }));
 
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import MilestoneCelebrationModal from '../features/streak/MilestoneCelebrationModal';
-import { SoundService } from '../services/SoundService';
-import { useStreak } from '../contexts/StreakContext';
-
 // Typed references to the inline jest.fn() stubs created in the factories above.
 const mockPlay = SoundService.play as jest.Mock;
 const mockDismissMilestone = jest.fn();
@@ -117,7 +115,7 @@ describe('MilestoneCelebrationModal — visibility', () => {
   it('renders nothing when no milestone is pending', () => {
     withNoMilestone();
     const { container } = renderModal();
-    expect(container.firstChild).toBeNull();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('renders nothing when streakData is null', () => {
@@ -126,7 +124,7 @@ describe('MilestoneCelebrationModal — visibility', () => {
       dismissMilestone: mockDismissMilestone,
     });
     const { container } = renderModal();
-    expect(container.firstChild).toBeNull();
+    expect(container).toBeEmptyDOMElement();
   });
 
   it('renders the milestone name when a milestone is pending', () => {
@@ -172,6 +170,7 @@ describe('MilestoneCelebrationModal — Phase 7: particle gate', () => {
     renderModal();
     act(() => { jest.advanceTimersByTime(1800); });
     // Particles are <span> elements with animation styles
+    // eslint-disable-next-line testing-library/no-node-access
     const particles = document.querySelectorAll('span[style*="animation"]');
     expect(particles.length).toBeGreaterThan(0);
   });
@@ -180,6 +179,7 @@ describe('MilestoneCelebrationModal — Phase 7: particle gate', () => {
     localStorage.setItem('celebrationAnimEnabled', 'true');
     renderModal();
     act(() => { jest.advanceTimersByTime(1800); });
+    // eslint-disable-next-line testing-library/no-node-access
     const particles = document.querySelectorAll('span[style*="animation"]');
     expect(particles.length).toBeGreaterThan(0);
   });
@@ -188,6 +188,7 @@ describe('MilestoneCelebrationModal — Phase 7: particle gate', () => {
     localStorage.setItem('celebrationAnimEnabled', 'false');
     renderModal();
     act(() => { jest.advanceTimersByTime(1800); });
+    // eslint-disable-next-line testing-library/no-node-access
     const particles = document.querySelectorAll('span[style*="animation"]');
     expect(particles.length).toBe(0);
   });
@@ -263,6 +264,6 @@ describe('MilestoneCelebrationModal — dismiss', () => {
     sessionStorage.setItem('dismissedMilestones', JSON.stringify(['week_in_word']));
     const { container } = renderModal();
     // Modal already dismissed in this session — should not render
-    expect(container.firstChild).toBeNull();
+    expect(container).toBeEmptyDOMElement();
   });
 });

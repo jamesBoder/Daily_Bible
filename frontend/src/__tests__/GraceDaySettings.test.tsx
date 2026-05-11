@@ -14,6 +14,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { GraceDaySettings } from '../features/settings/GraceDaySettings';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -41,9 +42,6 @@ jest.mock('../contexts/StreakContext', () => ({
   }),
   StreakProvider: ({ children }: any) => children,
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import { GraceDaySettings } from '../features/settings/GraceDaySettings';
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
 

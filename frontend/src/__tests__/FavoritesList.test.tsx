@@ -9,6 +9,8 @@ import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
+import { FavoritesList } from '../features/favorites/FavoritesList';
+import { useFavorites } from '../hooks/useFavorites';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 jest.mock('react-i18next', () => ({
@@ -44,10 +46,6 @@ jest.mock('../utils/toast', () => ({
 jest.mock('../features/verse/CommentSection', () => ({
   CommentSection: () => <div data-testid="comment-section" />,
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import { FavoritesList } from '../features/favorites/FavoritesList';
-import { useFavorites } from '../hooks/useFavorites';
 
 const mockRemoveFavorite = jest.fn().mockResolvedValue(undefined);
 

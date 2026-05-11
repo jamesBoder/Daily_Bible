@@ -11,6 +11,8 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { CommentSection } from '../features/verse/CommentSection';
+import { commentService } from '../services/api/comment';
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 jest.mock('react-i18next', () => ({
@@ -38,10 +40,6 @@ jest.mock('../services/api/comment', () => ({
 jest.mock('../hooks/useKeyboardShortcuts', () => ({
   useKeyboardShortcuts: jest.fn(),
 }));
-
-// ── Imports after mocks ───────────────────────────────────────────────────────
-import { CommentSection } from '../features/verse/CommentSection';
-import { commentService } from '../services/api/comment';
 
 const renderComponent = () =>
   render(<CommentSection verseId={1} verseReference="John 3:16" />);
@@ -123,7 +121,7 @@ describe('CommentSection – note badge', () => {
     await waitFor(() =>
       expect(commentService.getCommentForVerse).toHaveBeenCalled()
     );
-    await waitFor(() => expect(screen.getByText('1')).toBeInTheDocument());
+    expect(await screen.findByText('1')).toBeInTheDocument();
   });
 
   it('hides badge when section is expanded', async () => {
