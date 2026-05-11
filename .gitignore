@@ -53,6 +53,9 @@ frontend/src/test-i18n.js
 kubectl
 kubectl.sha256
 
+# Claude Code
+.claude/
+
 
 # sh files
 *.sh
