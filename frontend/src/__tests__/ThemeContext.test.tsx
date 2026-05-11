@@ -22,6 +22,7 @@ import apiClient from '../services/api/client';
 // jest.mock() is hoisted above imports by Babel-Jest, so this runs before
 // ThemeContext is imported regardless of source order.
 jest.mock('../services/api/client', () => ({
+  __esModule: true,
   default: { put: jest.fn().mockResolvedValue({}) },
 }));
 
@@ -266,7 +267,8 @@ const renderWithInit = () =>
 
 describe('ThemeContext — Phase 7: initTheme', () => {
   beforeEach(() => {
-    (apiClient as any).put.mockClear();
+    // resetMocks: true (CRA default) resets implementations — re-attach before each test
+    (apiClient as any).put.mockResolvedValue({});
     jest.useFakeTimers();
   });
   afterEach(() => {
@@ -293,7 +295,8 @@ describe('ThemeContext — Phase 7: initTheme', () => {
 
 describe('ThemeContext — Phase 7: setTheme API sync', () => {
   beforeEach(() => {
-    (apiClient as any).put.mockClear();
+    // resetMocks: true (CRA default) resets implementations — re-attach before each test
+    (apiClient as any).put.mockResolvedValue({});
     jest.useFakeTimers();
   });
   afterEach(() => {

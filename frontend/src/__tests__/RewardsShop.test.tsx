@@ -38,6 +38,35 @@ jest.mock('../components/BlessingsChip', () => ({
   default: () => <div data-testid="blessings-chip" />,
 }));
 
+jest.mock('../contexts/StreakContext', () => ({
+  useStreak: () => ({
+    streakData: { current_streak: 5, blessings_balance: 100, grace_days_remaining: 2 },
+    isLoading: false,
+  }),
+  StreakProvider: ({ children }: any) => children,
+}));
+
+jest.mock('../services/SoundService', () => ({
+  SoundService: { play: jest.fn(), setEnabled: jest.fn(), isEnabled: jest.fn(), loadPreference: jest.fn() },
+}));
+
+jest.mock('@phosphor-icons/react', () => ({
+  Crown: () => null,
+  Check: () => null,
+  Palette: () => null,
+  Sparkle: () => null,
+  Infinity: () => null,
+}));
+
+jest.mock('../features/settings/OneTimePurchaseSection', () => ({
+  OneTimePurchaseSection: () => <div data-testid="one-time-purchase-section" />,
+}));
+
+jest.mock('../features/shop/ShopTutorial', () => ({
+  ShopTutorial: () => null,
+  SHOP_TUTORIAL_KEY: 'shopSeenTutorial',
+}));
+
 const renderShop = () =>
   render(
     <MemoryRouter>

@@ -34,14 +34,19 @@ jest.mock('react-router-dom', () => ({
   useNavigate: () => jest.fn(),
 }));
 
-jest.mock('../hooks/useAuth', () => ({
-  useAuth: () => ({
-    user: { id: 1, username: 'Test', email: 'test@test.com' },
-    isAuthenticated: true,
-    isGuest: false,
-    logout: jest.fn(),
-  }),
-}));
+jest.mock('../hooks/useAuth', () => {
+  // Stable reference — useEffect([user]) only re-runs when reference changes.
+  // Without this, every render returns a new object and the effect fires repeatedly.
+  const stableUser = { id: 1, username: 'Test', email: 'test@test.com' };
+  return {
+    useAuth: () => ({
+      user: stableUser,
+      isAuthenticated: true,
+      isGuest: false,
+      logout: jest.fn(),
+    }),
+  };
+});
 
 jest.mock('../contexts/StreakContext', () => ({
   useStreak: () => ({
@@ -85,9 +90,6 @@ jest.mock('../features/profile/TranslationPicker', () => ({
 jest.mock('../features/profile/AccountManagement', () => ({
   AccountManagement: () => <div data-testid="account-management" />,
 }));
-jest.mock('../features/profile/GuestAccountManagement', () => ({
-  GuestAccountManagement: () => <div data-testid="guest-account-management" />,
-}));
 jest.mock('../features/settings/GraceDaySettings', () => ({
   GraceDaySettings: () => <div data-testid="grace-day-settings" />,
 }));
@@ -102,6 +104,22 @@ jest.mock('../features/settings/AppearanceSettings', () => ({
 }));
 jest.mock('../features/settings/ThemePicker', () => ({
   ThemePicker: () => <div data-testid="theme-picker" />,
+}));
+jest.mock('../features/settings/CommunitySection', () => ({
+  CommunitySection: () => <div data-testid="community-section" />,
+}));
+jest.mock('../features/settings/MannaSettings', () => ({
+  MannaSettings: () => <div data-testid="manna-settings" />,
+}));
+jest.mock('../features/about/About', () => ({
+  AboutContent: () => <div data-testid="about-content" />,
+}));
+jest.mock('../features/settings/TutorialsSection', () => ({
+  TutorialsSection: () => <div data-testid="tutorials-section" />,
+}));
+jest.mock('../features/settings/InstallAppSection', () => ({
+  __esModule: true,
+  default: () => <div data-testid="install-app-section" />,
 }));
 
 // Typed references to the jest.fn() stubs created inside the factories above.
@@ -139,7 +157,7 @@ const renderSettings = () =>
 describe('Settings — Phase 7 section layout', () => {
   it('renders the "My Journey" section heading', async () => {
     renderSettings();
-    expect(await screen.findByText('My Journey')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /My Journey/i })).toBeInTheDocument();
   });
 
   it('renders the "Devotion & Notifications" section heading', async () => {
@@ -149,7 +167,7 @@ describe('Settings — Phase 7 section layout', () => {
 
   it('renders the "Appearance" section heading', async () => {
     renderSettings();
-    expect(await screen.findByText('Appearance')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: /Appearance/i })).toBeInTheDocument();
   });
 
   it('renders the Account section', async () => {
@@ -180,14 +198,14 @@ describe('Settings — Phase 7 section layout', () => {
   });
 });
 
-// ── About link preserved ──────────────────────────────────────────────────────
+// ── About tab preserved ───────────────────────────────────────────────────────
 
-describe('Settings — About link', () => {
-  it('preserves the /about NavLink in the Account section', async () => {
+describe('Settings — About tab', () => {
+  it('renders the About tab button for navigating to About content', async () => {
     renderSettings();
-    const aboutLink = await screen.findByRole('link', { name: /nav\.about/i });
-    expect(aboutLink).toBeInTheDocument();
-    expect(aboutLink).toHaveAttribute('href', '/about');
+    // Component uses a tab bar with settings/about — About tab renders inline content
+    const aboutTab = await screen.findByRole('button', { name: /About/i });
+    expect(aboutTab).toBeInTheDocument();
   });
 });
 
@@ -219,6 +237,15 @@ describe('Settings — Phase 7: initTheme sync on load', () => {
   });
 
   it('calls initTheme with each of the 6 valid themes', async () => {
+    // Override activeTheme to a non-theme value so the guard
+    // (s.active_theme !== activeTheme) is always true for every theme
+    (useTheme as jest.Mock).mockReturnValue({
+      activeTheme: '',
+      setTheme: jest.fn(),
+      initTheme: mockInitTheme,
+      isDarkMode: false,
+      toggleTheme: jest.fn(),
+    });
     const themes = ['parchment', 'midnight', 'sanctuary', 'desert-sand', 'celestial', 'scarlet-grace'];
     for (const theme of themes) {
       const capturedInitTheme = mockInitTheme;

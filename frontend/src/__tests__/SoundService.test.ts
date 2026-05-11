@@ -43,6 +43,8 @@ const mockCtx = {
   createGain: jest.fn().mockReturnValue(mockGainNode),
   destination: {},
   currentTime: 0,
+  state: 'running',
+  resume: jest.fn().mockResolvedValue(undefined),
 };
 
 const MockAudioContext = jest.fn().mockImplementation(() => mockCtx);
@@ -71,6 +73,11 @@ beforeEach(() => {
   SoundService.setEnabled(false);
   // Reset the cached AudioContext so each test gets a fresh ctx
   (SoundService as any).ctx = null;
+  // resetMocks: true (CRA default) wipes jest.fn() implementations before each test —
+  // re-attach so getCtx() returns the mock context rather than throwing
+  MockAudioContext.mockImplementation(() => mockCtx);
+  mockCtx.createOscillator.mockReturnValue(mockOscillator);
+  mockCtx.createGain.mockReturnValue(mockGainNode);
   resetCtxCounts();
 });
 

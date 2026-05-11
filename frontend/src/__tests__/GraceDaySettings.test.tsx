@@ -20,12 +20,22 @@ import { GraceDaySettings } from '../features/settings/GraceDaySettings';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (_key: string, fallback?: string) => fallback ?? _key,
+    t: (_key: string, fallback?: any) => {
+      if (fallback && typeof fallback === 'object' && fallback.defaultValue) {
+        return fallback.defaultValue;
+      }
+      return typeof fallback === 'string' ? fallback : _key;
+    },
   }),
 }));
 
 jest.mock('@phosphor-icons/react', () => ({
   CalendarCheck: () => <span data-testid="icon-calendar-check" />,
+  ShieldStar: () => <span data-testid="icon-shield-star" />,
+}));
+
+jest.mock('../features/settings/GraceDayTutorial', () => ({
+  GraceDayTutorial: () => null,
 }));
 
 // Use a module-level variable for grace_days_remaining so renderWithRemaining()
@@ -67,7 +77,7 @@ describe('GraceDaySettings — rendering', () => {
   it('shows grace days remaining count', () => {
     renderComponent();
     expect(screen.getByText(/2/)).toBeInTheDocument();
-    expect(screen.getByText(/of 2/)).toBeInTheDocument();
+    expect(screen.getByText(/of 5/)).toBeInTheDocument();
   });
 
   it('shows "Use a Grace Day" button when remaining > 0', () => {
@@ -136,7 +146,7 @@ describe('GraceDaySettings — loading state', () => {
     const confirmBtn = screen.getByRole('button', { name: /confirm/i });
     fireEvent.click(confirmBtn); // → loading state
     await waitFor(() => {
-      expect(screen.getByRole('button')).toBeDisabled();
+      expect(screen.getByRole('button', { name: /confirm/i })).toBeDisabled();
     });
   });
 });

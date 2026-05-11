@@ -41,6 +41,18 @@ jest.mock('../hooks/useKeyboardShortcuts', () => ({
   useKeyboardShortcuts: jest.fn(),
 }));
 
+jest.mock('../contexts/StreakContext', () => ({
+  useStreak: () => ({
+    streakData: { current_streak: 5, blessings_balance: 100, grace_days_remaining: 2 },
+    isLoading: false,
+  }),
+  StreakProvider: ({ children }: any) => children,
+}));
+
+jest.mock('../components/BlessingsToast', () => ({
+  showBlessingsToast: jest.fn(),
+}));
+
 const renderComponent = () =>
   render(<CommentSection verseId={1} verseReference="John 3:16" />);
 

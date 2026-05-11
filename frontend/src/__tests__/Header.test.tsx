@@ -71,52 +71,40 @@ const renderAt = (initialPath: string) =>
 
 // ── Tests ─────────────────────────────────────────────────────────────────────
 describe('Header – NavLink active highlighting', () => {
-  // getAllByText because there are both desktop and mobile nav links rendered.
+  // Active NavLinks use amber pill styling. Favorites/settings moved to closed
+  // dropdowns (favorites uses a static class; settings is a plain button — neither
+  // has route-based active styling), so only top-level NavLinks are testable here.
 
-  it('applies text-primary-600 to /search link when on /search', () => {
+  it('applies amber active class to /search link when on /search', () => {
     renderAt('/search');
     const links = screen.getAllByText('nav.search');
-    expect(links[0]).toHaveClass('text-primary-600');
+    expect(links[0]).toHaveClass('text-amber-700');
   });
 
-  it('does NOT apply text-primary-600 to /search link when on /settings', () => {
+  it('does NOT apply amber active class to /search link when on /settings', () => {
     renderAt('/settings');
     const links = screen.getAllByText('nav.search');
-    expect(links[0]).not.toHaveClass('text-primary-600');
+    expect(links[0]).not.toHaveClass('text-amber-700');
   });
 
-  it('applies text-primary-600 to /favorites link when on /favorites', () => {
-    renderAt('/favorites');
-    const links = screen.getAllByText('nav.favorites');
-    expect(links[0]).toHaveClass('text-primary-600');
+  it('applies amber active class to /manna link when on /manna', () => {
+    renderAt('/manna');
+    const links = screen.getAllByText('nav.manna');
+    expect(links[0]).toHaveClass('text-amber-700');
   });
 
-  it('does NOT apply text-primary-600 to /favorites link when on /search', () => {
+  it('does NOT apply amber active class to /manna link when on /search', () => {
     renderAt('/search');
-    const links = screen.getAllByText('nav.favorites');
-    expect(links[0]).not.toHaveClass('text-primary-600');
-  });
-
-  it('applies text-primary-600 to /settings link when on /settings', () => {
-    renderAt('/settings');
-    const links = screen.getAllByText('nav.settings');
-    expect(links[0]).toHaveClass('text-primary-600');
-  });
-
-  it('does NOT apply text-primary-600 to /settings link when on /search', () => {
-    renderAt('/search');
-    const links = screen.getAllByText('nav.settings');
-    expect(links[0]).not.toHaveClass('text-primary-600');
+    const links = screen.getAllByText('nav.manna');
+    expect(links[0]).not.toHaveClass('text-amber-700');
   });
 });
 
-describe('Header – mobile menu closes on route change', () => {
-  it('renders all nav links and does not crash (regression guard)', () => {
-    // The close-on-route-change is a useEffect on location.pathname.
-    // Verify the Header renders correctly and all expected links are present.
+describe('Header – renders without crashing', () => {
+  it('renders top-level nav links (regression guard)', () => {
     renderAt('/search');
     expect(screen.getAllByText('nav.search').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('nav.favorites').length).toBeGreaterThan(0);
-    expect(screen.getAllByText('nav.settings').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('nav.manna').length).toBeGreaterThan(0);
+    expect(screen.getAllByText('nav.plans').length).toBeGreaterThan(0);
   });
 });

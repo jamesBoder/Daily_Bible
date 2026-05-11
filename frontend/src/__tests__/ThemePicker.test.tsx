@@ -24,7 +24,7 @@ jest.mock('react-i18next', () => ({
     t: (key: string, opts?: any) => {
       const map: Record<string, string> = {
         'settings.appearance.title':            'Appearance Theme',
-        'settings.appearance.blessingsAvailable': `${opts?.count ?? ''} Blessings available`,
+        'settings.appearance.blessingsAvailable': `${opts?.count?.toLocaleString() ?? ''} Blessings available`,
         'settings.appearance.loadingThemes':    'Loading themes…',
         'settings.appearance.tapToConfirm':     'Tap to confirm',
         'settings.appearance.signInToUnlock':   'Sign in to unlock',

@@ -30,21 +30,9 @@ import { useStreak } from '../contexts/StreakContext';
 // ── matchMedia mock ───────────────────────────────────────────────────────────
 
 // JSDOM does not implement window.matchMedia. We provide a controllable mock.
+// Note: resetMocks: true (CRA default) resets jest.fn() implementations before each
+// test, so we re-assign window.matchMedia inside beforeEach rather than beforeAll.
 let mockPrefersReducedMotion = false;
-
-Object.defineProperty(window, 'matchMedia', {
-  writable: true,
-  value: jest.fn().mockImplementation((query: string) => ({
-    matches: query.includes('reduce') && mockPrefersReducedMotion,
-    media: query,
-    onchange: null,
-    addListener: jest.fn(),
-    removeListener: jest.fn(),
-    addEventListener: jest.fn(),
-    removeEventListener: jest.fn(),
-    dispatchEvent: jest.fn(),
-  })),
-});
 
 // ── Mocks ─────────────────────────────────────────────────────────────────────
 
@@ -52,6 +40,11 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (_key: string, fallback?: string) => fallback ?? _key,
   }),
+}));
+
+jest.mock('posthog-js', () => ({
+  __esModule: true,
+  default: { capture: jest.fn(), init: jest.fn() },
 }));
 
 // Use jest.fn() inline — never reference outer const/let inside a hoisted factory.
@@ -107,6 +100,17 @@ beforeEach(() => {
   sessionStorage.clear();
   mockPrefersReducedMotion = false;
   mockDismissMilestone.mockResolvedValue(undefined);
+  // Re-create after resetMocks: true wipes jest.fn() implementations each test
+  (window as any).matchMedia = jest.fn().mockImplementation((query: string) => ({
+    matches: query.includes('reduce') && mockPrefersReducedMotion,
+    media: query,
+    onchange: null,
+    addListener: jest.fn(),
+    removeListener: jest.fn(),
+    addEventListener: jest.fn(),
+    removeEventListener: jest.fn(),
+    dispatchEvent: jest.fn(),
+  }));
 });
 
 // ── Visibility ────────────────────────────────────────────────────────────────
