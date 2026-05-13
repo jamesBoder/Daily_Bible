@@ -25,7 +25,7 @@ func resolveLogLevel(level string) logger.LogLevel {
 }
 
 func Connect(config *config.Config) (*gorm.DB, error) {
-	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s connect_timeout=5",
+	dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s connect_timeout=15",
 		config.DBHost, config.DBPort, config.DBUser,
 		config.DBPassword, config.DBName, config.DBSSLMode)
 
