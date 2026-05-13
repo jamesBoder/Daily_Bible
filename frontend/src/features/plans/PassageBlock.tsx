@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { WordStudy } from '../../services/api/plans';
+import { SoundService } from '../../services/SoundService';
 
 interface PassageBlockProps {
   verseRef: string;
@@ -44,7 +45,7 @@ const PassageBlock: React.FC<PassageBlockProps> = ({ verseRef, verseText, wordSt
                 <span
                   key={i}
                   className="cursor-pointer border-b-2 border-dotted border-amber-400 dark:border-amber-500 hover:bg-amber-50 dark:hover:bg-amber-900/20 rounded-sm px-0.5 py-0.5 -my-0.5 transition-colors inline-block"
-                  onClick={() => onWordTap(clean, study)}
+                  onClick={() => { SoundService.play('word-tap'); onWordTap(clean, study); }}
                 >
                   {tok}
                 </span>

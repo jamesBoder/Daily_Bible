@@ -1,6 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { QuizOption } from '../../services/api/plans';
+import { SoundService } from '../../services/SoundService';
 
 interface ComprehensionCheckProps {
   question: string;
@@ -56,7 +57,10 @@ const ComprehensionCheck: React.FC<ComprehensionCheckProps> = ({ question, optio
             key={opt.label}
             disabled={answered}
             className={optionClass(opt)}
-            onClick={() => setSelected(opt.label)}
+            onClick={() => {
+              setSelected(opt.label);
+              SoundService.play(opt.correct ? 'quiz-correct' : 'quiz-wrong');
+            }}
           >
             <span className="font-semibold mr-1.5">{opt.label})</span>
             {opt.text}

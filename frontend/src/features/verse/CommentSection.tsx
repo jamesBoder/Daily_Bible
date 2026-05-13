@@ -6,6 +6,7 @@ import { Comment } from "../../types/comment";
 import { useKeyboardShortcuts } from "../../hooks/useKeyboardShortcuts";
 import { useStreak } from "../../contexts/StreakContext";
 import { showBlessingsToast } from "../../components/BlessingsToast";
+import { SoundService } from "../../services/SoundService";
 
 interface CommentSectionProps {
   verseId: number;
@@ -85,6 +86,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 
       setComment(savedComment);
       setIsEditing(false);
+      SoundService.play('journal-save');
       onCommentSaved?.();
       if (blessings_credited > 0) {
         showBlessingsToast(blessings_credited, 'reflection_written');

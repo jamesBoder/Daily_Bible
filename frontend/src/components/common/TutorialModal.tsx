@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
+import { SoundService } from '../../services/SoundService';
 
 export interface TutorialStep {
   emoji: string;
@@ -47,8 +48,10 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
 
   const handleNext = () => {
     if (isLast) {
+      SoundService.play('tutorial-done');
       onDismiss();
     } else {
+      SoundService.play('tutorial-next');
       setStepIdx(i => i + 1);
     }
   };
