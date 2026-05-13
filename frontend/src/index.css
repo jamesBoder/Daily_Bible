@@ -138,7 +138,7 @@
     --grace-lavender: #9b8fc4;
     --grace-lavender-bg: rgba(155, 143, 196, 0.12);
     --milestone-glow: #fde047;
-    --challenge-accent: #3a9b8c;
+    --challenge-accent: #6b9e5a; /* parchment: sage green — warmer than teal on cream */
     --parchment: #faf8f3;
 
     /* Body background gradient — overridden per theme so adding a new theme
@@ -183,9 +183,11 @@
     --foreground: #dff0d8;
     /* Jade green accent — key differentiator from Midnight's warm amber */
     --candle-amber: #6dcb8a;
-    --blessing-gold: #8fd4a4;
+    /* Richer jade so correct Manna tiles and title glow pop on the dark forest bg */
+    --blessing-gold: #48cc76;
     --grace-lavender: #78a882;
-    --challenge-accent: #4ab87a;
+    /* Warm amber present tile — clear contrast with jade correct tile */
+    --challenge-accent: #d4944a;
     --milestone-glow: #7dd89a;
     --theme-surface: #0f2b1c;
     --theme-border: rgba(109, 203, 138, 0.28);
@@ -209,6 +211,7 @@
     --blessing-gold: #d4882a;
     --grace-lavender: #9b8a7a;
     --milestone-glow: #e8c070;
+    --challenge-accent: #a06840; /* desert-sand: warm terracotta present tile */
     --theme-surface: #ede0d0;
     --theme-border: rgba(201, 124, 43, 0.38);
     --theme-accent: #8b4513;
@@ -231,7 +234,7 @@
     --blessing-gold: #c0c8f0;
     --grace-lavender: #7788cc;
     --milestone-glow: #aabbee;
-    --challenge-accent: #5ec6b8;
+    --challenge-accent: #9b7fd4; /* celestial: violet-nebula — thematic for star/space */
     --theme-surface: #121840;
     --theme-border: rgba(136, 153, 221, 0.20);
     --theme-accent: #4455aa;
@@ -254,7 +257,7 @@
     --blessing-gold: #d4af37;
     --grace-lavender: #c08080;
     --milestone-glow: #e8c060;
-    --challenge-accent: #5ec6b8;
+    --challenge-accent: #c85030; /* scarlet-grace: crimson-orange — fits the manuscript palette */
     --theme-surface: #220808;
     --theme-border: rgba(200, 134, 42, 0.22);
     --theme-accent: #8b0000;
@@ -299,6 +302,7 @@
     --grace-lavender-bg: rgba(155, 143, 196, 0.18);
 
     /* Phase 6 — Midnight theme surface tokens */
+    --challenge-accent: #50b8a8; /* midnight: bright teal — vivid on dark navy */
     --theme-surface: #3a3020;
     --theme-border: rgba(251, 191, 36, 0.26);
     --theme-accent: #fbbf24;
