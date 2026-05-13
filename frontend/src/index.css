@@ -138,12 +138,15 @@
     --grace-lavender: #9b8fc4;
     --grace-lavender-bg: rgba(155, 143, 196, 0.12);
     --milestone-glow: #fde047;
-    --challenge-accent: #3a9b8c;
+    --challenge-accent: #6b9e5a; /* parchment: sage green — warmer than teal on cream */
     --parchment: #faf8f3;
 
     /* Body background gradient — overridden per theme so adding a new theme
-       only requires setting this one variable in the theme's block below. */
-    --body-bg: linear-gradient(to bottom, #d1dce8 0%, #b8c8d8 50%, #9fb4c8 100%);
+       only requires setting this one variable in the theme's block below.
+       Parchment: warm honey-cream with a faint morning-sun glow at the top. */
+    --body-bg:
+      radial-gradient(ellipse 100% 42% at 50% -5%, rgba(245, 185, 60, 0.14) 0%, transparent 62%),
+      linear-gradient(to bottom, #ede4cc 0%, #e3d7b5 50%, #d9cba5 100%);
 
     /* Phase 3 — Journal tokens (light mode) */
     --journal-surface:        #fffcf4;
@@ -151,7 +154,7 @@
     --journal-line:           rgba(190, 150, 80, 0.18);
     --journal-margin:         rgba(190, 150, 80, 0.25);
     --journal-text:           #2D1F0A;
-    --journal-text-muted:     #7A6040;
+    --journal-text-muted:     #8C6E48;
     --journal-border:         rgba(190, 150, 80, 0.30);
     --journal-accent-light:   rgba(245, 158, 11, 0.10);
     --journal-accent-border:  rgba(245, 158, 11, 0.35);
@@ -169,27 +172,34 @@
 
   /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
 
-  /* Sanctuary — forest green chapel */
+  /* Sanctuary — moonlit forest chapel */
   [data-theme="sanctuary"] {
-    --body-bg: linear-gradient(to bottom, #0f1a13 0%, #131e18 50%, #1a2620 100%);
-    --parchment: #1a2620;
-    --foreground: #e8e0d0;
-    --candle-amber: #c8a84b;
-    --blessing-gold: #d4af37;
-    --grace-lavender: #8fa68a;
-    --challenge-accent: #5ec6b8;
-    --milestone-glow: #a8c97f;
-    --theme-surface: #1f2e28;
-    --theme-border: rgba(200, 168, 75, 0.20);
-    --theme-accent: #4a7c59;
-    --header-bg: rgba(26, 38, 32, 0.88);
-    /* Journal / Manna tiles must match the dark green background */
-    --journal-surface:     #1c2c24;
-    --journal-surface-alt: #1a2a22;
-    --journal-line:        rgba(200, 168, 75, 0.14);
-    --journal-border:      rgba(200, 168, 75, 0.22);
-    --journal-text:        #d8d0bc;
-    --journal-text-muted:  #8a9e88;
+    /* Two-layer bg: jade radial glow from top (canopy light) + deep forest gradient.
+       The glow makes the top ~40% visibly luminous green — unmistakably not Midnight. */
+    --body-bg:
+      radial-gradient(ellipse 110% 52% at 50% -8%, rgba(45, 168, 90, 0.38) 0%, transparent 68%),
+      linear-gradient(to bottom, #040d08 0%, #081811 55%, #0c2016 100%);
+    --parchment: #0c2016;
+    --foreground: #dff0d8;
+    /* Jade green accent — key differentiator from Midnight's warm amber */
+    --candle-amber: #6dcb8a;
+    /* Richer jade so correct Manna tiles and title glow pop on the dark forest bg */
+    --blessing-gold: #48cc76;
+    --grace-lavender: #78a882;
+    /* Warm amber present tile — clear contrast with jade correct tile */
+    --challenge-accent: #d4944a;
+    --milestone-glow: #7dd89a;
+    --theme-surface: #0f2b1c;
+    --theme-border: rgba(109, 203, 138, 0.28);
+    --theme-accent: #3a8c5c;
+    --header-bg: rgba(4, 13, 8, 0.92);
+    /* Journal / Manna tiles — deep forest green with sage ivory text */
+    --journal-surface:     #0d2419;
+    --journal-surface-alt: #0b2016;
+    --journal-line:        rgba(109, 203, 138, 0.14);
+    --journal-border:      rgba(109, 203, 138, 0.24);
+    --journal-text:        #cce4c4;
+    --journal-text-muted:  #6aae7c;
   }
 
   /* Desert Sand — warm solitude */
@@ -201,6 +211,7 @@
     --blessing-gold: #d4882a;
     --grace-lavender: #9b8a7a;
     --milestone-glow: #e8c070;
+    --challenge-accent: #a06840; /* desert-sand: warm terracotta present tile */
     --theme-surface: #ede0d0;
     --theme-border: rgba(201, 124, 43, 0.38);
     --theme-accent: #8b4513;
@@ -223,7 +234,7 @@
     --blessing-gold: #c0c8f0;
     --grace-lavender: #7788cc;
     --milestone-glow: #aabbee;
-    --challenge-accent: #5ec6b8;
+    --challenge-accent: #9b7fd4; /* celestial: violet-nebula — thematic for star/space */
     --theme-surface: #121840;
     --theme-border: rgba(136, 153, 221, 0.20);
     --theme-accent: #4455aa;
@@ -246,7 +257,7 @@
     --blessing-gold: #d4af37;
     --grace-lavender: #c08080;
     --milestone-glow: #e8c060;
-    --challenge-accent: #5ec6b8;
+    --challenge-accent: #c85030; /* scarlet-grace: crimson-orange — fits the manuscript palette */
     --theme-surface: #220808;
     --theme-border: rgba(200, 134, 42, 0.22);
     --theme-accent: #8b0000;
@@ -277,7 +288,11 @@
      NOTE: .dark class intentionally excluded here so sanctuary/celestial/scarlet-grace
      themes (which also add .dark for Tailwind utilities) don't inherit midnight colors. */
   [data-theme="midnight"], [data-theme="dark"] {
-    --body-bg: linear-gradient(to bottom, #1a1a1a 0%, #0f172a 50%, #1e293b 100%);
+    /* Near-black top with a faint candlelight radial glow — single candle in a dark room.
+       Fades into deep navy. Much richer than the old grey-to-navy flat gradient. */
+    --body-bg:
+      radial-gradient(ellipse 75% 36% at 50% 0%, rgba(200, 140, 40, 0.18) 0%, transparent 58%),
+      linear-gradient(to bottom, #0a0907 0%, #0f172a 52%, #181e2e 100%);
     --parchment: #2C2519;
     --foreground: #e8d5b0;
     /* Amber is lightened for dark-mode readability — #f59e0b is marginal contrast
@@ -287,8 +302,9 @@
     --grace-lavender-bg: rgba(155, 143, 196, 0.18);
 
     /* Phase 6 — Midnight theme surface tokens */
+    --challenge-accent: #50b8a8; /* midnight: bright teal — vivid on dark navy */
     --theme-surface: #3a3020;
-    --theme-border: rgba(251, 191, 36, 0.20);
+    --theme-border: rgba(251, 191, 36, 0.26);
     --theme-accent: #fbbf24;
     --header-bg: rgba(44, 37, 25, 0.88);
 
