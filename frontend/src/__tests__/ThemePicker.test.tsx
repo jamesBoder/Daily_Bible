@@ -21,17 +21,17 @@ import { ThemePicker } from '../features/settings/ThemePicker';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key: string, opts?: any) => {
-      const map: Record<string, string> = {
-        'settings.appearance.title':            'Appearance Theme',
-        'settings.appearance.blessingsAvailable': `${opts?.count?.toLocaleString() ?? ''} Blessings available`,
-        'settings.appearance.loadingThemes':    'Loading themes…',
-        'settings.appearance.tapToConfirm':     'Tap to confirm',
-        'settings.appearance.signInToUnlock':   'Sign in to unlock',
-        'settings.appearance.signIn':           'Sign in',
-        'settings.appearance.guestNote':        'Sign in to unlock premium themes.',
+    t: (key, opts) => {
+      const map = {
+        'settings.appearance.title':              'Appearance Theme',
+        'settings.appearance.blessingsAvailable': `${opts && opts.count != null ? opts.count.toLocaleString() : ''} Blessings available`,
+        'settings.appearance.loadingThemes':      'Loading themes…',
+        'settings.appearance.tapToConfirm':       'Tap to confirm',
+        'settings.appearance.signInToUnlock':     'Sign in to unlock',
+        'settings.appearance.signIn':             'Sign in',
+        'settings.appearance.guestNote':          'Sign in to unlock premium themes.',
       };
-      return map[key] ?? key;
+      return map[key] !== undefined ? map[key] : key;
     },
   }),
 }));
@@ -72,11 +72,24 @@ jest.mock('../hooks/useUnlocks', () => ({
   }),
 }));
 
-jest.mock('@phosphor-icons/react', () => ({
-  Lock: ({ size }: any) => <span data-testid="icon-lock" data-size={size} />,
-  Check: ({ size }: any) => <span data-testid="icon-check" data-size={size} />,
-  Sparkle: ({ size }: any) => <span data-testid="icon-sparkle" data-size={size} />,
+jest.mock('../services/SoundService', () => ({
+  SoundService: { play: jest.fn() },
 }));
+
+jest.mock('../utils/toast', () => ({
+  showToast: { success: jest.fn(), error: jest.fn() },
+}));
+
+jest.mock('@phosphor-icons/react', () => {
+  const React = require('react');
+  return {
+    Lock:    (props) => React.createElement('span', { 'data-testid': 'icon-lock',    'data-size': props.size }),
+    Check:   (props) => React.createElement('span', { 'data-testid': 'icon-check',   'data-size': props.size }),
+    Sparkle: (props) => React.createElement('span', { 'data-testid': 'icon-sparkle', 'data-size': props.size }),
+    Sun:     (props) => React.createElement('span', { 'data-testid': 'icon-sun',     'data-size': props.size }),
+    Moon:    (props) => React.createElement('span', { 'data-testid': 'icon-moon',    'data-size': props.size }),
+  };
+});
 
 const renderPicker = () => render(<ThemePicker />);
 

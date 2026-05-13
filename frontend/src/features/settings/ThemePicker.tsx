@@ -188,7 +188,7 @@ export const ThemePicker: React.FC = () => {
                   )}
 
                   {isConfirming && !isGuest && (
-                    <span className={styles.confirmingBadge}>Confirm?</span>
+                    <span className={styles.confirmingBadge}>{t('settings.appearance.tapToConfirm')}</span>
                   )}
                 </button>
               );
