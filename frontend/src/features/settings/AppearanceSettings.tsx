@@ -11,6 +11,7 @@ const FONT_SIZE_LABELS = ['S', 'M', 'L', 'XL', 'XXL'];
 export const AppearanceSettings: React.FC = () => {
   const { t } = useTranslation();
   const [soundEnabled, setSoundEnabled] = useState(() => SoundService.isEnabled());
+  const [soundVolume, setSoundVolume] = useState(() => Math.round(SoundService.getVolume() * 100));
   const [animEnabled, setAnimEnabled] = useState(
     () => localStorage.getItem(ANIM_KEY) !== 'false'
   );
@@ -24,6 +25,15 @@ export const AppearanceSettings: React.FC = () => {
     if (value) {
       SoundService.play('journal-save');
     }
+  };
+
+  const handleVolumeChange = (value: number) => {
+    setSoundVolume(value);
+    SoundService.setVolume(value / 100);
+  };
+
+  const handleVolumeCommit = () => {
+    SoundService.play('journal-save');
   };
 
   const handleAnimToggle = (value: boolean) => {
@@ -97,6 +107,31 @@ export const AppearanceSettings: React.FC = () => {
           checked={soundEnabled}
           onChange={handleSoundToggle}
         />
+        {soundEnabled && (
+          <div style={{ padding: '0.5rem 1rem 0.75rem', marginTop: '-0.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <span style={{ fontSize: '0.8rem', color: 'var(--grace-lavender)' }}>
+                {t('settings.appearance.volume', 'Volume')}
+              </span>
+              <input
+                type="range"
+                min={10}
+                max={100}
+                step={5}
+                value={soundVolume}
+                onChange={(e) => handleVolumeChange(Number(e.target.value))}
+                onMouseUp={handleVolumeCommit}
+                onTouchEnd={handleVolumeCommit}
+                onKeyUp={handleVolumeCommit}
+                style={{ flex: 1, accentColor: 'var(--candle-amber)' }}
+                aria-label={t('settings.appearance.volume', 'Volume')}
+              />
+              <span style={{ fontSize: '0.75rem', color: 'var(--grace-lavender)', minWidth: '2.5rem', textAlign: 'right' }}>
+                {soundVolume}%
+              </span>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
