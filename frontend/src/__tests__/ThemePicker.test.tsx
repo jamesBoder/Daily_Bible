@@ -21,17 +21,17 @@ import { ThemePicker } from '../features/settings/ThemePicker';
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (key, opts) => {
-      const map = {
+    t: (key: string, opts?: any) => {
+      const map: Record<string, string> = {
         'settings.appearance.title':              'Appearance Theme',
-        'settings.appearance.blessingsAvailable': `${opts && opts.count != null ? opts.count.toLocaleString() : ''} Blessings available`,
+        'settings.appearance.blessingsAvailable': `${opts?.count != null ? opts.count.toLocaleString() : ''} Blessings available`,
         'settings.appearance.loadingThemes':      'Loading themes…',
         'settings.appearance.tapToConfirm':       'Tap to confirm',
         'settings.appearance.signInToUnlock':     'Sign in to unlock',
         'settings.appearance.signIn':             'Sign in',
         'settings.appearance.guestNote':          'Sign in to unlock premium themes.',
       };
-      return map[key] !== undefined ? map[key] : key;
+      return map[key] ?? key;
     },
   }),
 }));
@@ -83,11 +83,11 @@ jest.mock('../utils/toast', () => ({
 jest.mock('@phosphor-icons/react', () => {
   const React = require('react');
   return {
-    Lock:    (props) => React.createElement('span', { 'data-testid': 'icon-lock',    'data-size': props.size }),
-    Check:   (props) => React.createElement('span', { 'data-testid': 'icon-check',   'data-size': props.size }),
-    Sparkle: (props) => React.createElement('span', { 'data-testid': 'icon-sparkle', 'data-size': props.size }),
-    Sun:     (props) => React.createElement('span', { 'data-testid': 'icon-sun',     'data-size': props.size }),
-    Moon:    (props) => React.createElement('span', { 'data-testid': 'icon-moon',    'data-size': props.size }),
+    Lock:    (props: any) => React.createElement('span', { 'data-testid': 'icon-lock',    'data-size': props.size }),
+    Check:   (props: any) => React.createElement('span', { 'data-testid': 'icon-check',   'data-size': props.size }),
+    Sparkle: (props: any) => React.createElement('span', { 'data-testid': 'icon-sparkle', 'data-size': props.size }),
+    Sun:     (props: any) => React.createElement('span', { 'data-testid': 'icon-sun',     'data-size': props.size }),
+    Moon:    (props: any) => React.createElement('span', { 'data-testid': 'icon-moon',    'data-size': props.size }),
   };
 });
 
