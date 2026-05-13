@@ -128,10 +128,10 @@ export const Signup: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-3xl font-bold text-[var(--foreground)]">
             {t('auth.signup.title', 'Create Account')}
           </h2>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-[var(--journal-text-muted)]">
             {t('auth.signup.subtitle', 'Join us on your spiritual journey')}
           </p>
         </div>
@@ -140,9 +140,9 @@ export const Signup: React.FC = () => {
           onError={(err) => setErrors({ general: err.message })}
         />
         <div className="my-6 flex items-center">
-          <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-          <span className="mx-4 text-gray-500 dark:text-gray-400">{t('auth.signup.or', 'OR')}</span>
-          <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+          <hr className="flex-grow border-t border-[var(--theme-border)]" />
+          <span className="mx-4 text-[var(--journal-text-muted)]">{t('auth.signup.or', 'OR')}</span>
+          <hr className="flex-grow border-t border-[var(--theme-border)]" />
         </div>
 
         <Card>
@@ -241,7 +241,7 @@ export const Signup: React.FC = () => {
           </form>
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[var(--journal-text-muted)]">
               {t('auth.signup.hasAccount', 'Already have an account?')}{" "}
               <Link
                 to="/login"
