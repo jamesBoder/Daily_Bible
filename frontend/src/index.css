@@ -169,27 +169,32 @@
 
   /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
 
-  /* Sanctuary — forest green chapel */
+  /* Sanctuary — moonlit forest chapel */
   [data-theme="sanctuary"] {
-    --body-bg: linear-gradient(to bottom, #0f1a13 0%, #131e18 50%, #1a2620 100%);
-    --parchment: #1a2620;
-    --foreground: #e8e0d0;
-    --candle-amber: #c8a84b;
-    --blessing-gold: #d4af37;
-    --grace-lavender: #8fa68a;
-    --challenge-accent: #5ec6b8;
-    --milestone-glow: #a8c97f;
-    --theme-surface: #1f2e28;
-    --theme-border: rgba(200, 168, 75, 0.20);
-    --theme-accent: #4a7c59;
-    --header-bg: rgba(26, 38, 32, 0.88);
-    /* Journal / Manna tiles must match the dark green background */
-    --journal-surface:     #1c2c24;
-    --journal-surface-alt: #1a2a22;
-    --journal-line:        rgba(200, 168, 75, 0.14);
-    --journal-border:      rgba(200, 168, 75, 0.22);
-    --journal-text:        #d8d0bc;
-    --journal-text-muted:  #8a9e88;
+    /* Two-layer bg: jade radial glow from top (canopy light) + deep forest gradient.
+       The glow makes the top ~40% visibly luminous green — unmistakably not Midnight. */
+    --body-bg:
+      radial-gradient(ellipse 110% 52% at 50% -8%, rgba(55, 160, 95, 0.32) 0%, transparent 68%),
+      linear-gradient(to bottom, #040d08 0%, #081811 55%, #0c2016 100%);
+    --parchment: #0c2016;
+    --foreground: #dff0d8;
+    /* Jade green accent — key differentiator from Midnight's warm amber */
+    --candle-amber: #6dcb8a;
+    --blessing-gold: #8fd4a4;
+    --grace-lavender: #78a882;
+    --challenge-accent: #4ab87a;
+    --milestone-glow: #7dd89a;
+    --theme-surface: #0f2b1c;
+    --theme-border: rgba(109, 203, 138, 0.22);
+    --theme-accent: #3a8c5c;
+    --header-bg: rgba(4, 13, 8, 0.92);
+    /* Journal / Manna tiles — deep forest green with sage ivory text */
+    --journal-surface:     #0d2419;
+    --journal-surface-alt: #0b2016;
+    --journal-line:        rgba(109, 203, 138, 0.14);
+    --journal-border:      rgba(109, 203, 138, 0.24);
+    --journal-text:        #cce4c4;
+    --journal-text-muted:  #5a8868;
   }
 
   /* Desert Sand — warm solitude */

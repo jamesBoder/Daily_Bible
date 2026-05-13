@@ -43,10 +43,10 @@ export const THEMES: ThemeDefinition[] = [
   {
     id: 'sanctuary',
     name: 'Sanctuary',
-    description: 'Forest green and ivory. Evening chapel quiet.',
+    description: 'Deep emerald and sage ivory. Moonlight through the forest canopy.',
     isDark: true,
     unlockCost: 500,
-    previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b', surface: '#1f2e28' },
+    previewColors: { background: '#040d08', foreground: '#dff0d8', accent: '#6dcb8a', surface: '#0f2b1c' },
   },
   {
     id: 'desert-sand',
