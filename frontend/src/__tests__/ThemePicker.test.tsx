@@ -41,12 +41,12 @@ const mockPurchaseTheme = jest.fn();
 
 jest.mock('../contexts/ThemeContext', () => {
   const THEMES = [
-    { id: 'parchment',    name: 'Parchment',    description: 'desc', isDark: false, unlockCost: 0,   previewColors: { background: '#fff', foreground: '#000', accent: '#f00' } },
-    { id: 'midnight',     name: 'Midnight',     description: 'desc', isDark: true,  unlockCost: 0,   previewColors: { background: '#000', foreground: '#fff', accent: '#ff0' } },
-    { id: 'sanctuary',    name: 'Sanctuary',    description: 'desc', isDark: true,  unlockCost: 500, previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b' } },
-    { id: 'desert-sand',  name: 'Desert Sand',  description: 'desc', isDark: false, unlockCost: 500, previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b' } },
-    { id: 'celestial',    name: 'Celestial',    description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd' } },
-    { id: 'scarlet-grace',name: 'Scarlet Grace',description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a' } },
+    { id: 'parchment',    name: 'Parchment',    description: 'desc', isDark: false, unlockCost: 0,   previewColors: { background: '#fff',    foreground: '#000',    accent: '#f00',    surface: '#eee' } },
+    { id: 'midnight',     name: 'Midnight',     description: 'desc', isDark: true,  unlockCost: 0,   previewColors: { background: '#000',    foreground: '#fff',    accent: '#ff0',    surface: '#222' } },
+    { id: 'sanctuary',    name: 'Sanctuary',    description: 'desc', isDark: true,  unlockCost: 500, previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b', surface: '#1f2e28' } },
+    { id: 'desert-sand',  name: 'Desert Sand',  description: 'desc', isDark: false, unlockCost: 500, previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b', surface: '#ede0d0' } },
+    { id: 'celestial',    name: 'Celestial',    description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd', surface: '#121840' } },
+    { id: 'scarlet-grace',name: 'Scarlet Grace',description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a', surface: '#220808' } },
   ];
   return {
     THEMES,
