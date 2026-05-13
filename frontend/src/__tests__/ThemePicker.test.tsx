@@ -23,13 +23,13 @@ jest.mock('react-i18next', () => ({
   useTranslation: () => ({
     t: (key: string, opts?: any) => {
       const map: Record<string, string> = {
-        'settings.appearance.title':            'Appearance Theme',
-        'settings.appearance.blessingsAvailable': `${opts?.count?.toLocaleString() ?? ''} Blessings available`,
-        'settings.appearance.loadingThemes':    'Loading themes…',
-        'settings.appearance.tapToConfirm':     'Tap to confirm',
-        'settings.appearance.signInToUnlock':   'Sign in to unlock',
-        'settings.appearance.signIn':           'Sign in',
-        'settings.appearance.guestNote':        'Sign in to unlock premium themes.',
+        'settings.appearance.title':              'Appearance Theme',
+        'settings.appearance.blessingsAvailable': `${opts?.count != null ? opts.count.toLocaleString() : ''} Blessings available`,
+        'settings.appearance.loadingThemes':      'Loading themes…',
+        'settings.appearance.tapToConfirm':       'Tap to confirm',
+        'settings.appearance.signInToUnlock':     'Sign in to unlock',
+        'settings.appearance.signIn':             'Sign in',
+        'settings.appearance.guestNote':          'Sign in to unlock premium themes.',
       };
       return map[key] ?? key;
     },
@@ -41,12 +41,12 @@ const mockPurchaseTheme = jest.fn();
 
 jest.mock('../contexts/ThemeContext', () => {
   const THEMES = [
-    { id: 'parchment',    name: 'Parchment',    description: 'desc', isDark: false, unlockCost: 0,   previewColors: { background: '#fff', foreground: '#000', accent: '#f00' } },
-    { id: 'midnight',     name: 'Midnight',     description: 'desc', isDark: true,  unlockCost: 0,   previewColors: { background: '#000', foreground: '#fff', accent: '#ff0' } },
-    { id: 'sanctuary',    name: 'Sanctuary',    description: 'desc', isDark: true,  unlockCost: 500, previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b' } },
-    { id: 'desert-sand',  name: 'Desert Sand',  description: 'desc', isDark: false, unlockCost: 500, previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b' } },
-    { id: 'celestial',    name: 'Celestial',    description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd' } },
-    { id: 'scarlet-grace',name: 'Scarlet Grace',description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a' } },
+    { id: 'parchment',    name: 'Parchment',    description: 'desc', isDark: false, unlockCost: 0,   previewColors: { background: '#fff',    foreground: '#000',    accent: '#f00',    surface: '#eee' } },
+    { id: 'midnight',     name: 'Midnight',     description: 'desc', isDark: true,  unlockCost: 0,   previewColors: { background: '#000',    foreground: '#fff',    accent: '#ff0',    surface: '#222' } },
+    { id: 'sanctuary',    name: 'Sanctuary',    description: 'desc', isDark: true,  unlockCost: 500, previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b', surface: '#1f2e28' } },
+    { id: 'desert-sand',  name: 'Desert Sand',  description: 'desc', isDark: false, unlockCost: 500, previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b', surface: '#ede0d0' } },
+    { id: 'celestial',    name: 'Celestial',    description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd', surface: '#121840' } },
+    { id: 'scarlet-grace',name: 'Scarlet Grace',description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a', surface: '#220808' } },
   ];
   return {
     THEMES,
@@ -72,11 +72,24 @@ jest.mock('../hooks/useUnlocks', () => ({
   }),
 }));
 
-jest.mock('@phosphor-icons/react', () => ({
-  Lock: ({ size }: any) => <span data-testid="icon-lock" data-size={size} />,
-  Check: ({ size }: any) => <span data-testid="icon-check" data-size={size} />,
-  Sparkle: ({ size }: any) => <span data-testid="icon-sparkle" data-size={size} />,
+jest.mock('../services/SoundService', () => ({
+  SoundService: { play: jest.fn() },
 }));
+
+jest.mock('../utils/toast', () => ({
+  showToast: { success: jest.fn(), error: jest.fn() },
+}));
+
+jest.mock('@phosphor-icons/react', () => {
+  const React = require('react');
+  return {
+    Lock:    (props: any) => React.createElement('span', { 'data-testid': 'icon-lock',    'data-size': props.size }),
+    Check:   (props: any) => React.createElement('span', { 'data-testid': 'icon-check',   'data-size': props.size }),
+    Sparkle: (props: any) => React.createElement('span', { 'data-testid': 'icon-sparkle', 'data-size': props.size }),
+    Sun:     (props: any) => React.createElement('span', { 'data-testid': 'icon-sun',     'data-size': props.size }),
+    Moon:    (props: any) => React.createElement('span', { 'data-testid': 'icon-moon',    'data-size': props.size }),
+  };
+});
 
 const renderPicker = () => render(<ThemePicker />);
 

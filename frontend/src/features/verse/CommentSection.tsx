@@ -140,10 +140,10 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
   ]);
 
   return (
-    <div className="mt-6 border-t border-gray-300 dark:border-gray-600 pt-6">
+    <div className="mt-6 border-t border-[var(--theme-border)] pt-6">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <h2 className="text-sm sm:text-lg font-semibold text-gray-900 dark:text-gray-100">
+          <h2 className="text-sm sm:text-lg font-semibold text-[var(--foreground)]">
             {t('notes.title')}
           </h2>
           {!isVisible && comment && (
@@ -154,7 +154,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         </div>
         <button
           onClick={() => setIsVisible(!isVisible)}
-          className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors"
+          className="text-[var(--foreground)] opacity-50 hover:opacity-100 transition-opacity"
           aria-label={isVisible ? t('notes.hideNotes') : t('notes.showNotes')}
         >
           {isVisible ? (
@@ -214,8 +214,8 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
         )}
 
         {!isEditing && comment && (
-          <div className="bg-gray-50 dark:bg-gray-800 rounded-lg p-4">
-            <p className="text-sm sm:text-base text-gray-800 dark:text-gray-200 whitespace-pre-wrap mb-3">
+          <div className="bg-[var(--theme-surface)] rounded-lg p-4 transition-colors duration-300">
+            <p className="text-sm sm:text-base text-[var(--journal-text)] whitespace-pre-wrap mb-3">
               {comment.comment_text}
             </p>
             <div className="flex items-center gap-2 flex-wrap">
@@ -228,7 +228,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               </button>
               {confirmingDelete ? (
                 <>
-                  <span className="text-sm text-gray-600 dark:text-gray-400">
+                  <span className="text-sm text-[var(--journal-text-muted)]">
                     {t('notes.deleteConfirm')}
                   </span>
                   <button
@@ -240,7 +240,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                   </button>
                   <button
                     onClick={() => setConfirmingDelete(false)}
-                    className="text-sm text-gray-600 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-300 font-medium"
+                    className="text-sm text-[var(--journal-text-muted)] hover:text-[var(--foreground)] font-medium transition-colors"
                   >
                     {t('common.cancel')}
                   </button>
@@ -255,7 +255,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
                 </button>
               )}
             </div>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">
+            <p className="text-xs text-[var(--journal-text-muted)] mt-2">
               {t('notes.lastUpdated')} {new Date(comment.updated_at).toLocaleDateString()}
             </p>
           </div>
@@ -268,13 +268,13 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
               value={commentText}
               onChange={(e) => setCommentText(e.target.value)}
               placeholder={t('notes.placeholder')}
-              className="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none"
+              className="w-full px-3 py-2 sm:px-4 sm:py-3 text-sm sm:text-base border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--journal-text)] rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-transparent resize-none transition-colors duration-300"
               rows={4}
               maxLength={1000}
               aria-label={t('notes.addNote')}
             />
             <div className="flex flex-wrap justify-between items-center mt-2 gap-2">
-              <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400">
+              <span className="text-xs sm:text-sm text-[var(--journal-text-muted)]">
                 {commentText.length}/1000 {t('notes.characters')}
               </span>
               <div className="flex gap-2 flex-shrink-0">

@@ -15,13 +15,7 @@
   body {
     @apply text-gray-900;
     font-size: 16px;
-    /* Deeper gradient background for stronger contrast with white verse card */
-    background: linear-gradient(
-      to bottom,
-      #d1dce8 0%,
-      #b8c8d8 50%,
-      #9fb4c8 100%
-    );
+    background: var(--body-bg);
     min-height: 100vh;
     background-attachment: fixed;
     transition: background 0.3s ease, color 0.3s ease;
@@ -61,16 +55,26 @@
     padding: 0.75rem; /* 12px — expands most 20-24px icons to 44-48px hit area */
   }
 
-  /* Dark mode gradient */
+  /* Dark mode foreground override — background comes from --body-bg in each theme block */
   .dark body {
-    background: linear-gradient(
-      to bottom,
-      #1a1a1a 0%,
-      #0f172a 50%,
-      #1e293b 100%
-    );
-    background-attachment: fixed;
     color: var(--foreground);
+  }
+
+  /* Global theme crossfade — elements that use CSS variables for color/bg/border
+     will smoothly interpolate when data-theme changes. Sits in @layer base so
+     Tailwind utility transitions (transition-colors, transition-all, etc.) and
+     any explicit transition declarations in components override it correctly. */
+  *, *::before, *::after {
+    transition:
+      background-color 0.3s ease,
+      border-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      transition-duration: 0.01ms !important;
+    }
   }
 
   #root {
@@ -137,6 +141,10 @@
     --challenge-accent: #3a9b8c;
     --parchment: #faf8f3;
 
+    /* Body background gradient — overridden per theme so adding a new theme
+       only requires setting this one variable in the theme's block below. */
+    --body-bg: linear-gradient(to bottom, #d1dce8 0%, #b8c8d8 50%, #9fb4c8 100%);
+
     /* Phase 3 — Journal tokens (light mode) */
     --journal-surface:        #fffcf4;
     --journal-surface-alt:    #fdf4e2;
@@ -163,6 +171,7 @@
 
   /* Sanctuary — forest green chapel */
   [data-theme="sanctuary"] {
+    --body-bg: linear-gradient(to bottom, #0f1a13 0%, #131e18 50%, #1a2620 100%);
     --parchment: #1a2620;
     --foreground: #e8e0d0;
     --candle-amber: #c8a84b;
@@ -185,6 +194,7 @@
 
   /* Desert Sand — warm solitude */
   [data-theme="desert-sand"] {
+    --body-bg: linear-gradient(to bottom, #f0e4d0 0%, #ede0cb 50%, #e8d8c2 100%);
     --parchment: #f5ede0;
     --foreground: #3d2b1a;
     --candle-amber: #c97c2b;
@@ -206,6 +216,7 @@
 
   /* Celestial — indigo night sky */
   [data-theme="celestial"] {
+    --body-bg: linear-gradient(to bottom, #080c20 0%, #0b1028 50%, #0e1330 100%);
     --parchment: #0e1330;
     --foreground: #e8eaf8;
     --candle-amber: #8899dd;
@@ -228,6 +239,7 @@
 
   /* Scarlet Grace — illuminated manuscript */
   [data-theme="scarlet-grace"] {
+    --body-bg: linear-gradient(to bottom, #100303 0%, #150404 50%, #1a0505 100%);
     --parchment: #1a0505;
     --foreground: #f5e8d8;
     --candle-amber: #c8862a;
@@ -265,6 +277,7 @@
      NOTE: .dark class intentionally excluded here so sanctuary/celestial/scarlet-grace
      themes (which also add .dark for Tailwind utilities) don't inherit midnight colors. */
   [data-theme="midnight"], [data-theme="dark"] {
+    --body-bg: linear-gradient(to bottom, #1a1a1a 0%, #0f172a 50%, #1e293b 100%);
     --parchment: #2C2519;
     --foreground: #e8d5b0;
     /* Amber is lightened for dark-mode readability — #f59e0b is marginal contrast

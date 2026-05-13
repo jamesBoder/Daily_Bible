@@ -66,9 +66,9 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
           {...swipe}
         >
           <div className="flex justify-center mb-3">
-            <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+            <div className="w-10 h-1 rounded-full bg-[var(--theme-border)]" />
           </div>
-          <p className="text-sm text-gray-600 dark:text-gray-300 text-center mb-4">
+          <p className="text-sm text-[var(--foreground)] opacity-75 text-center mb-4">
             {t('annotation.premiumRequired', 'Annotations are available with a Words of Praise subscription.')}
           </p>
           <button
@@ -103,10 +103,10 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
         </div>
 
         <div className="flex items-center justify-between px-4 py-2">
-          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">
             {t('annotation.panelTitle', 'Your Notes on {{reference}}', { reference: verseReference })}
           </h2>
-          <button onClick={onClose} className="p-1.5 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <button onClick={onClose} className="p-1.5 rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 transition-opacity">
             <X size={16} />
           </button>
         </div>
@@ -133,10 +133,10 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
         style={{ background: 'var(--header-bg)' }}
       >
         <div className="flex items-center justify-between px-4 py-3 border-b border-amber-200/40 dark:border-amber-800/30">
-          <h2 className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+          <h2 className="text-sm font-semibold text-[var(--foreground)]">
             {t('annotation.panelTitle', 'Your Notes on {{reference}}', { reference: verseReference })}
           </h2>
-          <button onClick={onClose} className="p-1.5 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+          <button onClick={onClose} className="p-1.5 rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 transition-opacity">
             <X size={16} />
           </button>
         </div>
@@ -184,7 +184,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
     <>
       {/* Existing annotations */}
       {annotations.length === 0 ? (
-        <p className="text-xs text-gray-400 dark:text-gray-500 py-2">
+        <p className="text-xs text-[var(--journal-text-muted)] py-2">
           {t('annotation.empty', 'No annotations yet for this verse.')}
         </p>
       ) : (
@@ -202,10 +202,10 @@ const PanelContent: React.FC<PanelContentProps> = ({
                   {a.phrase_text && (
                     <p className="text-xs font-medium text-amber-600 dark:text-amber-400 mb-1 italic">"{a.phrase_text}"</p>
                   )}
-                  <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed">{a.annotation_text}</p>
+                  <p className="text-sm text-[var(--journal-text)] leading-relaxed">{a.annotation_text}</p>
                   <button
                     onClick={() => setEditingId(a.id)}
-                    className="mt-2 flex items-center gap-1 text-xs text-gray-400 dark:text-gray-500 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                    className="mt-2 flex items-center gap-1 text-xs text-[var(--journal-text-muted)] hover:text-[var(--candle-amber)] transition-colors"
                   >
                     <Pencil size={12} />
                     {t('annotation.edit', 'Edit')}
@@ -219,7 +219,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
 
       {/* New annotation form */}
       <div className="border-t border-amber-100/60 dark:border-amber-900/30 pt-4 space-y-3">
-        <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+        <p className="text-xs font-semibold text-[var(--journal-text-muted)] uppercase tracking-wider">
           {t('annotation.addNote', 'Add a note')}
         </p>
         <input
@@ -227,7 +227,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
           value={newPhrase}
           onChange={e => setNewPhrase(e.target.value)}
           placeholder={t('annotation.phrasePlaceholder', 'Phrase from this verse…')}
-          className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--journal-text)] focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)] transition-colors duration-300"
         />
         <textarea
           value={newNote}

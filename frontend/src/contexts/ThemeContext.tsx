@@ -19,6 +19,7 @@ export interface ThemeDefinition {
     background: string;
     foreground: string;
     accent: string;
+    surface: string;
   };
 }
 
@@ -29,7 +30,7 @@ export const THEMES: ThemeDefinition[] = [
     description: 'Warm cream and amber. The classic morning devotion.',
     isDark: false,
     unlockCost: 0,
-    previewColors: { background: '#faf8f3', foreground: '#1a1208', accent: '#f59e0b' },
+    previewColors: { background: '#faf8f3', foreground: '#1a1208', accent: '#f59e0b', surface: '#f0ece0' },
   },
   {
     id: 'midnight',
@@ -37,7 +38,7 @@ export const THEMES: ThemeDefinition[] = [
     description: 'Deep navy and gold. For evening reflection.',
     isDark: true,
     unlockCost: 0,
-    previewColors: { background: '#0f0e0c', foreground: '#e8d5b0', accent: '#fbbf24' },
+    previewColors: { background: '#2C2519', foreground: '#e8d5b0', accent: '#fbbf24', surface: '#3a3020' },
   },
   {
     id: 'sanctuary',
@@ -45,7 +46,7 @@ export const THEMES: ThemeDefinition[] = [
     description: 'Forest green and ivory. Evening chapel quiet.',
     isDark: true,
     unlockCost: 500,
-    previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b' },
+    previewColors: { background: '#1a2620', foreground: '#e8e0d0', accent: '#c8a84b', surface: '#1f2e28' },
   },
   {
     id: 'desert-sand',
@@ -53,7 +54,7 @@ export const THEMES: ThemeDefinition[] = [
     description: 'Sienna and linen. Morning solitude in the wilderness.',
     isDark: false,
     unlockCost: 500,
-    previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b' },
+    previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b', surface: '#ede0d0' },
   },
   {
     id: 'celestial',
@@ -61,7 +62,7 @@ export const THEMES: ThemeDefinition[] = [
     description: 'Indigo and silver. The clear night sky.',
     isDark: true,
     unlockCost: 750,
-    previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd' },
+    previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd', surface: '#121840' },
   },
   {
     id: 'scarlet-grace',
@@ -69,7 +70,7 @@ export const THEMES: ThemeDefinition[] = [
     description: 'Crimson and gold leaf. An illuminated manuscript.',
     isDark: true,
     unlockCost: 750,
-    previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a' },
+    previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a', surface: '#220808' },
   },
 ];
 

@@ -70,10 +70,10 @@ export const Login: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-3xl font-bold text-[var(--foreground)]">
             {t('auth.login.title', 'Welcome Back')}
           </h2>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-[var(--journal-text-muted)]">
             {t('auth.login.subtitle', 'Sign in to continue your spiritual journey')}
           </p>
         </div>
@@ -116,7 +116,7 @@ export const Login: React.FC = () => {
             {/* Password field with Forgot Password link */}
             <div>
               <div className="flex items-center justify-between mb-1">
-                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                <label className="block text-sm font-medium text-[var(--foreground)]">
                   {t('auth.login.password', 'Password')}
                 </label>
                 <Link
@@ -167,7 +167,7 @@ export const Login: React.FC = () => {
               />
               <label
                 htmlFor="remember-me"
-                className="ml-2 block text-sm text-gray-900 dark:text-gray-300 cursor-pointer"
+                className="ml-2 block text-sm text-[var(--foreground)] cursor-pointer"
               >
                 {t('auth.login.rememberMe', 'Remember me for 30 days')}
               </label>
@@ -183,9 +183,9 @@ export const Login: React.FC = () => {
             </Button>
           </form>
           <div className="my-6 flex items-center">
-            <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
-            <span className="mx-4 text-gray-500 dark:text-gray-400">{t('auth.login.or', 'OR')}</span>
-            <hr className="flex-grow border-t border-gray-300 dark:border-gray-700" />
+            <hr className="flex-grow border-t border-[var(--theme-border)]" />
+            <span className="mx-4 text-[var(--journal-text-muted)]">{t('auth.login.or', 'OR')}</span>
+            <hr className="flex-grow border-t border-[var(--theme-border)]" />
           </div>
           <GoogleLoginButton
             mode="login"
@@ -193,7 +193,7 @@ export const Login: React.FC = () => {
           />
 
           <div className="mt-6 text-center">
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-[var(--journal-text-muted)]">
               {t('auth.login.noAccount', "Don't have an account?")}{" "}
               <Link
                 to="/signup"
