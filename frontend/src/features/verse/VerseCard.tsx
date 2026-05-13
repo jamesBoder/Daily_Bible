@@ -13,6 +13,7 @@ import { TranslationSwitcherPopover } from "./TranslationSwitcherPopover";
 import { verseService } from "../../services/api/verse";
 import { showBlessingsToast } from "../../components/BlessingsToast";
 import { useStreak } from "../../contexts/StreakContext";
+import { SoundService } from "../../services/SoundService";
 import posthog from "posthog-js";
 
 // ── Share helpers ─────────────────────────────────────────────────────────────
@@ -93,6 +94,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
       } else {
         // Add to favorites
         await addFavorite(verse.id);
+        SoundService.play('verse-favorite');
         if (navigator.vibrate) navigator.vibrate([15, 30, 15]);
         setHeartbeatKey(k => k + 1);
         setJustFavorited(true);

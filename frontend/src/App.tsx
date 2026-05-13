@@ -297,6 +297,7 @@ const router = createBrowserRouter([
 function App() {
   useEffect(() => {
     SoundService.loadPreference();
+    SoundService.loadVolume();
     SoundService.unlockOnGesture();
   }, []);
 

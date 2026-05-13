@@ -66,10 +66,13 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         setJustCompleted(true);
         setCompletedAt(new Date());
         SoundService.play('milestone');
-      } else if (data.plan_streak === 1) {
-        showToast.success(t('plan.streakStarted', 'Streak started — keep reading!'));
-      } else if (data.plan_streak > 0 && data.plan_streak % 7 === 0) {
-        showToast.success(t('plan.streakMilestone', '{{count}}-day reading streak!', { count: data.plan_streak }));
+      } else {
+        SoundService.play('plan-advance');
+        if (data.plan_streak === 1) {
+          showToast.success(t('plan.streakStarted', 'Streak started — keep reading!'));
+        } else if (data.plan_streak > 0 && data.plan_streak % 7 === 0) {
+          showToast.success(t('plan.streakMilestone', '{{count}}-day reading streak!', { count: data.plan_streak }));
+        }
       }
     },
   });

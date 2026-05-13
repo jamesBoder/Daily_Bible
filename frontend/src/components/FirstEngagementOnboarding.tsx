@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { useStreak } from '../contexts/StreakContext';
 import { useAuth } from '../hooks/useAuth';
+import { SoundService } from '../services/SoundService';
 
 const FirstEngagementOnboarding: React.FC = () => {
   const { t } = useTranslation();
@@ -27,6 +28,7 @@ const FirstEngagementOnboarding: React.FC = () => {
       const timer = setTimeout(() => {
         setIsVisible(true);
         setHasAppeared(true);
+        SoundService.play('onboarding-appear');
       }, 2000);
 
       return () => clearTimeout(timer);

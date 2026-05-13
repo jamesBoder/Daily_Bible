@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Star } from '@phosphor-icons/react';
+import { SoundService } from '../../services/SoundService';
 
 interface MemoryVerseFlashcardProps {
   verseRef: string;
@@ -66,7 +67,7 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
           {/* Step: recall — blank card */}
           {step === 'recall' && (
             <button
-              onClick={() => setStep(hasPreview ? 'preview' : 'full')}
+              onClick={() => { SoundService.play('card-flip'); setStep(hasPreview ? 'preview' : 'full'); }}
               className="w-full rounded-2xl px-5 py-8 text-center mb-4 active:scale-[0.98] transition-transform"
               style={{ background: 'color-mix(in srgb, var(--blessing-gold) 8%, transparent)' }}
             >
@@ -85,7 +86,7 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
           {/* Step: preview — first N words (only when verse is long enough) */}
           {step === 'preview' && previewText && (
             <button
-              onClick={() => setStep('full')}
+              onClick={() => { SoundService.play('card-flip'); setStep('full'); }}
               className="w-full rounded-2xl px-5 py-5 text-left mb-4 active:scale-[0.98] transition-transform"
               style={{ background: 'color-mix(in srgb, var(--blessing-gold) 8%, transparent)' }}
             >
@@ -116,19 +117,19 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
 
               <div className="grid grid-cols-3 gap-2">
                 <button
-                  onClick={onDone}
+                  onClick={() => { SoundService.play('quiz-correct'); onDone(); }}
                   className="py-2.5 rounded-xl text-xs font-semibold bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 active:scale-95 transition-transform"
                 >
                   {t('plan.flashcard.knew', 'Knew it')}
                 </button>
                 <button
-                  onClick={onDone}
+                  onClick={() => { SoundService.play('card-flip'); onDone(); }}
                   className="py-2.5 rounded-xl text-xs font-semibold bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 active:scale-95 transition-transform"
                 >
                   {t('plan.flashcard.almost', 'Almost')}
                 </button>
                 <button
-                  onClick={onDone}
+                  onClick={() => { SoundService.play('quiz-wrong'); onDone(); }}
                   className="py-2.5 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 active:scale-95 transition-transform"
                 >
                   {t('plan.flashcard.notYet', 'Not yet')}
