@@ -7,7 +7,6 @@ import (
 
 	"dailybible/internal/models"
 	"dailybible/internal/password"
-
 )
 
 func main() {
@@ -51,7 +50,7 @@ func main() {
 		log.Fatal("Password check failed")
 	}
 	fmt.Println("Password check passed")
-	
+
 	// test too short password
 	shortPassword := "Shrt1!"
 	valid, err = password.ValidatePasswordStrength(shortPassword)
@@ -99,7 +98,6 @@ func main() {
 		log.Fatal("Empty password validation should fail")
 	}
 	fmt.Println("Empty password validation correctly failed:", err)
-
 
 	// test case sensitivity
 	wrongCasePassword := "strongp@ssw0rd!"
@@ -161,6 +159,5 @@ func main() {
 	fmt.Println("BeforeUpdate hook password hashing check passed")
 
 	fmt.Println("\n🎉 All password service tests passed!")
-
 
 }

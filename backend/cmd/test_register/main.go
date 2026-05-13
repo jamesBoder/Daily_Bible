@@ -3,11 +3,10 @@ package main
 // test register endpoint
 
 import (
-	"net/http"
 	"bytes"
 	"encoding/json"
 	"fmt"
-
+	"net/http"
 )
 
 // test register a new user
@@ -48,7 +47,5 @@ func main() {
 
 	// print response body
 	fmt.Println("Response Body:", respBody)
-
-
 
 }

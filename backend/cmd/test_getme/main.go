@@ -10,23 +10,21 @@ import (
 	"net/http/httptest"
 	"time"
 
-	"dailybible/internal/routes"
-	"dailybible/internal/handlers"
-	"dailybible/internal/services"
-	"dailybible/internal/repository"
-	"dailybible/internal/models"
 	"dailybible/internal/config"
 	"dailybible/internal/database"
+	"dailybible/internal/handlers"
+	"dailybible/internal/models"
+	"dailybible/internal/repository"
+	"dailybible/internal/routes"
+	"dailybible/internal/services"
 	"github.com/gin-gonic/gin"
 )
-
-
 
 func main() {
 	// Initialize Gin router
 	router := gin.Default()
 
-		// Load config from .env file (same as main.go)
+	// Load config from .env file (same as main.go)
 	cfg, err := config.Load()
 	if err != nil {
 		panic("Failed to load config: " + err.Error())
@@ -38,10 +36,8 @@ func main() {
 		panic("Failed to connect to database: " + err.Error())
 	}
 
-
-
 	// Initialize dependencies
-	userRepo := repository.NewUserRepository(db) // Assuming a constructor exists
+	userRepo := repository.NewUserRepository(db)  // Assuming a constructor exists
 	tokenService := services.NewTokenService(cfg) // Replace with actual secret key
 	authHandler := handlers.NewAuthHandler(userRepo, tokenService)
 
@@ -135,9 +131,7 @@ func main() {
 		panic("Expected 401 Unauthorized for missing token")
 	}
 
-	fmt.Println("Missing token test passed with status:", getMeResp3.StatusCode)	
-
-	
+	fmt.Println("Missing token test passed with status:", getMeResp3.StatusCode)
 
 	// test #5: malformed token
 	req5, _ := http.NewRequest("GET", fmt.Sprintf("%s/api/auth/me", ts.URL), nil)
@@ -154,7 +148,6 @@ func main() {
 	}
 
 	fmt.Println("Malformed token test passed with status:", getMeResp5.StatusCode)
-
 
 	// test #7: valid token, valid user
 	req7, _ := http.NewRequest("GET", fmt.Sprintf("%s/api/auth/me", ts.URL), nil)
@@ -200,7 +193,7 @@ func main() {
 
 	// test #9: valid token with extra spaces
 	req9, _ := http.NewRequest("GET", fmt.Sprintf("%s/api/auth/me", ts.URL), nil)
-	req9.Header.Set("Authorization", "  Bearer   "+registerResp.Token+"   ")			
+	req9.Header.Set("Authorization", "  Bearer   "+registerResp.Token+"   ")
 	getMeResp9, err := client.Do(req9)
 	if err != nil {
 		panic(err)
