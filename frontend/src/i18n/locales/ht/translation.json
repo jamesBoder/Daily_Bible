@@ -1197,6 +1197,7 @@
       "GRACE_PERIOD_EXPIRED": "Peryòd lagras la ekspire",
       "ALREADY_USED_TODAY": "Ou deja itilize yon jou lagras jodi a"
     },
+    "autoApplied": "Jou Lagras aplike otomatikman — seri ou pwoteje.",
     "success": "Jou Lagras itilize — seri ou pwoteje.",
     "banner": {
       "message": "Ou manke yè. Itilize yon Jou Lagras pou konsève seri {{current_streak}} jou ou?",

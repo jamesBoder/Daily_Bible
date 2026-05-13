@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { useTranslation } from 'react-i18next';
 import { X } from '@phosphor-icons/react';
 import type { WordStudy } from '../../services/api/plans';
@@ -18,7 +19,7 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
     return () => { document.body.style.overflow = prev; };
   }, []);
 
-  return (
+  const sheet = (
     <>
       {/* Backdrop */}
       <div
@@ -27,10 +28,15 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
         aria-hidden="true"
       />
 
-      {/* Sheet */}
+      {/* Sheet — rendered via portal to break out of any overflow context (iOS Safari fix) */}
       <div
-        className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl border-t border-amber-300/30 dark:border-amber-700/20 max-h-[60vh] overflow-y-auto animate-slide-up"
-        style={{ background: 'var(--header-bg)', paddingBottom: 'env(safe-area-inset-bottom)' }}
+        className="fixed inset-x-0 bottom-0 z-50 rounded-t-2xl border-t border-amber-300/30 dark:border-amber-700/20 animate-slide-up"
+        style={{
+          background: 'var(--header-bg)',
+          maxHeight: '80dvh',
+          overflowY: 'auto',
+          paddingBottom: 'max(env(safe-area-inset-bottom), 1.5rem)',
+        }}
         role="dialog"
         aria-modal="true"
         aria-label={t('plan.wordStudy.sheetLabel', 'Word study: {{word}}', { word })}
@@ -48,7 +54,7 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
           </button>
         </div>
 
-        <div className="px-5 pb-6 pt-3">
+        <div className="px-5 pt-3 pb-4">
           {/* English word */}
           <p className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1 capitalize">
             {word}
@@ -103,6 +109,8 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
       </div>
     </>
   );
+
+  return createPortal(sheet, document.body);
 };
 
 export default WordStudySheet;

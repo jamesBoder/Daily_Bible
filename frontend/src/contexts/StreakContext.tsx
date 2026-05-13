@@ -288,6 +288,33 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
   }, [isAuthenticated, refreshStreak, refreshSubscription]);
 
+  // Auto-apply grace day — fires once per UTC-10 day when the streak is recoverable
+  // and the user has days remaining, without requiring any manual interaction.
+  useEffect(() => {
+    if (!isAuthenticated || !streakData) return;
+    if (!streakData.streak_recoverable || streakData.grace_days_remaining <= 0) return;
+
+    const dateStr = new Date(Date.now() - 10 * 60 * 60 * 1000).toISOString().slice(0, 10);
+    const storageKey = `auto-grace-day-${dateStr}`;
+    if (sessionStorage.getItem(storageKey)) return;
+
+    sessionStorage.setItem(storageKey, '1');
+    api.post('/api/streak/grace-day')
+      .then(() => {
+        // Reset debounce guard so refreshStreak isn't silently skipped — the grace-day
+        // POST just changed streak state and the UI needs the updated data immediately.
+        lastFetchRef.current = 0;
+        refreshStreak();
+        toast.success(
+          t('graceDay.autoApplied', 'Grace Day applied — your streak is preserved.'),
+          { duration: 4000, style: { background: '#9B8FC4', color: '#fff' } },
+        );
+      })
+      .catch(() => {
+        sessionStorage.removeItem(storageKey);
+      });
+  }, [isAuthenticated, streakData?.streak_recoverable, streakData?.grace_days_remaining, refreshStreak, t]);
+
   // Refresh at midnight to update streak
   useEffect(() => {
     if (!isAuthenticated) return;

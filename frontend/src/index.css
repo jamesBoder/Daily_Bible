@@ -111,6 +111,14 @@
 }
 
 @layer utilities {
+  /* Mobile bottom clearance — clears the fixed bottom nav (h-14 = 56px) plus the
+     device's safe-area-inset-bottom (home indicator bar on iPhone X+).
+     Use this on <main> instead of a fixed pb-N so iPhones with tall safe areas
+     get enough room without over-padding on Android/desktop. */
+  .pb-safe-nav {
+    padding-bottom: calc(3.5rem + env(safe-area-inset-bottom) + 1.5rem);
+  }
+
   .scrollbar-hide {
     -ms-overflow-style: none;
     scrollbar-width: none;
@@ -253,8 +261,10 @@
     }
   }
 
-  /* Midnight (dark mode) overrides — [data-theme="dark"] kept for any legacy consumers */
-  [data-theme="midnight"], [data-theme="dark"], .dark {
+  /* Midnight (dark mode) overrides — [data-theme="dark"] kept for any legacy consumers.
+     NOTE: .dark class intentionally excluded here so sanctuary/celestial/scarlet-grace
+     themes (which also add .dark for Tailwind utilities) don't inherit midnight colors. */
+  [data-theme="midnight"], [data-theme="dark"] {
     --parchment: #2C2519;
     --foreground: #e8d5b0;
     /* Amber is lightened for dark-mode readability — #f59e0b is marginal contrast
