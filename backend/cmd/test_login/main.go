@@ -3,12 +3,12 @@ package main
 // test login functionality
 
 import (
-	"fmt"
-	"log"
-	"net/http"
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
+	"log"
+	"net/http"
 )
 
 // init LoginRequest struct
@@ -25,9 +25,9 @@ type LoginResponse struct {
 
 // create user response struct
 type UserResponse struct {
-	ID       uint   `json:"id"`
-	Email    string `json:"email"`
-	Username string `json:"username"`
+	ID        uint   `json:"id"`
+	Email     string `json:"email"`
+	Username  string `json:"username"`
 	CreatedAt string `json:"created_at"`
 }
 
@@ -69,5 +69,4 @@ func main() {
 	// print response body
 	fmt.Printf("Response Body: %+v\n", loginResp)
 
-	
 }

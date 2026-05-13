@@ -1197,6 +1197,7 @@
       "GRACE_PERIOD_EXPIRED": "La période de grâce a expiré",
       "ALREADY_USED_TODAY": "Vous avez déjà utilisé un jour de grâce aujourd'hui"
     },
+    "autoApplied": "Jour de Grâce appliqué automatiquement — votre série est préservée.",
     "success": "Jour de Grâce utilisé — votre série est préservée.",
     "banner": {
       "message": "Vous avez manqué hier. Utiliser un Jour de Grâce pour préserver votre série de {{current_streak}} jours ?",

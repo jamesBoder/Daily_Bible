@@ -353,11 +353,11 @@ func TestGetUnlocks_CostFieldsCorrect(t *testing.T) {
 	themes := body["themes"].([]any)
 
 	expected := map[string]int{
-		"parchment":    0,
-		"midnight":     0,
-		"sanctuary":    500,
-		"desert-sand":  500,
-		"celestial":    750,
+		"parchment":     0,
+		"midnight":      0,
+		"sanctuary":     500,
+		"desert-sand":   500,
+		"celestial":     750,
 		"scarlet-grace": 750,
 	}
 

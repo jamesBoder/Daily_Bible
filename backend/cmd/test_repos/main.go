@@ -43,14 +43,14 @@ func main() {
 
 	// Cleanup any existing test data first (in correct order due to foreign keys)
 	fmt.Println("\n--- Cleaning Up Any Existing Test Data ---")
-	
+
 	// Get existing user and verse IDs if they exist
 	var existingUser models.User
 	db.Unscoped().Where("email = ?", "test@repo.com").First(&existingUser)
-	
+
 	var existingVerse models.Verse
 	db.Unscoped().Where("reference = ?", "John 3:16").First(&existingVerse)
-	
+
 	// Delete in correct order: history -> favorites -> verse -> user
 	if existingUser.ID > 0 {
 		db.Unscoped().Where("user_id = ?", existingUser.ID).Delete(&models.History{})
@@ -63,7 +63,7 @@ func main() {
 	if existingUser.ID > 0 {
 		db.Unscoped().Delete(&existingUser)
 	}
-	
+
 	fmt.Println("✅ Cleaned up existing test data")
 
 	// Test 1: User Repository
@@ -118,18 +118,12 @@ func main() {
 	// Test 3: Favorite Repository
 	fmt.Println("\n--- Testing Favorite Repository ---")
 
-	
-
 	// Check if exists
 	exists, err := favoriteRepo.Exists(testUser.ID, testVerse.ID)
 	if err != nil {
 		log.Fatal("Failed to check favorite exists:", err)
 	}
 	fmt.Printf("✅ Favorite exists: %v\n", exists)
-
-	
-
-	
 
 	// Track view
 	if err := historyRepo.Track(testUser.ID, testVerse.ID); err != nil {

@@ -740,6 +740,7 @@
       "GRACE_PERIOD_EXPIRED": "The grace period has expired",
       "ALREADY_USED_TODAY": "You have already used a grace day today"
     },
+    "autoApplied": "Grace Day applied automatically — your streak is preserved.",
     "success": "Grace Day used — your streak is preserved.",
     "banner": {
       "message": "You missed yesterday. Use a Grace Day to preserve your {{current_streak}}-day streak?",

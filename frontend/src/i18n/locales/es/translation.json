@@ -740,6 +740,7 @@
       "GRACE_PERIOD_EXPIRED": "El período de gracia ha expirado",
       "ALREADY_USED_TODAY": "Ya has usado un día de gracia hoy"
     },
+    "autoApplied": "Día de Gracia aplicado automáticamente — tu racha está preservada.",
     "success": "Día de Gracia usado — tu racha está preservada.",
     "banner": {
       "message": "Perdiste ayer. ¿Usar un Día de Gracia para preservar tu racha de {{current_streak}} días?",

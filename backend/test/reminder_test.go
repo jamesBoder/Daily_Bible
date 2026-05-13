@@ -32,15 +32,15 @@ import (
 // Chosen to avoid collisions with IDs used in other test files.
 
 const (
-	rUserEligible  uint = 88880 // fully eligible user
-	rUserUnverif   uint = 88881 // email_verified = false
-	rUserNoEmail   uint = 88882 // email_notifications = false
-	rUserNoRemind  uint = 88883 // daily_verse_reminder = false
-	rUserTZ        uint = 88884 // timezone-filter test
-	rUserDedup     uint = 88885 // deduplication test
-	rUserVerse     uint = 88886 // verse-failure test
-	rUserSendFail  uint = 88887 // send-failure test (separate from eligibility)
-	rUserUnsub     uint = 88888 // unsubscribe handler test
+	rUserEligible uint = 88880 // fully eligible user
+	rUserUnverif  uint = 88881 // email_verified = false
+	rUserNoEmail  uint = 88882 // email_notifications = false
+	rUserNoRemind uint = 88883 // daily_verse_reminder = false
+	rUserTZ       uint = 88884 // timezone-filter test
+	rUserDedup    uint = 88885 // deduplication test
+	rUserVerse    uint = 88886 // verse-failure test
+	rUserSendFail uint = 88887 // send-failure test (separate from eligibility)
+	rUserUnsub    uint = 88888 // unsubscribe handler test
 )
 
 // ── DB helpers ────────────────────────────────────────────────────────────────

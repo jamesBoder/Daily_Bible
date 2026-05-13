@@ -28,8 +28,8 @@ export const Layout: React.FC = () => {
     <div className="md:min-h-screen h-full flex flex-col">
       <Header />
       <OfflineBanner />
-      {/* pb-20 on mobile clears the fixed bottom nav bar (56px + safe area) */}
-      <main key={location.pathname} className="flex-1 overflow-y-auto overscroll-y-contain py-8 pb-24 md:overflow-visible md:pb-8 animate-page-enter">
+      {/* pb-safe-nav clears the fixed bottom nav (3.5rem h-14 + safe-area-inset-bottom + 1.5rem buffer) */}
+      <main key={location.pathname} className="flex-1 overflow-y-auto overscroll-y-contain py-8 pb-safe-nav md:overflow-visible md:pb-8 animate-page-enter">
         <Outlet />
       </main>
       {/* Footer visible on desktop only — bottom nav replaces it on mobile */}

@@ -43,7 +43,7 @@ func main() {
 
 	fmt.Printf("✅ Token generated successfully\n")
 	fmt.Printf("   Token length: %d characters\n", len(token))
-	
+
 	// Verify token has 3 parts (header.payload.signature)
 	parts := strings.Split(token, ".")
 	if len(parts) != 3 {
@@ -63,7 +63,7 @@ func main() {
 	fmt.Println("✅ Token validated successfully")
 	fmt.Printf("   UserID: %d\n", claims.UserID)
 	fmt.Printf("   Email: %s\n", claims.Email)
-	
+
 	// Verify claims match
 	if claims.UserID != testUserID {
 		log.Fatalf("❌ UserID mismatch: expected %d, got %d", testUserID, claims.UserID)
@@ -79,15 +79,15 @@ func main() {
 	if claims.ExpiresAt == nil {
 		log.Fatal("❌ ExpiresAt is nil")
 	}
-	
+
 	expiresIn := claims.ExpiresAt.Time.Sub(claims.IssuedAt.Time)
 	expectedHours := 168.0 // 7 days
 	actualHours := expiresIn.Hours()
-	
+
 	fmt.Printf("   Issued at: %s\n", claims.IssuedAt.Time.Format("2006-01-02 15:04:05"))
 	fmt.Printf("   Expires at: %s\n", claims.ExpiresAt.Time.Format("2006-01-02 15:04:05"))
 	fmt.Printf("   Duration: %.0f hours (%.0f days)\n", actualHours, actualHours/24)
-	
+
 	if actualHours < expectedHours-1 || actualHours > expectedHours+1 {
 		log.Fatalf("❌ Expiration mismatch: expected ~%.0f hours, got %.0f hours", expectedHours, actualHours)
 	}
@@ -96,11 +96,11 @@ func main() {
 	// Test 4: Refresh Token
 	fmt.Println("Test 4: Refresh Token")
 	fmt.Println("----------------------")
-	
+
 	// Wait 1 second to ensure different IssuedAt timestamp
 	fmt.Println("   Waiting 1 second for timestamp difference...")
 	time.Sleep(1 * time.Second)
-	
+
 	newToken, err := tokenService.RefreshToken(token)
 	if err != nil {
 		log.Fatal("❌ Failed to refresh token:", err)
@@ -108,7 +108,7 @@ func main() {
 
 	fmt.Println("✅ Token refreshed successfully")
 	fmt.Printf("   New token length: %d characters\n", len(newToken))
-	
+
 	// Verify new token is different
 	if newToken == token {
 		log.Fatal("❌ Refreshed token should be different from original")
