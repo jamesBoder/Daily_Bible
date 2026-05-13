@@ -313,7 +313,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       .catch(() => {
         sessionStorage.removeItem(storageKey);
       });
-  }, [isAuthenticated, streakData?.streak_recoverable, streakData?.grace_days_remaining, refreshStreak, t]);
+  }, [isAuthenticated, streakData, refreshStreak, t]);
 
   // Refresh at midnight to update streak
   useEffect(() => {
