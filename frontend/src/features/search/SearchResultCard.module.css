@@ -3,18 +3,12 @@
   gap: 0.875rem;
   padding: 1rem 1.125rem;
   border-radius: 0.75rem;
-  background-color: #fff;
-  border: 1px solid rgba(245, 158, 11, 0.35);
+  background-color: var(--journal-surface);
+  border: 1px solid var(--theme-border);
   opacity: 0;
   transform: translateY(8px);
   animation: cardSlideIn 0.3s ease forwards;
   list-style: none;
-}
-
-/* Dark mode — elevated surface, clearly readable */
-:global(.dark) .card {
-  background-color: #3a2e1f;
-  border-color: rgba(245, 158, 11, 0.40);
 }
 
 @keyframes cardSlideIn {
@@ -57,15 +51,11 @@
   font-size: 0.9375rem;
   line-height: 1.65;
   word-break: break-word;
-  color: #1a1208;
+  color: var(--foreground);
   display: -webkit-box;
   -webkit-line-clamp: 4;
   -webkit-box-orient: vertical;
   overflow: hidden;
-}
-
-:global(.dark) .text {
-  color: #fdf3dc;
 }
 
 /* Copy button */
