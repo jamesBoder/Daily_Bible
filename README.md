@@ -41,10 +41,11 @@
 
 ## 🛠️ Local Development
 
-The recommended way to run the app locally is with **Docker Compose** — it starts the frontend, backend, and PostgreSQL together.
+The standard workflow is **hybrid**: PostgreSQL + backend run in Docker, frontend runs on the host with `npm start` for fast hot reload.
 
 ### Prerequisites
-- [Docker](https://docs.docker.com/get-docker/) & Docker Compose
+- [Docker](https://docs.docker.com/get-docker/) & Docker Compose v2
+- Node.js 18+ and npm
 - A `.env` file in the project root (see below)
 
 ### 1. Clone the Repository
@@ -54,15 +55,10 @@ cd Daily_Bible
 ```
 
 ### 2. Configure Environment Variables
-Create a `.env` file in the project root with the following:
 
+**Root `.env`** (read by Docker Compose — always run `docker compose` from the project root):
 ```env
-# Server
-PORT=8080
-
 # Database
-DB_HOST=localhost
-DB_PORT=5433
 DB_USER=your_db_user
 DB_PASSWORD=your_db_password
 DB_NAME=your_db_name
@@ -71,52 +67,66 @@ POSTGRES_DB=your_db_name
 # Auth
 JWT_SECRET=your_jwt_secret_min_32_chars
 
-# Google OAuth
+# Google OAuth — must point to the Docker backend port, not port 80
 GOOGLE_CLIENT_ID=your_google_client_id
 GOOGLE_CLIENT_SECRET=your_google_client_secret
-GOOGLE_REDIRECT_URL=http://localhost/api/auth/google/callback
+GOOGLE_REDIRECT_URL=http://localhost:18080/api/auth/google/callback
 
-# Frontend
-FRONTEND_URL=http://localhost
-REACT_APP_API_URL=http://localhost
-REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
+# Frontend callback after OAuth
+FRONTEND_URL=http://localhost:3000
 
 # Bible API
 BIBLE_API_KEY=your_api_bible_key
 BIBLE_API_BASE_URL=https://rest.api.bible/v1
+BIBLE_VERSION_ID=de4e12af7f28f599-02
 
-# Email (Resend) — use shared test sender for local dev
+# Email (Resend)
 RESEND_API_KEY=re_xxxxxxxxxxxx
-FROM_EMAIL=onboarding@resend.dev
+FROM_EMAIL=noreply@wordsofpraise.app
+
+# Stripe (required at startup)
+STRIPE_SECRET_KEY=sk_test_...
+STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
-> For Google OAuth locally, register `http://localhost/api/auth/google/callback` as an Authorized Redirect URI in Google Cloud Console.
+**`frontend/.env`** (read by `npm start`):
+```env
+REACT_APP_API_URL=http://localhost:18080
+REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
+```
+
+**Google Cloud Console** — add these to your OAuth client:
+- Authorized redirect URIs: `http://localhost:18080/api/auth/google/callback`
+- Authorized JavaScript origins: `http://localhost:3000`
 
 ### 3. Start the App
 
-**First run or after major changes (full rebuild):**
+**First run or after backend Go changes (rebuild image):**
 ```bash
-docker-compose down -v && docker-compose up --build
+docker compose up -d --build postgres backend
+cd frontend && npm start
 ```
 
-**Normal restart (keeps database data):**
+**Normal restart (no code changes):**
 ```bash
-docker-compose down && docker-compose up --build
+docker compose up -d postgres backend
+cd frontend && npm start
 ```
 
-**Rebuild a single service:**
+**After Go changes only:**
 ```bash
-docker-compose up --build -d frontend   # after React/nginx changes
-docker-compose up --build -d backend    # after Go changes
+docker compose up -d --build backend
 ```
+
+> **Important:** Always run `docker compose` from the project root. Running it from `backend/` causes Docker to read `backend/.env` instead of the root `.env`, which sets the wrong ports.
 
 ### 4. Access the App
 
-| Service | URL |
-|---|---|
-| Frontend | http://localhost |
-| API (via nginx) | http://localhost/api/... |
-| PostgreSQL (host) | localhost:5433 |
+| Service  | URL                    |
+|----------|------------------------|
+| Frontend | http://localhost:3000  |
+| Backend  | http://localhost:18080 |
+| Postgres | localhost:5433         |
 
 ---
 
