@@ -28,11 +28,11 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onClick }) => {
   return (
     <button
       onClick={handleClick}
-      className="w-full text-left p-4 rounded-xl border border-amber-200/60 dark:border-amber-800/40 bg-white dark:bg-gray-800/60 hover:bg-amber-50/60 dark:hover:bg-amber-900/20 transition-colors active:scale-[0.98] transition-transform"
+      className="w-full text-left p-4 rounded-xl border border-amber-200/60 dark:border-amber-800/40 bg-[var(--theme-surface)] hover:bg-amber-50/60 dark:hover:bg-amber-900/20 transition-colors active:scale-[0.98] transition-transform"
       style={{ background: 'var(--card-bg)' }}
     >
       <div className="flex items-start justify-between gap-2 mb-2">
-        <span className="font-semibold text-sm text-gray-800 dark:text-gray-100 leading-snug">{plan.title}</span>
+        <span className="font-semibold text-sm text-[var(--foreground)] leading-snug">{plan.title}</span>
         <div className="flex items-center gap-1.5 flex-shrink-0 mt-0.5">
           {plan.plan_streak >= 2 && (
             <span
@@ -53,7 +53,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onClick }) => {
         </div>
       </div>
 
-      <p className="text-xs text-gray-500 dark:text-gray-400 mb-3">
+      <p className="text-xs text-[var(--journal-text-muted)] mb-3">
         {isComplete
           ? t('plans.complete', 'Path Complete')
           : t('plans.dayOf', 'Day {{day}} of {{total}}', {

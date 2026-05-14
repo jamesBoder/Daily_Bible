@@ -16,8 +16,12 @@
     @apply text-gray-900;
     font-size: 16px;
     background: var(--body-bg);
+    background-repeat: no-repeat;
+    /* 100% 100% stretches the gradient to fill the full body height so it never
+       tiles. background-attachment:fixed is intentionally removed — it sizes
+       the gradient to the viewport and repeats below it, and is broken on iOS. */
+    background-size: 100% 100%;
     min-height: 100vh;
-    background-attachment: fixed;
     transition: background 0.3s ease, color 0.3s ease;
 
     /* Safe area insets for devices with notches */
@@ -172,34 +176,32 @@
 
   /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
 
-  /* Sanctuary — moonlit forest chapel */
+  /* Sanctuary — dappled forest chapel (medium tone — between Midnight and Parchment) */
   [data-theme="sanctuary"] {
-    /* Two-layer bg: jade radial glow from top (canopy light) + deep forest gradient.
-       The glow makes the top ~40% visibly luminous green — unmistakably not Midnight. */
+    /* Medium forest green — visibly green, relaxing, clearly not Midnight's near-black.
+       Soft luminous glow at top like light filtering through a canopy. */
     --body-bg:
-      radial-gradient(ellipse 110% 52% at 50% -8%, rgba(45, 168, 90, 0.38) 0%, transparent 68%),
-      linear-gradient(to bottom, #040d08 0%, #081811 55%, #0c2016 100%);
-    --parchment: #0c2016;
-    --foreground: #dff0d8;
-    /* Jade green accent — key differentiator from Midnight's warm amber */
+      radial-gradient(ellipse 100% 38% at 50% 0%, rgba(90, 200, 125, 0.20) 0%, transparent 58%),
+      linear-gradient(to bottom, #1e4a2e 0%, #24533a 55%, #1e4a2e 100%);
+    --parchment: #1e4a2e;
+    --foreground: #e4f2dc;
     --candle-amber: #6dcb8a;
-    /* Richer jade so correct Manna tiles and title glow pop on the dark forest bg */
     --blessing-gold: #48cc76;
-    --grace-lavender: #78a882;
-    /* Warm amber present tile — clear contrast with jade correct tile */
+    --grace-lavender: #82b890;
     --challenge-accent: #d4944a;
     --milestone-glow: #7dd89a;
-    --theme-surface: #0f2b1c;
-    --theme-border: rgba(109, 203, 138, 0.28);
+    /* Cards sit slightly lighter than the bg to float naturally */
+    --theme-surface: #2d6040;
+    --theme-border: rgba(109, 203, 138, 0.32);
     --theme-accent: #3a8c5c;
-    --header-bg: rgba(4, 13, 8, 0.92);
-    /* Journal / Manna tiles — deep forest green with sage ivory text */
-    --journal-surface:     #0d2419;
-    --journal-surface-alt: #0b2016;
-    --journal-line:        rgba(109, 203, 138, 0.14);
-    --journal-border:      rgba(109, 203, 138, 0.24);
-    --journal-text:        #cce4c4;
-    --journal-text-muted:  #6aae7c;
+    --header-bg: rgba(28, 62, 40, 0.92);
+    /* Journal / Manna tiles — medium green with light sage text */
+    --journal-surface:     #254e36;
+    --journal-surface-alt: #224832;
+    --journal-line:        rgba(109, 203, 138, 0.16);
+    --journal-border:      rgba(109, 203, 138, 0.28);
+    --journal-text:        #d4ecc8;
+    --journal-text-muted:  #78b888;
   }
 
   /* Desert Sand — warm solitude */

@@ -56,10 +56,10 @@ const MysterySelectScreen: React.FC<MysterySelectScreenProps> = ({
           style={{ background: 'color-mix(in srgb, var(--candle-amber) 6%, var(--card-bg))' }}
         >
           <div className="min-w-0">
-            <p className="text-sm font-semibold text-gray-800 dark:text-gray-100 truncate">
+            <p className="text-sm font-semibold text-[var(--foreground)] truncate">
               {t('prayer.resumeSession', 'Continue where you left off?')}
             </p>
-            <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+            <p className="text-xs text-[var(--journal-text-muted)] mt-0.5">
               {MYSTERY_ICONS[sessionKey]} {mysteryLabel} · {t('prayer.stepLabel', 'step {{n}}', { n: sessionStep + 1 })}
             </p>
           </div>
@@ -75,7 +75,7 @@ const MysterySelectScreen: React.FC<MysterySelectScreenProps> = ({
       )}
 
       {/* Section header */}
-      <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 px-1">
+      <p className="text-xs font-semibold uppercase tracking-wider text-[var(--journal-text-muted)] px-1">
         {hasSession
           ? t('prayer.startNewLabel', 'Or start fresh')
           : t('prayer.chooseMysteriesTitle', "Choose a Mystery")}
@@ -101,7 +101,7 @@ const MysterySelectScreen: React.FC<MysterySelectScreenProps> = ({
 
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 flex-wrap">
-                    <span className="text-sm font-bold text-gray-800 dark:text-gray-100">
+                    <span className="text-sm font-bold text-[var(--foreground)]">
                       {t(`prayer.${set.key}`, MYSTERY_LABELS[set.key])}
                     </span>
                     {isToday && (
@@ -111,7 +111,7 @@ const MysterySelectScreen: React.FC<MysterySelectScreenProps> = ({
                     )}
                   </div>
                   {/* Mystery titles inline as a single line summary */}
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-1 leading-snug line-clamp-1">
+                  <p className="text-xs text-[var(--journal-text-muted)] mt-1 leading-snug line-clamp-1">
                     {set.mysteries.map(m => m.title).join(' · ')}
                   </p>
                 </div>

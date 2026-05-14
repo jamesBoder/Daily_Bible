@@ -81,7 +81,7 @@
   white-space: nowrap;
 }
 
-.journal-begin-btn:hover  { background: #d97706; }
+.journal-begin-btn:hover  { background: color-mix(in srgb, var(--candle-amber) 80%, #000); }
 .journal-begin-btn:active { transform: scale(0.95); }
 
 /* ── Entry Cards ───────────────────────────────────────────────────────────── */
@@ -215,7 +215,7 @@
   transition: background 0.15s, transform 0.1s;
 }
 
-.journal-empty-cta:hover  { background: #d97706; }
+.journal-empty-cta:hover  { background: color-mix(in srgb, var(--candle-amber) 80%, #000); }
 .journal-empty-cta:active { transform: scale(0.95); }
 
 /* ── Locked entries stack ──────────────────────────────────────────────────── */
@@ -311,7 +311,7 @@
   flex-shrink: 0;
 }
 
-.journal-new-btn:hover  { background: #d97706; }
+.journal-new-btn:hover  { background: color-mix(in srgb, var(--candle-amber) 80%, #000); }
 .journal-new-btn:active { transform: scale(0.95); }
 
 /* ── Skeleton loading ──────────────────────────────────────────────────────── */

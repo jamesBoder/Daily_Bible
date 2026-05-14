@@ -69,22 +69,22 @@ export const TranslationPicker: React.FC = () => {
 
   return (
     <Card>
-      <h2 className="text-2xl font mb-4 text-gray-900 dark:text-gray-100 text-center">
+      <h2 className="text-2xl font mb-4 text-[var(--foreground)] text-center">
         {t("settings.translation.title", "Bible Translation")}
       </h2>
       <div>
-        <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-semibold text-[var(--foreground)] mb-2">
           {t("settings.translation.label", "Preferred Bible Version")}
         </label>
 
         {isLoading ? (
-          <div className="h-9 rounded-md bg-gray-100 dark:bg-gray-700 animate-pulse" />
+          <div className="h-9 rounded-md bg-[var(--theme-surface)] animate-pulse" />
         ) : (
           <select
             value={currentVersion}
             onChange={(e) => handleSelect(e.target.value)}
             disabled={isSaving}
-            className="block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 disabled:opacity-60"
+            className="block w-full rounded-md p-2 disabled:opacity-60 bg-[var(--journal-surface)] text-[var(--foreground)] border-[var(--theme-border)] border"
           >
             {translations.map((tr) => {
               const locked = tr.requires_premium && !isPremium;
@@ -98,7 +98,7 @@ export const TranslationPicker: React.FC = () => {
         )}
 
         {!isLoading && translations.some((tr) => tr.requires_premium) && !isPremium && (
-          <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
+          <p className="mt-2 text-xs text-[var(--journal-text-muted)]">
             {/* Phase 8: wire Modern Translations Pack purchase here */}
             {t(
               "settings.translation.premiumNote",

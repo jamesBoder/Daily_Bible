@@ -40,7 +40,7 @@ const EndOfDayModal: React.FC<EndOfDayModalProps> = ({ streak, onDismiss }) => {
       {/* Modal — pt-16 clears the h-14 sticky header; max-h accounts for bottom nav */}
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-4 pointer-events-none">
         <div className="pointer-events-auto w-full max-w-sm animate-slide-from-top max-h-[calc(100dvh-8rem)] sm:max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-3xl">
-          <div className="bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
+          <div className="bg-[var(--theme-surface)] shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
             <div className="p-6 sm:p-7 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-amber-900/30 dark:via-yellow-900/20 dark:to-orange-900/20">
 
               {/* Dismiss button */}
@@ -48,7 +48,7 @@ const EndOfDayModal: React.FC<EndOfDayModalProps> = ({ streak, onDismiss }) => {
                 <button
                   onClick={onDismiss}
                   aria-label={t('common.dismiss', 'Dismiss')}
-                  className="p-1.5 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+                  className="p-1.5 rounded-full text-[var(--journal-text-muted)] hover:opacity-100 hover:bg-[var(--theme-surface)] transition-colors"
                 >
                   <X size={16} weight="bold" />
                 </button>
@@ -57,10 +57,10 @@ const EndOfDayModal: React.FC<EndOfDayModalProps> = ({ streak, onDismiss }) => {
               {/* Icon + title */}
               <div className="text-center mb-5">
                 <div className="text-5xl mb-3" role="img" aria-label="candle">🕯️</div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 leading-tight">
+                <h2 className="text-xl font-bold text-[var(--foreground)] leading-tight">
                   {t('endOfDay.title', "You're done for today")}
                 </h2>
-                <p className="mt-2 text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+                <p className="mt-2 text-sm text-[var(--journal-text-muted)] leading-relaxed">
                   {t('endOfDay.body', 'Come back tomorrow — a new verse and a new puzzle await.')}
                 </p>
               </div>
@@ -72,7 +72,7 @@ const EndOfDayModal: React.FC<EndOfDayModalProps> = ({ streak, onDismiss }) => {
                   <p className="text-xs font-semibold text-amber-700 dark:text-amber-400 uppercase tracking-wide">
                     {t('endOfDay.streakLabel', 'Tomorrow')}
                   </p>
-                  <p className="text-lg font-bold text-gray-900 dark:text-gray-100">
+                  <p className="text-lg font-bold text-[var(--foreground)]">
                     {t('endOfDay.streakValue', 'Day {{streak}}', { streak: tomorrowStreak })}
                   </p>
                 </div>

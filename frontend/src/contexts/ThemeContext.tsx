@@ -46,7 +46,7 @@ export const THEMES: ThemeDefinition[] = [
     description: 'Deep emerald and sage ivory. Moonlight through the forest canopy.',
     isDark: true,
     unlockCost: 500,
-    previewColors: { background: '#040d08', foreground: '#dff0d8', accent: '#6dcb8a', surface: '#0f2b1c' },
+    previewColors: { background: '#1e4a2e', foreground: '#e4f2dc', accent: '#6dcb8a', surface: '#2d6040' },
   },
   {
     id: 'desert-sand',

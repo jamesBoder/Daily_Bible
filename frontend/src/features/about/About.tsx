@@ -32,7 +32,7 @@ export const AboutContent: React.FC = () => {
           <h1 className="text-5xl md:text-6xl font-display font-bold mb-4 bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400 bg-clip-text text-transparent">
             Words of Praise&#8482;
           </h1>
-          <p className="text-xl md:text-2xl text-gray-700 dark:text-gray-300 font-light">
+          <p className="text-xl md:text-2xl text-[var(--foreground)] font-light">
             {t('about.subtitle')}
           </p>
           <div className="mt-6 flex justify-center">
@@ -43,19 +43,19 @@ export const AboutContent: React.FC = () => {
 
       {/* ── Mission ──────────────────────────────────────────────────────── */}
       <section className="max-w-4xl mx-auto py-16 px-4 sm:px-6">
-        <div className="bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-6 sm:p-8 md:p-12 border border-gray-200 dark:border-gray-700">
+        <div className="bg-[var(--theme-surface)] rounded-3xl shadow-xl p-6 sm:p-8 md:p-12 border border-[var(--theme-border)]">
           <h2 className="text-2xl sm:text-3xl font-bold mb-6 text-primary-600 dark:text-primary-400 flex items-center justify-center sm:justify-start">
             <span className="text-3xl sm:text-4xl mr-3">🙏</span>
             {t('about.mission')}
           </h2>
-          <p className="text-base sm:text-lg leading-relaxed text-gray-700 dark:text-gray-300">
+          <p className="text-base sm:text-lg leading-relaxed text-[var(--foreground)]">
             {t('about.missionText')}
           </p>
         </div>
       </section>
 
       {/* ── Features ─────────────────────────────────────────────────────── */}
-      <section className="py-16 px-4 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-900">
+      <section className="py-16 px-4 bg-gradient-to-b from-[var(--theme-surface)] to-gray-50 dark:to-gray-900">
         <h2 className="text-3xl sm:text-4xl font-bold mb-12 text-center text-primary-600 dark:text-primary-400">
           {t('about.features')}
         </h2>
@@ -63,10 +63,10 @@ export const AboutContent: React.FC = () => {
           {features.map(({ emoji, titleKey, descKey, comingSoon }) => (
             <div
               key={titleKey}
-              className={`group bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border text-center relative ${
+              className={`group bg-[var(--theme-surface)] p-6 rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 border text-center relative ${
                 comingSoon
-                  ? 'border-dashed border-gray-300 dark:border-gray-600 opacity-75'
-                  : 'border-gray-100 dark:border-gray-700 hover:border-primary-300 dark:hover:border-primary-600'
+                  ? 'border-dashed border-[var(--theme-border)] opacity-75'
+                  : 'border-[var(--theme-border)] hover:border-primary-300 dark:hover:border-primary-600'
               }`}
             >
               {comingSoon && (
@@ -80,7 +80,7 @@ export const AboutContent: React.FC = () => {
               <h3 className="text-lg font-bold mb-2 text-primary-600 dark:text-primary-400">
                 {t(titleKey)}
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400 leading-relaxed">
+              <p className="text-sm text-[var(--journal-text-muted)] leading-relaxed">
                 {t(descKey)}
               </p>
             </div>
@@ -93,10 +93,10 @@ export const AboutContent: React.FC = () => {
         <div className="max-w-xl mx-auto">
           <div className="bg-gradient-to-br from-amber-50 to-yellow-50 dark:from-amber-900/30 dark:to-yellow-900/20 rounded-3xl shadow-lg p-8 border border-amber-200/60 dark:border-amber-700/40 text-center">
             <div className="text-3xl mb-3">📖</div>
-            <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="text-xl font-bold text-[var(--foreground)] mb-2">
               Get today's verse in your inbox
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm mb-6">
+            <p className="text-[var(--journal-text-muted)] text-sm mb-6">
               Not ready to create an account? Drop your email and we'll send you a
               verse each morning — free, always.
             </p>
@@ -143,25 +143,25 @@ export const AboutContent: React.FC = () => {
             <span className="text-3xl sm:text-4xl mr-3">✉️</span>
             {t('about.getInTouch')}
           </h2>
-          <p className="text-center mb-6 text-base sm:text-lg text-gray-700 dark:text-gray-300">
+          <p className="text-center mb-6 text-base sm:text-lg text-[var(--foreground)]">
             {t('about.contactDesc')}
           </p>
 
-          <div className="text-center bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-md mb-6">
-            <p className="text-gray-600 dark:text-gray-400 mb-2 text-sm sm:text-base">{t('about.emailUs')}</p>
+          <div className="text-center bg-[var(--theme-surface)] rounded-2xl p-4 sm:p-6 shadow-md mb-6">
+            <p className="text-[var(--journal-text-muted)] mb-2 text-sm sm:text-base">{t('about.emailUs')}</p>
             <a
               href="mailto:wordsofpraiseapp@gmail.com?subject=Words%20of%20Praise%20-%20Inquiry"
               className="text-lg sm:text-2xl font-bold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors inline-block hover:scale-105 transform break-words"
             >
               wordsofpraiseapp@gmail.com
             </a>
-            <p className="text-xs sm:text-sm mt-4 text-gray-500 dark:text-gray-500">
+            <p className="text-xs sm:text-sm mt-4 text-[var(--journal-text-muted)]">
               {t('about.responseTime')}
             </p>
           </div>
 
-          <div className="text-center bg-white dark:bg-gray-800 rounded-2xl p-4 sm:p-6 shadow-md">
-            <p className="text-gray-600 dark:text-gray-400 mb-3 text-sm sm:text-base">{t('about.followInstagram')}</p>
+          <div className="text-center bg-[var(--theme-surface)] rounded-2xl p-4 sm:p-6 shadow-md">
+            <p className="text-[var(--journal-text-muted)] mb-3 text-sm sm:text-base">{t('about.followInstagram')}</p>
             <a
               href="https://instagram.com/wordsofpraiseapp"
               target="_blank"
@@ -177,7 +177,7 @@ export const AboutContent: React.FC = () => {
               </svg>
               @wordsofpraiseapp
             </a>
-            <p className="text-xs sm:text-sm mt-3 text-gray-500 dark:text-gray-500">
+            <p className="text-xs sm:text-sm mt-3 text-[var(--journal-text-muted)]">
               {t('about.instagramUpdate')}
             </p>
           </div>
@@ -190,13 +190,13 @@ export const AboutContent: React.FC = () => {
           <div className="absolute top-0 right-0 w-32 h-32 bg-primary-100 dark:bg-primary-900/30 rounded-full -mr-16 -mt-16" />
           <div className="absolute bottom-0 left-0 w-24 h-24 bg-purple-100 dark:bg-purple-900/30 rounded-full -ml-12 -mb-12" />
           <div className="relative text-center">
-            <h2 className="text-3xl font-bold mb-8 text-gray-900 dark:text-white">
+            <h2 className="text-3xl font-bold mb-8 text-[var(--foreground)]">
               {t('about.inLovingMemory')}
             </h2>
             <p className="text-4xl font-bold bg-gradient-to-r from-primary-600 to-purple-600 dark:from-primary-400 dark:to-purple-400 bg-clip-text text-transparent mb-6">
               Clairemena Jean-Pierre
             </p>
-            <p className="text-lg text-gray-600 dark:text-gray-400 italic">
+            <p className="text-lg text-[var(--journal-text-muted)] italic">
               {t('about.devotedChild')}
             </p>
           </div>
@@ -212,7 +212,7 @@ export const About: React.FC = () => {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-b from-[var(--theme-surface)] to-gray-100 dark:to-gray-800">
       <div className="max-w-7xl mx-auto px-4 py-6 flex items-center">
         <button
           onClick={() => navigate(-1)}

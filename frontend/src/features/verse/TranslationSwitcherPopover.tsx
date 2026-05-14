@@ -112,26 +112,26 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
     >
       <div
         ref={panelRef}
-        className="relative w-full max-w-md bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85dvh]"
+        className="relative w-full max-w-md bg-[var(--theme-surface)] rounded-2xl shadow-2xl overflow-hidden flex flex-col max-h-[85dvh]"
       >
         {/* Top accent bar */}
         <div className="h-1 w-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400 flex-shrink-0" />
 
         {/* Header */}
-        <div className="px-5 pt-4 pb-4 border-b border-gray-100 dark:border-gray-800 flex-shrink-0">
+        <div className="px-5 pt-4 pb-4 border-b border-[var(--theme-border)] flex-shrink-0">
           <div className="flex items-start justify-between gap-3">
             <div>
-              <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 font-display leading-tight">
+              <h2 className="text-base font-bold text-[var(--foreground)] font-display leading-tight">
                 {t("verse.switchTranslation", "Switch Translation")}
               </h2>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+              <p className="text-xs text-[var(--journal-text-muted)] mt-0.5">
                 {t("verse.sessionOnly", "Session only — won't change your settings")}
               </p>
             </div>
             <button
               onClick={onClose}
               aria-label={t("common.close", "Close")}
-              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-80 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -143,11 +143,11 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
         {/* Scrollable translation list */}
         <div className="overflow-y-auto flex-1 py-2">
           {isLoading ? (
-            <div className="px-5 py-6 text-sm text-gray-400 text-center">
+            <div className="px-5 py-6 text-sm text-[var(--journal-text-muted)] text-center">
               {t("common.loading", "Loading…")}
             </div>
           ) : translations.length === 0 ? (
-            <div className="px-5 py-6 text-sm text-gray-400 text-center">
+            <div className="px-5 py-6 text-sm text-[var(--journal-text-muted)] text-center">
               {t("verse.translationUnavailable", "Translation unavailable")}
             </div>
           ) : (
@@ -182,10 +182,10 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
                         transition-colors duration-100
                         ${
                           isLocked
-                            ? "opacity-50 cursor-not-allowed text-gray-400 dark:text-gray-500"
+                            ? "opacity-50 cursor-not-allowed text-[var(--journal-text-muted)]"
                             : isActive
                             ? "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
-                            : "text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800/60 cursor-pointer active:bg-gray-100 dark:active:bg-gray-800"
+                            : "text-[var(--foreground)] hover:bg-[var(--theme-surface)] cursor-pointer active:bg-[var(--theme-surface)]"
                         }
                       `}
                     >
@@ -207,7 +207,7 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
                         )}
                         {isLocked && (
                           <svg
-                            className="w-4 h-4 text-gray-400"
+                            className="w-4 h-4 text-[var(--foreground)] opacity-35"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth={2}
@@ -231,8 +231,8 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
 
         {/* Footer — premium upsell when there are locked translations */}
         {!isPremium && translations.some((tr) => tr.requires_premium) && (
-          <div className="px-5 py-3 border-t border-gray-100 dark:border-gray-800 bg-gray-50 dark:bg-gray-800/40 flex-shrink-0">
-            <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+          <div className="px-5 py-3 border-t border-[var(--theme-border)] bg-[var(--theme-surface)] flex-shrink-0">
+            <p className="text-xs text-[var(--journal-text-muted)] text-center">
               <svg
                 className="w-3 h-3 inline-block mr-1 opacity-70"
                 fill="none"

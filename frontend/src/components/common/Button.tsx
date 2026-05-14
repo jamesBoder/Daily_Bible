@@ -23,7 +23,7 @@ export const Button: React.FC<ButtonProps> = ({
     primary:
       "bg-primary-600 dark:bg-primary-500 text-white hover:bg-primary-700 dark:hover:bg-primary-600",
     secondary:
-      "bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-300 dark:hover:bg-gray-600",
+      "bg-[var(--theme-surface)] text-[var(--foreground)] hover:opacity-90",
     danger: "bg-red-600 text-white hover:bg-red-700 dark:hover:bg-red-500",
   };
 

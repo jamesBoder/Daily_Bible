@@ -2,8 +2,8 @@ import React from "react";
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
   <section className="mb-8">
-    <h2 className="text-lg font-semibold text-gray-900 dark:text-white mb-3">{title}</h2>
-    <div className="text-gray-700 dark:text-gray-300 space-y-3 text-sm leading-relaxed">
+    <h2 className="text-lg font-semibold text-[var(--foreground)] mb-3">{title}</h2>
+    <div className="text-[var(--foreground)] space-y-3 text-sm leading-relaxed">
       {children}
     </div>
   </section>
@@ -11,12 +11,12 @@ const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title
 
 export const Privacy: React.FC = () => {
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 py-10 px-4">
+    <div className="min-h-screen bg-[var(--theme-surface)] py-10 px-4">
       <div className="max-w-2xl mx-auto">
-        <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Privacy Policy</h1>
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-8">Last updated: April 2026</p>
+        <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">Privacy Policy</h1>
+        <p className="text-sm text-[var(--journal-text-muted)] mb-8">Last updated: April 2026</p>
 
-        <p className="text-sm text-gray-700 dark:text-gray-300 mb-8">
+        <p className="text-sm text-[var(--foreground)] mb-8">
           Words of Praise ("we", "us") is a daily Bible reading app. This policy explains what data
           we collect, why we collect it, and how you can control it. We keep it plain — no legalese.
         </p>

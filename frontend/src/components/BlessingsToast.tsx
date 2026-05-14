@@ -150,10 +150,10 @@ const BlessingsToast: React.FC<BlessingsToastProps> = () => {
 
           {/* Content */}
           <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900 dark:text-gray-100">
+            <p className="text-sm font-medium text-[var(--foreground)]">
               +{toast.amount} {t('blessings.label', 'Blessings')}
             </p>
-            <p className="text-xs text-gray-600 dark:text-gray-400">
+            <p className="text-xs text-[var(--journal-text-muted)]">
               {getReasonText(toast.reason)}
             </p>
           </div>
@@ -161,8 +161,7 @@ const BlessingsToast: React.FC<BlessingsToastProps> = () => {
           {/* Close button */}
           <button
             onClick={() => removeToast(toast.id)}
-            className="flex-shrink-0 text-gray-400 hover:text-gray-600 
-                       dark:text-gray-500 dark:hover:text-gray-300
+            className="flex-shrink-0 text-[var(--journal-text-muted)] hover:opacity-100
                        transition-colors"
             aria-label="Dismiss"
           >

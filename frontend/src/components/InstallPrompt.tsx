@@ -115,7 +115,7 @@ export const InstallPrompt: React.FC = () => {
           {/* Modal — pt-16 clears the h-14 sticky header; max-h accounts for bottom nav */}
           <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-4 pointer-events-none">
             <div className="pointer-events-auto w-full max-w-sm animate-slide-from-top max-h-[calc(100dvh-8rem)] sm:max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-3xl">
-              <div className="bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
+              <div className="bg-[var(--theme-surface)] shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
                 <div className="p-6 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50 dark:from-amber-900/30 dark:via-yellow-900/20 dark:to-orange-900/20">
 
                   {/* Header */}
@@ -123,10 +123,10 @@ export const InstallPrompt: React.FC = () => {
                     <div className="flex items-center gap-3">
                       <span className="text-3xl" role="img" aria-label="phone">📱</span>
                       <div>
-                        <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 leading-tight">
+                        <h2 className="text-lg font-semibold text-[var(--foreground)] leading-tight">
                           {t('pwa.iosGuide.title', 'Add to Your Home Screen')}
                         </h2>
-                        <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
+                        <p className="text-xs text-[var(--journal-text-muted)] mt-0.5">
                           {t('pwa.iosGuide.subtitle', 'Open instantly, even offline.')}
                         </p>
                       </div>
@@ -134,7 +134,7 @@ export const InstallPrompt: React.FC = () => {
                     <button
                       onClick={dismissIOSGuide}
                       aria-label={t('common.dismiss', 'Dismiss')}
-                      className="flex-shrink-0 p-1.5 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors ml-2"
+                      className="flex-shrink-0 p-1.5 rounded-full text-[var(--journal-text-muted)] hover:opacity-100 hover:bg-[var(--theme-surface)] transition-colors ml-2"
                     >
                       <X size={16} weight="bold" />
                     </button>
@@ -144,7 +144,7 @@ export const InstallPrompt: React.FC = () => {
                   <ol className="space-y-3 mb-5">
                     <li className="flex items-start gap-3">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">1</span>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="text-sm text-[var(--foreground)]">
                         {t('pwa.settings.iosStep1', 'Tap the')}{' '}
                         <ShareNetwork size={14} weight="bold" className="inline align-middle text-blue-500" />{' '}
                         <strong>{t('pwa.settings.iosStep1Share', 'Share')}</strong>{' '}
@@ -153,7 +153,7 @@ export const InstallPrompt: React.FC = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">2</span>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="text-sm text-[var(--foreground)]">
                         {t('pwa.settings.iosStep2', 'Scroll down and tap')}{' '}
                         <PlusSquare size={14} weight="bold" className="inline align-middle text-blue-500" />{' '}
                         <strong>{t('pwa.settings.iosStep2AddToHome', '"Add to Home Screen"')}</strong>
@@ -161,7 +161,7 @@ export const InstallPrompt: React.FC = () => {
                     </li>
                     <li className="flex items-start gap-3">
                       <span className="flex-shrink-0 w-6 h-6 rounded-full bg-amber-500 text-white text-xs font-bold flex items-center justify-center mt-0.5">3</span>
-                      <span className="text-sm text-gray-700 dark:text-gray-300">
+                      <span className="text-sm text-[var(--foreground)]">
                         {t('pwa.settings.iosStep3', 'Tap')}{' '}
                         <strong>{t('pwa.settings.iosStep3Add', '"Add"')}</strong>{' '}
                         {t('pwa.settings.iosStep3After', 'in the top-right corner')}

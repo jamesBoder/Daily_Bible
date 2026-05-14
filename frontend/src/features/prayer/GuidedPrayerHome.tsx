@@ -24,10 +24,10 @@ const GuidedPrayerHome: React.FC = () => {
           <span className="text-xl">🙏</span>
         </div>
         <div>
-          <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 leading-tight">
+          <h1 className="text-xl font-bold text-[var(--foreground)] leading-tight">
             {t('prayer.guidedPrayerTitle', 'Guided Prayer')}
           </h1>
-          <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+          <p className="text-xs text-[var(--journal-text-muted)] mt-0.5">
             {t('prayer.guidedPrayerSubtitle', 'Structured prayer to draw you closer to God')}
           </p>
         </div>
@@ -50,10 +50,10 @@ const GuidedPrayerHome: React.FC = () => {
               📿
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-bold text-gray-800 dark:text-gray-100">
+              <p className="text-sm font-bold text-[var(--foreground)]">
                 {t('prayer.rosaryTitle', 'The Rosary')}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 leading-snug">
+              <p className="text-xs text-[var(--journal-text-muted)] mt-0.5 leading-snug">
                 {t('prayer.rosaryDesc', 'Pray all 59 beads with guided prayers and mysteries.')}
               </p>
             </div>
@@ -62,7 +62,7 @@ const GuidedPrayerHome: React.FC = () => {
         </button>
 
         {/* Coming soon section label */}
-        <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 px-1 mt-2">
+        <p className="text-xs font-semibold uppercase tracking-wider text-[var(--journal-text-muted)] px-1 mt-2">
           {t('prayer.comingSoonLabel', 'Coming Soon')}
         </p>
 
@@ -73,18 +73,18 @@ const GuidedPrayerHome: React.FC = () => {
         ].map(item => (
           <div
             key={item.key}
-            className="px-4 py-4 rounded-2xl border border-gray-100 dark:border-gray-800 opacity-55 pointer-events-none select-none"
+            className="px-4 py-4 rounded-2xl border border-[var(--theme-border)] opacity-55 pointer-events-none select-none"
             style={{ background: 'var(--card-bg)' }}
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl bg-gray-100 dark:bg-gray-800">
+              <div className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 text-xl bg-[var(--theme-surface)]">
                 {item.icon}
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+                <p className="text-sm font-semibold text-[var(--foreground)]">
                   {item.label}
                 </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5 leading-snug">{item.desc}</p>
+                <p className="text-xs text-[var(--journal-text-muted)] mt-0.5 leading-snug">{item.desc}</p>
               </div>
             </div>
           </div>

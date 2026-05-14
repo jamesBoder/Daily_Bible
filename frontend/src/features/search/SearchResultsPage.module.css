@@ -38,20 +38,13 @@
   padding: 0.6875rem 1rem 0.6875rem 2.75rem;
   border-radius: 0.625rem;
   border: 1.5px solid var(--candle-amber);
-  background-color: #fff;
-  color: #1a1208;
+  background-color: var(--journal-surface);
+  color: var(--foreground);
   font-size: 0.9375rem;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   -webkit-appearance: none;
   box-sizing: border-box;
-}
-
-/* Dark mode — explicit light text on elevated dark surface */
-:global(.dark) .searchInput {
-  background-color: #3a2e1f;
-  color: #fdf3dc;
-  border-color: var(--candle-amber);
 }
 
 .searchInput::-webkit-search-cancel-button {
@@ -64,11 +57,7 @@
 }
 
 .searchInput::placeholder {
-  color: #8a7055;
-}
-
-:global(.dark) .searchInput::placeholder {
-  color: #9a8060;
+  color: var(--journal-text-muted);
 }
 
 .searchButton {

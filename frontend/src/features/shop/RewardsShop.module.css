@@ -42,36 +42,21 @@
   position: relative;
   overflow: hidden;
   border-radius: 1.375rem;
-  border: 1.5px solid rgba(245, 158, 11, 0.38);
+  border: 1.5px solid color-mix(in srgb, var(--candle-amber) 38%, transparent);
   padding: 1.875rem 1.625rem 1.625rem;
   display: flex;
   flex-direction: column;
   gap: 1.25rem;
   background: linear-gradient(
     155deg,
-    rgba(254, 243, 199, 0.90) 0%,
-    rgba(253, 230, 138, 0.60) 40%,
-    rgba(252, 211, 77, 0.30) 70%,
-    rgba(255, 255, 255, 0.85) 100%
+    color-mix(in srgb, var(--candle-amber) 14%, var(--theme-surface)) 0%,
+    color-mix(in srgb, var(--candle-amber) 8%, var(--theme-surface)) 50%,
+    var(--theme-surface) 100%
   );
   box-shadow:
     0 4px 6px -1px rgba(0, 0, 0, 0.06),
-    0 12px 32px -8px rgba(245, 158, 11, 0.22),
-    0 0 0 1px rgba(245, 158, 11, 0.12);
-}
-
-:global(.dark) .premiumCard {
-  background: linear-gradient(
-    155deg,
-    rgba(120, 80, 10, 0.45) 0%,
-    rgba(92, 60, 8, 0.30) 40%,
-    rgba(60, 40, 5, 0.20) 70%,
-    rgba(30, 22, 10, 0.60) 100%
-  );
-  border-color: rgba(245, 158, 11, 0.30);
-  box-shadow:
-    0 4px 6px -1px rgba(0, 0, 0, 0.3),
-    0 12px 32px -8px rgba(245, 158, 11, 0.18);
+    0 12px 32px -8px color-mix(in srgb, var(--candle-amber) 22%, transparent),
+    0 0 0 1px color-mix(in srgb, var(--candle-amber) 12%, transparent);
 }
 
 /* Subtle radial shimmer in the top-left corner */
@@ -116,12 +101,8 @@
   font-weight: 800;
   margin: 0;
   letter-spacing: 0.01em;
-  color: #92400e;
+  color: var(--candle-amber);
   font-family: 'Playfair Display', Georgia, serif;
-}
-
-:global(.dark) .premiumCardTitle {
-  color: #fde68a;
 }
 
 .premiumCardSubtitle {
@@ -139,14 +120,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.50);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
   border-radius: 0.875rem;
-  border: 1px solid rgba(245, 158, 11, 0.18);
-}
-
-:global(.dark) .premiumFeatures {
-  background: rgba(0, 0, 0, 0.22);
-  border-color: rgba(245, 158, 11, 0.14);
+  border: 1px solid color-mix(in srgb, var(--candle-amber) 16%, transparent);
 }
 
 .premiumFeatureItem {
@@ -183,38 +159,23 @@
   gap: 0.2rem;
   padding: 0.875rem 1rem;
   border-radius: 1rem;
-  border: 2px solid rgba(180, 130, 30, 0.25);
-  background: rgba(255, 255, 255, 0.45);
+  border: 2px solid color-mix(in srgb, var(--candle-amber) 25%, transparent);
+  background: var(--journal-surface);
   cursor: pointer;
   transition: border-color 0.2s, background 0.2s, box-shadow 0.2s, transform 0.2s;
   position: relative;
   transform: scale(1);
 }
 
-:global(.dark) .planOption {
-  border-color: rgba(245, 158, 11, 0.18);
-  background: rgba(0, 0, 0, 0.18);
-}
-
 .planOption:hover {
-  background: rgba(255, 255, 255, 0.65);
-  border-color: rgba(245, 158, 11, 0.45);
-}
-
-:global(.dark) .planOption:hover {
-  background: rgba(0, 0, 0, 0.28);
+  background: var(--theme-surface);
+  border-color: color-mix(in srgb, var(--candle-amber) 45%, transparent);
 }
 
 .planOptionActive {
   border-color: var(--candle-amber);
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.18), 0 4px 12px rgba(245, 158, 11, 0.18);
-  transform: scale(1.03);
-}
-
-:global(.dark) .planOptionActive {
-  background: rgba(245, 158, 11, 0.14);
-  box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.22);
+  background: color-mix(in srgb, var(--candle-amber) 12%, var(--theme-surface));
+  box-shadow: 0 0 0 2px color-mix(in srgb, var(--candle-amber) 20%, transparent), 0 4px 12px color-mix(in srgb, var(--candle-amber) 18%, transparent);
   transform: scale(1.03);
 }
 
@@ -227,11 +188,7 @@
 .planName {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: #78350f;
-}
-
-:global(.dark) .planName {
-  color: #fde68a;
+  color: var(--foreground);
 }
 
 .planBestValue {
@@ -308,24 +265,16 @@
 .lifetimeOriginalPrice {
   font-size: 1.0625rem;
   font-weight: 600;
-  color: #92400e;
+  color: var(--candle-amber);
   text-decoration: line-through;
   opacity: 0.55;
-}
-
-:global(.dark) .lifetimeOriginalPrice {
-  color: #fde68a;
 }
 
 .lifetimeSalePrice {
   font-size: 1.75rem;
   font-weight: 800;
-  color: #92400e;
+  color: var(--candle-amber);
   letter-spacing: -0.02em;
-}
-
-:global(.dark) .lifetimeSalePrice {
-  color: #fde68a;
 }
 
 .lifetimeBadge {
@@ -347,23 +296,13 @@
   gap: 0.875rem;
   padding: 1rem 1.125rem;
   border-radius: 1rem;
-  border: 1.5px solid rgba(245, 158, 11, 0.30);
-  background: rgba(254, 243, 199, 0.65);
-}
-
-:global(.dark) .activeCard {
-  background: rgba(120, 80, 10, 0.25);
-  border-color: rgba(245, 158, 11, 0.22);
+  border: 1.5px solid color-mix(in srgb, var(--candle-amber) 28%, transparent);
+  background: color-mix(in srgb, var(--candle-amber) 10%, var(--theme-surface));
 }
 
 .activeCardCanceled {
-  border-color: rgba(239, 68, 68, 0.30);
-  background: rgba(254, 226, 226, 0.50);
-}
-
-:global(.dark) .activeCardCanceled {
-  background: rgba(120, 30, 30, 0.22);
-  border-color: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.28);
+  background: color-mix(in srgb, #ef4444 8%, var(--theme-surface));
 }
 
 .activeCardCrown {
@@ -391,8 +330,8 @@
 .manageBtn {
   padding: 0.4rem 0.875rem;
   border-radius: 999px;
-  border: 1.5px solid rgba(0, 0, 0, 0.15);
-  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid color-mix(in srgb, var(--foreground) 14%, transparent);
+  background: color-mix(in srgb, var(--theme-surface) 70%, transparent);
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
@@ -401,13 +340,8 @@
   transition: background 0.15s;
 }
 
-:global(.dark) .manageBtn {
-  background: rgba(255, 255, 255, 0.10);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
 .manageBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--theme-surface);
 }
 
 .manageBtnPrimary {
@@ -428,18 +362,13 @@
 
 /* ── Content sections (Themes, Add-ons) ───────────────────────────────── */
 .section {
-  background: rgba(255, 255, 255, 0.60);
+  background: var(--theme-surface);
   border-radius: 1.125rem;
   padding: 1.375rem 1.25rem;
-  border: 1px solid rgba(0, 0, 0, 0.07);
+  border: 1px solid var(--theme-border);
   display: flex;
   flex-direction: column;
   gap: 1rem;
-}
-
-:global(.dark) .section {
-  background: rgba(255, 255, 255, 0.04);
-  border-color: rgba(255, 255, 255, 0.08);
 }
 
 .sectionHeader {

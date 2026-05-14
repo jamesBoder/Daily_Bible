@@ -46,11 +46,11 @@ const NavArrow: React.FC<NavArrowProps> = ({ direction, onClick, size = "md" }) 
       aria-label={isBack ? "Go to previous verse" : "Go to next verse"}
       className={`
         ${sizeClasses} rounded-full
-        bg-white/60 dark:bg-gray-800/60
+        bg-[var(--theme-surface)]/60
         backdrop-blur-sm
-        border border-gray-200/80 dark:border-gray-700/80
+        border border-[var(--theme-border)]/80
         shadow-md
-        text-gray-500 dark:text-gray-400
+        text-[var(--journal-text-muted)]
         hover:bg-primary-50 dark:hover:bg-primary-900/30
         hover:border-primary-300 dark:hover:border-primary-600
         hover:text-primary-600 dark:hover:text-primary-400
@@ -349,8 +349,8 @@ export const DailyVerse: React.FC = () => {
   if (!verse) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8">
-        <div className="bg-gray-50 dark:bg-gray-900/20 border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
-          <p className="text-gray-700 dark:text-gray-400">{t("dailyVerse.error")}</p>
+        <div className="bg-[var(--theme-surface)] border border-[var(--theme-border)] rounded-lg p-6 text-center">
+          <p className="text-[var(--foreground)]">{t("dailyVerse.error")}</p>
         </div>
       </div>
     );
@@ -436,7 +436,7 @@ export const DailyVerse: React.FC = () => {
           </div>
 
           <div className="flex flex-col items-center">
-            <p key={formattedDate} className="text-gray-600 dark:text-gray-400 animate-fade-in">
+            <p key={formattedDate} className="text-[var(--journal-text-muted)] animate-fade-in">
               {formattedDate}
             </p>
             {historyIndex > 0 && (

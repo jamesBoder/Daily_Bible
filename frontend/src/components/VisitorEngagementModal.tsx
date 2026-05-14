@@ -68,19 +68,19 @@ const VisitorEngagementModal: React.FC = () => {
       {/* Modal */}
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-4 pointer-events-none">
         <div className="pointer-events-auto w-full max-w-md animate-slide-from-top max-h-[calc(100dvh-8rem)] sm:max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-3xl">
-          <div className="bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
+          <div className="bg-[var(--theme-surface)] shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
             <div className="p-6 sm:p-7 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50
                            dark:from-amber-900/30 dark:via-yellow-900/20 dark:to-orange-900/20">
 
               {/* Header */}
               <div className="flex items-center space-x-3 mb-4">
                 <span className="text-4xl" role="img" aria-label="open book">📖</span>
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)]">
                   {t('visitor.title', 'Stay in the Word')}
                 </h2>
               </div>
 
-              <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-5">
+              <p className="text-[var(--journal-text-muted)] text-sm leading-relaxed mb-5">
                 {t('visitor.body', 'Get a new verse in your inbox every morning — or create a free account to track your streak, save favorites, and unlock the full experience.')}
               </p>
 
@@ -88,10 +88,10 @@ const VisitorEngagementModal: React.FC = () => {
                 /* ── Success state ── */
                 <div className="text-center py-4 space-y-3">
                   <span className="text-4xl" role="img" aria-label="check">✅</span>
-                  <p className="font-semibold text-gray-900 dark:text-gray-100">
+                  <p className="font-semibold text-[var(--foreground)]">
                     {t('visitor.successTitle', "You're on the list!")}
                   </p>
-                  <p className="text-sm text-gray-500 dark:text-gray-400">
+                  <p className="text-sm text-[var(--journal-text-muted)]">
                     {t('visitor.successBody', 'Check your inbox for a welcome email.')}
                   </p>
                   <button
@@ -105,7 +105,7 @@ const VisitorEngagementModal: React.FC = () => {
                 <>
                   {/* ── Email capture ── */}
                   <form onSubmit={handleSubscribe} className="space-y-2 mb-4">
-                    <label className="block text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-1">
+                    <label className="block text-xs font-semibold text-[var(--journal-text-muted)] uppercase tracking-wide mb-1">
                       {t('visitor.emailLabel', 'Daily verse by email')}
                     </label>
                     <div className="flex gap-2">
@@ -115,7 +115,7 @@ const VisitorEngagementModal: React.FC = () => {
                         onChange={(e) => { setEmail(e.target.value); setStatus('idle'); setErrorMsg(''); }}
                         placeholder={t('visitor.emailPlaceholder', 'your@email.com')}
                         required
-                        className="flex-1 px-3 py-2.5 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-sm text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500"
+                        className="flex-1 px-3 py-2.5 rounded-xl border border-[var(--theme-border)] bg-[var(--journal-surface)] text-sm text-[var(--foreground)] placeholder-[var(--journal-text-muted)] focus:outline-none focus:ring-2 focus:ring-amber-400 dark:focus:ring-amber-500"
                       />
                       <button
                         type="submit"
@@ -134,11 +134,11 @@ const VisitorEngagementModal: React.FC = () => {
 
                   {/* ── Divider ── */}
                   <div className="flex items-center gap-3 mb-4">
-                    <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-                    <span className="text-xs text-gray-400 dark:text-gray-500 font-medium">
+                    <div className="flex-1 h-px bg-[var(--theme-border)]" />
+                    <span className="text-xs text-[var(--journal-text-muted)] font-medium">
                       {t('visitor.or', 'or')}
                     </span>
-                    <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                    <div className="flex-1 h-px bg-[var(--theme-border)]" />
                   </div>
 
                   {/* ── Sign up CTA ── */}
@@ -157,8 +157,8 @@ const VisitorEngagementModal: React.FC = () => {
                   {/* ── Dismiss ── */}
                   <button
                     onClick={dismiss}
-                    className="w-full mt-3 py-2 text-sm font-medium text-gray-400 dark:text-gray-500
-                             hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    className="w-full mt-3 py-2 text-sm font-medium text-[var(--journal-text-muted)]
+                             hover:opacity-100 transition-colors"
                   >
                     {t('visitor.maybeLater', 'Maybe later')}
                   </button>

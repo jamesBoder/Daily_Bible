@@ -38,7 +38,7 @@ const DeepDive: React.FC<DeepDiveProps> = ({ deepDiveText, deepDiveRefsJson }) =
 
       {expanded && (
         <div className="px-4 pb-4 pt-1">
-          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed mb-4 whitespace-pre-line">
+          <p className="text-sm text-[var(--foreground)] leading-relaxed mb-4 whitespace-pre-line">
             {deepDiveText}
           </p>
 

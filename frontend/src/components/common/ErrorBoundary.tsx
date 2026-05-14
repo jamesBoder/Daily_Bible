@@ -40,17 +40,17 @@ export class ErrorBoundary extends Component<Props, State> {
       const t = i18next.t.bind(i18next);
 
       return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 px-4">
-          <div className="max-w-md w-full bg-white dark:bg-gray-800 rounded-lg shadow-lg p-8 text-center">
+        <div className="min-h-screen flex items-center justify-center bg-[var(--theme-surface)] px-4">
+          <div className="max-w-md w-full bg-[var(--theme-surface)] rounded-lg shadow-lg p-8 text-center">
             <div className="text-red-500 text-6xl mb-4">⚠️</div>
-            <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+            <h1 className="text-2xl font-bold text-[var(--foreground)] mb-2">
               {t('common.somethingWentWrong', 'Oops! Something went wrong')}
             </h1>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-[var(--journal-text-muted)] mb-6">
               {t('common.errorRefresh', "We're sorry for the inconvenience. Please try refreshing the page.")}
             </p>
             {process.env.NODE_ENV === 'development' && this.state.error && (
-              <pre className="text-left text-xs bg-gray-100 dark:bg-gray-900 p-4 rounded mb-4 overflow-auto">
+              <pre className="text-left text-xs bg-[var(--theme-surface)] p-4 rounded mb-4 overflow-auto">
                 {this.state.error.toString()}
               </pre>
             )}
@@ -63,7 +63,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               <button
                 onClick={() => window.location.href = '/'}
-                className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-600 transition"
+                className="px-6 py-2 bg-[var(--theme-surface)] text-[var(--foreground)] rounded-lg hover:opacity-90 transition"
               >
                 {t('common.goHome', 'Go Home')}
               </button>

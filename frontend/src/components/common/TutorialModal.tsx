@@ -98,14 +98,14 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
     >
       <div
         ref={panelRef}
-        className="relative w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden"
+        className="relative w-full max-w-sm bg-[var(--theme-surface)] rounded-2xl shadow-2xl overflow-hidden"
       >
         {/* Decorative top accent */}
         <div className="h-1 w-full bg-gradient-to-r from-primary-400 via-primary-600 to-primary-400" />
 
         {/* Close button */}
         <button
-          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:opacity-100 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={onDismiss}
           aria-label={t('common.close', 'Close')}
         >
@@ -117,11 +117,11 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
         {/* Header — compact */}
         <div className="px-5 pt-4 pb-3 text-center">
           <div className="text-2xl mb-1" aria-hidden>{icon}</div>
-          <h2 className="text-base font-bold text-gray-900 dark:text-gray-100 font-display leading-tight">
+          <h2 className="text-base font-bold text-[var(--foreground)] font-display leading-tight">
             {title}
           </h2>
           {subtitle && stepIdx === 0 && (
-            <p className="mt-0.5 text-xs text-gray-500 dark:text-gray-400 leading-relaxed">
+            <p className="mt-0.5 text-xs text-[var(--journal-text-muted)] leading-relaxed">
               {subtitle}
             </p>
           )}
@@ -129,15 +129,15 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
 
         {/* Single step */}
         <div className="px-5 pb-2">
-          <div className="flex gap-3 items-start p-3 rounded-xl bg-gray-50 dark:bg-gray-800/60">
+          <div className="flex gap-3 items-start p-3 rounded-xl bg-[var(--theme-surface)]">
             <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-50 dark:bg-primary-900/30 flex items-center justify-center text-base" aria-hidden>
               {step.emoji}
             </div>
             <div>
-              <p className="text-sm font-semibold text-gray-800 dark:text-gray-200 leading-tight">
+              <p className="text-sm font-semibold text-[var(--foreground)] leading-tight">
                 {step.title}
               </p>
-              <p className="text-xs text-gray-500 dark:text-gray-400 leading-relaxed mt-0.5">
+              <p className="text-xs text-[var(--journal-text-muted)] leading-relaxed mt-0.5">
                 {step.body}
               </p>
             </div>
@@ -153,7 +153,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
                 className={`rounded-full transition-all duration-200 ${
                   i === stepIdx
                     ? 'w-4 h-1.5 bg-primary-600'
-                    : 'w-1.5 h-1.5 bg-gray-300 dark:bg-gray-600'
+                    : 'w-1.5 h-1.5 bg-[var(--theme-border)]'
                 }`}
               />
             ))}
@@ -169,7 +169,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
             {isLast ? (ctaLabel ?? t('tutorial.gotIt', 'Got it!')) : t('tutorial.next', 'Next')}
           </button>
           {reopenHint && isLast && (
-            <p className="mt-2 text-center text-xs text-gray-400 dark:text-gray-500">
+            <p className="mt-2 text-center text-xs text-[var(--journal-text-muted)]">
               {reopenHint}
             </p>
           )}

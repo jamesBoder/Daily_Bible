@@ -41,17 +41,17 @@ const NextMilestoneBar: React.FC<NextMilestoneBarProps> = ({ currentStreak, next
   return (
     <div className="space-y-2 pt-1">
       <div className="flex items-center justify-between">
-        <span className="text-xs font-semibold uppercase tracking-wide text-gray-500 dark:text-gray-400">
+        <span className="text-xs font-semibold uppercase tracking-wide text-[var(--journal-text-muted)]">
           {t('profile.next_milestone', 'Next')}
         </span>
-        <span className="text-xs font-medium text-gray-500 dark:text-gray-400 tabular-nums">
+        <span className="text-xs font-medium text-[var(--journal-text-muted)] tabular-nums">
           {isLargeMilestone
             ? `${currentStreak} / ${nextMilestone.days_required} ${t('profile.days_label', 'days')}`
             : `${daysRemaining} ${t('profile.days_remaining', 'days to go')}`}
         </span>
       </div>
       <div className="flex items-center justify-between gap-2 mb-1 min-w-0">
-        <span className="text-sm font-semibold text-gray-800 dark:text-gray-200 truncate">{milestoneName}</span>
+        <span className="text-sm font-semibold text-[var(--foreground)] truncate">{milestoneName}</span>
         <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: 'var(--blessing-gold)' }}>
           +{nextMilestone.blessings_awarded} ✦
         </span>
@@ -59,7 +59,7 @@ const NextMilestoneBar: React.FC<NextMilestoneBarProps> = ({ currentStreak, next
 
       {/* Progress track */}
       <div
-        className="w-full h-3 rounded-full bg-gray-100 dark:bg-gray-700 overflow-hidden"
+        className="w-full h-3 rounded-full bg-[var(--theme-surface)] overflow-hidden"
         aria-hidden="true"
       >
         <div

@@ -130,15 +130,15 @@ export const TutorialsSection: React.FC = () => {
           return (
             <button
               key={tut.id}
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-gray-50 dark:bg-gray-800/60 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-left group focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-[var(--theme-surface)] hover:opacity-80 transition-opacity text-left group focus:outline-none focus:ring-2 focus:ring-primary-500"
               onClick={() => handleOpen(tut.id)}
             >
               <span className="text-2xl flex-shrink-0" aria-hidden>{tut.emoji}</span>
               <div className="flex-1 min-w-0">
-                <p className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                <p className="text-sm font-semibold text-[var(--foreground)]">
                   {t(tut.labelKey, tut.fallback)}
                 </p>
-                <p className="text-xs text-gray-500 dark:text-gray-400 truncate">
+                <p className="text-xs text-[var(--journal-text-muted)] truncate">
                   {t(tut.descKey, tut.descFallback)}
                 </p>
               </div>
@@ -148,7 +148,7 @@ export const TutorialsSection: React.FC = () => {
                     {t('tutorial.newBadge', 'New')}
                   </span>
                 )}
-                <svg className="w-4 h-4 text-gray-400 group-hover:text-primary-500 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-4 h-4 text-[var(--foreground)] opacity-30 group-hover:opacity-80 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                 </svg>
               </div>

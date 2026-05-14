@@ -57,10 +57,10 @@ const AuthRequiredUpsell: React.FC = () => {
         🔒
       </div>
       <div className="space-y-2">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-50">
+        <h2 className="text-2xl font-bold text-[var(--foreground)]">
           Sign up for free
         </h2>
-        <p className="text-gray-500 dark:text-gray-400 max-w-xs mx-auto text-sm leading-relaxed">
+        <p className="text-[var(--journal-text-muted)] max-w-xs mx-auto text-sm leading-relaxed">
           Create a free account to unlock this feature and track your spiritual journey.
         </p>
       </div>
@@ -73,7 +73,7 @@ const AuthRequiredUpsell: React.FC = () => {
         </button>
         <button
           onClick={() => navigate('/login', { state: { from: location } })}
-          className="w-full py-3 px-6 rounded-xl font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="w-full py-3 px-6 rounded-xl font-semibold text-[var(--foreground)] bg-[var(--journal-surface)] hover:opacity-80 transition-opacity"
         >
           Sign In
         </button>

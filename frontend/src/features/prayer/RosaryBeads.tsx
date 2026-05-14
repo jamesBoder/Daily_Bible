@@ -243,7 +243,7 @@ const RosaryBeads: React.FC<RosaryBeadsProps> = ({
       </svg>
 
       {/* Swipe hint */}
-      <p className="text-center text-xs text-gray-400 dark:text-gray-600 mt-0.5 tracking-wide">
+      <p className="text-center text-xs text-[var(--journal-text-muted)] mt-0.5 tracking-wide">
         swipe left or up to advance
       </p>
     </div>

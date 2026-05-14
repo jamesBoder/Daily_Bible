@@ -138,7 +138,7 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
         aria-label={t('blessings.balance', 'Blessings balance')}
       >
         <Star size={18} weight="duotone" className="text-yellow-500 dark:text-yellow-400" />
-        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+        <span className="text-xs font-semibold text-[var(--foreground)]">
           {streakData.blessings_balance}
         </span>
       </button>
@@ -147,8 +147,8 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
         <div
           ref={popoverRef}
           className="fixed z-50 w-60 max-w-[90vw] p-3
-                     bg-white dark:bg-gray-800 rounded-lg shadow-xl
-                     border border-gray-200 dark:border-gray-700
+                     bg-[var(--theme-surface)] rounded-lg shadow-xl
+                     border border-[var(--theme-border)]
                      animate-fade-in"
           style={{
             top: popoverPos.top,
@@ -160,22 +160,21 @@ const BlessingsChip: React.FC<BlessingsChipProps> = ({ showZero = false }) => {
           onMouseLeave={() => { if (isHoverSourceRef.current) closePopover(); }}
         >
           <div className="space-y-1.5">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">
               {t('blessings.popover.title', 'Blessings')}
             </h3>
-            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-xs text-[var(--journal-text-muted)] leading-relaxed">
               {t('blessings.popover.description', 'Earn Blessings by engaging with daily verses, adding reflections, and maintaining your streak. Use them in the Rewards Shop (coming soon) to unlock themes and features!')}
             </p>
-            <div className="pt-1.5 border-t border-gray-300 dark:border-gray-600">
-              <p className="text-xs text-gray-500 dark:text-gray-500">
+            <div className="pt-1.5 border-t border-[var(--theme-border)]">
+              <p className="text-xs text-[var(--journal-text-muted)]">
                 {t('blessings.popover.balance', 'Current balance: {{count}}', { count: streakData.blessings_balance })}
               </p>
             </div>
           </div>
           <button
             onClick={closePopover}
-            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600
-                       dark:text-gray-500 dark:hover:text-gray-300"
+            className="absolute top-2 right-2 text-[var(--journal-text-muted)] hover:opacity-100"
             aria-label="Close"
           >
             <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">

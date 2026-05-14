@@ -98,7 +98,7 @@ export const SearchResultsPage: React.FC = () => {
       <div className="flex items-center gap-2 mb-1">
         <h1 className={styles.heading} style={{ margin: 0 }}>{t('search.title', 'Search Scripture')}</h1>
         <button
-          className="w-7 h-7 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={openTutorial}
           aria-label={t('common.help', 'Help')}
           title={t('common.help', 'Help')}

@@ -99,7 +99,7 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1 sticky top-0" style={{ background: 'var(--header-bg)' }}>
-          <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+          <div className="w-10 h-1 rounded-full bg-[var(--theme-border)]" />
         </div>
 
         <div className="flex items-center justify-between px-4 py-2">
@@ -234,7 +234,7 @@ const PanelContent: React.FC<PanelContentProps> = ({
           onChange={e => setNewNote(e.target.value)}
           rows={3}
           placeholder={t('annotation.notePlaceholder', 'Your reflection on this phrase…')}
-          className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] resize-none focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)] transition-colors duration-300"
         />
         <button
           onClick={onSave}

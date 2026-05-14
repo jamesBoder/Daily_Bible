@@ -33,7 +33,7 @@ const GoogleLoginButton: React.FC<GoogleLoginButtonProps> = ({ mode, onSuccess, 
         <button
             onClick={handleClick}
             disabled={loading}
-            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-lg shadow-sm bg-white dark:bg-gray-800 text-sm font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-[var(--theme-border)] rounded-lg shadow-sm bg-[var(--journal-surface)] text-sm font-medium text-[var(--foreground)] hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
         >
             <svg className="w-5 h-5" viewBox="0 0 48 48">
         <title>Google Logo</title>

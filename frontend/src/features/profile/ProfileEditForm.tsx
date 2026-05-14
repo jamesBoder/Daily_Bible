@@ -66,7 +66,7 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
       {error && <div className="text-red-500 dark:text-red-400">{error}</div>}
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+        <label className="block text-sm font-medium text-[var(--foreground)]">
           Username
         </label>
         <input
@@ -74,19 +74,19 @@ export const ProfileEditForm: React.FC<ProfileEditFormProps> = ({
           name="username"
           value={profileData.username || ""}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-md p-2"
+          className="mt-1 block w-full rounded-md p-2 bg-[var(--journal-surface)] text-[var(--foreground)] border-[var(--theme-border)] border"
           required
         />
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Email</label>
+        <label className="block text-sm font-medium text-[var(--foreground)]">Email</label>
         <input
           type="email"
           name="email"
           value={profileData.email || ""}
           onChange={handleChange}
-          className="mt-1 block w-full border border-gray-300 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 rounded-md p-2"
+          className="mt-1 block w-full rounded-md p-2 bg-[var(--journal-surface)] text-[var(--foreground)] border-[var(--theme-border)] border"
           required
         />
         {emailChanged && (

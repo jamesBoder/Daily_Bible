@@ -34,7 +34,7 @@ export const FAQ: React.FC = () => {
       <h2 className="text-3xl sm:text-4xl font-bold mb-3 text-center text-primary-600 dark:text-primary-400">
         {t('about.faqTitle', 'Frequently Asked Questions')}
       </h2>
-      <p className="text-center text-gray-500 dark:text-gray-400 mb-10">
+      <p className="text-center text-[var(--journal-text-muted)] mb-10">
         {t('about.faqSubtitle', 'Quick answers to the most common questions.')}
       </p>
 
@@ -45,11 +45,11 @@ export const FAQ: React.FC = () => {
             <React.Fragment key={qKey}>
               {sectionKey && (
                 <div className="flex items-center gap-3 pt-4 pb-1">
-                  <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
-                  <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 shrink-0">
+                  <div className="flex-1 h-px bg-[var(--theme-border)]" />
+                  <span className="text-xs font-semibold uppercase tracking-wider text-[var(--journal-text-muted)] shrink-0">
                     {t(sectionKey)}
                   </span>
-                  <div className="flex-1 h-px bg-gray-200 dark:bg-gray-700" />
+                  <div className="flex-1 h-px bg-[var(--theme-border)]" />
                 </div>
               )}
               <div
@@ -57,7 +57,7 @@ export const FAQ: React.FC = () => {
                   'rounded-2xl border transition-all duration-200',
                   isOpen
                     ? 'border-primary-300 dark:border-primary-700 bg-primary-50/60 dark:bg-primary-900/20'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800/60',
+                    : 'border-[var(--theme-border)] bg-[var(--theme-surface)]',
                 ].join(' ')}
               >
                 <button
@@ -65,7 +65,7 @@ export const FAQ: React.FC = () => {
                   className="w-full flex items-center justify-between gap-4 px-6 py-4 text-left"
                   aria-expanded={isOpen}
                 >
-                  <span className="font-semibold text-gray-900 dark:text-gray-100 text-sm sm:text-base">
+                  <span className="font-semibold text-[var(--foreground)] text-sm sm:text-base">
                     {t(qKey)}
                   </span>
                   <svg
@@ -87,7 +87,7 @@ export const FAQ: React.FC = () => {
                     isOpen ? 'max-h-[32rem]' : 'max-h-0',
                   ].join(' ')}
                 >
-                  <p className="px-6 pb-5 text-sm sm:text-base text-gray-600 dark:text-gray-300 leading-relaxed">
+                  <p className="px-6 pb-5 text-sm sm:text-base text-[var(--foreground)] leading-relaxed">
                     {t(aKey)}
                   </p>
                 </div>
