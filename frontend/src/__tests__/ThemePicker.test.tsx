@@ -43,7 +43,7 @@ jest.mock('../contexts/ThemeContext', () => {
   const THEMES = [
     { id: 'parchment',    name: 'Parchment',    description: 'desc', isDark: false, unlockCost: 0,   previewColors: { background: '#fff',    foreground: '#000',    accent: '#f00',    surface: '#eee' } },
     { id: 'midnight',     name: 'Midnight',     description: 'desc', isDark: true,  unlockCost: 0,   previewColors: { background: '#000',    foreground: '#fff',    accent: '#ff0',    surface: '#222' } },
-    { id: 'sanctuary',    name: 'Sanctuary',    description: 'desc', isDark: true,  unlockCost: 500, previewColors: { background: '#040d08', foreground: '#dff0d8', accent: '#6dcb8a', surface: '#0f2b1c' } },
+    { id: 'sanctuary',    name: 'Sanctuary',    description: 'desc', isDark: true,  unlockCost: 500, previewColors: { background: '#1e4a2e', foreground: '#e4f2dc', accent: '#6dcb8a', surface: '#2d6040' } },
     { id: 'desert-sand',  name: 'Desert Sand',  description: 'desc', isDark: false, unlockCost: 500, previewColors: { background: '#f5ede0', foreground: '#3d2b1a', accent: '#c97c2b', surface: '#ede0d0' } },
     { id: 'celestial',    name: 'Celestial',    description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#0e1330', foreground: '#e8eaf8', accent: '#8899dd', surface: '#121840' } },
     { id: 'scarlet-grace',name: 'Scarlet Grace',description: 'desc', isDark: true,  unlockCost: 750, previewColors: { background: '#1a0505', foreground: '#f5e8d8', accent: '#c8862a', surface: '#220808' } },
