@@ -32,7 +32,7 @@ const PassageBlock: React.FC<PassageBlockProps> = ({ verseRef, verseText, wordSt
         {verseRef}
       </p>
 
-      <p className="text-base font-serif leading-loose text-gray-800 dark:text-gray-100">
+      <p className="text-base font-serif leading-loose text-[var(--foreground)]">
         {hasStudies
           ? tokens.map((tok, i) => {
               // Whitespace-only tokens: render as-is

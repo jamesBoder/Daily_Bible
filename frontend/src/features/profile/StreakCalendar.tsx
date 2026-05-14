@@ -225,7 +225,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({ day, index, onNavigate }) =
       break;
     case 'missed':
     default:
-      className += ' text-gray-400 dark:text-gray-600';
+      className += ' text-[var(--foreground)] opacity-25';
       style = {
         background: 'rgba(0,0,0,0.04)',
         ...(!prefersReduced && { opacity: 0, animation: 'fadeIn 0.3s ease forwards', animationDelay: delay }),

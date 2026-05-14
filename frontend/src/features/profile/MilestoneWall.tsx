@@ -113,7 +113,7 @@ const MilestoneBadge: React.FC<BadgeProps> = ({
         className={`text-[10px] font-semibold text-center leading-tight max-w-[4.5rem] truncate ${
           milestone.earned
             ? 'text-amber-600 dark:text-amber-400'
-            : 'text-gray-400 dark:text-gray-600'
+            : 'text-[var(--foreground)] opacity-30'
         }`}
         title={milestone.name}
       >

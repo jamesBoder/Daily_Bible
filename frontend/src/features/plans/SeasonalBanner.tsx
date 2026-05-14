@@ -65,7 +65,7 @@ const SeasonalBanner: React.FC = () => {
         <p className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--candle-amber)' }}>
           {seasonLabel}
         </p>
-        <p className="text-sm text-gray-700 dark:text-gray-200 leading-snug mt-0.5">
+        <p className="text-sm text-[var(--foreground)] leading-snug mt-0.5">
           {t('plans.seasonalBannerSub', 'A reading path is available for this season')}
         </p>
       </div>

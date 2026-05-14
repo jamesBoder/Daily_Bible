@@ -31,7 +31,7 @@ const PrevDayStrip: React.FC<PrevDayStripProps> = ({ prevDay }) => {
         />
         <span className="text-xs font-semibold text-amber-700 dark:text-amber-400 flex-1 truncate">
           {t('plan.lastTime', 'Last time')}{': '}
-          <span className="font-normal text-gray-600 dark:text-gray-300">
+          <span className="font-normal text-[var(--foreground)] opacity-75">
             {prevDay.verse_ref}
             {prevDay.day_title ? ` — "${prevDay.day_title}"` : ''}
           </span>
@@ -44,10 +44,10 @@ const PrevDayStrip: React.FC<PrevDayStripProps> = ({ prevDay }) => {
 
       {expanded && prevDay.journal_excerpt && (
         <div className="px-4 pb-3 pt-0.5">
-          <p className="text-xs text-gray-500 dark:text-gray-400 uppercase tracking-wide font-semibold mb-1">
+          <p className="text-xs text-[var(--journal-text-muted)] uppercase tracking-wide font-semibold mb-1">
             {t('plan.yourNote', 'Your note')}
           </p>
-          <p className="text-sm text-gray-700 dark:text-gray-300 italic leading-relaxed">
+          <p className="text-sm text-[var(--foreground)] italic leading-relaxed">
             &ldquo;{prevDay.journal_excerpt}&rdquo;
           </p>
         </div>

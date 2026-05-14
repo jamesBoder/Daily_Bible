@@ -134,7 +134,7 @@ const RosaryPrayerCard: React.FC<RosaryPrayerCardProps> = ({
       {/* Prayer text */}
       {showFullPrayer && prayer && (
         <div
-          className="px-4 py-3 rounded-xl text-sm text-gray-700 dark:text-gray-200 leading-relaxed"
+          className="px-4 py-3 rounded-xl text-sm text-[var(--foreground)] leading-relaxed"
           style={{ background: 'var(--card-bg)' }}
         >
           {prayer}

@@ -857,7 +857,7 @@ export const MannaPuzzle: React.FC = () => {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
         <div className="text-5xl" aria-hidden>🌾</div>
-        <p className="text-sm text-gray-500 dark:text-gray-400">
+        <p className="text-sm text-[var(--journal-text-muted)]">
           {loadErrorMsg ?? t('manna.errorLoading', "Failed to load today's puzzle.")}
         </p>
         <button

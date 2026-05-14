@@ -131,7 +131,7 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
             <button
               onClick={onClose}
               aria-label={t("common.close", "Close")}
-              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-80 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -185,7 +185,7 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
                             ? "opacity-50 cursor-not-allowed text-[var(--journal-text-muted)]"
                             : isActive
                             ? "bg-amber-50 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
-                            : "text-[var(--foreground)] hover:bg-gray-50 dark:hover:bg-gray-800/60 cursor-pointer active:bg-[var(--theme-surface)]"
+                            : "text-[var(--foreground)] hover:bg-[var(--theme-surface)] cursor-pointer active:bg-[var(--theme-surface)]"
                         }
                       `}
                     >

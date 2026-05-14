@@ -434,7 +434,7 @@ export const FavoritesList: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <svg
-              className="w-16 h-16 text-gray-400 dark:text-gray-600 mx-auto mb-4 animate-float"
+              className="w-16 h-16 text-[var(--foreground)] opacity-25 mx-auto mb-4 animate-float"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -464,7 +464,7 @@ export const FavoritesList: React.FC = () => {
         <Card>
           <div className="text-center py-12">
             <svg
-              className="w-12 h-12 text-gray-400 dark:text-gray-600 mx-auto mb-3"
+              className="w-12 h-12 text-[var(--foreground)] opacity-25 mx-auto mb-3"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

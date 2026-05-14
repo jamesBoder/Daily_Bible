@@ -45,13 +45,13 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({ annotation, verseRe
   if (confirmDelete) {
     return (
       <div className="space-y-3 py-2">
-        <p className="text-sm text-gray-600 dark:text-gray-300">
+        <p className="text-sm text-[var(--foreground)] opacity-75">
           {t('annotation.deleteConfirm', 'Delete this annotation?')}
         </p>
         <div className="flex gap-2">
           <button
             onClick={() => setConfirmDelete(false)}
-            className="flex-1 py-2 rounded-lg text-xs font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300"
+            className="flex-1 py-2 rounded-lg text-xs font-medium border border-[var(--theme-border)] text-[var(--foreground)] opacity-75"
           >
             Cancel
           </button>
@@ -70,26 +70,26 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({ annotation, verseRe
   return (
     <div className="space-y-3 py-2">
       <div>
-        <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+        <label className="block text-xs font-medium text-[var(--journal-text-muted)] mb-1">
           {t('annotation.phrasePlaceholder', 'Phrase from this verse…')}
         </label>
         <input
           type="text"
           value={phrase}
           onChange={e => setPhrase(e.target.value)}
-          className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)]"
           placeholder={t('annotation.phrasePlaceholder', 'Phrase from this verse…')}
         />
       </div>
       <div>
-        <label className="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1">
+        <label className="block text-xs font-medium text-[var(--journal-text-muted)] mb-1">
           {t('annotation.addNote', 'Add a note')}
         </label>
         <textarea
           value={note}
           onChange={e => setNote(e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 text-sm rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 resize-none focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] resize-none focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)]"
           placeholder={t('annotation.notePlaceholder', 'Your reflection on this phrase…')}
         />
       </div>
@@ -110,7 +110,7 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({ annotation, verseRe
         </button>
         <button
           onClick={onDone}
-          className="px-3 py-2 rounded-lg text-xs text-gray-500 dark:text-gray-400 border border-gray-200 dark:border-gray-700"
+          className="px-3 py-2 rounded-lg text-xs text-[var(--journal-text-muted)] border border-[var(--theme-border)]"
         >
           Cancel
         </button>

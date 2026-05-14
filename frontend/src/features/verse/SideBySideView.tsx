@@ -102,7 +102,7 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
         <button
           onClick={onClose}
           aria-label={t("common.close", "Close")}
-          className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          className="text-[var(--foreground)] opacity-40 hover:opacity-80 transition-opacity"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
