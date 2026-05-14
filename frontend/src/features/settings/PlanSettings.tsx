@@ -22,7 +22,7 @@ const PlanSettings: React.FC = () => {
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
           <BookmarkSimple size={16} style={{ color: 'var(--blessing-gold)' }} weight="fill" />
-          <span className="text-sm font-semibold text-gray-700 dark:text-gray-200">
+          <span className="text-sm font-semibold text-[var(--foreground)]">
             {t('plans.title', 'Reading Plans')}
           </span>
         </div>
@@ -36,7 +36,7 @@ const PlanSettings: React.FC = () => {
       </div>
 
       {active.length === 0 ? (
-        <p className="text-xs text-gray-400 dark:text-gray-500 py-1">
+        <p className="text-xs text-[var(--journal-text-muted)] py-1">
           No active plans. <button onClick={() => navigate('/plans')} className="underline">Browse the library →</button>
         </p>
       ) : (
@@ -66,8 +66,8 @@ const MiniPlanCard: React.FC<MiniPlanCardProps> = ({ plan, onNavigate }) => {
       style={{ background: 'var(--card-bg)' }}
     >
       <div className="flex items-center justify-between mb-1.5">
-        <span className="text-xs font-medium text-gray-700 dark:text-gray-200 truncate flex-1 mr-2">{plan.title}</span>
-        <span className="text-xs text-gray-400 dark:text-gray-500 flex-shrink-0">
+        <span className="text-xs font-medium text-[var(--foreground)] truncate flex-1 mr-2">{plan.title}</span>
+        <span className="text-xs text-[var(--journal-text-muted)] flex-shrink-0">
           {t('plans.dayOf', 'Day {{day}} of {{total}}', { day: plan.last_read_day + 1, total: plan.length_days })}
         </span>
       </div>

@@ -41,7 +41,7 @@ const SavedSearchesList: React.FC<SavedSearchesListProps> = ({ currentQuery, onS
   return (
     <div className="mt-4">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--journal-text-muted)]">
           {t('search.savedSearches', 'Saved Searches')}
         </span>
         {currentQuery && !alreadySaved && (
@@ -63,7 +63,7 @@ const SavedSearchesList: React.FC<SavedSearchesListProps> = ({ currentQuery, onS
             value={saveName}
             onChange={e => setSaveName(e.target.value)}
             placeholder={t('search.searchName', 'Name (optional)')}
-            className="flex-1 px-3 py-1.5 text-xs rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-400"
+            className="flex-1 px-3 py-1.5 text-xs rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-400 bg-[var(--journal-surface)] text-[var(--foreground)] border-[var(--theme-border)] border"
           />
           <button
             onClick={() => saveMutation.mutate()}
@@ -78,7 +78,7 @@ const SavedSearchesList: React.FC<SavedSearchesListProps> = ({ currentQuery, onS
 
       {/* Search chips */}
       {searches.length === 0 ? (
-        <p className="text-xs text-gray-400 dark:text-gray-500 py-1">
+        <p className="text-xs text-[var(--journal-text-muted)] py-1">
           {t('search.noSavedSearches', 'No saved searches yet.')}
         </p>
       ) : (
@@ -91,7 +91,7 @@ const SavedSearchesList: React.FC<SavedSearchesListProps> = ({ currentQuery, onS
             >
               <button
                 onClick={() => { onSelectSearch(s.query); }}
-                className="flex items-center gap-1 text-gray-700 dark:text-gray-200 hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
+                className="flex items-center gap-1 text-[var(--foreground)] hover:text-amber-600 dark:hover:text-amber-400 transition-colors"
               >
                 <MagnifyingGlass size={11} />
                 {s.name}

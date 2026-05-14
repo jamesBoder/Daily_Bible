@@ -64,7 +64,7 @@ const PlanDetail: React.FC = () => {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
         <Warning size={32} className="text-red-400 mx-auto mb-2" />
-        <p className="text-gray-500 dark:text-gray-400 text-sm">Plan not found.</p>
+        <p className="text-[var(--journal-text-muted)] text-sm">Plan not found.</p>
       </div>
     );
   }
@@ -107,19 +107,19 @@ const PlanDetail: React.FC = () => {
       </button>
 
       {/* Header */}
-      <h1 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-1">{plan.title}</h1>
+      <h1 className="text-2xl font-bold text-[var(--foreground)] mb-1">{plan.title}</h1>
       <p className="text-sm text-amber-600 dark:text-amber-400 font-medium mb-3">
         {t('plans.nDays', '{{count}} days', { count: plan.length_days })}
         {!plan.requires_premium && (
           <span className="ml-2 text-green-600 dark:text-green-400">· {t('plans.freeLabel', 'Free')}</span>
         )}
       </p>
-      <p className="text-sm text-gray-600 dark:text-gray-300 leading-relaxed mb-6">{plan.description}</p>
+      <p className="text-sm text-[var(--journal-text-muted)] leading-relaxed mb-6">{plan.description}</p>
 
       {/* Progress bar (if enrolled) */}
       {isEnrolled && (
         <div className="mb-6">
-          <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mb-1.5">
+          <div className="flex justify-between text-xs text-[var(--journal-text-muted)] mb-1.5">
             <span>
               {isComplete
                 ? t('plans.complete', 'Path Complete')
@@ -185,14 +185,14 @@ const PlanDetail: React.FC = () => {
       {/* Confirm unenroll modal */}
       {confirmUnenroll && (
         <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center bg-black/40 px-4" style={{ paddingBottom: 'max(1.5rem, env(safe-area-inset-bottom))' }}>
-          <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 w-full max-w-sm space-y-4">
-            <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">
+          <div className="bg-[var(--theme-surface)] rounded-2xl p-6 w-full max-w-sm space-y-4">
+            <p className="text-sm font-semibold text-[var(--foreground)]">
               {t('plans.unenrollConfirm', 'Leave "{{title}}"? Your progress will be lost.', { title: plan.title })}
             </p>
             <div className="flex gap-3">
               <button
                 onClick={() => setConfirmUnenroll(false)}
-                className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-gray-200 dark:border-gray-700 text-gray-600 dark:text-gray-300"
+                className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-[var(--theme-border)] text-[var(--journal-text-muted)]"
               >
                 Cancel
               </button>
@@ -210,7 +210,7 @@ const PlanDetail: React.FC = () => {
 
       {/* Entry list */}
       <section>
-        <h2 className="text-sm font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
+        <h2 className="text-sm font-semibold text-[var(--journal-text-muted)] uppercase tracking-wider mb-3">
           {t('plans.nDays', '{{count}} days', { count: plan.length_days })}
         </h2>
         <div className="space-y-2">
@@ -236,11 +236,11 @@ const PlanDetail: React.FC = () => {
                   {isDone ? '✓' : entry.day_number}
                 </span>
                 <div className="min-w-0 flex-1">
-                  <p className={`text-sm font-medium ${isDone ? 'text-gray-500 dark:text-gray-400 line-through decoration-green-400/60' : 'text-gray-700 dark:text-gray-200'}`}>
+                  <p className={`text-sm font-medium ${isDone ? 'text-[var(--journal-text-muted)] line-through decoration-green-400/60' : 'text-[var(--foreground)]'}`}>
                     {entry.verse_ref}
                   </p>
                   {(entry.day_title || entry.reflection) && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 leading-snug italic">
+                    <p className="text-xs text-[var(--journal-text-muted)] mt-0.5 line-clamp-2 leading-snug italic">
                       {entry.day_title || entry.reflection}
                     </p>
                   )}

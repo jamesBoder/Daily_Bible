@@ -64,15 +64,15 @@ export const Header: React.FC = () => {
     `text-sm font-medium transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
       isActive
         ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
-        : "text-gray-600 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400"
+        : "text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400"
     }`;
 
   // Dropdown menu item style
   const dropdownItem =
-    "flex items-center gap-2 w-full px-3 py-2 text-sm text-gray-700 dark:text-gray-200 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-lg transition-colors";
+    "flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-lg transition-colors";
 
   const iconBtn =
-    "flex items-center justify-center w-8 h-8 rounded-full text-gray-500 dark:text-gray-400 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 transition-colors";
+    "flex items-center justify-center w-8 h-8 rounded-full text-[var(--journal-text-muted)] hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 transition-colors";
 
   const userInitial = user?.username ? user.username.charAt(0).toUpperCase() : null;
 
@@ -167,7 +167,7 @@ export const Header: React.FC = () => {
                 className={`text-sm font-medium transition-all duration-200 flex items-center gap-1.5 px-3 py-1.5 rounded-full ${
                   moreOpen
                     ? "bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400"
-                    : "text-gray-600 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400"
+                    : "text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400"
                 }`}
                 aria-haspopup="true"
                 aria-expanded={moreOpen}
@@ -213,7 +213,7 @@ export const Header: React.FC = () => {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => navigate("/login")}
-                  className="text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors px-3 py-1.5"
+                  className="text-sm font-medium text-[var(--foreground)] hover:text-amber-700 dark:hover:text-amber-400 transition-colors px-3 py-1.5"
                 >
                   {t("nav.signin", "Sign In")}
                 </button>
@@ -243,13 +243,13 @@ export const Header: React.FC = () => {
                         {userInitial}
                       </div>
                     )}
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                    <span className="text-sm text-[var(--journal-text-muted)]">
                       {user?.username}
                     </span>
                     <CaretDown
                       size={12}
                       weight="bold"
-                      className={`text-gray-400 dark:text-gray-500 transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`}
+                      className={`text-[var(--journal-text-muted)] transition-transform duration-200 ${userMenuOpen ? "rotate-180" : ""}`}
                     />
                   </button>
                   {userMenuOpen && (
@@ -286,7 +286,7 @@ export const Header: React.FC = () => {
               <>
                 <button
                   onClick={() => navigate("/login")}
-                  className="text-xs font-medium text-gray-600 dark:text-gray-300 hover:text-amber-700 dark:hover:text-amber-400 transition-colors px-2 py-1"
+                  className="text-xs font-medium text-[var(--foreground)] hover:text-amber-700 dark:hover:text-amber-400 transition-colors px-2 py-1"
                 >
                   {t("nav.signin", "Sign In")}
                 </button>

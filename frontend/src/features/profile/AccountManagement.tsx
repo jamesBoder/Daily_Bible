@@ -277,15 +277,15 @@ export const AccountManagement: React.FC = () => {
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       {/* Clear History */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--foreground)] text-center">
           {t("history.title")}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+        <p className="text-[var(--journal-text-muted)] mb-4 text-center">
           {t("history.clearDesc")}
         </p>
         {confirmingClearHistory ? (
           <div className="flex flex-col items-center gap-3">
-            <span className="text-sm text-gray-600 dark:text-gray-400">
+            <span className="text-sm text-[var(--journal-text-muted)]">
               {t("history.clearConfirm")}
             </span>
             <div className="flex gap-2">
@@ -320,10 +320,10 @@ export const AccountManagement: React.FC = () => {
 
       {/* Set/Change Password */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--foreground)] text-center">
           {hasPassword ? t('settings.account.changePassword') : t('account.setPassword')}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+        <p className="text-[var(--journal-text-muted)] mb-4 text-center">
           {hasPassword ? t('account.changePasswordDesc') : t('account.setPasswordDesc')}
         </p>
 
@@ -387,10 +387,10 @@ export const AccountManagement: React.FC = () => {
 
       {/* Connected Accounts */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--foreground)] text-center">
           {t('account.connectedAccounts')}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+        <p className="text-[var(--journal-text-muted)] mb-4 text-center">
           {t('account.connectedAccountsDesc')}
         </p>
 
@@ -403,11 +403,11 @@ export const AccountManagement: React.FC = () => {
 
         {/* Google Account - LINKED */}
         {user?.is_google_linked ? (
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-4">
+          <div className="border border-[var(--theme-border)] rounded-lg p-4">
             <div className="flex flex-col items-center justify-center gap-4">
               <div className="flex items-center gap-3">
                 {/* Google Logo */}
-                <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center border border-gray-200">
+                <div className="w-10 h-10 bg-[var(--theme-surface)] rounded-full flex items-center justify-center border border-[var(--theme-border)]">
                   <svg className="w-6 h-6" viewBox="0 0 24 24">
                     <path
                       fill="#4285F4"
@@ -430,13 +430,13 @@ export const AccountManagement: React.FC = () => {
 
                 {/* Account Info */}
                 <div>
-                  <p className="font-medium text-gray-900 dark:text-gray-100">
+                  <p className="font-medium text-[var(--foreground)]">
                     {t('account.googleAccount')}
                   </p>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[var(--journal-text-muted)]">
                     {user.google_email || user.email}
                   </p>
-                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-1">
+                  <p className="text-xs text-[var(--journal-text-muted)] mt-1">
                     {t('account.connectedOn')} {user.created_at ? new Date(user.created_at).toLocaleDateString() : t('account.recently')}
                   </p>
                 </div>
@@ -447,7 +447,7 @@ export const AccountManagement: React.FC = () => {
                 <img
                   src={user.google_picture}
                   alt="Google Profile"
-                  className="w-12 h-12 rounded-full border-2 border-gray-200 dark:border-gray-700"
+                  className="w-12 h-12 rounded-full border-2 border-[var(--theme-border)]"
                 />
               )}
 
@@ -475,8 +475,8 @@ export const AccountManagement: React.FC = () => {
           </div>
         ) : (
           /* Google Account - NOT LINKED */
-          <div className="border border-gray-200 dark:border-gray-700 rounded-lg p-6 text-center">
-            <div className="w-16 h-16 bg-gray-100 dark:bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="border border-[var(--theme-border)] rounded-lg p-6 text-center">
+            <div className="w-16 h-16 bg-[var(--theme-surface)] rounded-full flex items-center justify-center mx-auto mb-4">
               <svg className="w-8 h-8 text-gray-400" viewBox="0 0 24 24">
                 <path
                   fill="#4285F4"
@@ -496,10 +496,10 @@ export const AccountManagement: React.FC = () => {
                 />
               </svg>
             </div>
-            <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+            <h3 className="font-semibold text-[var(--foreground)] mb-2">
               {t('account.noGoogleConnected')}
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-sm text-[var(--journal-text-muted)] mb-4">
               {t('account.noGoogleDesc')}
             </p>
             <Button onClick={handleLinkGoogle} isLoading={isLinkingGoogle}>
@@ -531,10 +531,10 @@ export const AccountManagement: React.FC = () => {
 
       {/* Export Data */}
       <Card>
-        <h2 className="text-2xl font-bold mb-4 text-gray-600 dark:text-gray-300 text-center">
+        <h2 className="text-2xl font-bold mb-4 text-[var(--foreground)] text-center">
           {t('account.exportData')}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+        <p className="text-[var(--journal-text-muted)] mb-4 text-center">
           {t('account.exportDataDesc')}
         </p>
         <div className="flex justify-center">
@@ -549,7 +549,7 @@ export const AccountManagement: React.FC = () => {
         <h2 className="text-2xl font-bold mb-4 text-red-600 dark:text-red-400 text-center">
           {t('account.dangerZone')}
         </h2>
-        <p className="text-gray-600 dark:text-gray-400 mb-4 text-center">
+        <p className="text-[var(--journal-text-muted)] mb-4 text-center">
           <strong>⚠️</strong> {t('account.dangerZoneDesc')}
         </p>
 

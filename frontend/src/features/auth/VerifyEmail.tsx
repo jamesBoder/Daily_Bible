@@ -99,7 +99,7 @@ export const VerifyEmail: React.FC = () => {
           <Card>
             <div className="text-center space-y-4 py-4">
               <Loading />
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-[var(--journal-text-muted)]">
                 {t('auth.verifyEmail.verifying', 'Verifying your email...')}
               </p>
             </div>
@@ -116,12 +116,12 @@ export const VerifyEmail: React.FC = () => {
           <Card>
             <div className="text-center space-y-4">
               <div className="text-6xl">✅</div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
                 {searchParams.get("type") === "pending"
                   ? t('auth.verifyEmail.emailUpdatedTitle', 'Email Updated!')
                   : t('auth.verifyEmail.emailVerifiedTitle', 'Email Verified!')}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-[var(--journal-text-muted)]">
                 {searchParams.get("type") === "pending"
                   ? t('auth.verifyEmail.emailUpdatedBody', 'Your email address has been changed successfully. Redirecting...')
                   : t('auth.verifyEmail.emailVerifiedBody', 'Your account is now active. Redirecting you to the app...')}
@@ -140,10 +140,10 @@ export const VerifyEmail: React.FC = () => {
           <Card>
             <div className="text-center space-y-4">
               <div className="text-6xl">⏰</div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
                 {t('auth.verifyEmail.expiredTitle', 'Link Expired')}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-[var(--journal-text-muted)]">
                 {t('auth.verifyEmail.expiredBody', 'Verification links expire after 24 hours. Enter your email below to get a new one.')}
               </p>
 
@@ -201,10 +201,10 @@ export const VerifyEmail: React.FC = () => {
         <Card>
           <div className="text-center space-y-4">
             <div className="text-6xl">❌</div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">
               {t('auth.verifyEmail.failedTitle', 'Verification Failed')}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 break-words">{errorMessage}</p>
+            <p className="text-[var(--journal-text-muted)] break-words">{errorMessage}</p>
             <Button type="button" onClick={() => navigate("/login")} className="w-full">
               {t('auth.forgotPassword.backToLogin', 'Back to Login')}
             </Button>

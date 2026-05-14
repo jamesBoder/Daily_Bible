@@ -246,7 +246,7 @@ const router = createBrowserRouter([
           <ErrorBoundary fallback={
             <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4 text-center px-4">
               <div className="text-5xl" aria-hidden>🌾</div>
-              <p className="text-lg font-semibold text-gray-800 dark:text-gray-200">
+              <p className="text-lg font-semibold text-[var(--foreground)]">
                 Could not load today's puzzle
               </p>
               <button

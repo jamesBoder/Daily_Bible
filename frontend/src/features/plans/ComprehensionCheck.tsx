@@ -24,7 +24,7 @@ const ComprehensionCheck: React.FC<ComprehensionCheckProps> = ({ question, optio
   const optionClass = (opt: QuizOption): string => {
     const base = 'w-full text-left px-3 py-2.5 rounded-xl text-sm border transition-colors ';
     if (!answered) {
-      return base + 'border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800/50 hover:border-amber-400 dark:hover:border-amber-500 active:scale-[0.98]';
+      return base + 'border-[var(--theme-border)] text-[var(--foreground)] bg-[var(--theme-surface)] hover:border-amber-400 dark:hover:border-amber-500 active:scale-[0.98]';
     }
     if (opt.correct) {
       return base + 'border-green-400 bg-green-50 dark:bg-green-900/20 text-green-700 dark:text-green-300 font-medium';
@@ -32,7 +32,7 @@ const ComprehensionCheck: React.FC<ComprehensionCheckProps> = ({ question, optio
     if (opt.label === selected) {
       return base + 'border-red-300 bg-red-50 dark:bg-red-900/20 text-red-600 dark:text-red-400';
     }
-    return base + 'border-gray-200 dark:border-gray-700 text-gray-400 dark:text-gray-600 bg-white dark:bg-gray-800/30 opacity-50';
+    return base + 'border-[var(--theme-border)] text-[var(--journal-text-muted)] bg-[var(--theme-surface)] opacity-50';
   };
 
   return (
@@ -47,7 +47,7 @@ const ComprehensionCheck: React.FC<ComprehensionCheckProps> = ({ question, optio
         {t('plan.check.title', 'Quick Check')}
       </p>
 
-      <p className="text-sm font-medium text-gray-800 dark:text-gray-100 mb-3 leading-snug">
+      <p className="text-sm font-medium text-[var(--foreground)] mb-3 leading-snug">
         {question}
       </p>
 
@@ -73,7 +73,7 @@ const ComprehensionCheck: React.FC<ComprehensionCheckProps> = ({ question, optio
           <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--candle-amber)' }}>
             {t('plan.check.explanation', 'About this passage')}
           </p>
-          <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+          <p className="text-xs text-[var(--journal-text-muted)] leading-relaxed">
             {explanation}
           </p>
         </div>

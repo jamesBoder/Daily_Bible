@@ -147,7 +147,7 @@ export const CommunityView: React.FC = () => {
           </p>
         </div>
         <button
-          className="ml-auto flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="ml-auto flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:text-primary-600 dark:hover:text-primary-400 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={openTutorial}
           aria-label={t('common.help', 'Help')}
           title={t('common.help', 'Help')}
@@ -290,7 +290,7 @@ export const CommunityView: React.FC = () => {
               <CommunityComposer isPremium={isPremium} onSubmit={handleCreatePost} />
             ) : (
               <div className="flex flex-col items-center gap-3 py-5 px-4 rounded-xl border border-amber-200/60 dark:border-amber-700/30 text-center">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-[var(--journal-text-muted)]">
                   {t('community.signUpToPost', 'Sign up free to share your reflection with the community.')}
                 </p>
                 <button

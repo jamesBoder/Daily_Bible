@@ -111,7 +111,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
     const isNotEnrolled = entryError && (entryError as any)?.response?.status === 403;
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
-        <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+        <p className="text-sm text-[var(--journal-text-muted)] mb-4">
           {isNotEnrolled
             ? t('plan.notEnrolled', 'You are not enrolled in this plan.')
             : t('plan.loadError', 'Unable to load today\'s reading. Please try again.')}
@@ -163,7 +163,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
 
       {/* Day title */}
       {entry.day_title && (
-        <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100 mb-3 leading-snug">
+        <h2 className="text-xl font-bold text-[var(--foreground)] mb-3 leading-snug">
           {entry.day_title}
         </h2>
       )}
@@ -189,21 +189,21 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         />
       ) : entry.verse_text ? (
         <div className="mb-6">
-          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-2 tracking-wide">
+          <p className="text-sm font-semibold text-[var(--journal-text-muted)] mb-2 tracking-wide">
             {entry.verse_ref}
           </p>
-          <p className="text-xl font-serif leading-relaxed text-gray-800 dark:text-gray-100">
+          <p className="text-xl font-serif leading-relaxed text-[var(--foreground)]">
             &ldquo;{entry.verse_text}&rdquo;
           </p>
         </div>
       ) : (
-        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100 mb-6">{entry.verse_ref}</h2>
+        <h2 className="text-2xl font-bold text-[var(--foreground)] mb-6">{entry.verse_ref}</h2>
       )}
 
       {/* Reflection callout */}
       {entry.reflection && (
         <blockquote
-          className="border-l-4 pl-4 py-1 mb-5 italic text-sm text-gray-600 dark:text-gray-300 leading-relaxed"
+          className="border-l-4 pl-4 py-1 mb-5 italic text-sm text-[var(--journal-text-muted)] leading-relaxed"
           style={{ borderColor: 'var(--candle-amber)' }}
         >
           {entry.reflection}
@@ -225,7 +225,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         <div className="mb-5">
           <button
             onClick={() => setContextExpanded(v => !v)}
-            className="flex items-center gap-2 text-xs font-semibold text-gray-500 dark:text-gray-400 hover:opacity-75 transition-opacity w-full text-left"
+            className="flex items-center gap-2 text-xs font-semibold text-[var(--journal-text-muted)] hover:opacity-75 transition-opacity w-full text-left"
           >
             <BookOpen size={14} />
             {t('plan.historicalContext', 'Historical context')}
@@ -237,7 +237,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
             </span>
           </button>
           {contextExpanded && (
-            <p className="mt-2 text-sm text-gray-600 dark:text-gray-300 leading-relaxed pl-5">
+            <p className="mt-2 text-sm text-[var(--journal-text-muted)] leading-relaxed pl-5">
               {entry.context_note}
             </p>
           )}
@@ -251,7 +251,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
           style={{ background: 'color-mix(in srgb, var(--candle-amber) 8%, transparent)' }}
         >
           <HandsPraying size={18} weight="duotone" className="text-amber-500 dark:text-amber-400 flex-shrink-0 mt-0.5" />
-          <p className="text-sm italic text-gray-700 dark:text-gray-300 leading-relaxed">
+          <p className="text-sm italic text-[var(--journal-text-muted)] leading-relaxed">
             {entry.prayer}
           </p>
         </div>
@@ -271,7 +271,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
             <p className="text-xs font-semibold uppercase tracking-wide mb-1" style={{ color: 'var(--blessing-gold)' }}>
               {t('plan.todayLabel', 'Today')}
             </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-sm text-[var(--journal-text-muted)] leading-relaxed">
               {entry.application}
             </p>
           </div>
@@ -290,7 +290,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
             <p className="text-xs font-semibold uppercase tracking-wide text-indigo-400 dark:text-indigo-300 mb-1">
               {t('plan.reflectLabel', 'Reflect')}
             </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-sm text-[var(--journal-text-muted)] leading-relaxed">
               {entry.question}
             </p>
             <p className="text-xs text-indigo-400 dark:text-indigo-300 mt-1.5 font-medium">
@@ -306,7 +306,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
         try { refs = JSON.parse(entry.passage_refs); } catch { /* ignore */ }
         return refs.length > 0 ? (
           <div className="flex flex-wrap items-center gap-2 mb-5">
-            <span className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wide">
+            <span className="text-xs font-semibold text-[var(--journal-text-muted)] uppercase tracking-wide">
               {t('plan.relatedPassages', 'Related')}
             </span>
             {refs.map(ref => (

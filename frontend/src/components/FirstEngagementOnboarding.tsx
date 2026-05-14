@@ -74,7 +74,7 @@ const FirstEngagementOnboarding: React.FC = () => {
           make the panel scrollable so the buttons are always reachable. */}
       <div className="fixed inset-0 z-50 flex items-start justify-center pt-16 sm:pt-20 px-4 pointer-events-none">
         <div className="pointer-events-auto w-full max-w-md animate-slide-from-top max-h-[calc(100dvh-8rem)] sm:max-h-[calc(100dvh-6rem)] overflow-y-auto rounded-3xl">
-          <div className="bg-white dark:bg-gray-900 shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
+          <div className="bg-[var(--theme-surface)] shadow-2xl overflow-hidden border border-amber-200/60 dark:border-amber-700/40 rounded-3xl">
             <div className="p-6 sm:p-7 bg-gradient-to-br from-amber-50 via-yellow-50 to-orange-50
                            dark:from-amber-900/30 dark:via-yellow-900/20 dark:to-orange-900/20">
               {/* Header with candle icon */}
@@ -82,20 +82,20 @@ const FirstEngagementOnboarding: React.FC = () => {
                 <span className="text-4xl" role="img" aria-label="candle">
                   🕯
                 </span>
-                <h2 className="text-2xl font-semibold text-gray-900 dark:text-gray-100">
+                <h2 className="text-2xl font-semibold text-[var(--foreground)]">
                   {t('onboarding.title', 'Your journey begins')}
                 </h2>
               </div>
 
               {/* Content */}
-              <div className="space-y-3 text-gray-700 dark:text-gray-300">
+              <div className="space-y-3 text-[var(--foreground)]">
                 <p>
                   {t('onboarding.line1', 'Each day you open the Word, your streak grows.')}
                 </p>
                 <p>
                   {t('onboarding.line2', 'Miss a day? Grace Days can preserve your streak.')}
                 </p>
-                <p className="font-medium text-gray-900 dark:text-gray-100">
+                <p className="font-medium text-[var(--foreground)]">
                   {t('onboarding.line3', 'Your faithfulness is worth honoring.')}
                 </p>
               </div>
@@ -104,25 +104,25 @@ const FirstEngagementOnboarding: React.FC = () => {
               <div className="mt-5 space-y-2.5">
                 <div className="flex items-start space-x-2">
                   <span className="text-amber-500 mt-0.5">✦</span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[var(--journal-text-muted)]">
                     {t('onboarding.feature1', 'Earn Blessings by reading daily verses and adding reflections')}
                   </p>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-amber-500 mt-0.5">✦</span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[var(--journal-text-muted)]">
                     {t('onboarding.feature2', 'Achieve milestones as your streak grows')}
                   </p>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-amber-500 mt-0.5">✦</span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[var(--journal-text-muted)]">
                     {t('onboarding.feature3', 'Track your spiritual journey in your profile')}
                   </p>
                 </div>
                 <div className="flex items-start space-x-2">
                   <span className="text-amber-500 mt-0.5">✦</span>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-[var(--journal-text-muted)]">
                     {t('onboarding.feature4', 'Play Manna — a daily biblical word puzzle')}
                   </p>
                 </div>
@@ -148,8 +148,8 @@ const FirstEngagementOnboarding: React.FC = () => {
                 </button>
                 <button
                   onClick={handleDismiss}
-                  className="w-full py-2.5 px-4 text-sm font-medium text-gray-500 dark:text-gray-400
-                           hover:text-gray-700 dark:hover:text-gray-200
+                  className="w-full py-2.5 px-4 text-sm font-medium text-[var(--journal-text-muted)]
+                           hover:opacity-100
                            transition-colors duration-150"
                 >
                   {t('onboarding.begin', 'Start with the verse')}

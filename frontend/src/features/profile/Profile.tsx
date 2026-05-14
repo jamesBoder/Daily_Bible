@@ -114,9 +114,9 @@ const ProfileSkeleton: React.FC = () => (
 // ── Section wrapper ───────────────────────────────────────────────────────────
 
 const Section: React.FC<{ title: string; children: React.ReactNode }> = ({ title, children }) => (
-  <section className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 transition-shadow duration-200 hover:shadow-md">
+  <section className="bg-[var(--theme-surface)] rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 transition-shadow duration-200 hover:shadow-md">
     <div className="px-4 sm:px-5 pt-4 sm:pt-5 pb-2 sm:pb-3">
-      <h2 className="text-[11px] font-bold uppercase tracking-widest text-gray-400 dark:text-gray-500">
+      <h2 className="text-[11px] font-bold uppercase tracking-widest text-[var(--journal-text-muted)]">
         {title}
       </h2>
     </div>
@@ -283,7 +283,7 @@ export const Profile: React.FC = () => {
   if (!data) {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 flex flex-col items-center gap-3 text-center">
-        <p className="text-sm text-gray-400 dark:text-gray-500">
+        <p className="text-sm text-[var(--journal-text-muted)]">
           {t('profile.section_error', 'Could not load your profile.')}
         </p>
         <button
@@ -306,7 +306,7 @@ export const Profile: React.FC = () => {
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-4">
 
       {/* Profile Header Card */}
-      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 px-4 sm:px-5 py-4 sm:py-5 transition-shadow duration-200 hover:shadow-md">
+      <div className="bg-[var(--theme-surface)] rounded-2xl shadow-sm ring-1 ring-gray-100 dark:ring-gray-700/60 px-4 sm:px-5 py-4 sm:py-5 transition-shadow duration-200 hover:shadow-md">
         <div className="flex items-center gap-4">
           <AvatarRing
             username={editMode ? editUsername || data.username : data.username}
@@ -317,7 +317,7 @@ export const Profile: React.FC = () => {
           <div className="flex-1 min-w-0">
             {!editMode ? (
               <div key="display" className="animate-fade-in">
-                <h1 className="text-xl font-bold text-gray-900 dark:text-gray-100 break-all">
+                <h1 className="text-xl font-bold text-[var(--foreground)] break-all">
                   {data.username}
                 </h1>
                 {data.is_premium && (
@@ -328,7 +328,7 @@ export const Profile: React.FC = () => {
                     {t('profile.devoted_member', 'Devoted Member')}
                   </span>
                 )}
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                <p className="text-xs text-[var(--journal-text-muted)] mt-1">
                   {t('profile.member_since', 'Member since')} {memberSince}
                 </p>
               </div>
@@ -342,12 +342,12 @@ export const Profile: React.FC = () => {
                     onChange={e => handleUsernameChange(e.target.value)}
                     placeholder={t('profile.username_placeholder', 'Username')}
                     className={[
-                      'w-full text-sm px-3 py-1.5 pr-8 rounded-lg border bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                      'w-full text-sm px-3 py-1.5 pr-8 rounded-lg border bg-[var(--journal-surface)] text-[var(--foreground)] focus:outline-none focus:ring-2',
                       usernameStatus === 'taken'
                         ? 'border-red-400 focus:ring-red-300'
                         : usernameStatus === 'available'
                         ? 'border-green-400 focus:ring-green-300'
-                        : 'border-gray-300 dark:border-gray-600 focus:ring-primary-400',
+                        : 'border-[var(--theme-border)] focus:ring-primary-400',
                     ].join(' ')}
                   />
                   <FieldStatusIcon status={usernameStatus} />
@@ -366,12 +366,12 @@ export const Profile: React.FC = () => {
                     onChange={e => handleEmailChange(e.target.value)}
                     placeholder={t('profile.email_placeholder', 'Email')}
                     className={[
-                      'w-full text-sm px-3 py-1.5 pr-8 rounded-lg border bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                      'w-full text-sm px-3 py-1.5 pr-8 rounded-lg border bg-[var(--journal-surface)] text-[var(--foreground)] focus:outline-none focus:ring-2',
                       emailStatus === 'taken'
                         ? 'border-red-400 focus:ring-red-300'
                         : emailStatus === 'available'
                         ? 'border-green-400 focus:ring-green-300'
-                        : 'border-gray-300 dark:border-gray-600 focus:ring-primary-400',
+                        : 'border-[var(--theme-border)] focus:ring-primary-400',
                     ].join(' ')}
                   />
                   <FieldStatusIcon status={emailStatus} />
@@ -391,12 +391,12 @@ export const Profile: React.FC = () => {
                       onChange={e => setEditEmailConfirm(e.target.value)}
                       placeholder={t('profile.confirm_email_placeholder', 'Confirm new email')}
                       className={[
-                        'w-full text-sm px-3 py-1.5 rounded-lg border bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2',
+                        'w-full text-sm px-3 py-1.5 rounded-lg border bg-[var(--journal-surface)] text-[var(--foreground)] focus:outline-none focus:ring-2',
                         emailConfirmMismatch && editEmailConfirm
                           ? 'border-red-400 focus:ring-red-300'
                           : editEmailConfirm && !emailConfirmMismatch
                           ? 'border-green-400 focus:ring-green-300'
-                          : 'border-gray-300 dark:border-gray-600 focus:ring-primary-400',
+                          : 'border-[var(--theme-border)] focus:ring-primary-400',
                       ].join(' ')}
                       autoComplete="off"
                     />
@@ -419,7 +419,7 @@ export const Profile: React.FC = () => {
                       value={editCurrentPassword}
                       onChange={e => setEditCurrentPassword(e.target.value)}
                       placeholder={t('profile.current_password_placeholder', 'Current password to confirm')}
-                      className="w-full text-sm px-3 py-1.5 rounded-lg border border-amber-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-amber-300"
+                      className="w-full text-sm px-3 py-1.5 rounded-lg border border-amber-400 bg-[var(--journal-surface)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-amber-300"
                       autoComplete="current-password"
                     />
                     <p className="text-xs text-amber-600 dark:text-amber-400">
@@ -439,7 +439,7 @@ export const Profile: React.FC = () => {
           {!editMode ? (
             <button
               onClick={handleEditOpen}
-              className="flex-shrink-0 p-2 rounded-lg text-gray-400 dark:text-gray-500 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex-shrink-0 p-2 rounded-lg text-[var(--journal-text-muted)] hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
               aria-label={t('profile.edit_profile', 'Edit profile')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -457,7 +457,7 @@ export const Profile: React.FC = () => {
               </button>
               <button
                 onClick={handleEditCancel}
-                className="text-xs px-3 py-1.5 rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-h-[32px]"
+                className="text-xs px-3 py-1.5 rounded-lg bg-[var(--theme-surface)] text-[var(--foreground)] font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-h-[32px]"
               >
                 {t('common.cancel', 'Cancel')}
               </button>
@@ -481,7 +481,7 @@ export const Profile: React.FC = () => {
       {/* My Journey */}
       <Section title={t('profile.my_journey', 'My Journey')}>
         {sectionError ? (
-          <p className="text-sm text-gray-400 dark:text-gray-500">
+          <p className="text-sm text-[var(--journal-text-muted)]">
             {t('profile.section_error', 'Could not load this section. Pull to refresh.')}
           </p>
         ) : (
@@ -496,7 +496,7 @@ export const Profile: React.FC = () => {
               nextMilestone={data.streak.next_milestone}
             />
             {data.streak.current_streak === 0 && (
-              <p className="text-sm text-center text-gray-500 dark:text-gray-400 py-2">
+              <p className="text-sm text-center text-[var(--journal-text-muted)] py-2">
                 {t('profile.begin_desc', "Open today's verse to begin your streak. Your faithfulness will be honored here.")}
               </p>
             )}
@@ -569,14 +569,14 @@ export const Profile: React.FC = () => {
           ].map(({ value, label, icon, color }) => (
             <div
               key={label}
-              className="rounded-xl bg-gray-50 dark:bg-gray-700/50 p-4 flex flex-col items-center text-center gap-1 transition-transform duration-150 hover:scale-[1.03] hover:shadow-sm cursor-default"
+              className="rounded-xl bg-[var(--theme-surface)] p-4 flex flex-col items-center text-center gap-1 transition-transform duration-150 hover:scale-[1.03] hover:shadow-sm cursor-default"
               style={{ borderTop: `3px solid ${color}` }}
             >
               <span className="text-lg">{icon}</span>
-              <span className="text-xl sm:text-2xl font-bold text-gray-900 dark:text-gray-100 tabular-nums leading-none">
+              <span className="text-xl sm:text-2xl font-bold text-[var(--foreground)] tabular-nums leading-none">
                 {value}
               </span>
-              <span className="text-xs text-gray-500 dark:text-gray-400">{label}</span>
+              <span className="text-xs text-[var(--journal-text-muted)]">{label}</span>
             </div>
           ))}
         </div>

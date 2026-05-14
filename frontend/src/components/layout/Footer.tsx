@@ -5,7 +5,7 @@ export const Footer: React.FC = () => {
   const { t } = useTranslation();
   
   return (
-    <footer className="bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 py-6 mt-12">
+    <footer className="bg-[var(--theme-surface)] text-[var(--foreground)] py-6 mt-12">
       <div className="container mx-auto px-4">
         <div className="flex flex-col md:flex-row items-center justify-between">
           {/* Links Section */}

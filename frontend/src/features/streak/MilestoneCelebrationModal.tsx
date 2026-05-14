@@ -172,7 +172,7 @@ const MilestoneCelebrationModal: React.FC = () => {
         aria-labelledby="milestone-title"
         ref={modalRef}
       >
-        <div className={`relative bg-white dark:bg-gray-900 rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border border-amber-200/50 dark:border-amber-700/30 ${prefersReducedMotion ? 'animate-fade-in' : 'animate-slide-from-top'}`}>
+        <div className={`relative bg-[var(--theme-surface)] rounded-3xl shadow-2xl p-8 max-w-sm w-full text-center border border-amber-200/50 dark:border-amber-700/30 ${prefersReducedMotion ? 'animate-fade-in' : 'animate-slide-from-top'}`}>
 
           {/* Badge area */}
           <div className="relative flex items-center justify-center mb-6">
@@ -215,11 +215,11 @@ const MilestoneCelebrationModal: React.FC = () => {
           >
             <h2
               id="milestone-title"
-              className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-1"
+              className="text-2xl font-bold text-[var(--foreground)] mb-1"
             >
               {t(`milestone.${milestone.key}.name`, milestone.name)}
             </h2>
-            <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+            <p className="text-sm text-[var(--journal-text-muted)] mb-4">
               {t('milestone.achieved_label', 'Milestone Achieved')}
             </p>
           </div>

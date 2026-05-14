@@ -109,7 +109,7 @@ const StreakCandle: React.FC = () => {
         aria-label={t('streak.tooltip', 'Day {{count}} streak', { count: streakData.current_streak })}
       >
         <Fire size={20} weight="duotone" className="flex-shrink-0 text-orange-500 dark:text-orange-400" />
-        <span className="text-xs font-semibold text-gray-700 dark:text-gray-200">
+        <span className="text-xs font-semibold text-[var(--foreground)]">
           {streakData.current_streak}
         </span>
       </div>
@@ -118,8 +118,8 @@ const StreakCandle: React.FC = () => {
         <div
           ref={popoverRef}
           className="fixed z-50 w-52 max-w-[calc(100vw-1rem)] p-3
-                     bg-white dark:bg-gray-800 rounded-lg shadow-xl
-                     border border-gray-200 dark:border-gray-700
+                     bg-[var(--theme-surface)] rounded-lg shadow-xl
+                     border border-[var(--theme-border)]
                      animate-fade-in"
           style={{
             top: popoverPos.top,
@@ -131,15 +131,15 @@ const StreakCandle: React.FC = () => {
           onMouseLeave={() => { if (isHoverSourceRef.current) closePopover(); }}
         >
           <div className="space-y-1.5">
-            <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+            <h3 className="text-sm font-semibold text-[var(--foreground)]">
               🔥 {t('streak.popover.title', '{{count}}-Day Streak', { count: streakData.current_streak })}
             </h3>
-            <p className="text-xs text-gray-600 dark:text-gray-400 leading-relaxed">
+            <p className="text-xs text-[var(--journal-text-muted)] leading-relaxed">
               {t('streak.popover.description', "You've been reading daily for {{count}} days in a row. Keep it up!", { count: streakData.current_streak })}
             </p>
             {streakData.grace_days_remaining > 0 && (
-              <div className="pt-1.5 border-t border-gray-300 dark:border-gray-600">
-                <p className="text-xs text-gray-500 dark:text-gray-500">
+              <div className="pt-1.5 border-t border-[var(--theme-border)]">
+                <p className="text-xs text-[var(--journal-text-muted)]">
                   {t('streak.popover.graceDays', '{{count}} Grace Day(s) available', { count: streakData.grace_days_remaining })}
                 </p>
               </div>
@@ -147,8 +147,7 @@ const StreakCandle: React.FC = () => {
           </div>
           <button
             onClick={closePopover}
-            className="absolute top-2 right-2 text-gray-400 hover:text-gray-600
-                       dark:text-gray-500 dark:hover:text-gray-300"
+            className="absolute top-2 right-2 text-[var(--journal-text-muted)] hover:opacity-100"
             aria-label="Close"
           >
             <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">

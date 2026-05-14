@@ -78,14 +78,14 @@ const BottomNav: React.FC = () => {
   const tabBase =
     'relative flex flex-col items-center justify-center gap-0.5 flex-1 h-full text-[11px] font-medium transition-colors duration-150 active:scale-90 select-none focus:outline-none min-w-0 overflow-hidden';
   const tabActive = 'text-amber-700 dark:text-amber-400';
-  const tabInactive = 'text-gray-500 dark:text-gray-400';
+  const tabInactive = 'text-[var(--journal-text-muted)]';
 
   // Lock badge overlaid on restricted tab icons for guest users
   const LockBadge = () => (
     <LockSimple
       size={9}
       weight="fill"
-      className="absolute -top-0.5 -right-1 text-gray-400 dark:text-gray-500"
+      className="absolute -top-0.5 -right-1 text-[var(--journal-text-muted)]"
     />
   );
 
@@ -239,12 +239,12 @@ const BottomNav: React.FC = () => {
       >
         {/* Drag handle */}
         <div className="flex justify-center pt-3 pb-1">
-          <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" />
+          <div className="w-10 h-1 rounded-full bg-[var(--theme-border)]" />
         </div>
 
         {/* Close button */}
         <button
-          className="absolute top-3 right-4 p-2 rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          className="absolute top-3 right-4 p-2 rounded-full text-[var(--journal-text-muted)] hover:bg-[var(--theme-surface)] transition-colors"
           onClick={() => setSheetOpen(false)}
           aria-label={t('common.close', 'Close')}
         >
@@ -272,7 +272,7 @@ const BottomNav: React.FC = () => {
                 </button>
                 <button
                   onClick={() => { setSheetOpen(false); navigate('/login'); }}
-                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors"
+                  className="px-3 py-1.5 rounded-lg text-xs font-medium text-[var(--foreground)] bg-[var(--theme-surface)] border border-[var(--theme-border)] hover:bg-[var(--theme-surface)] transition-colors"
                 >
                   Sign In
                 </button>
@@ -280,7 +280,7 @@ const BottomNav: React.FC = () => {
             </div>
           )}
 
-          <p className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-3 px-1">
+          <p className="text-xs font-semibold text-[var(--journal-text-muted)] uppercase tracking-wider mb-3 px-1">
             {t('nav.moreMenu', 'More')}
           </p>
 
@@ -291,13 +291,13 @@ const BottomNav: React.FC = () => {
                 `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
                   isActive
                     ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                    : 'text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20'
                 }`
               }
             >
               <Heart size={20} weight="duotone" />
               <span className="flex-1">{t('nav.favorites', 'Favorites')}</span>
-              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+              {!user && <LockSimple size={13} weight="fill" className="text-[var(--journal-text-muted)]" />}
             </NavLink>
 
             <NavLink
@@ -306,13 +306,13 @@ const BottomNav: React.FC = () => {
                 `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
                   isActive
                     ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                    : 'text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20'
                 }`
               }
             >
               <BookOpen size={20} weight="duotone" />
               <span className="flex-1">{t('nav.journal', 'Journal')}</span>
-              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+              {!user && <LockSimple size={13} weight="fill" className="text-[var(--journal-text-muted)]" />}
             </NavLink>
 
             <NavLink
@@ -321,13 +321,13 @@ const BottomNav: React.FC = () => {
                 `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
                   isActive
                     ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                    : 'text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20'
                 }`
               }
             >
               <MagnifyingGlass size={20} weight="duotone" />
               <span className="flex-1">{t('nav.search', 'Search')}</span>
-              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+              {!user && <LockSimple size={13} weight="fill" className="text-[var(--journal-text-muted)]" />}
             </NavLink>
 
             <NavLink
@@ -336,13 +336,13 @@ const BottomNav: React.FC = () => {
                 `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
                   isActive
                     ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                    : 'text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20'
                 }`
               }
             >
               <HandsPraying size={20} weight="duotone" />
               <span className="flex-1">{t('nav.prayer', 'Prayer')}</span>
-              {!user && <LockSimple size={13} weight="fill" className="text-gray-400 dark:text-gray-500" />}
+              {!user && <LockSimple size={13} weight="fill" className="text-[var(--journal-text-muted)]" />}
             </NavLink>
 
             {/* Install App — only shown when app is installable and not yet installed */}
@@ -375,7 +375,7 @@ const BottomNav: React.FC = () => {
                 `flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors ${
                   isActive
                     ? 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400'
-                    : 'text-gray-700 dark:text-gray-300 hover:bg-amber-50 dark:hover:bg-amber-900/20'
+                    : 'text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20'
                 }`
               }
             >
@@ -385,7 +385,7 @@ const BottomNav: React.FC = () => {
 
             {!!user && (
               <>
-                <div className="h-px bg-gray-200 dark:bg-gray-700 my-1" />
+                <div className="h-px bg-[var(--theme-border)] my-1" />
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-3 px-3 py-3 rounded-xl font-medium transition-colors text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900/20 w-full text-left"

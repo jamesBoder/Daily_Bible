@@ -52,14 +52,14 @@ const StatTile: React.FC<StatTileProps> = ({ value, label, icon, colorVar, forma
 
   return (
     <div
-      className="flex-1 flex flex-col items-center justify-center gap-1.5 py-4 sm:py-5 px-2 sm:px-3 rounded-xl bg-gray-50 dark:bg-gray-700/50"
+      className="flex-1 flex flex-col items-center justify-center gap-1.5 py-4 sm:py-5 px-2 sm:px-3 rounded-xl bg-[var(--theme-surface)]"
       style={{ borderBottom: `3px solid ${colorVar}` }}
     >
       <span className="text-2xl sm:text-3xl leading-none" role="img" aria-hidden>{icon}</span>
-      <span className="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 tabular-nums leading-none">
+      <span className="text-2xl sm:text-3xl font-bold text-[var(--foreground)] tabular-nums leading-none">
         {displayValue}
       </span>
-      <span className="text-[11px] sm:text-xs font-medium text-gray-500 dark:text-gray-400 text-center leading-tight">
+      <span className="text-[11px] sm:text-xs font-medium text-[var(--journal-text-muted)] text-center leading-tight">
         {label}
       </span>
     </div>

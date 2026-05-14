@@ -44,7 +44,7 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
         {/* Drag handle + close button */}
         <div className="flex items-center justify-between pt-3 pb-1 px-4">
           <div className="w-6" aria-hidden="true" />{/* spacer */}
-          <div className="w-10 h-1 rounded-full bg-gray-300 dark:bg-gray-600" aria-hidden="true" />
+          <div className="w-10 h-1 rounded-full bg-[var(--theme-border)]" aria-hidden="true" />
           <button
             onClick={onClose}
             className="w-6 h-6 flex items-center justify-center rounded-full text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
@@ -56,7 +56,7 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
 
         <div className="px-5 pt-3 pb-4">
           {/* English word */}
-          <p className="text-lg font-bold text-gray-800 dark:text-gray-100 mb-1 capitalize">
+          <p className="text-lg font-bold text-[var(--foreground)] mb-1 capitalize">
             {word}
           </p>
 
@@ -69,16 +69,16 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
           </p>
 
           {/* Transliteration */}
-          <p className="text-sm italic text-gray-400 dark:text-gray-500 mb-5">
+          <p className="text-sm italic text-[var(--journal-text-muted)] mb-5">
             {study.transliteration}
           </p>
 
           {/* Definition */}
           <div className="mb-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--journal-text-muted)] mb-1">
               {t('plan.wordStudy.definition', 'Meaning')}
             </p>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+            <p className="text-sm text-[var(--journal-text-muted)] leading-relaxed">
               {study.definition}
             </p>
           </div>
@@ -86,7 +86,7 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
           {/* Cross-references */}
           {(study.refs?.length ?? 0) > 0 && (
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-gray-400 dark:text-gray-500 mb-2">
+              <p className="text-xs font-semibold uppercase tracking-wide text-[var(--journal-text-muted)] mb-2">
                 {t('plan.wordStudy.alsoIn', 'Also in')}
               </p>
               <div className="flex flex-wrap gap-1.5">

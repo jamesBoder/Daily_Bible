@@ -71,7 +71,7 @@ const EmailCapture: React.FC = () => {
         <p className="text-base font-semibold text-amber-800 dark:text-amber-300">
           You're on the list!
         </p>
-        <p className="text-sm text-gray-600 dark:text-gray-400">
+        <p className="text-sm text-[var(--journal-text-muted)]">
           Check your inbox for a welcome email.
         </p>
       </div>
@@ -95,14 +95,14 @@ const EmailCapture: React.FC = () => {
             maxLength={320}
             disabled={isDisabled}
             className={`w-full px-4 py-3 rounded-xl border text-sm
-              bg-white dark:bg-gray-800
-              text-gray-900 dark:text-gray-100
-              placeholder-gray-400 dark:placeholder-gray-500
+              bg-[var(--journal-surface)]
+              text-[var(--foreground)]
+              placeholder-[var(--journal-text-muted)]
               focus:outline-none focus:ring-2 focus:ring-amber-400
               disabled:opacity-60 disabled:cursor-not-allowed
               ${emailError
                 ? 'border-red-400 dark:border-red-500'
-                : 'border-amber-200 dark:border-amber-700'
+                : 'border-[var(--theme-border)]'
               }`}
           />
         </div>
@@ -134,7 +134,7 @@ const EmailCapture: React.FC = () => {
         </p>
       )}
 
-      <p className="text-xs text-gray-500 dark:text-gray-500 text-center">
+      <p className="text-xs text-[var(--journal-text-muted)] text-center">
         One email a day. No spam. Unsubscribe any time.{" "}
         <a href="/privacy" className="underline hover:text-gray-700 dark:hover:text-gray-300">
           Privacy policy

@@ -87,16 +87,16 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
   return (
     <div
       className="
-        mt-4 rounded-2xl border border-gray-200 dark:border-gray-600
-        bg-white dark:bg-gray-800 shadow-sm
+        mt-4 rounded-2xl border border-[var(--theme-border)]
+        bg-[var(--theme-surface)] shadow-sm
         animate-fade-in overflow-hidden
       "
       role="region"
       aria-label={t("verse.compareTranslations", "Compare Translations")}
     >
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-gray-600">
-        <p className="text-xs font-bold uppercase tracking-widest text-gray-500 dark:text-gray-400">
+      <div className="flex items-center justify-between px-4 py-3 border-b border-[var(--theme-border)]">
+        <p className="text-xs font-bold uppercase tracking-widest text-[var(--journal-text-muted)]">
           {t("verse.compareTranslations", "Compare Translations")}
         </p>
         <button
@@ -129,13 +129,13 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
               key={col.abbreviation}
               className={`
                 flex-shrink-0 w-56 sm:w-64 p-4
-                ${idx < columns.length - 1 ? "border-r border-gray-100 dark:border-gray-600" : ""}
+                ${idx < columns.length - 1 ? "border-r border-[var(--theme-border)]" : ""}
               `}
             >
               <p className="text-xs font-bold text-amber-600 dark:text-amber-400 mb-0.5">
                 {col.abbreviation}
               </p>
-              <p className="text-[0.625rem] text-gray-400 dark:text-gray-500 mb-2 truncate">
+              <p className="text-[0.625rem] text-[var(--journal-text-muted)] mb-2 truncate">
                 {col.name}
               </p>
               {col.error ? (
@@ -143,7 +143,7 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
                   {t("verse.translationUnavailable", "Translation unavailable")}
                 </p>
               ) : (
-                <p className="text-sm text-gray-700 dark:text-gray-200 leading-relaxed font-serif">
+                <p className="text-sm text-[var(--foreground)] leading-relaxed font-serif">
                   {col.text}
                 </p>
               )}
@@ -153,8 +153,8 @@ export const SideBySideView: React.FC<SideBySideViewProps> = ({ reference, lang,
       )}
 
       {/* Reference footer */}
-      <div className="px-4 py-2.5 border-t border-gray-100 dark:border-gray-600 text-center">
-        <p className="text-xs text-gray-400 dark:text-gray-500 font-medium">{reference}</p>
+      <div className="px-4 py-2.5 border-t border-[var(--theme-border)] text-center">
+        <p className="text-xs text-[var(--journal-text-muted)] font-medium">{reference}</p>
       </div>
     </div>
   );

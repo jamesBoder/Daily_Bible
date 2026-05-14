@@ -82,7 +82,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
     return (
       <div className="grid grid-cols-7 gap-1">
         {Array.from({ length: 35 }).map((_, i) => (
-          <div key={i} className="aspect-square w-full rounded-lg bg-gray-200 dark:bg-gray-700 animate-pulse" />
+          <div key={i} className="aspect-square w-full rounded-lg bg-[var(--theme-border)] animate-pulse" />
         ))}
       </div>
     );
@@ -90,7 +90,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
 
   if (isError) {
     return (
-      <p className="text-sm text-gray-400 dark:text-gray-500 text-center py-4">
+      <p className="text-sm text-[var(--journal-text-muted)] text-center py-4">
         {t('profile.calendar_error', 'Calendar temporarily unavailable.')}
       </p>
     );
@@ -119,25 +119,25 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
           onClick={() => setViewIdx(i => i - 1)}
           disabled={!canGoBack}
           aria-label="Previous month"
-          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           ‹
         </button>
-        <h3 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+        <h3 className="text-sm font-semibold text-[var(--foreground)]">
           {localMonthLabel(currentMonth.year, currentMonth.month, currentLanguage)}
         </h3>
         <button
           onClick={() => setViewIdx(i => i + 1)}
           disabled={!canGoForward}
           aria-label="Next month"
-          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-500 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           ›
         </button>
       </div>
 
       {/* Legend */}
-      <div className="flex items-center justify-end gap-3 text-xs text-gray-400 dark:text-gray-500">
+      <div className="flex items-center justify-end gap-3 text-xs text-[var(--journal-text-muted)]">
         <span className="flex items-center gap-1">
           <span className="inline-block w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ background: 'var(--candle-amber)' }} />
           {t('profile.cal_engaged', 'Active')}
@@ -151,7 +151,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
       {/* Day-of-week header */}
       <div className="grid grid-cols-7 gap-1">
         {localDayLabels(currentLanguage).map((d, i) => (
-          <div key={i} className="text-center text-[11px] font-semibold text-gray-400 dark:text-gray-500 py-1">
+          <div key={i} className="text-center text-[11px] font-semibold text-[var(--journal-text-muted)] py-1">
             {d}
           </div>
         ))}
@@ -217,7 +217,7 @@ const CalendarCell: React.FC<CalendarCellProps> = ({ day, index, onNavigate }) =
       };
       break;
     case 'today_pending':
-      className += ' border-2 border-dashed text-gray-600 dark:text-gray-300';
+      className += ' border-2 border-dashed text-[var(--foreground)]';
       style = {
         borderColor: 'var(--candle-amber)',
         ...(!prefersReduced && { opacity: 0, animation: 'fadeIn 0.3s ease forwards', animationDelay: delay }),

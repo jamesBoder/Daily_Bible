@@ -57,10 +57,10 @@ const SharePanel: React.FC<SharePanelProps> = ({
 
   return (
     <div
-      className="mt-4 pt-4 border-t border-gray-300 dark:border-gray-600 animate-fade-in"
+      className="mt-4 pt-4 border-t border-[var(--theme-border)] animate-fade-in"
       onClick={(e) => e.stopPropagation()}
     >
-      <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wide mb-3">
+      <p className="text-xs font-semibold text-[var(--journal-text-muted)] uppercase tracking-wide mb-3">
         {t('favorites.shareVerse')}
       </p>
       <div className="flex items-center gap-2">
@@ -72,7 +72,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
           className={`${btnBase} ${
             isCopied
               ? "bg-green-500 text-white focus:ring-green-400"
-              : "bg-gray-100 text-gray-700 hover:bg-gray-200 dark:bg-gray-700 dark:text-gray-300 dark:hover:bg-gray-600 focus:ring-gray-400"
+              : "bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-gray-400"
           }`}
         >
           {isCopied ? (
@@ -350,7 +350,7 @@ export const FavoritesList: React.FC = () => {
               </svg>
             </button>
           </div>
-          <p className="text-gray-600 dark:text-gray-400 text-sm">
+          <p className="text-[var(--journal-text-muted)] text-sm">
             {keyword.trim()
               ? `${sortedFavorites.length} ${t('favorites.of')} ${favorites.length} ${favorites.length === 1 ? t('favorites.verse') : t('favorites.verses')}`
               : `${favorites.length} ${favorites.length === 1 ? t('favorites.verse') : t('favorites.verses')} ${t('favorites.saved')}`}
@@ -361,7 +361,7 @@ export const FavoritesList: React.FC = () => {
         <div className="flex items-center gap-2 flex-shrink-0">
           <label
             htmlFor="sort-field"
-            className="text-sm font-medium text-gray-600 dark:text-gray-400 whitespace-nowrap"
+            className="text-sm font-medium text-[var(--journal-text-muted)] whitespace-nowrap"
           >
             {t('favorites.sortBy')}:
           </label>
@@ -369,7 +369,7 @@ export const FavoritesList: React.FC = () => {
             id="sort-field"
             value={sortField}
             onChange={(e) => setSortField(e.target.value as SortField)}
-            className="text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
+            className="text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary-500 cursor-pointer"
           >
             {SORT_OPTIONS.map((opt) => (
               <option key={opt.value} value={opt.value}>
@@ -382,7 +382,7 @@ export const FavoritesList: React.FC = () => {
           <button
             onClick={toggleDirection}
             title={sortDirection === "asc" ? t('favorites.ascending') : t('favorites.descending')}
-            className="flex items-center gap-1 px-3 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="flex items-center gap-1 px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             {sortDirection === "asc" ? (
               <>
@@ -415,7 +415,7 @@ export const FavoritesList: React.FC = () => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder={t('favorites.filterPlaceholder')}
-          className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow duration-200"
+          className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] placeholder-[var(--journal-text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow duration-200"
         />
         {keyword && (
           <button
@@ -446,10 +446,10 @@ export const FavoritesList: React.FC = () => {
                 d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"
               />
             </svg>
-            <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100 mb-2">
+            <h2 className="text-lg font-medium text-[var(--foreground)] mb-2">
               {t('favorites.empty')}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-[var(--journal-text-muted)] mb-4">
               {t('favorites.emptyDescription')}
             </p>
             <Button
@@ -471,7 +471,7 @@ export const FavoritesList: React.FC = () => {
             >
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[var(--journal-text-muted)]">
               {t('favorites.noMatch')} <span className="font-medium">"{keyword}"</span>
             </p>
             <button
@@ -510,21 +510,21 @@ export const FavoritesList: React.FC = () => {
                 >
                   {/* Verse content — always visible */}
                   <div className="mb-3">
-                    <p className="text-gray-800 dark:text-gray-200 font-serif leading-relaxed mb-3" style={{ fontSize: 'var(--verse-font-size, clamp(1rem, 4.5vw, 1.25rem))' }}>
+                    <p className="text-[var(--foreground)] font-serif leading-relaxed mb-3" style={{ fontSize: 'var(--verse-font-size, clamp(1rem, 4.5vw, 1.25rem))' }}>
                       {favorite.verse?.text}
                     </p>
                     <p className="text-sm font-display font-semibold text-primary-700 dark:text-primary-400 transition-all duration-300 hover:brightness-125 hover:drop-shadow-[0_0_8px_rgba(79,70,229,0.3)] dark:hover:drop-shadow-[0_0_8px_rgba(129,140,248,0.3)] cursor-default">
                       {favorite.verse?.reference}
                     </p>
                     {favorite.verse?.version && (
-                      <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                      <p className="text-sm text-[var(--journal-text-muted)] mt-1">
                         {favorite.verse.version}
                       </p>
                     )}
                   </div>
 
                   {/* Date — always visible */}
-                  <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">
+                  <p className="text-xs text-[var(--journal-text-muted)] mt-2">
                     {t('favorites.added')} {new Date(favorite.created_at).toLocaleDateString()}
                   </p>
 
@@ -548,12 +548,12 @@ export const FavoritesList: React.FC = () => {
 
                       {/* Remove button */}
                       <div
-                        className="flex justify-end items-center gap-2 mt-3 pt-3 border-t border-gray-300 dark:border-gray-600"
+                        className="flex justify-end items-center gap-2 mt-3 pt-3 border-t border-[var(--theme-border)]"
                         onClick={(e) => e.stopPropagation()}
                       >
                         {confirmingRemoveId === favorite.id ? (
                           <>
-                            <span className="text-sm text-gray-600 dark:text-gray-400">
+                            <span className="text-sm text-[var(--journal-text-muted)]">
                               {t('favorites.removeConfirm')}
                             </span>
                             <Button

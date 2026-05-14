@@ -60,10 +60,10 @@ const RosaryPrayerCard: React.FC<RosaryPrayerCardProps> = ({
         </div>
 
         <div className="space-y-2">
-          <h2 className="text-xl font-bold text-gray-800 dark:text-gray-100">
+          <h2 className="text-xl font-bold text-[var(--foreground)]">
             {t('prayer.rosaryComplete', 'Rosary Complete')}
           </h2>
-          <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs leading-relaxed">
+          <p className="text-sm text-[var(--journal-text-muted)] max-w-xs leading-relaxed">
             {t('prayer.rosaryCompleteDesc', 'You have prayed the Rosary. May Our Lady intercede for you and bring your intentions before God.')}
           </p>
         </div>
@@ -86,13 +86,13 @@ const RosaryPrayerCard: React.FC<RosaryPrayerCardProps> = ({
   return (
     <div className="flex flex-col gap-4">
       {/* Progress bar */}
-      <div className="w-full h-1.5 rounded-full bg-gray-100 dark:bg-gray-800 overflow-hidden">
+      <div className="w-full h-1.5 rounded-full bg-[var(--theme-surface)] overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-500"
           style={{ width: `${progress}%`, background: 'var(--blessing-gold)' }}
         />
       </div>
-      <p className="text-xs text-right text-gray-400 dark:text-gray-500 -mt-2">
+      <p className="text-xs text-right text-[var(--journal-text-muted)] -mt-2">
         {completedBeads}/{totalBeads}
       </p>
 
@@ -105,20 +105,20 @@ const RosaryPrayerCard: React.FC<RosaryPrayerCardProps> = ({
           <p className="text-xs font-semibold uppercase tracking-wider text-amber-600 dark:text-amber-400 mb-1">
             {t('prayer.mysteryLabel', 'Mystery')} {step.decadeIndex + 1}
           </p>
-          <p className="text-sm font-semibold text-gray-800 dark:text-gray-100">{mystery.title}</p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 italic">{mystery.scripture}</p>
-          <p className="text-xs text-gray-600 dark:text-gray-300 mt-1.5 leading-relaxed">{mystery.meditation}</p>
+          <p className="text-sm font-semibold text-[var(--foreground)]">{mystery.title}</p>
+          <p className="text-xs text-[var(--journal-text-muted)] mt-0.5 italic">{mystery.scripture}</p>
+          <p className="text-xs text-[var(--journal-text-muted)] mt-1.5 leading-relaxed">{mystery.meditation}</p>
         </div>
       )}
 
       {/* Step header */}
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500">
+          <p className="text-xs font-semibold uppercase tracking-wider text-[var(--journal-text-muted)]">
             {stepLabel}
           </p>
           {hasCounter && (
-            <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+            <p className="text-xs text-[var(--journal-text-muted)] mt-0.5">
               {step.beadIndex + 1} / {step.totalInStep}
             </p>
           )}

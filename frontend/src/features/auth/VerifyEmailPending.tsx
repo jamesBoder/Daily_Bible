@@ -47,21 +47,21 @@ export const VerifyEmailPending: React.FC = () => {
         <Card>
           <div className="text-center space-y-4">
             <div className="text-6xl">📧</div>
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+            <h2 className="text-2xl font-bold text-[var(--foreground)]">
               {t('auth.verifyEmail.pendingTitle', 'Check your email')}
             </h2>
-            <p className="text-gray-600 dark:text-gray-400">
+            <p className="text-[var(--journal-text-muted)]">
               {stateEmail
                 ? t('auth.verifyEmail.pendingBody', 'We sent a verification link to {{email}}. Click the link to activate your account.', { email: stateEmail })
                 : t('auth.verifyEmail.pendingBodyNoEmail', 'We sent a verification link to your email address. Click the link to activate your account.')}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">
+            <p className="text-sm text-[var(--journal-text-muted)]">
               {t('auth.verifyEmail.expires24h', 'The link expires in 24 hours.')}
             </p>
 
             {!resent ? (
               <div className="pt-2 space-y-3">
-                <p className="text-sm text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-[var(--journal-text-muted)]">
                   {t('auth.verifyEmail.didntReceive', "Didn't receive it?")}
                 </p>
 
@@ -98,7 +98,7 @@ export const VerifyEmailPending: React.FC = () => {
               </p>
             )}
 
-            <div className="pt-2 border-t border-gray-200 dark:border-gray-700">
+            <div className="pt-2 border-t border-[var(--theme-border)]">
               <Link
                 to="/login"
                 className="text-sm text-primary-600 dark:text-primary-400 hover:underline"

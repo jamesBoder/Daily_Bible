@@ -52,11 +52,11 @@ const PlansLibrary: React.FC = () => {
 
       <div className="flex items-center gap-2">
         <BookmarkSimple size={22} style={{ color: 'var(--blessing-gold)' }} weight="fill" />
-        <h1 className="text-xl font-bold text-gray-800 dark:text-gray-100 flex-1">
+        <h1 className="text-xl font-bold text-[var(--foreground)] flex-1">
           {t('plans.title', 'Reading Plans')}
         </h1>
         <button
-          className="w-8 h-8 flex items-center justify-center rounded-full text-gray-400 hover:text-amber-600 dark:hover:text-amber-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:text-amber-600 dark:hover:text-amber-400 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
           onClick={openTutorial}
           aria-label={t('common.help', 'Help')}
           title={t('common.help', 'Help')}
@@ -84,7 +84,7 @@ const PlansLibrary: React.FC = () => {
       {/* Regular plans */}
       <section>
         {seasonalPlans.length > 0 && (
-          <h2 className="text-xs font-semibold uppercase tracking-wider text-gray-400 dark:text-gray-500 mb-3">
+          <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--journal-text-muted)] mb-3">
             {t('plans.library', 'Plan Library')}
           </h2>
         )}
@@ -120,7 +120,7 @@ const PlanLibraryCard: React.FC<PlanLibraryCardProps> = ({ plan, isPremium, onCl
     >
       {/* Lock overlay for premium-gated plans */}
       {locked && (
-        <div className="absolute inset-0 bg-white/60 dark:bg-gray-900/60 rounded-xl flex items-center justify-end pr-4 pointer-events-none">
+        <div className="absolute inset-0 bg-[var(--theme-surface)]/60 rounded-xl flex items-center justify-end pr-4 pointer-events-none">
           <span className="flex items-center gap-1.5 text-xs font-semibold text-amber-600 dark:text-amber-400 bg-amber-100/80 dark:bg-amber-900/60 px-2 py-1 rounded-full">
             <LockSimple size={12} weight="fill" />
             {t('plans.premiumLabel', 'Devoted Member')}
@@ -130,10 +130,10 @@ const PlanLibraryCard: React.FC<PlanLibraryCardProps> = ({ plan, isPremium, onCl
 
       <div className="flex items-start gap-3">
         <div className="flex-1 min-w-0">
-          <p className="font-semibold text-sm text-gray-800 dark:text-gray-100 leading-snug truncate">
+          <p className="font-semibold text-sm text-[var(--foreground)] leading-snug truncate">
             {plan.title}
           </p>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-0.5 line-clamp-2 leading-snug">
+          <p className="text-xs text-[var(--journal-text-muted)] mt-0.5 line-clamp-2 leading-snug">
             {plan.description}
           </p>
           <p className="text-xs text-amber-600 dark:text-amber-400 mt-1.5">
@@ -153,7 +153,7 @@ const PlanLibraryCard: React.FC<PlanLibraryCardProps> = ({ plan, isPremium, onCl
       {/* Progress bar if enrolled */}
       {progress && !locked && (
         <div className="mt-3">
-          <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mb-1">
+          <div className="flex justify-between text-xs text-[var(--journal-text-muted)] mb-1">
             <span>
               {progress.completed_at
                 ? t('plans.complete', 'Path Complete')

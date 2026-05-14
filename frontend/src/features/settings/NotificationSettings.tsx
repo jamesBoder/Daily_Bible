@@ -157,7 +157,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
               />
               <label
                 htmlFor="push-reminder-time"
-                className="flex-1 text-sm text-gray-700 dark:text-gray-300"
+                className="flex-1 text-sm text-[var(--foreground)]"
               >
                 {t('settings.notifications.pushReminderLabel', 'Remind me at')}
               </label>
@@ -166,7 +166,7 @@ export const NotificationSettings: React.FC<NotificationSettingsProps> = ({
                 value={pushReminderTime}
                 onChange={(e) => handleTimeChange(e.target.value)}
                 disabled={savingTime}
-                className="text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-60"
+                className="text-sm rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-2 focus:ring-amber-500 disabled:opacity-60 bg-[var(--journal-surface)] text-[var(--foreground)] border-[var(--theme-border)] border"
                 aria-label={t('settings.notifications.pushReminderLabel', 'Remind me at')}
               >
                 {HOUR_OPTIONS.map((opt) => (

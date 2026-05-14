@@ -227,25 +227,25 @@ const MilestoneWall: React.FC<MilestoneWallProps> = ({ milestones, currentStreak
             className="fixed inset-0 z-40 bg-black/30"
             onPointerDown={() => setSheet(null)}
           />
-          <div className="fixed bottom-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 rounded-t-3xl p-6 animate-slide-up">
+          <div className="fixed bottom-0 left-0 right-0 z-50 bg-[var(--theme-surface)] rounded-t-3xl p-6 animate-slide-up">
             <div className="flex flex-col items-center gap-3">
               <div
                 className={`milestone-badge ${sheetMilestone.earned ? 'milestone-badge--earned' : 'milestone-badge--locked'} text-4xl w-20 h-20`}
               >
                 {BADGE_EMOJIS[sheetMilestone.key] ?? '✦'}
               </div>
-              <h3 className="text-lg font-bold text-gray-900 dark:text-gray-100 text-center">
+              <h3 className="text-lg font-bold text-[var(--foreground)] text-center">
                 {t(`milestone.${sheetMilestone.key}.name`, sheetMilestone.name)}
               </h3>
-              <p className="text-sm text-gray-500 dark:text-gray-400 text-center leading-relaxed">
+              <p className="text-sm text-[var(--journal-text-muted)] text-center leading-relaxed">
                 {t(`milestone.${sheetMilestone.key}.description`, BADGE_DESCRIPTIONS[sheetMilestone.key] ?? '')}
               </p>
               {sheetMilestone.earned && sheetMilestone.achieved_at ? (
-                <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-center text-[var(--journal-text-muted)]">
                   Earned {new Date(sheetMilestone.achieved_at).toLocaleDateString(undefined, { month: 'long', day: 'numeric', year: 'numeric' })}
                 </p>
               ) : (
-                <p className="text-sm text-center text-gray-500 dark:text-gray-400">
+                <p className="text-sm text-center text-[var(--journal-text-muted)]">
                   {Math.max(sheetMilestone.days_required - currentStreak, 0)} {t('profile.days_to', 'days to')} {t(`milestone.${sheetMilestone.key}.name`, sheetMilestone.name)}
                 </p>
               )}
@@ -254,7 +254,7 @@ const MilestoneWall: React.FC<MilestoneWallProps> = ({ milestones, currentStreak
               </p>
               <button
                 onClick={() => setSheet(null)}
-                className="mt-2 px-6 py-2 rounded-2xl bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 font-medium min-h-[44px]"
+                className="mt-2 px-6 py-2 rounded-2xl bg-[var(--theme-surface)] text-[var(--foreground)] font-medium min-h-[44px]"
               >
                 {t('common.close', 'Close')}
               </button>

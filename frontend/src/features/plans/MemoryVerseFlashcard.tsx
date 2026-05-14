@@ -36,7 +36,7 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
       onClick={onDone}
     >
       <div
-        className="w-full max-w-sm bg-white dark:bg-gray-900 rounded-2xl shadow-2xl overflow-hidden animate-slide-up sm:animate-none"
+        className="w-full max-w-sm bg-[var(--theme-surface)] rounded-2xl shadow-2xl overflow-hidden animate-slide-up sm:animate-none"
         onClick={e => e.stopPropagation()}
       >
         <div className="h-1 w-full" style={{ background: 'var(--blessing-gold)' }} />
@@ -50,14 +50,14 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
             </p>
             <button
               onClick={onDone}
-              className="text-xs text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="text-xs text-[var(--journal-text-muted)] hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
             >
               {t('plan.flashcard.skip', 'Skip')}
             </button>
           </div>
 
           {/* Verse reference — always visible */}
-          <p className="text-sm font-semibold text-gray-500 dark:text-gray-400 mb-4 tracking-wide">
+          <p className="text-sm font-semibold text-[var(--journal-text-muted)] mb-4 tracking-wide">
             {verseRef}
           </p>
 
@@ -71,7 +71,7 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
               className="w-full rounded-2xl px-5 py-8 text-center mb-4 active:scale-[0.98] transition-transform"
               style={{ background: 'color-mix(in srgb, var(--blessing-gold) 8%, transparent)' }}
             >
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-3">
+              <p className="text-sm text-[var(--journal-text-muted)] mb-3">
                 {t('plan.flashcard.recallPrompt', 'Can you recall this verse?')}
               </p>
               <p className="text-xs font-semibold" style={{ color: 'var(--blessing-gold)' }}>
@@ -90,7 +90,7 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
               className="w-full rounded-2xl px-5 py-5 text-left mb-4 active:scale-[0.98] transition-transform"
               style={{ background: 'color-mix(in srgb, var(--blessing-gold) 8%, transparent)' }}
             >
-              <p className="text-base font-serif leading-relaxed text-gray-700 dark:text-gray-300 mb-3">
+              <p className="text-base font-serif leading-relaxed text-[var(--journal-text-muted)] mb-3">
                 &ldquo;{previewText}&rdquo;
               </p>
               <p className="text-xs font-semibold text-right" style={{ color: 'var(--blessing-gold)' }}>
@@ -106,12 +106,12 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
                 className="rounded-2xl px-5 py-4 mb-5"
                 style={{ background: 'color-mix(in srgb, var(--blessing-gold) 8%, transparent)' }}
               >
-                <p className="text-base font-serif leading-loose text-gray-800 dark:text-gray-100">
+                <p className="text-base font-serif leading-loose text-[var(--foreground)]">
                   &ldquo;{verseText}&rdquo;
                 </p>
               </div>
 
-              <p className="text-sm font-semibold text-center text-gray-600 dark:text-gray-300 mb-3">
+              <p className="text-sm font-semibold text-center text-[var(--journal-text-muted)] mb-3">
                 {t('plan.flashcard.ratePrompt', 'How well did you know it?')}
               </p>
 
@@ -130,7 +130,7 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
                 </button>
                 <button
                   onClick={() => { SoundService.play('quiz-wrong'); onDone(); }}
-                  className="py-2.5 rounded-xl text-xs font-semibold bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 active:scale-95 transition-transform"
+                  className="py-2.5 rounded-xl text-xs font-semibold bg-[var(--theme-surface)] text-[var(--journal-text-muted)] active:scale-95 transition-transform"
                 >
                   {t('plan.flashcard.notYet', 'Not yet')}
                 </button>

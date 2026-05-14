@@ -67,18 +67,18 @@ const RosaryView: React.FC<RosaryViewProps> = ({ onBack }) => {
       <div className="flex items-center gap-3 px-4 py-3 border-b border-amber-200/40 dark:border-amber-800/30">
         <button
           onClick={screen === 'praying' ? () => setScreen('select') : onBack}
-          className="p-1.5 -ml-1 rounded-full text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          className="p-1.5 -ml-1 rounded-full text-[var(--journal-text-muted)] hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
           aria-label={screen === 'praying' ? t('common.back', 'Back') : t('common.close', 'Close')}
         >
           <ArrowLeft size={18} />
         </button>
-        <h1 className="text-base font-semibold text-gray-800 dark:text-gray-100">
+        <h1 className="text-base font-semibold text-[var(--foreground)]">
           {t('prayer.rosaryTitle', 'The Rosary')}
         </h1>
         {screen === 'praying' && !rosary.isComplete && (
           <button
             onClick={handleReset}
-            className="ml-auto text-xs text-gray-400 dark:text-gray-500 hover:text-red-400 transition-colors"
+            className="ml-auto text-xs text-[var(--journal-text-muted)] hover:text-red-400 transition-colors"
           >
             {t('prayer.restart', 'Restart')}
           </button>

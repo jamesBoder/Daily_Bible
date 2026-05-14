@@ -54,7 +54,7 @@ export const Settings: React.FC = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* Tab bar */}
-      <div className="flex gap-1 mb-6 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex gap-1 mb-6 border-b border-[var(--theme-border)]">
         {(['settings', 'about'] as Tab[]).map(tab => (
           <button
             key={tab}
@@ -63,7 +63,7 @@ export const Settings: React.FC = () => {
               'px-5 py-2.5 text-sm font-semibold rounded-t-lg transition-colors',
               activeTab === tab
                 ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400 bg-white/30 dark:bg-white/5'
-                : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200',
+                : 'text-[var(--journal-text-muted)] hover:text-gray-700 dark:hover:text-gray-200',
             ].join(' ')}
           >
             {tab === 'settings' ? t('settings.title', 'Settings') : t('nav.about', 'About')}
@@ -78,36 +78,36 @@ export const Settings: React.FC = () => {
           {/* Section quick-jump nav */}
           <div className="flex gap-2 mb-6 overflow-x-auto pb-1 scrollbar-hide">
             {(!!user) && (
-              <button onClick={() => scrollToSection('journey')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              <button onClick={() => scrollToSection('journey')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                 {t('settings.sections.myJourney', 'My Journey')}
               </button>
             )}
-            <button onClick={() => scrollToSection('devotion')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+            <button onClick={() => scrollToSection('devotion')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.sections.devotion', 'Devotion')}
             </button>
-            <button onClick={() => scrollToSection('appearance')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+            <button onClick={() => scrollToSection('appearance')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.sections.appearance', 'Appearance')}
             </button>
             {!!user && (
-              <button onClick={() => scrollToSection('manna')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              <button onClick={() => scrollToSection('manna')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                 {t('settings.sections.manna', 'Manna')}
               </button>
             )}
             {!!user && (
-              <button onClick={() => scrollToSection('community')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+              <button onClick={() => scrollToSection('community')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
                 {t('nav.community', 'Community')}
               </button>
             )}
-            <button onClick={() => scrollToSection('install')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+            <button onClick={() => scrollToSection('install')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('pwa.settings.sectionTitle', 'Install App')}
             </button>
-            <button onClick={() => scrollToSection('help')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+            <button onClick={() => scrollToSection('help')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.sections.help', 'Help')}
             </button>
-            <button onClick={() => scrollToSection('feedback')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+            <button onClick={() => scrollToSection('feedback')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.sections.feedback', 'Feedback')}
             </button>
-            <button onClick={() => scrollToSection('account')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
+            <button onClick={() => scrollToSection('account')} className="shrink-0 px-3 py-1.5 text-xs font-medium rounded-full bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-primary-100 dark:hover:bg-primary-900/40 hover:text-primary-700 dark:hover:text-primary-300 transition-colors">
               {t('settings.tabs.account', 'Account')}
             </button>
           </div>
@@ -116,7 +116,7 @@ export const Settings: React.FC = () => {
             {/* My Journey — authenticated users only */}
             {!!user && (
               <Card id="settings-section-journey">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
                   {t('settings.sections.myJourney', 'My Journey')}
                 </h2>
                 <Profile />
@@ -126,7 +126,7 @@ export const Settings: React.FC = () => {
 
             {/* Devotion & Notifications */}
             <Card id="settings-section-devotion">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+              <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
                 {t('settings.sections.devotion', 'Devotion & Notifications')}
               </h2>
               <NotificationSettings initialEmail={notifEmail} initialReminder={notifReminder} initialPushReminderTime={pushReminderTime} />
@@ -142,7 +142,7 @@ export const Settings: React.FC = () => {
 
             {/* Appearance */}
             <Card id="settings-section-appearance">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+              <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
                 {t('settings.sections.appearance', 'Appearance')}
               </h2>
               <AppearanceSettings />
@@ -151,7 +151,7 @@ export const Settings: React.FC = () => {
             {/* Manna — authenticated users only (Phase 10) */}
             {!!user && (
               <Card id="settings-section-manna">
-                <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+                <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
                   {t('settings.sections.manna', 'Manna Puzzle')}
                 </h2>
                 <MannaSettings />
@@ -167,7 +167,7 @@ export const Settings: React.FC = () => {
 
             {/* Install App */}
             <Card id="settings-section-install">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+              <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
                 {t('pwa.settings.sectionTitle', 'Install App')}
               </h2>
               <InstallAppSection />
@@ -175,10 +175,10 @@ export const Settings: React.FC = () => {
 
             {/* Help & Tutorials */}
             <Card id="settings-section-help">
-              <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
+              <h2 className="text-xl font-semibold mb-1 text-[var(--foreground)]">
                 {t('settings.sections.help', 'Help & Tutorials')}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-sm text-[var(--journal-text-muted)] mb-4">
                 {t('settings.sections.helpDesc', 'Tap any feature to view its guide again.')}
               </p>
               <TutorialsSection />
@@ -186,10 +186,10 @@ export const Settings: React.FC = () => {
 
             {/* Feedback & Contact */}
             <Card id="settings-section-feedback">
-              <h2 className="text-xl font-semibold mb-1 text-gray-900 dark:text-gray-100">
+              <h2 className="text-xl font-semibold mb-1 text-[var(--foreground)]">
                 {t('settings.sections.feedback', 'Feedback & Contact')}
               </h2>
-              <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+              <p className="text-sm text-[var(--journal-text-muted)] mb-4">
                 {t('settings.sections.feedbackDesc', 'Found a bug or have a suggestion? We would love to hear from you.')}
               </p>
               <a
@@ -205,14 +205,14 @@ export const Settings: React.FC = () => {
 
             {/* Account */}
             <Card id="settings-section-account">
-              <h2 className="text-xl font-semibold mb-4 text-gray-900 dark:text-gray-100">
+              <h2 className="text-xl font-semibold mb-4 text-[var(--foreground)]">
                 {t('settings.tabs.account')}
               </h2>
               {user ? (
                 <AccountManagement />
               ) : (
                 <div className="flex flex-col items-center gap-4 py-4 text-center">
-                  <p className="text-sm text-gray-500 dark:text-gray-400 max-w-xs">
+                  <p className="text-sm text-[var(--journal-text-muted)] max-w-xs">
                     {t('settings.account.signUpPrompt', 'Create a free account to manage your profile, streak, and preferences.')}
                   </p>
                   <div className="flex gap-3">
@@ -224,7 +224,7 @@ export const Settings: React.FC = () => {
                     </button>
                     <button
                       onClick={() => navigate('/login')}
-                      className="px-5 py-2 rounded-xl text-sm font-semibold text-gray-700 dark:text-gray-300 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="px-5 py-2 rounded-xl text-sm font-semibold text-[var(--foreground)] bg-[var(--theme-surface)] hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
                     >
                       {t('nav.signin', 'Sign In')}
                     </button>

@@ -28,10 +28,10 @@ export const ResetPassword: React.FC = () => {
           <Card>
             <div className="text-center space-y-4">
               <div className="text-6xl">❌</div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
                 {t('auth.resetPassword.invalidLinkTitle', 'Invalid Link')}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-[var(--journal-text-muted)]">
                 {t('auth.resetPassword.invalidLinkBody', 'This password reset link is invalid or missing.')}
               </p>
               <Link
@@ -83,10 +83,10 @@ export const ResetPassword: React.FC = () => {
           <Card>
             <div className="text-center space-y-4">
               <div className="text-6xl">✅</div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100">
+              <h2 className="text-2xl font-bold text-[var(--foreground)]">
                 {t('auth.resetPassword.successTitle', 'Password Reset!')}
               </h2>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-[var(--journal-text-muted)]">
                 {t('auth.resetPassword.successBody', 'Your password has been updated. Redirecting to login...')}
               </p>
             </div>
@@ -100,10 +100,10 @@ export const ResetPassword: React.FC = () => {
     <div className="min-h-screen flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100">
+          <h2 className="text-3xl font-bold text-[var(--foreground)]">
             {t('auth.resetPassword.title', 'Reset Password')}
           </h2>
-          <p className="mt-2 text-gray-600 dark:text-gray-400">
+          <p className="mt-2 text-[var(--journal-text-muted)]">
             {t('auth.resetPassword.subtitle', 'Enter your new password below.')}
           </p>
         </div>

@@ -53,7 +53,7 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/70 backdrop-blur-sm">
       <div
-        className="relative w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl bg-white dark:bg-gray-900"
+        className="relative w-full sm:max-w-sm rounded-t-3xl sm:rounded-3xl overflow-hidden shadow-2xl bg-[var(--theme-surface)]"
       >
         {/* Gold accent bar */}
         <div className="h-1.5 w-full" style={{ background: 'var(--blessing-gold)' }} />
@@ -71,12 +71,12 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
           </div>
 
           {/* App name */}
-          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-gray-400 dark:text-gray-500 mb-1.5">
+          <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--journal-text-muted)] mb-1.5">
             Words of Praise
           </p>
 
           {/* Certificate heading */}
-          <p className="text-xs font-semibold text-gray-500 dark:text-gray-400 mb-3">
+          <p className="text-xs font-semibold text-[var(--journal-text-muted)] mb-3">
             {t('plan.certificate.title', 'Certificate of Completion')}
           </p>
 
@@ -89,7 +89,7 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
           </h2>
 
           {/* Cover verse ref */}
-          <p className="text-xs italic text-gray-400 dark:text-gray-500 mb-5">
+          <p className="text-xs italic text-[var(--journal-text-muted)] mb-5">
             {coverVerseRef}
           </p>
 
@@ -102,8 +102,8 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
           {/* Stats row */}
           <div className="flex justify-center gap-10 mb-5">
             <div>
-              <p className="text-3xl font-bold text-gray-800 dark:text-gray-100 leading-none">{totalDays}</p>
-              <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+              <p className="text-3xl font-bold text-[var(--foreground)] leading-none">{totalDays}</p>
+              <p className="text-xs text-[var(--journal-text-muted)] mt-0.5">
                 {t('plan.certificate.days', 'days')}
               </p>
             </div>
@@ -112,7 +112,7 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
                 <p className="text-3xl font-bold leading-none" style={{ color: 'var(--blessing-gold)' }}>
                   +{blessingsEarned}
                 </p>
-                <p className="text-xs text-gray-400 dark:text-gray-500 mt-0.5">
+                <p className="text-xs text-[var(--journal-text-muted)] mt-0.5">
                   {t('plan.certificate.blessings', 'blessings')}
                 </p>
               </div>
@@ -120,7 +120,7 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
           </div>
 
           {/* Completion date */}
-          <p className="text-xs text-gray-400 dark:text-gray-500 mb-7">
+          <p className="text-xs text-[var(--journal-text-muted)] mb-7">
             {t('plan.certificate.completedOn', 'Completed on {{date}}', { date: dateStr })}
           </p>
 
@@ -137,7 +137,7 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
           {/* Back to library */}
           <button
             onClick={onBackToLibrary}
-            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm text-gray-600 dark:text-gray-300 border border-gray-200 dark:border-gray-700 mb-3 transition-all active:scale-[0.98] hover:opacity-75"
+            className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-semibold text-sm text-[var(--journal-text-muted)] border border-[var(--theme-border)] mb-3 transition-all active:scale-[0.98] hover:opacity-75"
           >
             <Books size={15} weight="duotone" />
             {t('plan.certificate.backToLibrary', 'Back to Library')}
@@ -146,7 +146,7 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
           {/* Dismiss link */}
           <button
             onClick={onDismiss}
-            className="text-xs text-gray-400 dark:text-gray-500 hover:opacity-70 transition-opacity pb-1"
+            className="text-xs text-[var(--journal-text-muted)] hover:opacity-70 transition-opacity pb-1"
           >
             {t('plan.certificate.dismiss', 'Dismiss')}
           </button>

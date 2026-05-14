@@ -22,7 +22,7 @@ export const LanguageSettings: React.FC = () => {
         id="language-select"
         value={currentLanguage}
         onChange={handleChange}
-        className="block w-full border border-gray-300 dark:border-gray-600 rounded-md p-2 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
+        className="block w-full rounded-md p-2 bg-[var(--journal-surface)] text-[var(--foreground)] border-[var(--theme-border)] border"
       >
         {supportedLanguages.map(lang => (
           <option key={lang.code} value={lang.code}>
