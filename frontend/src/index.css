@@ -37,6 +37,14 @@
       height: 100%;
       overflow: hidden;
     }
+
+    /* Desktop: pin the gradient to the viewport so it never gaps or repeats
+       as content scrolls. background-attachment:fixed is safe on desktop;
+       it's intentionally skipped on mobile because it's broken on iOS. */
+    @media (min-width: 768px) {
+      background-attachment: fixed;
+      background-size: cover;
+    }
   }
 
   /* iOS auto-zoom prevention: Safari zooms the page when an input
@@ -176,32 +184,31 @@
 
   /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
 
-  /* Sanctuary — dappled forest chapel (medium tone — between Midnight and Parchment) */
+  /* Sanctuary — warm forest chapel (earthy amber and honey gold — no blue) */
   [data-theme="sanctuary"] {
-    /* Medium forest green — visibly green, relaxing, clearly not Midnight's near-black.
-       Soft luminous glow at top like light filtering through a canopy. */
+    /* Amber morning-light glow at top (sunlight through leaves) over rich warm forest green.
+       Asymmetric gradient: distinctly different from Midnight's cold near-black navy. */
     --body-bg:
-      radial-gradient(ellipse 100% 38% at 50% 0%, rgba(90, 200, 125, 0.20) 0%, transparent 58%),
-      linear-gradient(to bottom, #1e4a2e 0%, #24533a 55%, #1e4a2e 100%);
-    --parchment: #1e4a2e;
-    --foreground: #e4f2dc;
-    --candle-amber: #6dcb8a;
-    --blessing-gold: #48cc76;
-    --grace-lavender: #82b890;
-    --challenge-accent: #d4944a;
-    --milestone-glow: #7dd89a;
-    /* Cards sit slightly lighter than the bg to float naturally */
-    --theme-surface: #2d6040;
-    --theme-border: rgba(109, 203, 138, 0.32);
-    --theme-accent: #3a8c5c;
-    --header-bg: rgba(28, 62, 40, 0.92);
-    /* Journal / Manna tiles — medium green with light sage text */
-    --journal-surface:     #254e36;
-    --journal-surface-alt: #224832;
-    --journal-line:        rgba(109, 203, 138, 0.16);
-    --journal-border:      rgba(109, 203, 138, 0.28);
-    --journal-text:        #d4ecc8;
-    --journal-text-muted:  #78b888;
+      radial-gradient(ellipse 90% 44% at 50% 0%, rgba(220, 178, 58, 0.22) 0%, transparent 55%),
+      linear-gradient(to bottom, #243820 0%, #344e28 70%, #2a4420 100%);
+    --parchment: #2a4420;
+    --foreground: #e4ecc8;
+    --candle-amber: #c89838;        /* warm honey amber */
+    --blessing-gold: #d4a830;       /* warm golden yellow */
+    --grace-lavender: #96aa6a;      /* warm olive sage — yellow-leaning, no blue */
+    --challenge-accent: #b87838;    /* warm copper-orange */
+    --milestone-glow: #c8b04a;      /* warm golden glow */
+    --theme-surface: #304823;
+    --theme-border: rgba(196, 152, 48, 0.30);
+    --theme-accent: #72a840;
+    --header-bg: rgba(28, 44, 16, 0.92);
+    /* Journal / Manna tiles — warm forest with amber accents */
+    --journal-surface:     #273e1c;
+    --journal-surface-alt: #223818;
+    --journal-line:        rgba(196, 152, 48, 0.16);
+    --journal-border:      rgba(196, 152, 48, 0.28);
+    --journal-text:        #dce8c0;
+    --journal-text-muted:  #96a870;
   }
 
   /* Desert Sand — warm solitude */
