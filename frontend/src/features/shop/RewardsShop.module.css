@@ -120,14 +120,9 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  background: rgba(255, 255, 255, 0.50);
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
   border-radius: 0.875rem;
-  border: 1px solid rgba(245, 158, 11, 0.18);
-}
-
-:global(.dark) .premiumFeatures {
-  background: rgba(0, 0, 0, 0.22);
-  border-color: rgba(245, 158, 11, 0.14);
+  border: 1px solid color-mix(in srgb, var(--candle-amber) 16%, transparent);
 }
 
 .premiumFeatureItem {
@@ -301,23 +296,13 @@
   gap: 0.875rem;
   padding: 1rem 1.125rem;
   border-radius: 1rem;
-  border: 1.5px solid rgba(245, 158, 11, 0.30);
-  background: rgba(254, 243, 199, 0.65);
-}
-
-:global(.dark) .activeCard {
-  background: rgba(120, 80, 10, 0.25);
-  border-color: rgba(245, 158, 11, 0.22);
+  border: 1.5px solid color-mix(in srgb, var(--candle-amber) 28%, transparent);
+  background: color-mix(in srgb, var(--candle-amber) 10%, var(--theme-surface));
 }
 
 .activeCardCanceled {
-  border-color: rgba(239, 68, 68, 0.30);
-  background: rgba(254, 226, 226, 0.50);
-}
-
-:global(.dark) .activeCardCanceled {
-  background: rgba(120, 30, 30, 0.22);
-  border-color: rgba(239, 68, 68, 0.22);
+  border-color: rgba(239, 68, 68, 0.28);
+  background: color-mix(in srgb, #ef4444 8%, var(--theme-surface));
 }
 
 .activeCardCrown {
@@ -345,8 +330,8 @@
 .manageBtn {
   padding: 0.4rem 0.875rem;
   border-radius: 999px;
-  border: 1.5px solid rgba(0, 0, 0, 0.15);
-  background: rgba(255, 255, 255, 0.65);
+  border: 1.5px solid color-mix(in srgb, var(--foreground) 14%, transparent);
+  background: color-mix(in srgb, var(--theme-surface) 70%, transparent);
   font-size: 0.8125rem;
   font-weight: 600;
   cursor: pointer;
@@ -355,13 +340,8 @@
   transition: background 0.15s;
 }
 
-:global(.dark) .manageBtn {
-  background: rgba(255, 255, 255, 0.10);
-  border-color: rgba(255, 255, 255, 0.16);
-}
-
 .manageBtn:hover:not(:disabled) {
-  background: rgba(255, 255, 255, 0.85);
+  background: var(--theme-surface);
 }
 
 .manageBtnPrimary {

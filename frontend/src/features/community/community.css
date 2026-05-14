@@ -8,11 +8,11 @@
   margin: 0 -1rem 1.25rem;
   background: linear-gradient(
     135deg,
-    rgba(245, 158, 11, 0.12) 0%,
-    rgba(251, 191, 36, 0.06) 60%,
+    color-mix(in srgb, var(--candle-amber) 12%, transparent) 0%,
+    color-mix(in srgb, var(--candle-amber) 6%, transparent) 60%,
     transparent 100%
   );
-  border-bottom: 1px solid rgba(245, 158, 11, 0.18);
+  border-bottom: 1px solid color-mix(in srgb, var(--candle-amber) 18%, transparent);
 }
 
 .community-hero-icon {
@@ -49,12 +49,12 @@
   border-radius: 16px;
   background: linear-gradient(
     135deg,
-    rgba(245, 158, 11, 0.14) 0%,
-    rgba(251, 191, 36, 0.08) 100%
+    color-mix(in srgb, var(--candle-amber) 14%, transparent) 0%,
+    color-mix(in srgb, var(--candle-amber) 8%, transparent) 100%
   );
   color: var(--foreground);
   margin-bottom: 1.1rem;
-  border: 1px solid rgba(245, 158, 11, 0.30);
+  border: 1px solid color-mix(in srgb, var(--candle-amber) 30%, transparent);
 }
 
 /* ─── Pill Tab Bar ───────────────────────────────────────────────────────────── */
@@ -63,11 +63,11 @@
   position: relative;
   display: flex;
   gap: 0.25rem;
-  background: var(--journal-surface, #fffcf4);
+  background: var(--journal-surface);
   border-radius: 14px;
   padding: 0.25rem;
   margin-bottom: 1.1rem;
-  border: 1px solid rgba(245, 158, 11, 0.18);
+  border: 1px solid color-mix(in srgb, var(--candle-amber) 18%, transparent);
 }
 
 .community-tab-pill {
@@ -180,8 +180,8 @@
 
 /* 5. WalkingToday pill — slow breathing glow */
 @keyframes candleGlow {
-  0%, 100% { box-shadow: 0 0 4px 0px rgba(202, 138, 4, 0.35); }
-  50%       { box-shadow: 0 0 12px 3px rgba(202, 138, 4, 0.65); }
+  0%, 100% { box-shadow: 0 0 4px 0px color-mix(in srgb, var(--candle-amber) 35%, transparent); }
+  50%       { box-shadow: 0 0 12px 3px color-mix(in srgb, var(--candle-amber) 65%, transparent); }
 }
 
 .candle-glow {
