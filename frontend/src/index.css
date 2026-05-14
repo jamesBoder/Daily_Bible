@@ -15,12 +15,8 @@
   body {
     @apply text-gray-900;
     font-size: 16px;
-    background: var(--body-bg);
-    background-repeat: no-repeat;
-    background-size: cover;
-    background-attachment: fixed;
     min-height: 100dvh;
-    transition: background 0.3s ease, color 0.3s ease;
+    transition: color 0.3s ease;
 
     /* Safe area insets for devices with notches */
     padding-top: env(safe-area-inset-top);
@@ -29,13 +25,23 @@
     padding-right: env(safe-area-inset-right);
   }
 
+  /* Theme background — fixed pseudo-element always fills the viewport.
+     Avoids background-attachment/background-size cascade issues entirely. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--body-bg);
+    background-size: cover;
+    transition: background 0.3s ease;
+  }
+
   /* Mobile: lock body to viewport so <main> handles all scrolling. */
   @media (max-width: 767px) {
     body {
       height: 100%;
       overflow: hidden;
-      background-attachment: scroll;
-      background-size: 100% 100%;
     }
   }
 
