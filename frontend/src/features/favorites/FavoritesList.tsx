@@ -72,7 +72,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
           className={`${btnBase} ${
             isCopied
               ? "bg-green-500 text-white focus:ring-green-400"
-              : "bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-gray-400"
+              : "bg-[var(--theme-surface)] text-[var(--foreground)] hover:opacity-80 focus:ring-[var(--candle-amber)]"
           }`}
         >
           {isCopied ? (
@@ -91,7 +91,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
           onClick={(e) => onTwitter(verse, e)}
           aria-label="Share on Twitter / X"
           title="Share on Twitter / X"
-          className={`${btnBase} bg-black text-white hover:bg-gray-800 dark:bg-gray-900 dark:hover:bg-black focus:ring-gray-600`}
+          className={`${btnBase} bg-black text-white hover:bg-gray-900 focus:ring-gray-600`}
         >
           <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
             <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
@@ -340,7 +340,7 @@ export const FavoritesList: React.FC = () => {
               {t('favorites.title')}
             </h1>
             <button
-              className="mb-1 w-7 h-7 flex items-center justify-center rounded-full text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="mb-1 w-7 h-7 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
               onClick={openTutorial}
               aria-label={t('common.help', 'Help')}
               title={t('common.help', 'Help')}
@@ -382,7 +382,7 @@ export const FavoritesList: React.FC = () => {
           <button
             onClick={toggleDirection}
             title={sortDirection === "asc" ? t('favorites.ascending') : t('favorites.descending')}
-            className="flex items-center gap-1 px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+            className="flex items-center gap-1 px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] hover:opacity-80 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary-500"
           >
             {sortDirection === "asc" ? (
               <>
@@ -406,7 +406,7 @@ export const FavoritesList: React.FC = () => {
       {/* Keyword filter input */}
       <div className="mb-6 relative">
         <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-4 h-4 text-[var(--journal-text-muted)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
           </svg>
         </div>
@@ -420,7 +420,7 @@ export const FavoritesList: React.FC = () => {
         {keyword && (
           <button
             onClick={() => setKeyword("")}
-            className="absolute inset-y-0 right-0 pr-3 flex items-center text-gray-400 hover:text-gray-600 dark:hover:text-gray-200"
+            className="absolute inset-y-0 right-0 pr-3 flex items-center text-[var(--journal-text-muted)] hover:text-[var(--foreground)] transition-colors"
             title="Clear filter"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

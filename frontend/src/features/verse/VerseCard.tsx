@@ -358,7 +358,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
             className={`mt-2 w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold transition-all duration-200 active:scale-[0.98] focus:outline-none focus:ring-2 focus:ring-offset-1 ${
               isCopied
                 ? 'bg-green-500 text-white focus:ring-green-400'
-                : 'bg-[var(--theme-surface)] text-[var(--foreground)] hover:bg-gray-200 dark:hover:bg-gray-600 focus:ring-gray-400'
+                : 'bg-[var(--theme-surface)] text-[var(--foreground)] hover:opacity-80 focus:ring-[var(--candle-amber)]'
             }`}
           >
             {isCopied ? (
@@ -389,7 +389,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
             onClick={handleTwitterShare}
             aria-label="Share on Twitter / X"
             title="Share on Twitter / X"
-            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-black text-white hover:bg-gray-800 dark:bg-gray-900 dark:hover:bg-black transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-600"
+            className="inline-flex items-center justify-center w-9 h-9 rounded-full bg-black text-white hover:bg-gray-900 transition-all duration-200 active:scale-95 focus:outline-none focus:ring-2 focus:ring-offset-1 focus:ring-gray-600"
           >
             <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
               <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.253 5.622 5.911-5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z" />

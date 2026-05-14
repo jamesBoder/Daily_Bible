@@ -67,7 +67,7 @@ const RosaryView: React.FC<RosaryViewProps> = ({ onBack }) => {
       <div className="flex items-center gap-3 px-4 py-3 border-b border-amber-200/40 dark:border-amber-800/30">
         <button
           onClick={screen === 'praying' ? () => setScreen('select') : onBack}
-          className="p-1.5 -ml-1 rounded-full text-[var(--journal-text-muted)] hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+          className="p-1.5 -ml-1 rounded-full text-[var(--journal-text-muted)] hover:opacity-80 transition-opacity"
           aria-label={screen === 'praying' ? t('common.back', 'Back') : t('common.close', 'Close')}
         >
           <ArrowLeft size={18} />

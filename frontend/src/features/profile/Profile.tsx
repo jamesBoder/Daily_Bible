@@ -60,7 +60,7 @@ const FieldStatusIcon: React.FC<{ status: 'idle' | 'checking' | 'available' | 't
   return (
     <span className="absolute right-2.5 top-1/2 -translate-y-1/2 pointer-events-none">
       {status === 'checking' && (
-        <svg className="w-3.5 h-3.5 text-gray-400 animate-spin" fill="none" viewBox="0 0 24 24">
+        <svg className="w-3.5 h-3.5 text-[var(--journal-text-muted)] animate-spin" fill="none" viewBox="0 0 24 24">
           <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
           <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z" />
         </svg>
@@ -439,7 +439,7 @@ export const Profile: React.FC = () => {
           {!editMode ? (
             <button
               onClick={handleEditOpen}
-              className="flex-shrink-0 p-2 rounded-lg text-[var(--journal-text-muted)] hover:text-primary-600 dark:hover:text-primary-400 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+              className="flex-shrink-0 p-2 rounded-lg text-[var(--journal-text-muted)] hover:text-[var(--candle-amber)] hover:bg-[var(--theme-surface)] transition-all"
               aria-label={t('profile.edit_profile', 'Edit profile')}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" strokeWidth={2} viewBox="0 0 24 24">
@@ -457,7 +457,7 @@ export const Profile: React.FC = () => {
               </button>
               <button
                 onClick={handleEditCancel}
-                className="text-xs px-3 py-1.5 rounded-lg bg-[var(--theme-surface)] text-[var(--foreground)] font-medium hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors min-h-[32px]"
+                className="text-xs px-3 py-1.5 rounded-lg bg-[var(--theme-surface)] text-[var(--foreground)] font-medium hover:opacity-80 transition-opacity min-h-[32px]"
               >
                 {t('common.cancel', 'Cancel')}
               </button>

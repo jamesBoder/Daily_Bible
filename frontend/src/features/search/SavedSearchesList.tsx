@@ -98,7 +98,7 @@ const SavedSearchesList: React.FC<SavedSearchesListProps> = ({ currentQuery, onS
               </button>
               <button
                 onClick={() => deleteMutation.mutate(s.id)}
-                className="ml-0.5 text-gray-300 dark:text-gray-600 hover:text-red-400 transition-colors"
+                className="ml-0.5 text-[var(--foreground)] opacity-30 hover:opacity-100 hover:text-red-400 transition-all"
               >
                 <Trash size={11} />
               </button>

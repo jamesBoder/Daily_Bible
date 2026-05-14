@@ -77,7 +77,7 @@ const GraceDayBanner: React.FC = () => {
         {/* Top row: icon + message + close */}
         <div className="flex items-start gap-2">
           <span className="text-base flex-shrink-0 mt-px" role="img" aria-label="dove">🕊</span>
-          <p className="text-xs text-gray-700 flex-1 leading-snug">
+          <p className="text-xs text-[var(--foreground)] flex-1 leading-snug">
             {t(
               'graceDay.banner.message',
               'Missed yesterday? Preserve your {{current_streak}}-day streak with a Grace Day.',
@@ -86,7 +86,7 @@ const GraceDayBanner: React.FC = () => {
           </p>
           <button
             onClick={handleDismiss}
-            className="text-gray-400 hover:text-gray-600 flex-shrink-0 p-0.5"
+            className="text-[var(--foreground)] opacity-40 hover:opacity-80 flex-shrink-0 p-0.5 transition-opacity"
             aria-label={t('common.close', 'Close')}
           >
             <svg className="w-3.5 h-3.5" fill="currentColor" viewBox="0 0 20 20">
@@ -119,12 +119,12 @@ const GraceDayBanner: React.FC = () => {
 
           <button
             onClick={handleDismiss}
-            className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+            className="text-xs text-[var(--journal-text-muted)] hover:text-[var(--foreground)] transition-colors"
           >
             {t('graceDay.banner.notNow', 'Not now')}
           </button>
 
-          <span className="ml-auto text-xs text-gray-400">
+          <span className="ml-auto text-xs text-[var(--journal-text-muted)]">
             {streakData.grace_days_remaining}× left
           </span>
         </div>

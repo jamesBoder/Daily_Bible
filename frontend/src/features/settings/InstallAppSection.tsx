@@ -92,8 +92,8 @@ const InstallAppSection: React.FC = () => {
             </p>
           </div>
           {iosGuideOpen
-            ? <CaretUp size={16} className="text-gray-400 flex-shrink-0" />
-            : <CaretDown size={16} className="text-gray-400 flex-shrink-0" />}
+            ? <CaretUp size={16} className="text-[var(--foreground)] opacity-40 flex-shrink-0" />
+            : <CaretDown size={16} className="text-[var(--foreground)] opacity-40 flex-shrink-0" />}
         </button>
 
         {iosGuideOpen && (
@@ -130,7 +130,7 @@ const InstallAppSection: React.FC = () => {
   // Desktop or unsupported browser — generic hint
   return (
     <div className="flex items-center gap-3 py-2">
-      <DeviceMobile size={22} weight="duotone" className="text-gray-400 flex-shrink-0" />
+      <DeviceMobile size={22} weight="duotone" className="text-[var(--foreground)] opacity-40 flex-shrink-0" />
       <p className="text-sm text-[var(--journal-text-muted)]">
         {t('pwa.settings.genericHint', 'Open this app in Chrome on Android or Safari on iPhone to add it to your home screen.')}
       </p>

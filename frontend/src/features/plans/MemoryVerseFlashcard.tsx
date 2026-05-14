@@ -50,7 +50,7 @@ const MemoryVerseFlashcard: React.FC<MemoryVerseFlashcardProps> = ({ verseRef, v
             </p>
             <button
               onClick={onDone}
-              className="text-xs text-[var(--journal-text-muted)] hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+              className="text-xs text-[var(--journal-text-muted)] hover:text-[var(--foreground)] transition-colors"
             >
               {t('plan.flashcard.skip', 'Skip')}
             </button>

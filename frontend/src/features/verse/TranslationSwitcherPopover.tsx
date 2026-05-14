@@ -207,7 +207,7 @@ export const TranslationSwitcherPopover: React.FC<TranslationSwitcherPopoverProp
                         )}
                         {isLocked && (
                           <svg
-                            className="w-4 h-4 text-gray-400"
+                            className="w-4 h-4 text-[var(--foreground)] opacity-35"
                             fill="none"
                             stroke="currentColor"
                             strokeWidth={2}

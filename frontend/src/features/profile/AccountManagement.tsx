@@ -366,7 +366,7 @@ export const AccountManagement: React.FC = () => {
 
         {hasPassword && showPasswordForm && (
           <form onSubmit={handlePasswordSubmit} className="space-y-4">
-            {passwordError && <div className="text-red-500 dark:text-gray-400 text-sm">{passwordError}</div>}
+            {passwordError && <div className="text-red-500 text-sm">{passwordError}</div>}
             {passwordSuccess && (
               <div className="text-green-500 dark:text-green-400 text-sm">
                 {t('account.passwordChangedSuccess')}
@@ -561,7 +561,7 @@ export const AccountManagement: React.FC = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {deleteError && <div className="text-red-500 dark:text-gray-400 text-sm">{deleteError}</div>}
+            {deleteError && <div className="text-red-500 text-sm">{deleteError}</div>}
             <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded p-4">
               <p className="font-semibold text-red-800 dark:text-red-300 mb-2">
                 {t('account.areYouSure')}

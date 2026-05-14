@@ -119,7 +119,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
           onClick={() => setViewIdx(i => i - 1)}
           disabled={!canGoBack}
           aria-label="Previous month"
-          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-[var(--theme-surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           ‹
         </button>
@@ -130,7 +130,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
           onClick={() => setViewIdx(i => i + 1)}
           disabled={!canGoForward}
           aria-label="Next month"
-          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-gray-100 dark:hover:bg-gray-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-[var(--theme-surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           ›
         </button>

@@ -73,7 +73,7 @@ const AuthRequiredUpsell: React.FC = () => {
         </button>
         <button
           onClick={() => navigate('/login', { state: { from: location } })}
-          className="w-full py-3 px-6 rounded-xl font-semibold text-[var(--foreground)] bg-[var(--journal-surface)] hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+          className="w-full py-3 px-6 rounded-xl font-semibold text-[var(--foreground)] bg-[var(--journal-surface)] hover:opacity-80 transition-opacity"
         >
           Sign In
         </button>

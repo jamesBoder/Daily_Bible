@@ -139,7 +139,7 @@ export const Login: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300"
+                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-[var(--journal-text-muted)] hover:text-[var(--foreground)] transition-colors"
                   aria-label={showPassword ? t('auth.login.hidePassword', 'Hide password') : t('auth.login.showPassword', 'Show password')}
                 >
                   {showPassword ? (
@@ -163,7 +163,7 @@ export const Login: React.FC = () => {
                 type="checkbox"
                 checked={rememberMe}
                 onChange={(e) => setRememberMe(e.target.checked)}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded cursor-pointer"
+                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-[var(--theme-border)] rounded cursor-pointer"
               />
               <label
                 htmlFor="remember-me"

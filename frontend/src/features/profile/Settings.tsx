@@ -63,7 +63,7 @@ export const Settings: React.FC = () => {
               'px-5 py-2.5 text-sm font-semibold rounded-t-lg transition-colors',
               activeTab === tab
                 ? 'text-primary-600 dark:text-primary-400 border-b-2 border-primary-600 dark:border-primary-400 bg-white/30 dark:bg-white/5'
-                : 'text-[var(--journal-text-muted)] hover:text-gray-700 dark:hover:text-gray-200',
+                : 'text-[var(--journal-text-muted)] hover:text-[var(--foreground)]',
             ].join(' ')}
           >
             {tab === 'settings' ? t('settings.title', 'Settings') : t('nav.about', 'About')}
@@ -224,7 +224,7 @@ export const Settings: React.FC = () => {
                     </button>
                     <button
                       onClick={() => navigate('/login')}
-                      className="px-5 py-2 rounded-xl text-sm font-semibold text-[var(--foreground)] bg-[var(--theme-surface)] hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors"
+                      className="px-5 py-2 rounded-xl text-sm font-semibold text-[var(--foreground)] bg-[var(--theme-surface)] hover:opacity-80 transition-opacity"
                     >
                       {t('nav.signin', 'Sign In')}
                     </button>

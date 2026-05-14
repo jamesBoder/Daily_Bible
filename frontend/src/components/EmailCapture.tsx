@@ -136,7 +136,7 @@ const EmailCapture: React.FC = () => {
 
       <p className="text-xs text-[var(--journal-text-muted)] text-center">
         One email a day. No spam. Unsubscribe any time.{" "}
-        <a href="/privacy" className="underline hover:text-gray-700 dark:hover:text-gray-300">
+        <a href="/privacy" className="underline hover:text-[var(--foreground)]">
           Privacy policy
         </a>
       </p>
