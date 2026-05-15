@@ -46,10 +46,6 @@ func SetupRoutes(
 	// Email capture
 	subscriberHandler *handlers.SubscriberHandler,
 ) {
-	router.GET("/health", func(c *gin.Context) {
-		c.JSON(200, gin.H{"status": "ok"})
-	})
-
 	api := router.Group("/api")
 	{
 		// auth routes
