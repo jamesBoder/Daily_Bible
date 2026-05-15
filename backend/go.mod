@@ -5,7 +5,7 @@ go 1.25.0
 require (
 	github.com/SherClockHolmes/webpush-go v1.4.0
 	github.com/TwiN/go-away v1.8.1
-	github.com/getsentry/sentry-go v0.45.0
+	github.com/getsentry/sentry-go v0.46.2
 	github.com/getsentry/sentry-go/gin v0.45.0
 	github.com/gin-contrib/cors v1.7.6
 	github.com/gin-contrib/gzip v1.2.5
