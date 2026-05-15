@@ -6,6 +6,7 @@
 
 [![Backend CI](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-backend.yml/badge.svg)](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-backend.yml)
 [![Frontend CI](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-frontend.yml/badge.svg)](https://github.com/jamesBoder/Daily_Bible/actions/workflows/ci-frontend.yml)
+[![codecov](https://codecov.io/gh/jamesBoder/Daily_Bible/branch/main/graph/badge.svg)](https://codecov.io/gh/jamesBoder/Daily_Bible)
 
 ---
 
@@ -34,7 +35,7 @@
 | **Email** | Resend (verification & password reset) |
 | **Bible API** | API.Bible (language-specific version IDs) |
 | **Deployment** | Fly.io (frontend + backend), Docker Compose (local dev) |
-| **CI/CD** | GitHub Actions — tests + security scan on every PR, auto-deploy to Fly.io on merge to `main` |
+| **CI/CD** | GitHub Actions — tests, security scan, bundle size check, Codecov coverage on every PR; auto-deploy with health-check rollback on merge to `main`; Dependabot for dependency updates |
 | **Infra** | Nginx, Docker multi-stage builds, PostgreSQL Cloud |
 
 ---
@@ -186,7 +187,10 @@ The app is deployed on **Fly.io** as two separate apps:
 Merging a PR into `main` triggers the CD pipeline automatically:
 
 1. `ci-backend.yml` and `ci-frontend.yml` must pass on the PR before it can merge
-2. On merge, `cd.yml` deploys the backend first, waits 30s for migrations to complete, then deploys the frontend
+2. On merge, `cd.yml` deploys the backend first
+3. The pipeline polls `/health` every 10s for up to 2 minutes — if the backend never responds healthy it **automatically rolls back** and the frontend deploy is skipped
+4. Once the backend is confirmed healthy, the frontend deploys
+5. A deployment summary (status, URL, timestamp, commit SHA) is written to the GitHub Actions job summary
 
 No manual steps required.
 
@@ -223,7 +227,12 @@ cd frontend && npm test
 
 # TypeScript type check
 cd frontend && npm run typecheck
+
+# Bundle size check
+cd frontend && npx size-limit
 ```
+
+Coverage is tracked automatically via Codecov — every PR gets a coverage delta comment showing whether coverage went up or down. Dependabot opens automated PRs weekly for outdated Go, npm, and GitHub Actions dependencies.
 
 Tested across Chrome, Firefox, Safari, Edge, iOS Safari, and Android Chrome.
 
