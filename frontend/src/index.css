@@ -15,35 +15,33 @@
   body {
     @apply text-gray-900;
     font-size: 16px;
-    background: var(--body-bg);
-    background-repeat: no-repeat;
-    /* 100% 100% stretches the gradient to fill the full body height so it never
-       tiles. background-attachment:fixed is intentionally removed — it sizes
-       the gradient to the viewport and repeats below it, and is broken on iOS. */
-    background-size: 100% 100%;
-    min-height: 100vh;
-    transition: background 0.3s ease, color 0.3s ease;
+    min-height: 100dvh;
+    transition: color 0.3s ease;
 
     /* Safe area insets for devices with notches */
     padding-top: env(safe-area-inset-top);
     /* Bottom padding handled by BottomNav on mobile — not on body */
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
+  }
 
-    /* Mobile: lock body to viewport so <main> handles all scrolling.
-       Using 100dvh on html means the lock adapts when browser chrome
-       shows/hides — giving more visible area without body-scroll bouncing. */
-    @media (max-width: 767px) {
+  /* Theme background — fixed pseudo-element always fills the viewport.
+     Avoids background-attachment/background-size cascade issues entirely. */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background: var(--body-bg);
+    background-size: cover;
+    transition: background 0.3s ease;
+  }
+
+  /* Mobile: lock body to viewport so <main> handles all scrolling. */
+  @media (max-width: 767px) {
+    body {
       height: 100%;
       overflow: hidden;
-    }
-
-    /* Desktop: pin the gradient to the viewport so it never gaps or repeats
-       as content scrolls. background-attachment:fixed is safe on desktop;
-       it's intentionally skipped on mobile because it's broken on iOS. */
-    @media (min-width: 768px) {
-      background-attachment: fixed;
-      background-size: cover;
     }
   }
 
@@ -67,8 +65,9 @@
     padding: 0.75rem; /* 12px — expands most 20-24px icons to 44-48px hit area */
   }
 
-  /* Dark mode foreground override — background comes from --body-bg in each theme block */
-  .dark body {
+  /* All themes override body text via --foreground so dark themes get light text
+     and light themes (parchment, desert-sand, sanctuary) get dark text. */
+  [data-theme] body {
     color: var(--foreground);
   }
 
@@ -184,31 +183,28 @@
 
   /* ─── Phase 6 Theme Tokens ─────────────────────────────────────────────── */
 
-  /* Sanctuary — warm forest chapel (earthy amber and honey gold — no blue) */
+  /* Sanctuary — light sage-green forest chapel, morning light through canopy */
   [data-theme="sanctuary"] {
-    /* Amber morning-light glow at top (sunlight through leaves) over rich warm forest green.
-       Asymmetric gradient: distinctly different from Midnight's cold near-black navy. */
     --body-bg:
-      radial-gradient(ellipse 90% 44% at 50% 0%, rgba(220, 178, 58, 0.22) 0%, transparent 55%),
-      linear-gradient(to bottom, #243820 0%, #344e28 70%, #2a4420 100%);
-    --parchment: #2a4420;
-    --foreground: #e4ecc8;
-    --candle-amber: #c89838;        /* warm honey amber */
-    --blessing-gold: #d4a830;       /* warm golden yellow */
-    --grace-lavender: #96aa6a;      /* warm olive sage — yellow-leaning, no blue */
-    --challenge-accent: #b87838;    /* warm copper-orange */
-    --milestone-glow: #c8b04a;      /* warm golden glow */
-    --theme-surface: #304823;
-    --theme-border: rgba(196, 152, 48, 0.30);
-    --theme-accent: #72a840;
-    --header-bg: rgba(28, 44, 16, 0.92);
-    /* Journal / Manna tiles — warm forest with amber accents */
-    --journal-surface:     #273e1c;
-    --journal-surface-alt: #223818;
-    --journal-line:        rgba(196, 152, 48, 0.16);
-    --journal-border:      rgba(196, 152, 48, 0.28);
-    --journal-text:        #dce8c0;
-    --journal-text-muted:  #96a870;
+      radial-gradient(ellipse 90% 45% at 50% 0%, rgba(200, 185, 60, 0.20) 0%, transparent 60%),
+      linear-gradient(to bottom, #dce8c6 0%, #cfe1b8 55%, #c5d9ac 100%);
+    --parchment: #eef5e0;
+    --foreground: #1a2e0a;
+    --candle-amber: #a06c18;
+    --blessing-gold: #b87828;
+    --grace-lavender: #5a7a3a;
+    --challenge-accent: #7a5020;
+    --milestone-glow: #c89830;
+    --theme-surface: #e4eed2;
+    --theme-border: rgba(90, 70, 20, 0.25);
+    --theme-accent: #2d6020;
+    --header-bg: rgba(220, 235, 200, 0.90);
+    --journal-surface:     #e8f0d4;
+    --journal-surface-alt: #dde8c8;
+    --journal-line:        rgba(80, 60, 20, 0.16);
+    --journal-border:      rgba(80, 60, 20, 0.28);
+    --journal-text:        #1a2e0a;
+    --journal-text-muted:  #5a7a3a;
   }
 
   /* Desert Sand — warm solitude */

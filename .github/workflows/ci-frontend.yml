@@ -68,3 +68,20 @@ jobs:
           GENERATE_SOURCEMAP: "false"
           DISABLE_ESLINT_PLUGIN: "true"
           CI: "false"
+
+      - name: Check bundle size
+        working-directory: frontend
+        run: npx size-limit --json | tee size-output.json && npx size-limit
+
+      - name: Bundle size summary
+        if: always()
+        working-directory: frontend
+        run: |
+          if [ -f size-output.json ]; then
+            SIZE=$(node -e "const d=require('./size-output.json'); console.log(d[0]?.sizeKB ? d[0].sizeKB.toFixed(1)+' KB' : d[0]?.size || 'unknown')" 2>/dev/null || echo "see logs")
+            echo "## Bundle Size" >> $GITHUB_STEP_SUMMARY
+            echo "| Chunk | Size |" >> $GITHUB_STEP_SUMMARY
+            echo "|-------|------|" >> $GITHUB_STEP_SUMMARY
+            echo "| JS total | $SIZE |" >> $GITHUB_STEP_SUMMARY
+            echo "| Limit | 1 MB |" >> $GITHUB_STEP_SUMMARY
+          fi

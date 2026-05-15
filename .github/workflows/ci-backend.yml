@@ -67,11 +67,19 @@ jobs:
 
       - name: Run unit tests
         working-directory: backend
-        run: go test ./internal/... -cover -count=1
+        run: go test ./internal/... -coverprofile=coverage.out -covermode=atomic -count=1
 
       - name: Run smoke tests
         working-directory: backend
         run: go test ./test/... -run TestSmoke -v -count=1
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: backend/coverage.out
+          fail_ci_if_error: false
+          comment: true
 
   security:
     name: Security Scan

@@ -43,10 +43,10 @@ export const THEMES: ThemeDefinition[] = [
   {
     id: 'sanctuary',
     name: 'Sanctuary',
-    description: 'Warm forest green and honey gold. Morning light through the canopy.',
-    isDark: true,
+    description: 'Soft sage green and honey gold. Morning light through the forest canopy.',
+    isDark: false,
     unlockCost: 500,
-    previewColors: { background: '#2a4420', foreground: '#e4ecc8', accent: '#c89838', surface: '#304823' },
+    previewColors: { background: '#dce8c6', foreground: '#1a2e0a', accent: '#a06c18', surface: '#e4eed2' },
   },
   {
     id: 'desert-sand',

@@ -84,12 +84,12 @@ describe('THEMES catalog', () => {
 
   it('marks dark themes correctly', () => {
     const darkThemes = THEMES.filter(t => t.isDark).map(t => t.id).sort();
-    expect(darkThemes).toEqual(['celestial', 'midnight', 'sanctuary', 'scarlet-grace']);
+    expect(darkThemes).toEqual(['celestial', 'midnight', 'scarlet-grace']);
   });
 
   it('marks light themes correctly', () => {
     const lightThemes = THEMES.filter(t => !t.isDark).map(t => t.id).sort();
-    expect(lightThemes).toEqual(['desert-sand', 'parchment']);
+    expect(lightThemes).toEqual(['desert-sand', 'parchment', 'sanctuary']);
   });
 });
 
@@ -200,12 +200,12 @@ describe('ThemeContext — isDarkMode', () => {
     expect(screen.getByTestId('isDarkMode').textContent).toBe('true');
   });
 
-  it('is true for sanctuary', () => {
+  it('is false for sanctuary', () => {
     renderWithProvider();
     act(() => {
       screen.getByText('set-sanctuary').click();
     });
-    expect(screen.getByTestId('isDarkMode').textContent).toBe('true');
+    expect(screen.getByTestId('isDarkMode').textContent).toBe('false');
   });
 
   it('is false for desert-sand', () => {
