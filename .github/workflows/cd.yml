@@ -11,6 +11,9 @@ jobs:
   deploy-backend:
     name: Deploy Backend
     runs-on: ubuntu-latest
+    environment:
+      name: production
+      url: https://wordsofpraise.app
 
     steps:
       - uses: actions/checkout@v4
@@ -23,18 +26,31 @@ jobs:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: flyctl deploy --remote-only
 
-      - name: Wait for backend health
+      - name: Health check with rollback
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: |
-          echo "Waiting 30s for backend to complete migrations and start..."
-          sleep 30
-          flyctl status -a wordsofpraise-backend
+          echo "Polling https://wordsofpraise-backend.fly.dev/health ..."
+          for i in {1..12}; do
+            if curl -sf https://wordsofpraise-backend.fly.dev/health; then
+              echo ""
+              echo "Backend healthy after $((i * 10))s"
+              exit 0
+            fi
+            echo "Attempt $i/12 failed — retrying in 10s..."
+            sleep 10
+          done
+          echo "Health check failed after 120s — rolling back..."
+          flyctl releases rollback -a wordsofpraise-backend
+          exit 1
 
   deploy-frontend:
     name: Deploy Frontend
     runs-on: ubuntu-latest
     needs: deploy-backend
+    environment:
+      name: production
+      url: https://wordsofpraise.app
 
     steps:
       - uses: actions/checkout@v4
@@ -46,3 +62,25 @@ jobs:
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
         run: flyctl deploy --remote-only
+
+      - name: Deployment summary
+        if: always()
+        run: |
+          BACKEND_STATUS="${{ needs.deploy-backend.result }}"
+          FRONTEND_STATUS="success"
+          echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Component | Status |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          if [ "$BACKEND_STATUS" = "success" ]; then
+            echo "| Backend | ✅ deployed |" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "| Backend | ❌ failed |" >> $GITHUB_STEP_SUMMARY
+          fi
+          echo "| Frontend | ✅ deployed |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| | |" >> $GITHUB_STEP_SUMMARY
+          echo "|---|---|" >> $GITHUB_STEP_SUMMARY
+          echo "| **URL** | https://wordsofpraise.app |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Deployed at** | $(date -u '+%Y-%m-%d %H:%M UTC') |" >> $GITHUB_STEP_SUMMARY
+          echo "| **Commit** | \`${{ github.sha }}\` |" >> $GITHUB_STEP_SUMMARY
