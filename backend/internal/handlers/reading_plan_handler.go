@@ -137,7 +137,7 @@ func (h *ReadingPlanHandler) Advance(c *gin.Context) {
 	slug := c.Param("slug")
 	userID := c.MustGet("userID").(uint)
 
-	prog, justCompleted, err := h.service.AdvanceDay(userID, slug)
+	prog, justCompleted, blessingsEarned, err := h.service.AdvanceDay(userID, slug)
 	if err != nil {
 		switch {
 		case errors.Is(err, services.ErrPlanNotFound):
@@ -150,11 +150,6 @@ func (h *ReadingPlanHandler) Advance(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to advance"})
 		}
 		return
-	}
-
-	blessingsEarned := 10
-	if justCompleted {
-		blessingsEarned = 50
 	}
 
 	c.JSON(http.StatusOK, gin.H{
