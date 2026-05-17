@@ -879,7 +879,7 @@ export const MannaPuzzle: React.FC = () => {
   const activeRow = isOver ? -1 : game.guesses.length;
 
   return (
-    <div className="manna-scene flex flex-col items-center gap-2 pt-1 pb-5 px-4 max-w-sm mx-auto">
+    <div className="manna-scene flex flex-col items-center gap-2 pt-1 pb-5 px-4 mx-auto">
       {/* Tutorial overlay — shown on first visit or when ? is tapped */}
       {showTutorial && (
         <MannaHowToPlay onDismiss={() => setShowTutorial(false)} />
@@ -1011,27 +1011,37 @@ export const MannaPuzzle: React.FC = () => {
         </div>
       )}
 
-      {/* ── Scripture clue — all users ── */}
-      {game.scripture_clue && (
-        <ScriptureClue
-          testament={game.testament}
-          reference={game.scripture_reference}
-          clue={game.scripture_clue}
-          t={t}
-        />
-      )}
+      {/* ── Desktop two-column body — display:contents on mobile so children flow
+           directly into the manna-scene flex column, preserving current layout ── */}
+      <div className="manna-body-cols">
 
-      {/* ── Ornament divider ── */}
-      <div className="manna-ornament">
-        <span className="manna-ornament-star" aria-hidden>✦ ✦ ✦</span>
-      </div>
+        {/* Left column (desktop): scripture context, ornament, hints */}
+        <div className="manna-left-panel">
+          {/* ── Scripture clue — all users ── */}
+          {game.scripture_clue && (
+            <ScriptureClue
+              testament={game.testament}
+              reference={game.scripture_reference}
+              clue={game.scripture_clue}
+              t={t}
+            />
+          )}
 
-      {/* ── Hint strip ── */}
-      {(game.hint_letters?.length ?? 0) > 0 && (
-        <HintStrip hintLetters={game.hint_letters!} t={t} />
-      )}
+          {/* ── Ornament divider ── */}
+          <div className="manna-ornament">
+            <span className="manna-ornament-star" aria-hidden>✦ ✦ ✦</span>
+          </div>
 
-      {/* ── Tile grid ── */}
+          {/* ── Hint strip ── */}
+          {(game.hint_letters?.length ?? 0) > 0 && (
+            <HintStrip hintLetters={game.hint_letters!} t={t} />
+          )}
+        </div>
+
+        {/* Right column (desktop): game grid, controls, keyboard / result */}
+        <div className="manna-right-panel">
+
+        {/* ── Tile grid ── */}
       <div className="manna-grid-wrap" style={{ position: 'relative', zIndex: 1 }}>
         {/* Confetti burst on win */}
         {showConfetti && <Confetti />}
@@ -1228,6 +1238,9 @@ export const MannaPuzzle: React.FC = () => {
           <MannaKeyboard keyStates={keyStates} onKey={handleKey} disabled={isOver || hintLoading} loading={submittingUI} />
         </div>
       )}
+
+        </div>{/* /manna-right-panel */}
+      </div>{/* /manna-body-cols */}
     </div>
   );
 };
