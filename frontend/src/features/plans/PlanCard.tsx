@@ -28,7 +28,7 @@ const PlanCard: React.FC<PlanCardProps> = ({ plan, onClick }) => {
   return (
     <button
       onClick={handleClick}
-      className="w-full text-left p-4 rounded-xl border border-amber-200/60 dark:border-amber-800/40 bg-[var(--theme-surface)] hover:bg-amber-50/60 dark:hover:bg-amber-900/20 transition-colors active:scale-[0.98] transition-transform"
+      className="w-full text-left p-4 rounded-xl border border-amber-200/60 dark:border-amber-800/40 bg-[var(--theme-surface)] hover:bg-amber-50/60 dark:hover:bg-amber-900/20 transition-all active:scale-[0.98]"
       style={{ background: 'var(--card-bg)' }}
     >
       <div className="flex items-start justify-between gap-2 mb-2">

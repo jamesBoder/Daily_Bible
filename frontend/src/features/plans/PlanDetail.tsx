@@ -64,7 +64,7 @@ const PlanDetail: React.FC = () => {
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
         <Warning size={32} className="text-red-400 mx-auto mb-2" />
-        <p className="text-[var(--journal-text-muted)] text-sm">Plan not found.</p>
+        <p className="text-[var(--journal-text-muted)] text-sm">{t('plans.notFound', 'Plan not found.')}</p>
       </div>
     );
   }
@@ -194,7 +194,7 @@ const PlanDetail: React.FC = () => {
                 onClick={() => setConfirmUnenroll(false)}
                 className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-[var(--theme-border)] text-[var(--journal-text-muted)]"
               >
-                Cancel
+                {t('common.cancel', 'Cancel')}
               </button>
               <button
                 onClick={() => unenrollMutation.mutate()}
