@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect, useRef } from 'react';
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useVirtualizer } from '@tanstack/react-virtual';
@@ -10,6 +10,8 @@ import { useVerseSearch } from '../../hooks/useVerseSearch';
 import { useTutorial } from '../../hooks/useTutorial';
 import { SearchTutorial, SEARCH_TUTORIAL_KEY } from './SearchTutorial';
 import { useStreak } from '../../contexts/StreakContext';
+import AnnotationPanel from '../verse/AnnotationPanel';
+import { useAuth } from '../../hooks/useAuth';
 import styles from './SearchResultsPage.module.css';
 
 const SearchIcon: React.FC = () => (
@@ -36,6 +38,8 @@ export const SearchResultsPage: React.FC = () => {
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(SEARCH_TUTORIAL_KEY);
   const { subscription } = useStreak();
   const isPremium = subscription?.is_premium ?? false;
+  const { user } = useAuth();
+  const [annotatingReference, setAnnotatingReference] = useState<string | null>(null);
 
   const {
     results,
@@ -180,13 +184,23 @@ export const SearchResultsPage: React.FC = () => {
                   paddingBottom: '0.75rem', // replaces the CSS gap
                 }}
               >
-                <SearchResultCard result={results[virtualItem.index]} index={virtualItem.index} />
+                <SearchResultCard
+                  result={results[virtualItem.index]}
+                  index={virtualItem.index}
+                  onAnnotate={!!user ? setAnnotatingReference : undefined}
+                />
               </li>
             ))}
           </ul>
         </>
       )}
 
+      {/* Annotation panel — opens when a search result's "Add a note" is tapped */}
+      <AnnotationPanel
+        verseReference={annotatingReference ?? ''}
+        isOpen={!!annotatingReference}
+        onClose={() => setAnnotatingReference(null)}
+      />
     </div>
   );
 };

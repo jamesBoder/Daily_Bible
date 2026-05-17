@@ -11,6 +11,8 @@ import { usePullToRefresh } from "../../hooks/usePullToRefresh";
 import PullRefreshIndicator from "../../components/common/PullRefreshIndicator";
 import { useTutorial } from "../../hooks/useTutorial";
 import { FavoritesTutorial, FAVORITES_TUTORIAL_KEY } from "./FavoritesTutorial";
+import AnnotationPanel from "../verse/AnnotationPanel";
+import AnnotationIndicator from "../verse/AnnotationIndicator";
 
 type SortField = "date" | "reference" | "book" | "translation" | "chapter" | "verseNumber";
 type SortDirection = "asc" | "desc";
@@ -156,6 +158,7 @@ const SharePanel: React.FC<SharePanelProps> = ({
 export const FavoritesList: React.FC = () => {
   const { t } = useTranslation();
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(FAVORITES_TUTORIAL_KEY);
+  const [annotatingReference, setAnnotatingReference] = React.useState<string | null>(null);
 
   const SORT_OPTIONS: { value: SortField; label: string }[] = [
     { value: "date",        label: t('favorites.sortOptions.date')        },
@@ -430,6 +433,13 @@ export const FavoritesList: React.FC = () => {
         )}
       </div>
 
+      {/* Annotation panel — rendered once at the top level, driven by annotatingReference */}
+      <AnnotationPanel
+        verseReference={annotatingReference ?? ''}
+        isOpen={!!annotatingReference}
+        onClose={() => setAnnotatingReference(null)}
+      />
+
       {favorites.length === 0 ? (
         <Card>
           <div className="text-center py-12">
@@ -544,6 +554,22 @@ export const FavoritesList: React.FC = () => {
                           onInstagram={handleInstagramShare}
                           onNativeShare={handleNativeShare}
                         />
+                      )}
+
+                      {/* Annotation button — authenticated users (premium gate is inside AnnotationPanel) */}
+                      {favorite.verse?.reference && (
+                        <div
+                          className="mt-3 pt-3 border-t border-[var(--theme-border)]"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <button
+                            onClick={() => setAnnotatingReference(favorite.verse!.reference!)}
+                            className="flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-400 hover:opacity-75 transition-opacity px-1 min-h-[44px]"
+                          >
+                            <AnnotationIndicator verseReference={favorite.verse.reference} />
+                            {t('annotation.addNote', 'Add a note')}
+                          </button>
+                        </div>
                       )}
 
                       {/* Remove button */}
