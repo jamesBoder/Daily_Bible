@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { X, Pencil } from '@phosphor-icons/react';
@@ -33,6 +33,13 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
 
   const swipe = useSwipe({ onSwipeDown: onClose });
 
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [isOpen, onClose]);
+
   const { data: annotations = [] } = useQuery({
     queryKey: ['annotations-verse', verseReference],
     queryFn: () => annotationsApi.getForVerse(verseReference),
@@ -56,11 +63,30 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
   if (!isOpen) return null;
 
   if (!isPremium) {
+    const upsellContent = (
+      <>
+        <p className="text-sm text-[var(--foreground)] opacity-75 mb-4">
+          {t('annotation.premiumRequired', 'Annotations are available with a Words of Praise subscription.')}
+        </p>
+        <button
+          onClick={(e) => { e.stopPropagation(); onClose(); openModal(); }}
+          className="w-full py-3 rounded-xl text-sm font-semibold text-white"
+          style={{ background: 'var(--blessing-gold)' }}
+        >
+          {t('common.learnMore', 'Learn More')}
+        </button>
+      </>
+    );
     return (
       <>
         {/* Backdrop */}
         <div className="fixed inset-0 z-40 bg-black/40" onClick={onClose} aria-hidden="true" />
+
+        {/* Mobile bottom sheet */}
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('annotation.premiumRequired', 'Annotations are available with a Words of Praise subscription.')}
           className="md:hidden fixed inset-x-0 bottom-0 z-50 rounded-t-2xl border-t border-amber-300/30 dark:border-amber-700/20 px-4 pt-4"
           style={{ background: 'var(--header-bg)', paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
           {...swipe}
@@ -68,17 +94,29 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
           <div className="flex justify-center mb-3">
             <div className="w-10 h-1 rounded-full bg-[var(--theme-border)]" />
           </div>
-          <p className="text-sm text-[var(--foreground)] opacity-75 text-center mb-4">
-            {t('annotation.premiumRequired', 'Annotations are available with a Words of Praise subscription.')}
-          </p>
-          <button
-            onClick={(e) => { e.stopPropagation(); onClose(); openModal(); }}
-            className="w-full py-3 rounded-xl text-sm font-semibold text-white mb-4"
-            style={{ background: 'var(--blessing-gold)' }}
-          >
-            Learn More
-          </button>
+          {upsellContent}
         </div>
+
+        {/* Desktop sidebar */}
+        <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('annotation.premiumRequired', 'Annotations are available with a Words of Praise subscription.')}
+          className="hidden md:flex flex-col fixed right-0 top-0 bottom-0 w-80 z-50 border-l border-amber-200/60 dark:border-amber-800/40"
+          style={{ background: 'var(--header-bg)' }}
+        >
+          <div className="flex items-center justify-between px-4 py-3 border-b border-amber-200/40 dark:border-amber-800/30">
+            <h2 className="text-sm font-semibold text-[var(--foreground)]">
+              {t('annotation.panelTitle', 'Your Notes on {{reference}}', { reference: verseReference })}
+            </h2>
+            <button onClick={onClose} className="p-1.5 rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 transition-opacity">
+              <X size={16} />
+            </button>
+          </div>
+          <div className="p-4">
+            {upsellContent}
+          </div>
+        </aside>
       </>
     );
   }

@@ -186,25 +186,28 @@
   /* Sanctuary — light sage-green forest chapel, morning light through canopy */
   [data-theme="sanctuary"] {
     --body-bg:
-      radial-gradient(ellipse 90% 45% at 50% 0%, rgba(200, 185, 60, 0.20) 0%, transparent 60%),
+      radial-gradient(ellipse 90% 45% at 50% 0%, rgba(200, 185, 60, 0.22) 0%, transparent 60%),
       linear-gradient(to bottom, #dce8c6 0%, #cfe1b8 55%, #c5d9ac 100%);
-    --parchment: #eef5e0;
+    --parchment: #f5fdf0;
     --foreground: #1a2e0a;
-    --candle-amber: #a06c18;
-    --blessing-gold: #b87828;
-    --grace-lavender: #5a7a3a;
-    --challenge-accent: #7a5020;
-    --milestone-glow: #c89830;
-    --theme-surface: #e4eed2;
-    --theme-border: rgba(90, 70, 20, 0.25);
-    --theme-accent: #2d6020;
-    --header-bg: rgba(220, 235, 200, 0.90);
-    --journal-surface:     #e8f0d4;
-    --journal-surface-alt: #dde8c8;
-    --journal-line:        rgba(80, 60, 20, 0.16);
-    --journal-border:      rgba(80, 60, 20, 0.28);
+    --candle-amber: #8c5c12;
+    --blessing-gold: #b06e18;
+    --grace-lavender: #3e6820;
+    --challenge-accent: #7a4e1a;
+    --milestone-glow: #d09828;
+    /* Cards are near-white sage — pops clearly off the medium-green body */
+    --theme-surface: #f0f9e4;
+    /* Stronger border — forest green at 45% so card edges are clearly visible */
+    --theme-border: rgba(40, 85, 20, 0.45);
+    --theme-accent: #1e6010;
+    /* Near-white frosted glass — clear visual break from the sage body */
+    --header-bg: rgba(248, 255, 242, 0.94);
+    --journal-surface:     #f4fce8;
+    --journal-surface-alt: #edf6de;
+    --journal-line:        rgba(50, 80, 20, 0.22);
+    --journal-border:      rgba(50, 80, 20, 0.38);
     --journal-text:        #1a2e0a;
-    --journal-text-muted:  #5a7a3a;
+    --journal-text-muted:  #3e6820;
   }
 
   /* Desert Sand — warm solitude */

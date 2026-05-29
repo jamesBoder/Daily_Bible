@@ -691,6 +691,7 @@
     "contact": "Contact",
     "comment": "Ajouter une réflexion",
     "help": "Aide",
+    "learnMore": "En savoir plus",
     "comingSoon": "Bientôt disponible",
     "goHome": "Accueil",
     "somethingWentWrong": "Oups ! Quelque chose s'est mal passé",
@@ -1087,6 +1088,7 @@
     "edit": "Modifier",
     "deleteConfirm": "Supprimer cette annotation?",
     "delete": "Supprimer",
+    "notes": "Notes",
     "saveError": "Impossible d'enregistrer l'annotation. Veuillez réessayer.",
     "deleteError": "Impossible de supprimer l'annotation. Veuillez réessayer."
   },
@@ -1109,7 +1111,7 @@
     "day": "Jour",
     "reflection": "Réflexion",
     "currentDay": "Lecture du Jour",
-    "memoryVerse": "Verset de mémoire de la semaine",
+    "memoryVerse": "Verset de mémoire",
     "historicalContext": "Contexte historique",
     "todayLabel": "Aujourd'hui",
     "reflectLabel": "Réfléchis",
@@ -1169,7 +1171,8 @@
       "share": "Partagez votre réussite",
       "backToLibrary": "Retour à la bibliothèque",
       "dismiss": "Fermer",
-      "shareText": "Je viens de terminer « {{title}} » — un plan de lecture de {{days}} jours sur Words of Praise ! 🙏"
+      "shareText": "Je viens de terminer « {{title}} » — un plan de lecture de {{days}} jours sur Words of Praise ! 🙏",
+      "appName": "Words of Praise"
     },
     "enrollError": "Impossible de démarrer ce plan. Veuillez réessayer.",
     "unenrollError": "Impossible de quitter ce plan. Veuillez réessayer."
@@ -1188,7 +1191,14 @@
     "unenroll": "Quitter",
     "unenrollConfirm": "Quitter \"{{title}}\" ? Votre progression sera perdue.",
     "blessingsEarned": "+{{count}} Bénédictions",
-    "seasonalBannerSub": "Un plan de lecture est disponible pour cette saison"
+    "seasonalBannerSub": "Un plan de lecture est disponible pour cette saison",
+    "notFound": "Plan introuvable.",
+    "season": {
+      "advent": "Avent",
+      "lent": "Carême",
+      "holy-week": "Semaine Sainte",
+      "pentecost": "Pentecôte"
+    }
   },
   "graceDay": {
     "errors": {

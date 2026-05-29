@@ -90,13 +90,33 @@
   font-weight: 500;
 }
 
+.annotateButton {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0.25rem;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--candle-amber);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity 0.15s ease;
+}
+
+.annotateButton:hover {
+  opacity: 1;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .card {
     animation: none;
     opacity: 1;
     transform: none;
   }
-  .copyButton {
+  .copyButton,
+  .annotateButton {
     transition: none;
   }
 }

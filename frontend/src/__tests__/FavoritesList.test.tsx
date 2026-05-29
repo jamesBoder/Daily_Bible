@@ -47,6 +47,16 @@ jest.mock('../features/verse/CommentSection', () => ({
   CommentSection: () => <div data-testid="comment-section" />,
 }));
 
+jest.mock('../features/verse/AnnotationPanel', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
+jest.mock('../features/verse/AnnotationIndicator', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 const mockRemoveFavorite = jest.fn().mockResolvedValue(undefined);
 
 const defaultFavoritesReturn = {
