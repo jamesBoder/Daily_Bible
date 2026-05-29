@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { X, Pencil } from '@phosphor-icons/react';
@@ -32,6 +32,13 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
   const [newNote, setNewNote] = useState('');
 
   const swipe = useSwipe({ onSwipeDown: onClose });
+
+  useEffect(() => {
+    if (!isOpen) return;
+    const handler = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose(); };
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
+  }, [isOpen, onClose]);
 
   const { data: annotations = [] } = useQuery({
     queryKey: ['annotations-verse', verseReference],
@@ -77,6 +84,9 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
 
         {/* Mobile bottom sheet */}
         <div
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('annotation.premiumRequired', 'Annotations are available with a Words of Praise subscription.')}
           className="md:hidden fixed inset-x-0 bottom-0 z-50 rounded-t-2xl border-t border-amber-300/30 dark:border-amber-700/20 px-4 pt-4"
           style={{ background: 'var(--header-bg)', paddingBottom: 'calc(1.5rem + env(safe-area-inset-bottom))' }}
           {...swipe}
@@ -89,6 +99,9 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
 
         {/* Desktop sidebar */}
         <aside
+          role="dialog"
+          aria-modal="true"
+          aria-label={t('annotation.premiumRequired', 'Annotations are available with a Words of Praise subscription.')}
           className="hidden md:flex flex-col fixed right-0 top-0 bottom-0 w-80 z-50 border-l border-amber-200/60 dark:border-amber-800/40"
           style={{ background: 'var(--header-bg)' }}
         >

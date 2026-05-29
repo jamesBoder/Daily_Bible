@@ -1088,6 +1088,7 @@
     "edit": "Modifier",
     "deleteConfirm": "Supprimer cette annotation?",
     "delete": "Supprimer",
+    "notes": "Notes",
     "saveError": "Impossible d'enregistrer l'annotation. Veuillez réessayer.",
     "deleteError": "Impossible de supprimer l'annotation. Veuillez réessayer."
   },

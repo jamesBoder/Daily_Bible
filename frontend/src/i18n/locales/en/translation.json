@@ -1105,6 +1105,7 @@
     "edit": "Edit",
     "deleteConfirm": "Delete this annotation?",
     "delete": "Delete",
+    "notes": "Notes",
     "saveError": "Could not save annotation. Please try again.",
     "deleteError": "Could not delete annotation. Please try again."
   },

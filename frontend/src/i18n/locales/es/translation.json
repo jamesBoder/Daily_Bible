@@ -1105,6 +1105,7 @@
     "edit": "Editar",
     "deleteConfirm": "¿Eliminar esta anotación?",
     "delete": "Eliminar",
+    "notes": "Notas",
     "saveError": "No se pudo guardar la anotación. Por favor, inténtalo de nuevo.",
     "deleteError": "No se pudo eliminar la anotación. Por favor, inténtalo de nuevo."
   },

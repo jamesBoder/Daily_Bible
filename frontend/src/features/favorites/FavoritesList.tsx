@@ -567,7 +567,7 @@ export const FavoritesList: React.FC = () => {
                             className="flex items-center gap-1.5 text-sm font-medium text-amber-600 dark:text-amber-400 hover:opacity-75 transition-opacity px-1 min-h-[44px]"
                           >
                             <AnnotationIndicator verseReference={favorite.verse.reference} />
-                            {t('annotation.addNote', 'Add a note')}
+                            {t('annotation.notes', 'Notes')}
                           </button>
                         </div>
                       )}

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../hooks/useAuth';
 import type { VerseSearchResult } from '../../hooks/useVerseSearch';
+import AnnotationIndicator from '../verse/AnnotationIndicator';
 import styles from './SearchResultCard.module.css';
 
 const BookIcon: React.FC = () => (
@@ -72,9 +73,10 @@ export const SearchResultCard: React.FC<Props> = ({ result, index, onAnnotate })
           <button
             onClick={() => onAnnotate(result.reference)}
             className={styles.annotateButton}
-            aria-label={t('annotation.addNote', 'Add a note')}
+            aria-label={t('annotation.notes', 'Notes')}
           >
-            {t('annotation.addNote', 'Add a note')}
+            <AnnotationIndicator verseReference={result.reference} />
+            {t('annotation.notes', 'Notes')}
           </button>
         )}
       </div>
