@@ -42,9 +42,12 @@ const AnnotationPanel: React.FC<AnnotationPanelProps> = ({ verseReference, isOpe
 
   const createMutation = useMutation({
     mutationFn: () => annotationsApi.create(verseReference, newPhrase, newNote),
-    onSuccess: () => {
+    onSuccess: (data) => {
       if (navigator.vibrate) navigator.vibrate(8);
       qc.invalidateQueries({ queryKey: ['annotations-verse', verseReference] });
+      if (data?.discipline_completed) {
+        qc.invalidateQueries({ queryKey: ['disciplines', 'today'] });
+      }
       setNewPhrase('');
       setNewNote('');
     },

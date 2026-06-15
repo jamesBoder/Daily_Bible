@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState, useCallback } from "react";
 import { useNavigate, useParams, useBlocker } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import api from "../../services/api/api";
 import { showToast } from "../../utils/toast";
 import { SoundService } from "../../services/SoundService";
@@ -47,6 +48,7 @@ export const JournalEditor: React.FC = () => {
   const { id } = useParams<{ id?: string }>();
   const { t } = useTranslation();
   const { refreshStreak } = useStreak();
+  const queryClient = useQueryClient();
 
   const isEditMode = Boolean(id);
 
@@ -133,7 +135,7 @@ export const JournalEditor: React.FC = () => {
     try {
       if (entryId === null) {
         // First save — POST to create
-        const res = await api.post<JournalEntry & { blessings_credited?: number }>("/api/journal", {
+        const res = await api.post<JournalEntry & { blessings_credited?: number; discipline_completed?: { key: string; blessings_credited: number } }>("/api/journal", {
           content_plain: plain,
           linked_verse: verse,
           prompt_id: pId,
@@ -142,6 +144,9 @@ export const JournalEditor: React.FC = () => {
         if (res.data.blessings_credited && res.data.blessings_credited > 0) {
           showBlessingsToast(res.data.blessings_credited, 'journal_entry_written');
           refreshStreak().catch(() => {});
+        }
+        if (res.data.discipline_completed) {
+          queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
         }
       } else {
         // Subsequent saves — PUT to update

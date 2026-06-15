@@ -2,10 +2,12 @@ package handlers
 
 import (
 	"dailybible/internal/services"
-	"github.com/gin-gonic/gin"
 	"log"
 	"net/http"
 	"strconv"
+	"strings"
+
+	"github.com/gin-gonic/gin"
 )
 
 type CommentHandler struct {
@@ -13,6 +15,7 @@ type CommentHandler struct {
 	blessingsService    *services.BlessingsService
 	subscriptionChecker services.SubscriptionChecker
 	subscriptionService *services.SubscriptionService // for HasOneTimePurchase("reflection_archive")
+	disciplineService   *services.DisciplineService
 }
 
 func NewCommentHandler(
@@ -25,6 +28,11 @@ func NewCommentHandler(
 		blessingsService:    blessingsService,
 		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// SetDisciplineService wires the discipline service for the write_reflection_50 hook.
+func (h *CommentHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
 }
 
 // SetSubscriptionService wires in the SubscriptionService for HasOneTimePurchase checks.
@@ -93,6 +101,13 @@ func (h *CommentHandler) AddOrUpdateComment(c *gin.Context) {
 	response := gin.H{"comment": comment}
 	if blessingsCredited > 0 {
 		response["blessings_credited"] = blessingsCredited
+	}
+	if h.disciplineService != nil && len(strings.Fields(req.CommentText)) >= 50 {
+		if dcCredits, dcErr := h.disciplineService.TryComplete(userID.(uint), "write_reflection_50", c.GetBool("isPremium")); dcErr != nil {
+			log.Printf("discipline TryComplete write_reflection_50 failed user %d: %v", userID, dcErr)
+		} else if dcCredits > 0 {
+			response["discipline_completed"] = gin.H{"key": "write_reflection_50", "blessings_credited": dcCredits}
+		}
 	}
 
 	c.JSON(http.StatusOK, response)

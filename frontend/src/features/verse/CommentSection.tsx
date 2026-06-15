@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useRef } from "react";
 import { useTranslation } from "react-i18next";
+import { useQueryClient } from "@tanstack/react-query";
 import { Button } from "../../components/common/Button";
 import { commentService } from "../../services/api/comment";
 import { Comment } from "../../types/comment";
@@ -21,6 +22,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
 }) => {
   const { t } = useTranslation();
   const { refreshStreak } = useStreak();
+  const queryClient = useQueryClient();
   const [comment, setComment] = useState<Comment | null>(null);
   const [commentText, setCommentText] = useState("");
   const [isEditing, setIsEditing] = useState(false);
@@ -78,7 +80,7 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
     setError("");
 
     try {
-      const { comment: savedComment, blessings_credited } = await commentService.addOrUpdateComment({
+      const { comment: savedComment, blessings_credited, discipline_completed } = await commentService.addOrUpdateComment({
         verse_id: verseId,
         verse_reference: verseReference,
         comment_text: commentText.trim(),
@@ -91,6 +93,9 @@ export const CommentSection: React.FC<CommentSectionProps> = ({
       if (blessings_credited > 0) {
         showBlessingsToast(blessings_credited, 'reflection_written');
         refreshStreak().catch(() => {});
+      }
+      if (discipline_completed) {
+        queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
       }
     } catch (err: any) {
       setError(err.response?.data?.error || t('notes.saveFailed'));

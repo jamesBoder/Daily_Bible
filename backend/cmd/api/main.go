@@ -379,6 +379,17 @@ func main() {
 	searchHandler := handlers.NewSearchHandler(searchService, subscriptionChecker)
 	prayerHandler := handlers.NewPrayerHandler(db, blessingsService, subscriptionChecker)
 
+	// Daily Disciplines
+	disciplineService := services.NewDisciplineService(db, blessingsService)
+	disciplineHandler := handlers.NewDisciplineHandler(disciplineService)
+	verseHandler.SetDisciplineService(disciplineService)
+	favoriteHandler.SetDisciplineService(disciplineService)
+	journalHandler.SetDisciplineService(disciplineService)
+	commentHandler.SetDisciplineService(disciplineService)
+	mannaHandler.SetDisciplineService(disciplineService)
+	annotationHandler.SetDisciplineService(disciplineService)
+	readingPlanHandler.SetDisciplineService(disciplineService)
+
 	// Email capture handler — public landing page opt-in
 	subscriberHandler := handlers.NewSubscriberHandler(db, emailService, cfg.FrontendURL)
 
@@ -468,7 +479,7 @@ func main() {
 	log.Printf("Starting server at %s\n", cfg.ServerAddress)
 
 	// setup routes
-	routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler, readingPlanHandler, annotationHandler, searchHandler, prayerHandler, subscriberHandler)
+	routes.SetupRoutes(router, authHandler, tokenService, verseHandler, favoriteHandler, historyHandler, commentService, commentHandler, profileHandler, oauthHandler, settingsHandler, streakHandler, blessingsHandler, milestonesHandler, journalHandler, translationsHandler, unlocksHandler, subscriptionHandler, subscriptionChecker, communityHandler, mannaHandler, pushHandler, readingPlanHandler, annotationHandler, searchHandler, prayerHandler, subscriberHandler, disciplineHandler)
 
 	// debug print setup routes
 	log.Println("Routes have been set up")

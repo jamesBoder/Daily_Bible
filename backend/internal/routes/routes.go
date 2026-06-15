@@ -45,6 +45,8 @@ func SetupRoutes(
 	prayerHandler *handlers.PrayerHandler,
 	// Email capture
 	subscriberHandler *handlers.SubscriberHandler,
+	// Daily Disciplines
+	disciplineHandler *handlers.DisciplineHandler,
 ) {
 	api := router.Group("/api")
 	{
@@ -262,6 +264,13 @@ func SetupRoutes(
 
 			// Phase 12: guided prayer (auth-required; premium gate inside handler)
 			protected.POST("/prayer/rosary/complete", prayerHandler.CompleteRosary)
+
+			// Daily Disciplines
+			disciplines := protected.Group("/disciplines")
+			{
+				disciplines.GET("/today", disciplineHandler.GetToday)
+				disciplines.POST("/:key/complete", disciplineHandler.Complete)
+			}
 		}
 	}
 

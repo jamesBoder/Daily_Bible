@@ -8,6 +8,7 @@ export interface VerseAnnotation {
   annotation_text: string;
   created_at: string;
   updated_at: string;
+  discipline_completed?: { key: string; blessings_credited: number }
 }
 
 const annotationsApi = {

@@ -3,6 +3,7 @@ package handlers
 import (
 	"dailybible/internal/services"
 	"errors"
+	"log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
@@ -12,6 +13,7 @@ import (
 type ReadingPlanHandler struct {
 	service             *services.ReadingPlanService
 	subscriptionChecker services.SubscriptionChecker
+	disciplineService   *services.DisciplineService
 }
 
 // NewReadingPlanHandler creates a new ReadingPlanHandler.
@@ -20,6 +22,11 @@ func NewReadingPlanHandler(service *services.ReadingPlanService, subscriptionChe
 		service:             service,
 		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// SetDisciplineService wires the discipline service for the advance_plan_day hook.
+func (h *ReadingPlanHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
 }
 
 // GetLibrary handles GET /api/plans
@@ -152,12 +159,21 @@ func (h *ReadingPlanHandler) Advance(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, gin.H{
+	resp := gin.H{
 		"progress":         prog,
 		"just_completed":   justCompleted,
 		"blessings_earned": blessingsEarned,
 		"plan_streak":      prog.PlanStreak,
-	})
+	}
+	if h.disciplineService != nil {
+		isPremium := c.GetBool("isPremium")
+		if dcCredits, dcErr := h.disciplineService.TryComplete(userID, "advance_plan_day", isPremium); dcErr != nil {
+			log.Printf("discipline TryComplete advance_plan_day failed user %d: %v", userID, dcErr)
+		} else if dcCredits > 0 {
+			resp["discipline_completed"] = gin.H{"key": "advance_plan_day", "blessings_credited": dcCredits}
+		}
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 // Unenroll handles DELETE /api/plans/:slug/unenroll

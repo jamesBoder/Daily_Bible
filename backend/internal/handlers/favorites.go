@@ -13,9 +13,10 @@ import (
 
 // init FavoriteHandler struct
 type FavoriteHandler struct {
-	favoriteService  *services.FavoriteService
-	bibleAPIService  services.BibleAPIService
-	blessingsService *services.BlessingsService
+	favoriteService   *services.FavoriteService
+	bibleAPIService   services.BibleAPIService
+	blessingsService  *services.BlessingsService
+	disciplineService *services.DisciplineService
 }
 
 // Constructor
@@ -25,6 +26,11 @@ func NewFavoriteHandler(favoriteService *services.FavoriteService, bibleAPIServi
 		bibleAPIService:  bibleAPIService,
 		blessingsService: blessingsService,
 	}
+}
+
+// SetDisciplineService wires the discipline service for the favorite_verse hook.
+func (h *FavoriteHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
 }
 
 // GetFavorites handler
@@ -130,7 +136,13 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 	if blessingsCredited > 0 {
 		response["blessings_credited"] = blessingsCredited
 	}
-
+	if h.disciplineService != nil {
+		if dcCredits, dcErr := h.disciplineService.TryComplete(userIDStr.(uint), "favorite_verse", c.GetBool("isPremium")); dcErr != nil {
+			log.Printf("discipline TryComplete favorite_verse failed user %d: %v", userIDStr, dcErr)
+		} else if dcCredits > 0 {
+			response["discipline_completed"] = gin.H{"key": "favorite_verse", "blessings_credited": dcCredits}
+		}
+	}
 	c.JSON(http.StatusOK, response)
 }
 

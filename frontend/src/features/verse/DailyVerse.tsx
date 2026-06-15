@@ -26,6 +26,7 @@ import { HistoryEntry } from "../../types/history";
 import SeasonalBanner from "../plans/SeasonalBanner";
 import AnnotationPanel from "./AnnotationPanel";
 import AnnotationIndicator from "./AnnotationIndicator";
+import DisciplinesCard from "./DisciplinesCard";
 
 
 // NavArrow button component
@@ -188,6 +189,8 @@ export const DailyVerse: React.FC = () => {
     if (sessionStorage.getItem(sessionKey)) return;
     sessionStorage.setItem(sessionKey, '1');
     showBlessingsToast(blessingsCredited, 'daily_view');
+    // Invalidate disciplines so read_verse shows as complete immediately.
+    queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
     // Delay so this refresh always falls outside the 1-second debounce window
     // (StreakContext fetches streak on mount, ~0ms; verse arrives ~200-800ms later).
     // The backend now writes milestones synchronously before the verse response
@@ -510,6 +513,13 @@ export const DailyVerse: React.FC = () => {
           </div>
         )}
       </div>
+
+      {/* Daily Disciplines card — only on today's verse, authenticated users */}
+      {!!user && historyIndex === 0 && (
+        <div className="mt-4">
+          <DisciplinesCard />
+        </div>
+      )}
 
       {/* Annotation bottom sheet / sidebar */}
       {!!user && renderedVerse && (

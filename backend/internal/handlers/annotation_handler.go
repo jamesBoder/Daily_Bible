@@ -1,8 +1,10 @@
 package handlers
 
 import (
+	"dailybible/internal/models"
 	"dailybible/internal/services"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 
@@ -16,6 +18,7 @@ import (
 type AnnotationHandler struct {
 	service             *services.AnnotationService
 	subscriptionChecker services.SubscriptionChecker
+	disciplineService   *services.DisciplineService
 }
 
 // NewAnnotationHandler creates a new AnnotationHandler.
@@ -24,6 +27,17 @@ func NewAnnotationHandler(service *services.AnnotationService, subscriptionCheck
 		service:             service,
 		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// SetDisciplineService wires the discipline service for the annotate_verse hook.
+func (h *AnnotationHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
+}
+
+// annotationCreateResponse extends VerseAnnotation with an optional discipline_completed field.
+type annotationCreateResponse struct {
+	*models.VerseAnnotation
+	DisciplineCompleted *disciplineCompletedField `json:"discipline_completed,omitempty"`
 }
 
 // GetForVerse handles GET /api/annotations/verse/:reference
@@ -88,7 +102,15 @@ func (h *AnnotationHandler) Create(c *gin.Context) {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to create annotation"})
 		return
 	}
-	c.JSON(http.StatusCreated, annotation)
+	resp := &annotationCreateResponse{VerseAnnotation: annotation}
+	if h.disciplineService != nil {
+		if credits, dcErr := h.disciplineService.TryComplete(userID, "annotate_verse", isPremium); dcErr != nil {
+			log.Printf("discipline TryComplete annotate_verse failed user %d: %v", userID, dcErr)
+		} else if credits > 0 {
+			resp.DisciplineCompleted = &disciplineCompletedField{Key: "annotate_verse", BlessingsCredited: credits}
+		}
+	}
+	c.JSON(http.StatusCreated, resp)
 }
 
 // Update handles PUT /api/annotations/:id — premium-gated.

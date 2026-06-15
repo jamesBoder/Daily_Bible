@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import type { TFunction } from 'i18next';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 import { mannaApi, GuessEntry, HintLetter, MannaGameResponse, MannaLockedResponse, YesterdayResult } from '../../services/api/manna';
 import { SoundService } from '../../services/SoundService';
@@ -205,6 +206,7 @@ export const MannaPuzzle: React.FC = () => {
   const navigate = useNavigate();
   const { isAuthenticated, isLoading: authLoading } = useAuth();
   const { refreshStreak, subscription, streakData } = useStreak();
+  const queryClient = useQueryClient();
   const isPremium = subscription?.is_premium ?? false;
   // Guest mode: user is not logged in. State lives in localStorage; backend is stateless.
   const isGuestMode = !authLoading && !isAuthenticated;
@@ -633,6 +635,9 @@ export const MannaPuzzle: React.FC = () => {
           }
           // G-02: refresh streak count in header so blessings and streak display update immediately
           refreshStreak().catch(() => {});
+          if (result.discipline_completed) {
+            queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
+          }
         } else if (result.status === 'failed') {
           posthog.capture('manna_completed', {
             word: result.answer,

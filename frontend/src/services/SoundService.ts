@@ -25,7 +25,8 @@ type AudioCue =
   | 'card-flip'
   | 'plan-advance'
   | 'onboarding-appear'
-  | 'word-tap';
+  | 'word-tap'
+  | 'discipline-complete';
 
 class SoundServiceClass {
   private ctx: AudioContext | null = null;
@@ -140,6 +141,7 @@ class SoundServiceClass {
         case 'plan-advance':         return this.playPlanAdvance();
         case 'onboarding-appear':    return this.playOnboardingAppear();
         case 'word-tap':             return this.playWordTap();
+        case 'discipline-complete':  return this.playDisciplineComplete();
       }
     } catch {
       // Web Audio failures are non-critical — never surface to user
@@ -588,6 +590,25 @@ class SoundServiceClass {
       gain.gain.exponentialRampToValueAtTime(0.001, start + 0.3);
       osc.start(start);
       osc.stop(start + 0.3);
+    });
+  }
+  // C5→E5→G5→C6 ascending arpeggio — warm completion chime
+  private playDisciplineComplete(): void {
+    const ctx = this.getCtx();
+    const dest = this.getMasterGain();
+    ([[523.25, 0], [659.25, 0.12], [783.99, 0.24], [1046.5, 0.36]] as [number, number][]).forEach(([freq, delay]) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(dest);
+      osc.type = 'triangle';
+      osc.frequency.value = freq;
+      const start = ctx.currentTime + delay;
+      gain.gain.setValueAtTime(0, start);
+      gain.gain.linearRampToValueAtTime(0.06, start + 0.03);
+      gain.gain.exponentialRampToValueAtTime(0.001, start + 0.5);
+      osc.start(start);
+      osc.stop(start + 0.5);
     });
   }
 }
