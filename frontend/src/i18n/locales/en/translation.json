@@ -691,6 +691,7 @@
     "contact": "Contact",
     "comment": "Add a reflection",
     "help": "Help",
+    "learnMore": "Learn More",
     "comingSoon": "Coming soon",
     "goHome": "Go Home",
     "somethingWentWrong": "Oops! Something went wrong",
@@ -1126,6 +1127,7 @@
     "edit": "Edit",
     "deleteConfirm": "Delete this annotation?",
     "delete": "Delete",
+    "notes": "Notes",
     "saveError": "Could not save annotation. Please try again.",
     "deleteError": "Could not delete annotation. Please try again."
   },
@@ -1148,7 +1150,7 @@
     "day": "Day",
     "reflection": "Reflection",
     "currentDay": "Today's Reading",
-    "memoryVerse": "This week's memory verse",
+    "memoryVerse": "Memory verse",
     "historicalContext": "Historical context",
     "todayLabel": "Today",
     "reflectLabel": "Reflect",
@@ -1208,7 +1210,8 @@
       "share": "Share your achievement",
       "backToLibrary": "Back to Library",
       "dismiss": "Dismiss",
-      "shareText": "I just completed \"{{title}}\" — a {{days}}-day reading plan on Words of Praise! 🙏"
+      "shareText": "I just completed \"{{title}}\" — a {{days}}-day reading plan on Words of Praise! 🙏",
+      "appName": "Words of Praise"
     },
     "enrollError": "Could not start this plan. Please try again.",
     "unenrollError": "Could not leave this plan. Please try again."
@@ -1227,6 +1230,13 @@
     "unenroll": "Leave",
     "unenrollConfirm": "Leave \"{{title}}\"? Your progress will be lost.",
     "blessingsEarned": "+{{count}} Blessings",
-    "seasonalBannerSub": "A reading path is available for this season"
+    "seasonalBannerSub": "A reading path is available for this season",
+    "notFound": "Plan not found.",
+    "season": {
+      "advent": "Advent",
+      "lent": "Lent",
+      "holy-week": "Holy Week",
+      "pentecost": "Pentecost"
+    }
   }
 }

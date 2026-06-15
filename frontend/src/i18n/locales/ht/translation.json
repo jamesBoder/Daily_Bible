@@ -691,6 +691,7 @@
     "contact": "Kontak",
     "comment": "Ajoute yon refleksyon",
     "help": "Èd",
+    "learnMore": "Aprann plis",
     "comingSoon": "Byento disponib",
     "errorRefresh": "Nou regrèt enkonvenyans lan. Tanpri eseye rechaje paj la.",
     "goHome": "Ale lakay",
@@ -1109,6 +1110,7 @@
     "edit": "Modifye",
     "deleteConfirm": "Efase anotasyon sa a?",
     "delete": "Efase",
+    "notes": "Nòt yo",
     "saveError": "Pa ka sove anotasyon an. Tanpri eseye ankò.",
     "deleteError": "Pa ka efase anotasyon an. Tanpri eseye ankò."
   },
@@ -1131,7 +1133,7 @@
     "day": "Jou",
     "reflection": "Refleksyon",
     "currentDay": "Lekti Jodi a",
-    "memoryVerse": "Vèsè memwa semèn sa a",
+    "memoryVerse": "Vèsè pou memwa",
     "historicalContext": "Kontèks istorik",
     "todayLabel": "Jodi a",
     "reflectLabel": "Reflechi",
@@ -1191,7 +1193,8 @@
       "share": "Pataje akonplisman ou",
       "backToLibrary": "Retounen nan bibliyotèk",
       "dismiss": "Fèmen",
-      "shareText": "Mwen fini « {{title}} » — yon plan lekti {{days}} jou sou Words of Praise! 🙏"
+      "shareText": "Mwen fini « {{title}} » — yon plan lekti {{days}} jou sou Words of Praise! 🙏",
+      "appName": "Words of Praise"
     },
     "enrollError": "Pa ka kòmanse plan sa a. Tanpri eseye ankò.",
     "unenrollError": "Pa ka kite plan sa a. Tanpri eseye ankò."
@@ -1210,7 +1213,14 @@
     "unenroll": "Kite",
     "unenrollConfirm": "Kite \"{{title}}\"? Pwogrè ou ap pèdu.",
     "blessingsEarned": "+{{count}} Benediksyon",
-    "seasonalBannerSub": "Gen yon plan lekti disponib pou sezon sa a"
+    "seasonalBannerSub": "Gen yon plan lekti disponib pou sezon sa a",
+    "notFound": "Plan pa jwenn.",
+    "season": {
+      "advent": "Avent",
+      "lent": "Karèm",
+      "holy-week": "Semèn Sen",
+      "pentecost": "Pentekòt"
+    }
   },
   "graceDay": {
     "errors": {

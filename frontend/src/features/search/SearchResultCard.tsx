@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { useAuth } from '../../hooks/useAuth';
 import type { VerseSearchResult } from '../../hooks/useVerseSearch';
+import AnnotationIndicator from '../verse/AnnotationIndicator';
 import styles from './SearchResultCard.module.css';
 
 const BookIcon: React.FC = () => (
@@ -25,9 +28,12 @@ const CheckIcon: React.FC = () => (
 interface Props {
   result: VerseSearchResult;
   index: number;
+  onAnnotate?: (reference: string) => void;
 }
 
-export const SearchResultCard: React.FC<Props> = ({ result, index }) => {
+export const SearchResultCard: React.FC<Props> = ({ result, index, onAnnotate }) => {
+  const { t } = useTranslation();
+  const { user } = useAuth();
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -62,6 +68,17 @@ export const SearchResultCard: React.FC<Props> = ({ result, index }) => {
           </button>
         </div>
         <p className={styles.text}>{result.text}</p>
+        {/* Annotate link — below the verse text so the header stays uncluttered on mobile */}
+        {!!user && !!onAnnotate && (
+          <button
+            onClick={() => onAnnotate(result.reference)}
+            className={styles.annotateButton}
+            aria-label={t('annotation.notes', 'Notes')}
+          >
+            <AnnotationIndicator verseReference={result.reference} />
+            {t('annotation.notes', 'Notes')}
+          </button>
+        )}
       </div>
     </li>
   );
