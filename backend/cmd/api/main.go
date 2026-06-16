@@ -119,7 +119,6 @@ func main() {
 	googleOAuthConfig := config.GoogleOAuthConfig()
 
 	// 5. Initialize services
-	authService := services.NewAuthService(userRepo)
 	tokenService := services.NewTokenService(cfg)
 	emailValidationService := services.NewEmailValidationService()
 
@@ -230,7 +229,6 @@ func main() {
 	_ = validate // currently not used, but can be integrated into services or handlers later
 
 	// 6. Initialize handlers
-	_ = authService // Use services to avoid "declared and not used" errors
 	_ = verseService
 	_ = favoriteService
 	_ = tokenService

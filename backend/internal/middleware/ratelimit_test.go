@@ -13,11 +13,11 @@ func TestRateLimiter_AllowWithinLimitThenBlocks(t *testing.T) {
 	rl := &rateLimiter{max: 3, window: time.Minute}
 
 	for i := 1; i <= 3; i++ {
-		if !rl.allow("1.2.3.4") {
+		if allowed, _ := rl.allow("1.2.3.4"); !allowed {
 			t.Fatalf("request %d should be allowed (within max=3)", i)
 		}
 	}
-	if rl.allow("1.2.3.4") {
+	if allowed, _ := rl.allow("1.2.3.4"); allowed {
 		t.Fatal("4th request should be blocked once max is reached")
 	}
 }
@@ -25,13 +25,13 @@ func TestRateLimiter_AllowWithinLimitThenBlocks(t *testing.T) {
 func TestRateLimiter_KeysAreIndependent(t *testing.T) {
 	rl := &rateLimiter{max: 1, window: time.Minute}
 
-	if !rl.allow("1.1.1.1") {
+	if allowed, _ := rl.allow("1.1.1.1"); !allowed {
 		t.Fatal("first request for IP A should be allowed")
 	}
-	if rl.allow("1.1.1.1") {
+	if allowed, _ := rl.allow("1.1.1.1"); allowed {
 		t.Fatal("second request for IP A should be blocked")
 	}
-	if !rl.allow("2.2.2.2") {
+	if allowed, _ := rl.allow("2.2.2.2"); !allowed {
 		t.Fatal("IP B must have its own independent budget")
 	}
 }
@@ -39,15 +39,29 @@ func TestRateLimiter_KeysAreIndependent(t *testing.T) {
 func TestRateLimiter_WindowExpiryFreesBudget(t *testing.T) {
 	rl := &rateLimiter{max: 1, window: 30 * time.Millisecond}
 
-	if !rl.allow("9.9.9.9") {
+	if allowed, _ := rl.allow("9.9.9.9"); !allowed {
 		t.Fatal("first request should be allowed")
 	}
-	if rl.allow("9.9.9.9") {
+	if allowed, _ := rl.allow("9.9.9.9"); allowed {
 		t.Fatal("second request inside window should be blocked")
 	}
 	time.Sleep(40 * time.Millisecond)
-	if !rl.allow("9.9.9.9") {
+	if allowed, _ := rl.allow("9.9.9.9"); !allowed {
 		t.Fatal("request after the window elapses should be allowed again")
+	}
+}
+
+func TestRateLimiter_ReportBlockOncePerWindow(t *testing.T) {
+	rl := &rateLimiter{max: 1, window: time.Minute}
+
+	if _, report := rl.allow("7.7.7.7"); report {
+		t.Fatal("an allowed request must not trigger a report")
+	}
+	if allowed, report := rl.allow("7.7.7.7"); allowed || !report {
+		t.Fatalf("first block should report: allowed=%v report=%v", allowed, report)
+	}
+	if _, report := rl.allow("7.7.7.7"); report {
+		t.Fatal("subsequent blocks within the window must not report again")
 	}
 }
 
