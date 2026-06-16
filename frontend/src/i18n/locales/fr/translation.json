@@ -208,6 +208,7 @@
       "password": "Mot de passe",
       "rememberMe": "Se souvenir de moi pendant 30 jours",
       "forgotPassword": "Mot de passe oublié ?",
+      "forgotUsername": "Nom d'utilisateur oublié ?",
       "submit": "Se Connecter",
       "noAccount": "Vous n'avez pas de compte ?",
       "signUp": "S'inscrire",
@@ -258,6 +259,18 @@
       "backToLogin": "Retour à la connexion",
       "checkEmailTitle": "Vérifiez votre e-mail",
       "checkEmailBody": "Si un compte avec {{email}} existe, nous avons envoyé un lien de réinitialisation. Le lien expire dans 1 heure.",
+      "forgotUsernameInstead": "Vous avez oublié votre nom d'utilisateur ?",
+      "genericError": "Une erreur s'est produite. Veuillez réessayer."
+    },
+    "forgotUsername": {
+      "title": "Nom d'Utilisateur Oublié",
+      "subtitle": "Entrez votre e-mail et nous vous enverrons le nom d'utilisateur de ce compte.",
+      "emailLabel": "Adresse e-mail",
+      "submit": "Envoyer Mon Nom d'Utilisateur",
+      "backToLogin": "Retour à la connexion",
+      "checkEmailTitle": "Vérifiez votre e-mail",
+      "checkEmailBody": "Si un compte avec {{email}} existe, nous vous avons envoyé le nom d'utilisateur de ce compte.",
+      "forgotPasswordInstead": "Vous avez oublié votre mot de passe ?",
       "genericError": "Une erreur s'est produite. Veuillez réessayer."
     },
     "resetPassword": {

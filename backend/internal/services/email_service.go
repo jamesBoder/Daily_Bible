@@ -477,3 +477,26 @@ func (s *EmailService) SendPasswordResetEmail(toEmail, username, token string) e
 	})
 	return err
 }
+
+// SendUsernameReminderEmail emails the user the username tied to their account.
+// Sign-in uses the email address, so the username is only a community/display
+// handle the user may forget.
+func (s *EmailService) SendUsernameReminderEmail(toEmail, username string) error {
+	loginURL := fmt.Sprintf("%s/login", s.frontendURL)
+	html := fmt.Sprintf(`<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:24px;">
+  <h2 style="color:#1a56db;">Your Username — Words of Praise</h2>
+  <p>Hi there, you asked us to remind you of the username for this account. Here it is:</p>
+  <p style="font-size:22px;font-weight:bold;color:#1f2937;background:#f3f4f6;padding:14px 20px;border-radius:6px;text-align:center;margin:16px 0;">%s</p>
+  <p>Remember, you sign in with your <strong>email address</strong> — your username is your display name in the community.</p>
+  <a href="%s" style="display:inline-block;background:#1a56db;color:#fff;padding:12px 28px;text-decoration:none;border-radius:6px;font-weight:bold;margin:16px 0;">Go to Sign In</a>
+  <p style="color:#6b7280;font-size:14px;">If you didn't request this, you can safely ignore this email.</p>
+</div>`, username, loginURL)
+
+	_, err := s.client.Emails.Send(&resend.SendEmailRequest{
+		From:    s.fromEmail,
+		To:      []string{toEmail},
+		Subject: "Your username — Words of Praise",
+		Html:    html,
+	})
+	return err
+}

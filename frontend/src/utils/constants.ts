@@ -13,6 +13,7 @@ export const API_ENDPOINTS = {
   VERIFY_PENDING_EMAIL: '/api/auth/verify-pending-email',
   RESEND_VERIFICATION: '/api/auth/resend-verification',
   FORGOT_PASSWORD: '/api/auth/forgot-password',
+  FORGOT_USERNAME: '/api/auth/forgot-username',
   RESET_PASSWORD: '/api/auth/reset-password',
   PROFILE_RESEND_VERIFICATION: '/api/profile/resend-verification',
   
@@ -54,5 +55,6 @@ export const ROUTES = {
   VERIFY_EMAIL_PENDING: '/verify-email-pending',
   VERIFY_EMAIL: '/verify-email',
   FORGOT_PASSWORD: '/forgot-password',
+  FORGOT_USERNAME: '/forgot-username',
   RESET_PASSWORD: '/reset-password',
 };

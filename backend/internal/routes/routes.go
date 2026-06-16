@@ -1,6 +1,8 @@
 package routes
 
 import (
+	"time"
+
 	"dailybible/internal/handlers"
 	"dailybible/internal/middleware"
 	"dailybible/internal/services"
@@ -53,17 +55,23 @@ func SetupRoutes(
 		// auth routes
 		auth := api.Group("/auth")
 		{
-			auth.POST("/register", authHandler.Register)
-			auth.POST("/login", authHandler.Login)
+			// Rate limiters are per-IP, per-endpoint (each call builds an
+			// independent budget). Credential endpoints get a tighter window to
+			// blunt brute force; email-sending endpoints are throttled harder to
+			// prevent inbox bombing. All limits are generous enough for a real
+			// user retrying a few times.
+			auth.POST("/register", middleware.RateLimit(5, time.Minute), authHandler.Register)
+			auth.POST("/login", middleware.RateLimit(10, time.Minute), authHandler.Login)
 			auth.POST("/logout", authHandler.Logout)
 			// /me endpoint requires authentication
 			auth.GET("/me", middleware.AuthMiddleware(tokenService, subscriptionChecker), authHandler.GetMe)
 			// Email verification & password reset (public)
 			auth.POST("/verify-email", authHandler.VerifyEmail)
 			auth.POST("/verify-pending-email", authHandler.VerifyPendingEmail)
-			auth.POST("/resend-verification", authHandler.ResendVerification)
-			auth.POST("/forgot-password", authHandler.ForgotPassword)
-			auth.POST("/reset-password", authHandler.ResetPassword)
+			auth.POST("/resend-verification", middleware.RateLimit(5, 15*time.Minute), authHandler.ResendVerification)
+			auth.POST("/forgot-password", middleware.RateLimit(5, 15*time.Minute), authHandler.ForgotPassword)
+			auth.POST("/forgot-username", middleware.RateLimit(5, 15*time.Minute), authHandler.ForgotUsername)
+			auth.POST("/reset-password", middleware.RateLimit(10, time.Minute), authHandler.ResetPassword)
 			// Google OAuth routes
 			auth.GET("/google/login", oauthHandler.GoogleLogin)
 			auth.GET("/google/callback", oauthHandler.GoogleCallback)
