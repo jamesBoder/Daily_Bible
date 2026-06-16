@@ -208,6 +208,7 @@
       "password": "Password",
       "rememberMe": "Remember me for 30 days",
       "forgotPassword": "Forgot password?",
+      "forgotUsername": "Forgot username?",
       "submit": "Sign In",
       "noAccount": "Don't have an account?",
       "signUp": "Sign up",
@@ -258,6 +259,18 @@
       "backToLogin": "Back to login",
       "checkEmailTitle": "Check your email",
       "checkEmailBody": "If an account with {{email}} exists, we've sent a password reset link. The link expires in 1 hour.",
+      "forgotUsernameInstead": "Forgot your username instead?",
+      "genericError": "Something went wrong. Please try again."
+    },
+    "forgotUsername": {
+      "title": "Forgot Username",
+      "subtitle": "Enter your email and we'll send you the username for that account.",
+      "emailLabel": "Email address",
+      "submit": "Send My Username",
+      "backToLogin": "Back to login",
+      "checkEmailTitle": "Check your email",
+      "checkEmailBody": "If an account with {{email}} exists, we've sent you the username for that account.",
+      "forgotPasswordInstead": "Forgot your password instead?",
       "genericError": "Something went wrong. Please try again."
     },
     "resetPassword": {

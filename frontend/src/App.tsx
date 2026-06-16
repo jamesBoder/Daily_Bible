@@ -46,6 +46,9 @@ const VerifyEmail = lazy(() =>
 const ForgotPassword = lazy(() =>
   import("./features/auth/ForgotPassword").then((m) => ({ default: m.ForgotPassword }))
 );
+const ForgotUsername = lazy(() =>
+  import("./features/auth/ForgotUsername").then((m) => ({ default: m.ForgotUsername }))
+);
 const ResetPassword = lazy(() =>
   import("./features/auth/ResetPassword").then((m) => ({ default: m.ResetPassword }))
 );
@@ -167,6 +170,10 @@ const router = createBrowserRouter([
   {
     path: "/forgot-password",
     element: <PageSuspense><ForgotPassword /></PageSuspense>,
+  },
+  {
+    path: "/forgot-username",
+    element: <PageSuspense><ForgotUsername /></PageSuspense>,
   },
   {
     path: "/reset-password",

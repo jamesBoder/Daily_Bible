@@ -208,6 +208,7 @@
       "password": "Contraseña",
       "rememberMe": "Recordarme por 30 días",
       "forgotPassword": "¿Olvidaste tu contraseña?",
+      "forgotUsername": "¿Olvidaste tu nombre de usuario?",
       "submit": "Iniciar Sesión",
       "noAccount": "¿No tienes una cuenta?",
       "signUp": "Regístrate",
@@ -258,6 +259,18 @@
       "backToLogin": "Volver al inicio de sesión",
       "checkEmailTitle": "Revisa tu correo",
       "checkEmailBody": "Si existe una cuenta con {{email}}, te hemos enviado un enlace para restablecer tu contraseña. El enlace expira en 1 hora.",
+      "forgotUsernameInstead": "¿Olvidaste tu nombre de usuario?",
+      "genericError": "Algo salió mal. Por favor, intenta de nuevo."
+    },
+    "forgotUsername": {
+      "title": "Olvidé mi Nombre de Usuario",
+      "subtitle": "Ingresa tu correo y te enviaremos el nombre de usuario de esa cuenta.",
+      "emailLabel": "Correo electrónico",
+      "submit": "Enviar Mi Nombre de Usuario",
+      "backToLogin": "Volver al inicio de sesión",
+      "checkEmailTitle": "Revisa tu correo",
+      "checkEmailBody": "Si existe una cuenta con {{email}}, te hemos enviado el nombre de usuario de esa cuenta.",
+      "forgotPasswordInstead": "¿Olvidaste tu contraseña?",
       "genericError": "Algo salió mal. Por favor, intenta de nuevo."
     },
     "resetPassword": {

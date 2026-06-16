@@ -7,7 +7,7 @@ import { Button } from "../../components/common/Button";
 import apiClient from "../../services/api/api";
 import { API_ENDPOINTS } from "../../utils/constants";
 
-export const ForgotPassword: React.FC = () => {
+export const ForgotUsername: React.FC = () => {
   const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [isLoading, setIsLoading] = useState(false);
@@ -19,12 +19,12 @@ export const ForgotPassword: React.FC = () => {
     setError("");
     setIsLoading(true);
     try {
-      await apiClient.post(API_ENDPOINTS.FORGOT_PASSWORD, { email });
+      await apiClient.post(API_ENDPOINTS.FORGOT_USERNAME, { email });
       // Backend always returns 200 (prevents user enumeration)
       setSubmitted(true);
     } catch {
       // Only show error for network/server failures
-      setError(t('auth.forgotPassword.genericError', 'Something went wrong. Please try again.'));
+      setError(t('auth.forgotUsername.genericError', 'Something went wrong. Please try again.'));
     } finally {
       setIsLoading(false);
     }
@@ -38,16 +38,16 @@ export const ForgotPassword: React.FC = () => {
             <div className="text-center space-y-4">
               <div className="text-6xl">📬</div>
               <h2 className="text-2xl font-bold text-[var(--foreground)]">
-                {t('auth.forgotPassword.checkEmailTitle', 'Check your email')}
+                {t('auth.forgotUsername.checkEmailTitle', 'Check your email')}
               </h2>
               <p className="text-[var(--journal-text-muted)]">
-                {t('auth.forgotPassword.checkEmailBody', "If an account with {{email}} exists, we've sent a password reset link. The link expires in 1 hour.", { email })}
+                {t('auth.forgotUsername.checkEmailBody', "If an account with {{email}} exists, we've sent you the username for that account.", { email })}
               </p>
               <Link
                 to="/login"
                 className="block text-sm text-primary-600 dark:text-primary-400 hover:underline"
               >
-                {t('auth.forgotPassword.backToLogin', 'Back to login')}
+                {t('auth.forgotUsername.backToLogin', 'Back to login')}
               </Link>
             </div>
           </Card>
@@ -61,10 +61,10 @@ export const ForgotPassword: React.FC = () => {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <h2 className="text-3xl font-bold text-[var(--foreground)]">
-            {t('auth.forgotPassword.title', 'Forgot Password')}
+            {t('auth.forgotUsername.title', 'Forgot Username')}
           </h2>
           <p className="mt-2 text-[var(--journal-text-muted)]">
-            {t('auth.forgotPassword.subtitle', "Enter your email and we'll send you a reset link.")}
+            {t('auth.forgotUsername.subtitle', "Enter your email and we'll send you the username for that account.")}
           </p>
         </div>
         <Card>
@@ -76,7 +76,7 @@ export const ForgotPassword: React.FC = () => {
             )}
 
             <Input
-              label={t('auth.forgotPassword.emailLabel', 'Email address')}
+              label={t('auth.forgotUsername.emailLabel', 'Email address')}
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -91,22 +91,22 @@ export const ForgotPassword: React.FC = () => {
               isLoading={isLoading}
               className="w-full"
             >
-              {t('auth.forgotPassword.submit', 'Send Reset Link')}
+              {t('auth.forgotUsername.submit', 'Send My Username')}
             </Button>
           </form>
 
           <div className="mt-6 text-center space-y-2">
             <Link
-              to="/forgot-username"
+              to="/forgot-password"
               className="block text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
-              {t('auth.forgotPassword.forgotUsernameInstead', 'Forgot your username instead?')}
+              {t('auth.forgotUsername.forgotPasswordInstead', 'Forgot your password instead?')}
             </Link>
             <Link
               to="/login"
               className="block text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
-              {t('auth.forgotPassword.backToLogin', 'Back to login')}
+              {t('auth.forgotUsername.backToLogin', 'Back to login')}
             </Link>
           </div>
         </Card>

@@ -421,6 +421,48 @@ func main() {
 	// init gin router
 	router := gin.New()
 
+	// Resolve the client IP from X-Real-IP, not X-Forwarded-For. Our nginx sets
+	// `X-Real-IP $remote_addr` (a single value it OVERWRITES on every request),
+	// whereas it builds X-Forwarded-For with `$proxy_add_x_forwarded_for`, which
+	// APPENDS the real IP after any client-supplied value. gin returns the
+	// left-most X-Forwarded-For entry once the peer is trusted, so a client can
+	// pin a spoofed IP there and dodge the rate limiter. X-Real-IP has no such
+	// hole because the client cannot influence it past nginx. Combined with the
+	// trusted-proxy config below this makes c.ClientIP() (used by the auth rate
+	// limiter and access logger) spoof-resistant for traffic arriving via nginx.
+	router.RemoteIPHeaders = []string{"X-Real-IP"}
+
+	// Trusted proxy configuration — controls how c.ClientIP() resolves the real
+	// client IP, which the auth rate limiter and access logger depend on. gin
+	// trusts ALL proxies by default and returns the left-most X-Forwarded-For
+	// value, which a client can spoof to dodge the rate limiter.
+	//
+	// Set TRUSTED_PROXIES (comma-separated CIDRs/IPs) to the proxy layer in
+	// front of this service so gin walks past it to the true client:
+	//   - Local Docker: the nginx container subnet, e.g. "172.16.0.0/12"
+	//   - Fly.io: front the backend over the private network (.internal /
+	//     .flycast) and trust "fdaa::/16", or trust the Fly edge ranges.
+	//
+	// SAFETY: if TRUSTED_PROXIES is unset we keep gin's permissive default and
+	// log a warning, rather than guessing a CIDR. A wrong restrictive value
+	// would collapse every real client onto a single proxy IP — one shared
+	// bucket — and rate-limit the entire user base at once.
+	if tp := os.Getenv("TRUSTED_PROXIES"); tp != "" {
+		var proxies []string
+		for _, p := range strings.Split(tp, ",") {
+			if p = strings.TrimSpace(p); p != "" {
+				proxies = append(proxies, p)
+			}
+		}
+		if err := router.SetTrustedProxies(proxies); err != nil {
+			log.Printf("WARNING: invalid TRUSTED_PROXIES %q: %v — keeping gin default (client IP is spoofable)", tp, err)
+		} else {
+			log.Printf("Trusted proxies set to %v — client IP resolved from X-Forwarded-For behind these", proxies)
+		}
+	} else {
+		log.Println("WARNING: TRUSTED_PROXIES not set — client IP is taken from a spoofable X-Forwarded-For header; auth rate limiting is best-effort. Set TRUSTED_PROXIES to the proxy CIDR to harden.")
+	}
+
 	// Sentry must be the first middleware so it can capture panics from all
 	// subsequent middleware and handlers. Repanic: true re-panics after capture
 	// so gin.Recovery() still handles the HTTP response.
