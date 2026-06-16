@@ -421,16 +421,21 @@ func main() {
 	// init gin router
 	router := gin.New()
 
-	// Resolve the client IP from X-Real-IP, not X-Forwarded-For. Our nginx sets
-	// `X-Real-IP $remote_addr` (a single value it OVERWRITES on every request),
-	// whereas it builds X-Forwarded-For with `$proxy_add_x_forwarded_for`, which
-	// APPENDS the real IP after any client-supplied value. gin returns the
-	// left-most X-Forwarded-For entry once the peer is trusted, so a client can
-	// pin a spoofed IP there and dodge the rate limiter. X-Real-IP has no such
-	// hole because the client cannot influence it past nginx. Combined with the
-	// trusted-proxy config below this makes c.ClientIP() (used by the auth rate
-	// limiter and access logger) spoof-resistant for traffic arriving via nginx.
-	router.RemoteIPHeaders = []string{"X-Real-IP"}
+	// Resolve the client IP for the auth rate limiter and access logger. In
+	// production the React app calls the backend directly (browser → Fly edge →
+	// backend); nginx is NOT in the auth path. The trustworthy source there is
+	// Fly's own `Fly-Client-IP` header: the Fly proxy sets it to the real client
+	// and replaces any client-supplied value, so it cannot be spoofed. X-Real-IP
+	// is the local-Docker fallback, where nginx sets it to the real $remote_addr.
+	// We deliberately avoid X-Forwarded-For: nginx builds it with
+	// $proxy_add_x_forwarded_for (append), leaving a client-controlled value in
+	// the left-most position that gin would return.
+	//
+	// IMPORTANT: leave TRUSTED_PROXIES unset on Fly. The backend's TCP peer is
+	// always the Fly proxy (whether traffic comes via the app or hits the
+	// hostname directly), so any restrictive CIDR would make gin ignore
+	// Fly-Client-IP and key every user on the proxy IP — one shared bucket.
+	router.RemoteIPHeaders = []string{"Fly-Client-IP", "X-Real-IP"}
 
 	// Trusted proxy configuration — controls how c.ClientIP() resolves the real
 	// client IP, which the auth rate limiter and access logger depend on. gin
