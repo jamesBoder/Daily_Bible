@@ -526,6 +526,89 @@
       "milestone_locked": "Vin manm pou pataje etap yo ak kominote a."
     }
   },
+  "privacy": {
+    "back": "Tounen",
+    "title": "Règleman sou Konfidansyalite",
+    "lastUpdated": "Dènye mizajou: jen 2026",
+    "intro": "Words of Praise (\"nou\") se yon aplikasyon pou li Bib la chak jou. Règleman sa a eksplike ki done nou kolekte, poukisa nou kolekte yo, ak kijan ou ka kontwole yo. Nou kenbe l senp — san langaj legal konplike.",
+    "collect": {
+      "heading": "Sa nou kolekte",
+      "accountLabel": "Done kont lan",
+      "account": "lè ou enskri ak imèl: adrès imèl ou ak yon modpas ki kode. Lè ou enskri ak Google: non ou ak imèl ou ki soti nan Google. Nou pa janm wè modpas Google ou.",
+      "contentLabel": "Kontni ou kreye",
+      "content": "antre jounal, vèsè pi renmen, piblikasyon sou tablo kominote a, demann lapriyè, ak anòtasyon vèsè. Kontni sa a estoke sou sèvè nou yo epi se sèlman ou ki ka wè l (jounal, pi renmen, anòtasyon) oswa tout itilizatè (piblikasyon kominote, mi lapriyè).",
+      "activityLabel": "Aktivite ak pwogrè",
+      "activity": "pou fè fonksyon aplikasyon an mache epi montre pwogrè ou, nou estoke bagay tankou seri lekti ou (streak), balans Benediksyon ou ak etap enpòtan yo, pwogrè plan lekti yo, rezilta kaztèt Manna a, ak disiplin chak jou ou konplete. Done sa yo lye ak kont ou epi se sèlman ou ki ka wè yo.",
+      "usageLabel": "Done itilizasyon",
+      "usage": "paj ou gade, entèraksyon ak fonksyon yo, ak done sesyon yo kolekte atravè analitik PostHog. Sa ede nou konprann kijan moun itilize aplikasyon an pou nou ka amelyore l. Nou idantifye itilizatè ki konekte yo ak yon ID nimerik, pa janm pa non oswa imèl.",
+      "errorsLabel": "Rapò erè",
+      "errors": "si aplikasyon an kraze oswa bay yon erè, Sentry kaptire otomatikman yon tras pil la, vèsyon navigatè/sistèm operasyon ou, ak paj ou te ye a. Pa gen okenn enfòmasyon idantifyab pèsonèl ki nan rapò erè yo.",
+      "emailLabel": "Adrès imèl",
+      "email": "si ou abòne nan bilten vèsè chak jou a depi paj akèy la, nou estoke imèl ou pou voye vèsè chak jou a ba ou. Ou ka dezabòne nenpòt lè atravè lyen ki nan chak imèl.",
+      "paymentLabel": "Done peman",
+      "payment": "si ou achte yon lisans Premium pou tout lavi, se Stripe ki trete peman an nèt. Nou pa janm wè ni estoke nimewo kat ou. Nou estoke sèlman ID kliyan Stripe ou ak estati abònman ou.",
+      "pushLabel": "Abònman notifikasyon push",
+      "push": "si ou chwazi pou resevwa notifikasyon push, nou estoke jeton abònman push navigatè ou pou voye rapèl vèsè chak jou. Nou pa itilize sa pou maketing.",
+      "securityLabel": "Done teknik ak sekirite",
+      "security": "sèvè nou yo trete adrès IP ou pou aplike limit (rate limits) epi pwoteje kont abi (pa egzanp, bloke tantativ koneksyon ak fòs brital). Nou itilize adrès IP yo yon fason tanporè pou sekirite epi yo ka parèt nan jounal sèvè ki la pou yon ti tan; nou pa itilize yo pou kreye yon pwofil sou ou ni nou pa vann yo."
+    },
+    "use": {
+      "heading": "Kijan nou itilize l",
+      "items": [
+        "Ba ou vèsè chak jou a, plan lekti yo, ak fonksyon aplikasyon an",
+        "Voye imèl vèsè chak jou a bay abonè bilten yo",
+        "Voye imèl rapèl seri lekti (si ou chwazi rapèl yo)",
+        "Konprann kijan moun itilize fonksyon yo pou nou ka amelyore yo",
+        "Dyagnostike pwoblèm epi korije bug yo",
+        "Trete acha Premium atravè Stripe",
+        "Pwoteje kont yo epi anpeche abi (limit ak sekirite)"
+      ],
+      "footer": "Nou pa vann done ou. Nou pa itilize done ou pou piblisite."
+    },
+    "thirdParty": {
+      "heading": "Sèvis tyès pati",
+      "intro": "Words of Praise itilize sèvis tyès pati sa yo. Chak gen pwòp règleman konfidansyalite pa l:",
+      "posthog": "analitik pwodwi",
+      "sentry": "siveyans erè",
+      "stripe": "tretman peman",
+      "google": "koneksyon opsyonèl",
+      "resend": "imèl tranzaksyonèl ak bilten",
+      "fly": "ebèjman ak enfrastrikti"
+    },
+    "retention": {
+      "heading": "Konsèvasyon done",
+      "p1": "Nou kenbe done kont ou pandan tout tan kont ou egziste. Si ou efase kont ou, done pèsonèl ou, antre jounal, pi renmen, ak anòtasyon ou yo efase nèt nan 30 jou. Piblikasyon kominote ak antre mi lapriyè yo ka rete yon fason anonim.",
+      "p2": "Abonè bilten yo ki dezabòne wè imèl yo retire imedyatman."
+    },
+    "rights": {
+      "heading": "Dwa ou",
+      "intro": "Ou kapab:",
+      "items": [
+        "Aksede oswa ekspòte done ou — ekri nou epi n ap voye yo ba ou nan 30 jou",
+        "Efase kont ou ak tout done ki asosye depi paj Paramèt yo",
+        "Dezabòne nan imèl yo nenpòt lè atravè lyen dezabònman an",
+        "Dezaktive notifikasyon push nan paramèt navigatè ou nenpòt lè"
+      ],
+      "footer": "Si ou nan Inyon Ewopeyen an oswa nan Kalifòni, ou gen dwa anplis dapre RGPD ak CCPA respektivman. Kontakte nou pou egzèse yo."
+    },
+    "cookies": {
+      "heading": "Cookies ak depo lokal",
+      "p1": "Nou pa itilize cookies piblisite. Nou itilize depo lokal navigatè a pou sove preferans ou (tèm, lang, gwosè lèt, paramèt son) lokalman sou aparèy ou. Done sa yo pa janm kite aparèy ou.",
+      "p2": "PostHog mete yon cookie premye pati pou distenge sesyon yo. Nou pa itilize okenn cookie swivi ant sit yo."
+    },
+    "children": {
+      "heading": "Timoun",
+      "body": "Words of Praise pa fèt pou timoun ki poko gen 13 an. Nou pa kolekte done timoun ki poko gen 13 an espre. Si ou kwè yon timoun ban nou done pèsonèl, kontakte nou epi n ap efase yo."
+    },
+    "changes": {
+      "heading": "Chanjman nan règleman sa a",
+      "body": "Si nou fè chanjman enpòtan, n ap mete dat \"Dènye mizajou\" pi wo a ajou. Lè ou kontinye sèvi ak aplikasyon an apre chanjman yo antre an vigè, sa vle di ou aksepte règleman ki mete ajou a."
+    },
+    "contact": {
+      "heading": "Kontak",
+      "text": "Kesyon? Ekri nou nan"
+    }
+  },
   "about": {
     "title": "Konsènan Pawòl Lwanj",
     "dedication": "Dedye a Clairemena Jean-Pierre",
@@ -558,6 +641,8 @@
     "feature11Desc": "Chèche nan tout Ekriti pa mo kle, referans oswa liv. Anrejistre rechèch prefere ou yo epi chèche nan pwòp refleksyon ou yo.",
     "feature12Title": "Anòtasyon Vèsè",
     "feature12Desc": "Souliye yon fraz nan nenpòt vèsè epi mete yon nòt pèsonèl. Refleksyon ou yo, anchore nan Pawòl la.",
+    "feature13Title": "Disiplin Chak Jou",
+    "feature13Desc": "Yon seri ti objektif chak jou k ap chanje — reflechi, pataje, ekri nan jounal ou, ak plis ankò. Konplete yo pou w genyen Benediksyon epi bati yon rit fidèl.",
     "ctaTitle": "Kòmanse Vwayaj Ou",
     "ctaDesc": "Kreye yon kont gratis pou anrejistre vèsè prefere ou yo, kòmanse seri ou, ekri refleksyon ak rejwenn kominote a. Enskripsyon pran mwens pase yon minit.",
     "createAccount": "Kreye Kont Gratis",

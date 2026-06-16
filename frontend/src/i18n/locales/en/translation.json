@@ -526,6 +526,89 @@
       "milestone_locked": "Upgrade to share milestones with the community."
     }
   },
+  "privacy": {
+    "back": "Back",
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated: June 2026",
+    "intro": "Words of Praise (\"we\", \"us\") is a daily Bible reading app. This policy explains what data we collect, why we collect it, and how you can control it. We keep it plain — no legalese.",
+    "collect": {
+      "heading": "What we collect",
+      "accountLabel": "Account data",
+      "account": "when you sign up with email: your email address and a hashed password. When you sign up with Google: your name and email from Google. We never see your Google password.",
+      "contentLabel": "Content you create",
+      "content": "journal entries, verse favorites, community board posts, prayer requests, and verse annotations. This content is stored on our servers and is only visible to you (journals, favorites, annotations) or to all users (community posts, prayer wall).",
+      "activityLabel": "Activity & progress",
+      "activity": "to power the app's features and show your progress, we store things like your reading streak, Blessings balance and milestones, reading-plan progress, Manna puzzle results, and daily discipline completions. This data is tied to your account and is only visible to you.",
+      "usageLabel": "Usage data",
+      "usage": "page views, feature interactions, and session data collected via PostHog analytics. This helps us understand how the app is used so we can improve it. We identify logged-in users by a numeric ID, never by name or email.",
+      "errorsLabel": "Error reports",
+      "errors": "if the app crashes or throws an error, Sentry automatically captures a stack trace, your browser/OS version, and the page you were on. No personally identifiable information is included in error reports.",
+      "emailLabel": "Email address",
+      "email": "if you subscribe to the daily verse newsletter from the landing page, we store your email to send you the daily verse. You can unsubscribe at any time via the link in every email.",
+      "paymentLabel": "Payment data",
+      "payment": "if you purchase a Premium lifetime license, payment is processed entirely by Stripe. We never see or store your card number. We store only your Stripe customer ID and subscription status.",
+      "pushLabel": "Push notification subscription",
+      "push": "if you opt in to push notifications, we store your browser's push subscription token to deliver daily verse reminders. We do not use this for marketing.",
+      "securityLabel": "Technical & security data",
+      "security": "our servers process your IP address to apply rate limits and protect against abuse (for example, blocking brute-force login attempts). IP addresses are used transiently for security and may appear in short-lived server logs; we do not use them to build a profile of you or sell them."
+    },
+    "use": {
+      "heading": "How we use it",
+      "items": [
+        "Deliver the daily verse, reading plans, and app features to you",
+        "Send the daily verse email to newsletter subscribers",
+        "Send streak-break reminder emails (if you opt in to reminders)",
+        "Understand how features are used so we can improve them",
+        "Diagnose crashes and fix bugs",
+        "Process Premium purchases via Stripe",
+        "Protect accounts and prevent abuse (rate limiting and security)"
+      ],
+      "footer": "We do not sell your data. We do not use your data for advertising."
+    },
+    "thirdParty": {
+      "heading": "Third-party services",
+      "intro": "Words of Praise uses the following third-party services. Each has its own privacy policy:",
+      "posthog": "product analytics",
+      "sentry": "error monitoring",
+      "stripe": "payment processing",
+      "google": "optional sign-in",
+      "resend": "transactional and newsletter email",
+      "fly": "hosting and infrastructure"
+    },
+    "retention": {
+      "heading": "Data retention",
+      "p1": "Your account data is kept for as long as your account exists. If you delete your account, your personal data, journal entries, favorites, and annotations are permanently deleted within 30 days. Community posts and prayer wall entries may remain anonymised.",
+      "p2": "Newsletter subscribers who unsubscribe have their email removed immediately."
+    },
+    "rights": {
+      "heading": "Your rights",
+      "intro": "You can:",
+      "items": [
+        "Access or export your data — email us and we'll send it within 30 days",
+        "Delete your account and all associated data from the Settings page",
+        "Unsubscribe from emails at any time via the unsubscribe link",
+        "Opt out of push notifications in your browser settings at any time"
+      ],
+      "footer": "If you are in the EU or California, you have additional rights under GDPR and CCPA respectively. Contact us to exercise them."
+    },
+    "cookies": {
+      "heading": "Cookies & local storage",
+      "p1": "We do not use advertising cookies. We use browser local storage to save your preferences (theme, language, font size, sound settings) locally on your device. This data never leaves your device.",
+      "p2": "PostHog sets a first-party cookie to distinguish sessions. No cross-site tracking cookies are used."
+    },
+    "children": {
+      "heading": "Children",
+      "body": "Words of Praise is not directed at children under 13. We do not knowingly collect data from children under 13. If you believe a child has provided us with personal data, contact us and we will delete it."
+    },
+    "changes": {
+      "heading": "Changes to this policy",
+      "body": "If we make material changes, we will update the \"Last updated\" date above. Continued use of the app after changes take effect constitutes acceptance of the updated policy."
+    },
+    "contact": {
+      "heading": "Contact",
+      "text": "Questions? Email us at"
+    }
+  },
   "about": {
     "title": "About Words of Praise",
     "dedication": "Dedicated to Clairemena Jean-Pierre",
@@ -558,6 +641,8 @@
     "feature11Desc": "Search all of Scripture by keyword, reference, or book. Save your favorite searches and search within your own reflections.",
     "feature12Title": "Verse Annotations",
     "feature12Desc": "Highlight a phrase from any verse and attach a personal note. Your insights, anchored to the Word.",
+    "feature13Title": "Daily Disciplines",
+    "feature13Desc": "A rotating set of small daily goals — reflect, share, journal, and more. Complete them to earn Blessings and build a faithful rhythm.",
     "ctaTitle": "Begin Your Journey",
     "ctaDesc": "Create a free account to save your favorite verses, start your streak, write reflections, and join the community. Sign up takes less than a minute.",
     "createAccount": "Create Free Account",
