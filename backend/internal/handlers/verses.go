@@ -216,6 +216,7 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	}()
 
 	var blessingsCredited int
+	var disciplineCredited int
 	var cachedSettings *models.UserSettings // reused by resolveVersion to avoid a second DB call
 	if userID, authenticated := c.Get("userID"); authenticated {
 		// Get user settings for timezone
@@ -294,11 +295,21 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 				}()
 			}
 
-			// Daily Disciplines: credit read_verse on first daily view.
-			if h.disciplineService != nil {
-				if _, dcErr := h.disciplineService.TryComplete(userID.(uint), "read_verse", c.GetBool("isPremium")); dcErr != nil {
-					log.Printf("discipline TryComplete read_verse failed user %d: %v", userID, dcErr)
-				}
+		}
+
+		// Daily Disciplines: complete read_verse on ANY authenticated view of today's
+		// verse — deliberately NOT gated on wasNew. RecordDailyEngagement's "first
+		// engagement of the day" is keyed to the user's timezone and is routinely
+		// consumed by the authenticated lang=en prefetch in index.html, another tab,
+		// or a prior session — which previously left read_verse uncompleted whenever
+		// the user's real page view wasn't the first fetch (e.g. non-English users).
+		// TryComplete is idempotent (OnConflict DoNothing) and read_verse is in every
+		// day's UTC-10 rotation, so this credits exactly once per day on the real view.
+		if h.disciplineService != nil {
+			if credited, dcErr := h.disciplineService.TryComplete(userID.(uint), "read_verse", c.GetBool("isPremium")); dcErr != nil {
+				log.Printf("discipline TryComplete read_verse failed user %d: %v", userID, dcErr)
+			} else {
+				disciplineCredited = credited
 			}
 		}
 	}
@@ -372,6 +383,12 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	// Add blessings_credited to response if any were credited
 	if blessingsCredited > 0 {
 		response["blessings_credited"] = blessingsCredited
+	}
+
+	// Signal a freshly-completed read_verse discipline so the frontend can refresh
+	// the Daily Disciplines card immediately (mirrors the share/favorite handlers).
+	if disciplineCredited > 0 {
+		response["discipline_completed"] = gin.H{"key": "read_verse", "blessings_credited": disciplineCredited}
 	}
 
 	c.JSON(http.StatusOK, response)
