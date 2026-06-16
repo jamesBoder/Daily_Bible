@@ -21,6 +21,7 @@ export const AboutContent: React.FC = () => {
     { emoji: '🙏', titleKey: 'about.feature10Title', descKey: 'about.feature10Desc' },
     { emoji: '🔍', titleKey: 'about.feature11Title', descKey: 'about.feature11Desc' },
     { emoji: '📝', titleKey: 'about.feature12Title', descKey: 'about.feature12Desc' },
+    { emoji: '✅', titleKey: 'about.feature13Title', descKey: 'about.feature13Desc' },
   ];
 
   return (

@@ -1,90 +1,89 @@
-import React, { useState, useEffect, useCallback, useRef } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { Star } from '@phosphor-icons/react';
 
-interface BlessingsToastItem {
+interface BlessingsBurstItem {
   id: string;
   amount: number;
   reason: string;
   timestamp: number;
 }
 
-interface BlessingsToastProps {
-  // This component will be used by other components to show blessing notifications
-}
+// Global queue management — lets any component fire a burst without prop drilling.
+let burstQueue: BlessingsBurstItem[] = [];
+let addBurstCallback: ((burst: BlessingsBurstItem) => void) | null = null;
 
-// Global toast queue management
-let toastQueue: BlessingsToastItem[] = [];
-let addToastCallback: ((toast: BlessingsToastItem) => void) | null = null;
-
-// Export function to add toasts from anywhere in the app
+// Export function to trigger a blessings burst from anywhere in the app.
 export const showBlessingsToast = (amount: number, reason: string) => {
-  const newToast: BlessingsToastItem = {
+  if (!amount || amount <= 0) return;
+
+  const newBurst: BlessingsBurstItem = {
     id: `${Date.now()}-${Math.random()}`,
     amount,
     reason,
     timestamp: Date.now(),
   };
 
-  // Check for duplicate within 5 seconds
-  const isDuplicate = toastQueue.some(
-    (toast) =>
-      toast.reason === reason &&
-      toast.amount === amount &&
-      Date.now() - toast.timestamp < 5000
+  // De-dupe identical bursts fired within 5s (e.g. double-tap / re-render).
+  const isDuplicate = burstQueue.some(
+    (b) => b.reason === reason && b.amount === amount && Date.now() - b.timestamp < 5000
   );
-
   if (isDuplicate) return;
 
-  // Cap queue at 3 items
-  if (toastQueue.length >= 3) {
-    toastQueue.shift();
+  // Cap concurrent bursts so the center of the screen never floods.
+  if (burstQueue.length >= 3) {
+    burstQueue.shift();
   }
+  burstQueue.push(newBurst);
 
-  toastQueue.push(newToast);
+  if (navigator.vibrate) navigator.vibrate(30);
 
-  if (addToastCallback) {
-    addToastCallback(newToast);
+  if (addBurstCallback) {
+    addBurstCallback(newBurst);
   }
 };
 
-const EXIT_DURATION = 260; // ms — matches animate-slide-out-right
+// Total visible lifetime — must outlast the CSS blessingBurstIn animation (2.4s).
+const BURST_LIFETIME = 2500;
 
-const BlessingsToast: React.FC<BlessingsToastProps> = () => {
+// Sparkle particles radiating from the icon. Pre-computed so they don't shift
+// between renders. Each has a drift vector and a stagger delay.
+const SPARKLES = [
+  { x: -34, y: -28, delay: 0 },
+  { x: 36, y: -22, delay: 0.08 },
+  { x: -28, y: 26, delay: 0.16 },
+  { x: 30, y: 30, delay: 0.12 },
+  { x: 0, y: -40, delay: 0.04 },
+  { x: 44, y: 6, delay: 0.2 },
+  { x: -46, y: 2, delay: 0.18 },
+];
+
+const BlessingsToast: React.FC = () => {
   const { t } = useTranslation();
-  const [toasts, setToasts] = useState<BlessingsToastItem[]>([]);
-  const [exitingIds, setExitingIds] = useState<Set<string>>(new Set());
-  const exitTimers = useRef<Map<string, ReturnType<typeof setTimeout>>>(new Map());
+  const [bursts, setBursts] = useState<BlessingsBurstItem[]>([]);
 
-  const removeToast = useCallback((id: string) => {
-    // Start exit animation
-    setExitingIds((prev) => new Set(prev).add(id));
-    // Remove from DOM after animation completes
-    const timer = setTimeout(() => {
-      setToasts((prev) => prev.filter((t) => t.id !== id));
-      setExitingIds((prev) => { const s = new Set(prev); s.delete(id); return s; });
-      toastQueue = toastQueue.filter((t) => t.id !== id);
-      exitTimers.current.delete(id);
-    }, EXIT_DURATION);
-    exitTimers.current.set(id, timer);
+  const removeBurst = useCallback((id: string) => {
+    setBursts((prev) => prev.filter((b) => b.id !== id));
+    burstQueue = burstQueue.filter((b) => b.id !== id);
   }, []);
 
   useEffect(() => {
-    const timers = exitTimers.current;
-    // Register callback for adding toasts
-    addToastCallback = (toast: BlessingsToastItem) => {
-      setToasts((prev) => [...prev, toast]);
+    const timers = new Set<ReturnType<typeof setTimeout>>();
 
-      // Auto-remove after 4 seconds
-      setTimeout(() => {
-        removeToast(toast.id);
-      }, 4000);
+    addBurstCallback = (burst: BlessingsBurstItem) => {
+      setBursts((prev) => [...prev, burst]);
+      const timer = setTimeout(() => {
+        removeBurst(burst.id);
+        timers.delete(timer);
+      }, BURST_LIFETIME);
+      timers.add(timer);
     };
 
     return () => {
-      addToastCallback = null;
-      timers.forEach((t) => clearTimeout(t));
+      addBurstCallback = null;
+      timers.forEach((timer) => clearTimeout(timer));
     };
-  }, [removeToast]);
+  }, [removeBurst]);
 
   const getReasonText = (reason: string) => {
     switch (reason) {
@@ -106,73 +105,76 @@ const BlessingsToast: React.FC<BlessingsToastProps> = () => {
         return t('blessings.earned.manna_played', 'Manna puzzle played');
       case 'manna_streak_bonus':
         return t('blessings.earned.manna_streak_bonus', 'Manna streak bonus');
+      case 'discipline_complete':
+        return t('blessings.earned.discipline_complete', 'Discipline completed');
       default:
         return t('blessings.earned.generic', 'Blessings earned');
     }
   };
 
-  if (toasts.length === 0) return null;
+  if (bursts.length === 0) return null;
 
   return (
     <div
-      className="fixed bottom-20 right-4 z-50 space-y-2 sm:bottom-4"
+      className="pointer-events-none fixed inset-0 z-[60] flex flex-col items-center
+                 justify-center gap-3 px-4"
       role="status"
       aria-live="polite"
+      aria-atomic="true"
       aria-label={t('blessings.label', 'Blessings')}
     >
-      {toasts.map((toast) => (
+      {bursts.map((burst) => (
         <div
-          key={toast.id}
-          className={[
-            exitingIds.has(toast.id) ? 'animate-slide-out-right' : 'animate-slide-in-right',
-            'bg-gradient-to-r from-yellow-50 to-amber-50',
-            'dark:from-yellow-900/20 dark:to-amber-900/20',
-            'border border-yellow-300 dark:border-yellow-700',
-            'rounded-lg shadow-lg p-4 flex items-center space-x-3',
-            'hover:scale-105 transition-transform duration-150',
-          ].join(' ')}
+          key={burst.id}
+          className="animate-blessing-burst flex flex-col items-center will-change-transform"
         >
-          {/* Blessing icon */}
-          <div className="flex-shrink-0">
-            <svg
-              className="w-6 h-6 text-yellow-600 dark:text-yellow-400"
-              fill="currentColor"
-              viewBox="0 0 20 20"
+          {/* Icon + amount card with radiating sparkles */}
+          <div className="relative flex items-center justify-center">
+            {SPARKLES.map((s, i) => (
+              <span
+                key={i}
+                aria-hidden="true"
+                className="animate-blessing-sparkle absolute h-1.5 w-1.5 rounded-full
+                           bg-amber-300 shadow-[0_0_6px_rgba(251,191,36,0.9)]"
+                style={
+                  {
+                    '--spark-x': `${s.x}px`,
+                    '--spark-y': `${s.y}px`,
+                    animationDelay: `${s.delay}s`,
+                  } as React.CSSProperties
+                }
+              />
+            ))}
+
+            <div
+              className="flex items-center gap-2.5 rounded-2xl px-6 py-3.5
+                         bg-gradient-to-br from-amber-300 to-yellow-500
+                         shadow-[0_10px_44px_rgba(251,191,36,0.55)]
+                         ring-1 ring-white/50"
             >
-              <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-              <path
-                fillRule="evenodd"
-                d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"
-                clipRule="evenodd"
+              <Star
+                size={34}
+                weight="fill"
+                className="animate-blessing-glow text-white drop-shadow"
               />
-            </svg>
+              <span className="text-4xl font-extrabold tabular-nums text-white drop-shadow-sm">
+                +{burst.amount}
+              </span>
+            </div>
           </div>
 
-          {/* Content */}
-          <div className="flex-1">
-            <p className="text-sm font-medium text-[var(--foreground)]">
-              +{toast.amount} {t('blessings.label', 'Blessings')}
-            </p>
-            <p className="text-xs text-[var(--journal-text-muted)]">
-              {getReasonText(toast.reason)}
-            </p>
-          </div>
-
-          {/* Close button */}
-          <button
-            onClick={() => removeToast(toast.id)}
-            className="flex-shrink-0 text-[var(--journal-text-muted)] hover:opacity-100
-                       transition-colors"
-            aria-label="Dismiss"
+          {/* Label pill — translucent backdrop reads cleanly on any theme/verse art */}
+          <div
+            className="mt-2.5 flex flex-col items-center gap-0.5 rounded-full
+                       bg-black/55 px-4 py-1.5 backdrop-blur-sm"
           >
-            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-              <path
-                fillRule="evenodd"
-                d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
-                clipRule="evenodd"
-              />
-            </svg>
-          </button>
+            <span className="text-sm font-bold uppercase tracking-wide text-amber-200">
+              {t('blessings.label', 'Blessings')}
+            </span>
+            <span className="text-xs font-medium text-white/85">
+              {getReasonText(burst.reason)}
+            </span>
+          </div>
         </div>
       ))}
     </div>

@@ -13,7 +13,7 @@
 ## ✨ Features
 
 - 📖 **Daily Bible Verse** — Deterministic daily verse, updates at midnight, accessible without an account
-- 🔐 **Authentication** — Email/password with verification flow, Google OAuth 2.0, JWT sessions
+- 🔐 **Authentication** — Email/password with verification flow, Google OAuth 2.0, JWT sessions; password & username recovery by email, rate-limited against brute force
 - 👤 **Guest Mode** — Full browse experience without an account; session persists in `sessionStorage`
 - ⭐ **Favorites** — One-click save/unsave with optimistic UI updates
 - 💬 **Personal Reflections** — Private reflections per verse (up to 1,000 characters)
@@ -67,6 +67,12 @@ POSTGRES_DB=your_db_name
 
 # Auth
 JWT_SECRET=your_jwt_secret_min_32_chars
+
+# Trusted proxy CIDR for real client-IP detection (auth rate limiter).
+# Local Docker only — trusts the nginx container. NEVER set this on Fly:
+# the backend's peer is always the Fly proxy, so a CIDR would collapse all
+# users onto one rate-limit bucket. (Prod uses the Fly-Client-IP header.)
+TRUSTED_PROXIES=172.16.0.0/12
 
 # Google OAuth — must point to the Docker backend port, not port 80
 GOOGLE_CLIENT_ID=your_google_client_id
@@ -168,7 +174,8 @@ Daily_Bible/
 - **Bcrypt** password hashing (cost factor 12)
 - **JWT** tokens with 168-hour expiry
 - **Guest sessions** use `sessionStorage` (cleared on tab close); 401 interceptor skips redirect for guests
-- **User enumeration prevention** — forgot password & resend verification always return generic responses
+- **User enumeration prevention** — forgot password, forgot username & resend verification always return generic responses
+- **Rate limiting** — per-IP sliding window on auth endpoints (login, register, password reset, and email-senders); 429 + `Retry-After` when exceeded. Real client IP resolved from Fly's `Fly-Client-IP` header in production (spoof-resistant). Trips emit a WARN log + Sentry warning event for brute-force visibility
 - Parameterized queries, CORS configuration, input validation on all endpoints
 
 ---

@@ -526,6 +526,89 @@
       "milestone_locked": "Abonnez-vous pour partager vos étapes avec la communauté."
     }
   },
+  "privacy": {
+    "back": "Retour",
+    "title": "Politique de Confidentialité",
+    "lastUpdated": "Dernière mise à jour : juin 2026",
+    "intro": "Words of Praise (« nous ») est une application de lecture quotidienne de la Bible. Cette politique explique quelles données nous collectons, pourquoi nous les collectons et comment vous pouvez les contrôler. Nous la gardons simple, sans jargon juridique.",
+    "collect": {
+      "heading": "Ce que nous collectons",
+      "accountLabel": "Données de compte",
+      "account": "lorsque vous vous inscrivez par e-mail : votre adresse e-mail et un mot de passe haché. Lorsque vous vous inscrivez avec Google : votre nom et votre e-mail provenant de Google. Nous ne voyons jamais votre mot de passe Google.",
+      "contentLabel": "Contenu que vous créez",
+      "content": "entrées de journal, versets favoris, publications sur le tableau communautaire, demandes de prière et annotations de versets. Ce contenu est stocké sur nos serveurs et n'est visible que par vous (journaux, favoris, annotations) ou par tous les utilisateurs (publications communautaires, mur de prière).",
+      "activityLabel": "Activité et progression",
+      "activity": "pour faire fonctionner les fonctionnalités de l'application et afficher votre progression, nous stockons des éléments comme votre série de lecture, votre solde de Bénédictions et vos jalons, la progression des plans de lecture, les résultats du puzzle Manne et les disciplines quotidiennes accomplies. Ces données sont liées à votre compte et ne sont visibles que par vous.",
+      "usageLabel": "Données d'utilisation",
+      "usage": "pages vues, interactions avec les fonctionnalités et données de session collectées via l'analytique PostHog. Cela nous aide à comprendre comment l'application est utilisée afin de l'améliorer. Nous identifions les utilisateurs connectés par un identifiant numérique, jamais par leur nom ou e-mail.",
+      "errorsLabel": "Rapports d'erreurs",
+      "errors": "si l'application plante ou génère une erreur, Sentry capture automatiquement une trace de la pile, la version de votre navigateur/système d'exploitation et la page sur laquelle vous étiez. Aucune information personnelle identifiable n'est incluse dans les rapports d'erreurs.",
+      "emailLabel": "Adresse e-mail",
+      "email": "si vous vous abonnez à la newsletter du verset quotidien depuis la page d'accueil, nous stockons votre e-mail pour vous envoyer le verset quotidien. Vous pouvez vous désabonner à tout moment via le lien présent dans chaque e-mail.",
+      "paymentLabel": "Données de paiement",
+      "payment": "si vous achetez une licence Premium à vie, le paiement est entièrement traité par Stripe. Nous ne voyons ni ne stockons jamais votre numéro de carte. Nous ne conservons que votre identifiant client Stripe et le statut de votre abonnement.",
+      "pushLabel": "Abonnement aux notifications push",
+      "push": "si vous acceptez les notifications push, nous stockons le jeton d'abonnement push de votre navigateur pour vous envoyer des rappels du verset quotidien. Nous n'utilisons pas cela à des fins de marketing.",
+      "securityLabel": "Données techniques et de sécurité",
+      "security": "nos serveurs traitent votre adresse IP pour appliquer des limites de débit et se protéger contre les abus (par exemple, bloquer les tentatives de connexion par force brute). Les adresses IP sont utilisées de manière transitoire à des fins de sécurité et peuvent apparaître dans des journaux de serveur de courte durée ; nous ne les utilisons pas pour établir un profil vous concernant ni ne les vendons."
+    },
+    "use": {
+      "heading": "Comment nous l'utilisons",
+      "items": [
+        "Vous fournir le verset quotidien, les plans de lecture et les fonctionnalités de l'application",
+        "Envoyer l'e-mail du verset quotidien aux abonnés de la newsletter",
+        "Envoyer des e-mails de rappel de série (si vous acceptez les rappels)",
+        "Comprendre comment les fonctionnalités sont utilisées afin de les améliorer",
+        "Diagnostiquer les plantages et corriger les bugs",
+        "Traiter les achats Premium via Stripe",
+        "Protéger les comptes et prévenir les abus (limitation de débit et sécurité)"
+      ],
+      "footer": "Nous ne vendons pas vos données. Nous n'utilisons pas vos données à des fins publicitaires."
+    },
+    "thirdParty": {
+      "heading": "Services tiers",
+      "intro": "Words of Praise utilise les services tiers suivants. Chacun dispose de sa propre politique de confidentialité :",
+      "posthog": "analytique produit",
+      "sentry": "surveillance des erreurs",
+      "stripe": "traitement des paiements",
+      "google": "connexion optionnelle",
+      "resend": "e-mails transactionnels et newsletter",
+      "fly": "hébergement et infrastructure"
+    },
+    "retention": {
+      "heading": "Conservation des données",
+      "p1": "Vos données de compte sont conservées tant que votre compte existe. Si vous supprimez votre compte, vos données personnelles, entrées de journal, favoris et annotations sont définitivement supprimés sous 30 jours. Les publications communautaires et les entrées du mur de prière peuvent rester de façon anonymisée.",
+      "p2": "Les abonnés à la newsletter qui se désabonnent voient leur e-mail supprimé immédiatement."
+    },
+    "rights": {
+      "heading": "Vos droits",
+      "intro": "Vous pouvez :",
+      "items": [
+        "Accéder à vos données ou les exporter — écrivez-nous et nous vous les enverrons sous 30 jours",
+        "Supprimer votre compte et toutes les données associées depuis la page Paramètres",
+        "Vous désabonner des e-mails à tout moment via le lien de désabonnement",
+        "Désactiver les notifications push dans les paramètres de votre navigateur à tout moment"
+      ],
+      "footer": "Si vous résidez dans l'UE ou en Californie, vous disposez de droits supplémentaires au titre du RGPD et de la CCPA respectivement. Contactez-nous pour les exercer."
+    },
+    "cookies": {
+      "heading": "Cookies et stockage local",
+      "p1": "Nous n'utilisons pas de cookies publicitaires. Nous utilisons le stockage local du navigateur pour enregistrer vos préférences (thème, langue, taille de police, paramètres de son) localement sur votre appareil. Ces données ne quittent jamais votre appareil.",
+      "p2": "PostHog dépose un cookie propriétaire pour distinguer les sessions. Aucun cookie de suivi inter-sites n'est utilisé."
+    },
+    "children": {
+      "heading": "Enfants",
+      "body": "Words of Praise ne s'adresse pas aux enfants de moins de 13 ans. Nous ne collectons pas sciemment de données auprès d'enfants de moins de 13 ans. Si vous pensez qu'un enfant nous a fourni des données personnelles, contactez-nous et nous les supprimerons."
+    },
+    "changes": {
+      "heading": "Modifications de cette politique",
+      "body": "Si nous apportons des modifications importantes, nous mettrons à jour la date de « Dernière mise à jour » ci-dessus. L'utilisation continue de l'application après l'entrée en vigueur des modifications vaut acceptation de la politique mise à jour."
+    },
+    "contact": {
+      "heading": "Contact",
+      "text": "Des questions ? Écrivez-nous à"
+    }
+  },
   "about": {
     "title": "À Propos de Paroles de Louange",
     "dedication": "Dédié à Clairemena Jean-Pierre",
@@ -558,6 +641,8 @@
     "feature11Desc": "Recherchez toute l'Écriture par mot-clé, référence ou livre. Enregistrez vos recherches préférées et cherchez dans vos propres réflexions.",
     "feature12Title": "Annotations de Versets",
     "feature12Desc": "Soulignez une phrase de n'importe quel verset et ajoutez une note personnelle. Vos réflexions, ancrées à la Parole.",
+    "feature13Title": "Disciplines Quotidiennes",
+    "feature13Desc": "Un ensemble tournant de petits objectifs quotidiens — méditer, partager, tenir son journal et plus encore. Accomplissez-les pour gagner des Bénédictions et instaurer un rythme fidèle.",
     "ctaTitle": "Commencez Votre Voyage",
     "ctaDesc": "Créez un compte gratuit pour sauvegarder vos versets préférés, démarrer votre série, écrire des réflexions et rejoindre la communauté. L'inscription prend moins d'une minute.",
     "createAccount": "Créer un Compte Gratuit",

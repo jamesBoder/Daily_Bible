@@ -526,6 +526,89 @@
       "milestone_locked": "Actualiza para compartir hitos con la comunidad."
     }
   },
+  "privacy": {
+    "back": "Atrás",
+    "title": "Política de Privacidad",
+    "lastUpdated": "Última actualización: junio de 2026",
+    "intro": "Words of Praise (\"nosotros\") es una aplicación de lectura diaria de la Biblia. Esta política explica qué datos recopilamos, por qué los recopilamos y cómo puedes controlarlos. La mantenemos sencilla, sin tecnicismos legales.",
+    "collect": {
+      "heading": "Qué recopilamos",
+      "accountLabel": "Datos de la cuenta",
+      "account": "cuando te registras con correo electrónico: tu dirección de correo y una contraseña cifrada. Cuando te registras con Google: tu nombre y correo de Google. Nunca vemos tu contraseña de Google.",
+      "contentLabel": "Contenido que creas",
+      "content": "entradas de diario, versículos favoritos, publicaciones en el muro de la comunidad, peticiones de oración y anotaciones de versículos. Este contenido se almacena en nuestros servidores y solo es visible para ti (diarios, favoritos, anotaciones) o para todos los usuarios (publicaciones de la comunidad, muro de oración).",
+      "activityLabel": "Actividad y progreso",
+      "activity": "para impulsar las funciones de la aplicación y mostrar tu progreso, almacenamos datos como tu racha de lectura, tu saldo de Bendiciones e hitos, el progreso de los planes de lectura, los resultados del rompecabezas Manná y las disciplinas diarias completadas. Estos datos están vinculados a tu cuenta y solo son visibles para ti.",
+      "usageLabel": "Datos de uso",
+      "usage": "vistas de página, interacciones con funciones y datos de sesión recopilados mediante la analítica de PostHog. Esto nos ayuda a entender cómo se usa la aplicación para poder mejorarla. Identificamos a los usuarios que han iniciado sesión mediante un ID numérico, nunca por nombre o correo.",
+      "errorsLabel": "Informes de errores",
+      "errors": "si la aplicación falla o genera un error, Sentry captura automáticamente un registro de la pila, la versión de tu navegador/sistema operativo y la página en la que estabas. Los informes de errores no incluyen información de identificación personal.",
+      "emailLabel": "Dirección de correo electrónico",
+      "email": "si te suscribes al boletín del versículo diario desde la página de inicio, almacenamos tu correo para enviarte el versículo diario. Puedes cancelar la suscripción en cualquier momento mediante el enlace de cada correo.",
+      "paymentLabel": "Datos de pago",
+      "payment": "si compras una licencia Premium de por vida, el pago es procesado en su totalidad por Stripe. Nunca vemos ni almacenamos el número de tu tarjeta. Solo guardamos tu ID de cliente de Stripe y el estado de tu suscripción.",
+      "pushLabel": "Suscripción a notificaciones push",
+      "push": "si optas por recibir notificaciones push, almacenamos el token de suscripción push de tu navegador para enviarte recordatorios del versículo diario. No usamos esto para fines de marketing.",
+      "securityLabel": "Datos técnicos y de seguridad",
+      "security": "nuestros servidores procesan tu dirección IP para aplicar límites de frecuencia y protegerse contra abusos (por ejemplo, bloquear intentos de inicio de sesión por fuerza bruta). Las direcciones IP se usan de forma transitoria por seguridad y pueden aparecer en registros de servidor de corta duración; no las usamos para crear un perfil sobre ti ni las vendemos."
+    },
+    "use": {
+      "heading": "Cómo lo usamos",
+      "items": [
+        "Entregarte el versículo diario, los planes de lectura y las funciones de la aplicación",
+        "Enviar el correo del versículo diario a los suscriptores del boletín",
+        "Enviar correos recordatorios de racha (si optas por los recordatorios)",
+        "Comprender cómo se usan las funciones para poder mejorarlas",
+        "Diagnosticar fallos y corregir errores",
+        "Procesar compras Premium mediante Stripe",
+        "Proteger las cuentas y prevenir abusos (límites de frecuencia y seguridad)"
+      ],
+      "footer": "No vendemos tus datos. No usamos tus datos para publicidad."
+    },
+    "thirdParty": {
+      "heading": "Servicios de terceros",
+      "intro": "Words of Praise utiliza los siguientes servicios de terceros. Cada uno tiene su propia política de privacidad:",
+      "posthog": "analítica de producto",
+      "sentry": "supervisión de errores",
+      "stripe": "procesamiento de pagos",
+      "google": "inicio de sesión opcional",
+      "resend": "correo transaccional y de boletín",
+      "fly": "alojamiento e infraestructura"
+    },
+    "retention": {
+      "heading": "Conservación de datos",
+      "p1": "Tus datos de cuenta se conservan mientras exista tu cuenta. Si eliminas tu cuenta, tus datos personales, entradas de diario, favoritos y anotaciones se eliminan permanentemente en un plazo de 30 días. Las publicaciones de la comunidad y las entradas del muro de oración pueden permanecer de forma anonimizada.",
+      "p2": "A los suscriptores del boletín que cancelan su suscripción se les elimina el correo de inmediato."
+    },
+    "rights": {
+      "heading": "Tus derechos",
+      "intro": "Puedes:",
+      "items": [
+        "Acceder a tus datos o exportarlos: escríbenos y te los enviaremos en un plazo de 30 días",
+        "Eliminar tu cuenta y todos los datos asociados desde la página de Ajustes",
+        "Cancelar la suscripción a los correos en cualquier momento mediante el enlace para darte de baja",
+        "Desactivar las notificaciones push en los ajustes de tu navegador en cualquier momento"
+      ],
+      "footer": "Si te encuentras en la UE o en California, tienes derechos adicionales bajo el RGPD y la CCPA respectivamente. Contáctanos para ejercerlos."
+    },
+    "cookies": {
+      "heading": "Cookies y almacenamiento local",
+      "p1": "No usamos cookies publicitarias. Usamos el almacenamiento local del navegador para guardar tus preferencias (tema, idioma, tamaño de fuente, ajustes de sonido) localmente en tu dispositivo. Estos datos nunca salen de tu dispositivo.",
+      "p2": "PostHog establece una cookie propia para distinguir sesiones. No se usan cookies de seguimiento entre sitios."
+    },
+    "children": {
+      "heading": "Menores",
+      "body": "Words of Praise no está dirigida a menores de 13 años. No recopilamos datos de menores de 13 años de forma consciente. Si crees que un menor nos ha proporcionado datos personales, contáctanos y los eliminaremos."
+    },
+    "changes": {
+      "heading": "Cambios en esta política",
+      "body": "Si realizamos cambios importantes, actualizaremos la fecha de \"Última actualización\" indicada arriba. El uso continuado de la aplicación después de que los cambios entren en vigor constituye la aceptación de la política actualizada."
+    },
+    "contact": {
+      "heading": "Contacto",
+      "text": "¿Preguntas? Escríbenos a"
+    }
+  },
   "about": {
     "title": "Acerca de Palabras de Alabanza",
     "dedication": "Dedicado a Clairemena Jean-Pierre",
@@ -558,6 +641,8 @@
     "feature11Desc": "Busca en toda la Escritura por palabra clave, referencia o libro. Guarda tus búsquedas favoritas y busca dentro de tus propias reflexiones.",
     "feature12Title": "Anotaciones de Versículos",
     "feature12Desc": "Resalta una frase de cualquier versículo y adjunta una nota personal. Tus reflexiones, ancladas a la Palabra.",
+    "feature13Title": "Disciplinas Diarias",
+    "feature13Desc": "Un conjunto rotativo de pequeñas metas diarias: reflexionar, compartir, escribir en el diario y más. Complétalas para ganar Bendiciones y crear un ritmo fiel.",
     "ctaTitle": "Comienza Tu Jornada",
     "ctaDesc": "Crea una cuenta gratuita para guardar tus versículos favoritos, iniciar tu racha, escribir reflexiones y unirte a la comunidad. El registro toma menos de un minuto.",
     "createAccount": "Crear Cuenta Gratuita",
