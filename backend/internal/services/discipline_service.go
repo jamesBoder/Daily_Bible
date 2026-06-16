@@ -12,7 +12,7 @@ import (
 
 // DisciplineService handles discipline completions and daily status queries.
 type DisciplineService struct {
-	db       *gorm.DB
+	db        *gorm.DB
 	blessings *BlessingsService
 }
 
