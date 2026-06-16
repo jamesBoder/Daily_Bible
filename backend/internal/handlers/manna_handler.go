@@ -19,6 +19,18 @@ type MannaHandler struct {
 	streakService       *services.StreakService
 	settingsService     *services.SettingsService
 	adminIDs            map[uint]bool
+	disciplineService   *services.DisciplineService
+}
+
+// SetDisciplineService wires the discipline service for solve_manna_any and solve_manna_4 hooks.
+func (h *MannaHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
+}
+
+// mannaSubmitResponse extends GuessResult with an optional discipline_completed field.
+type mannaSubmitResponse struct {
+	*services.GuessResult
+	DisciplineCompleted *disciplineCompletedField `json:"discipline_completed,omitempty"`
 }
 
 // NewMannaHandler creates a MannaHandler.
@@ -138,7 +150,24 @@ func (h *MannaHandler) SubmitGuess(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, result)
+	resp := &mannaSubmitResponse{GuessResult: result}
+	if h.disciplineService != nil && result.Status == "solved" {
+		// Try solve_manna_any first; also try solve_manna_4 if solved in ≤4 guesses.
+		// TryComplete is idempotent — only the key in today's rotation credits blessings.
+		if credits, dcErr := h.disciplineService.TryComplete(uid, "solve_manna_any", isPremium); dcErr != nil {
+			log.Printf("discipline TryComplete solve_manna_any failed user %d: %v", uid, dcErr)
+		} else if credits > 0 {
+			resp.DisciplineCompleted = &disciplineCompletedField{Key: "solve_manna_any", BlessingsCredited: credits}
+		}
+		if result.GuessCount <= 4 {
+			if credits, dcErr := h.disciplineService.TryComplete(uid, "solve_manna_4", isPremium); dcErr != nil {
+				log.Printf("discipline TryComplete solve_manna_4 failed user %d: %v", uid, dcErr)
+			} else if credits > 0 {
+				resp.DisciplineCompleted = &disciplineCompletedField{Key: "solve_manna_4", BlessingsCredited: credits}
+			}
+		}
+	}
+	c.JSON(http.StatusOK, resp)
 }
 
 // GetYesterday returns yesterday's word + Scripture. Public — no auth required.

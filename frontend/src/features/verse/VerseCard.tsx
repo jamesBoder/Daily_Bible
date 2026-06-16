@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Verse } from "../../types/verse";
 import { Card } from "../../components/common/Card";
 import { Button } from "../../components/common/Button";
@@ -111,12 +112,16 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   // ── Share helpers ─────────────────────────────────────────────────────────
   // Called once after any share action succeeds. Fire-and-forget — never blocks UI.
   const { refreshStreak } = useStreak();
+  const queryClient = useQueryClient();
   const creditShareBlessings = () => {
     if (!user) return;
-    verseService.recordShare().then((credited) => {
-      if (credited > 0) {
-        showBlessingsToast(credited, 'verse_shared');
+    verseService.recordShare().then(({ blessings_credited, discipline_completed }) => {
+      if (blessings_credited > 0) {
+        showBlessingsToast(blessings_credited, 'verse_shared');
         refreshStreak().catch(() => {});
+      }
+      if (discipline_completed) {
+        queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
       }
     });
   };

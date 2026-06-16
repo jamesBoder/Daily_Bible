@@ -23,7 +23,8 @@ type VerseHandler struct {
 	settingsService     *services.SettingsService
 	rewardsService      *services.RewardsService
 	subscriptionChecker services.SubscriptionChecker
-	communityService    *services.CommunityService // Phase 9: milestone auto-post
+	communityService    *services.CommunityService  // Phase 9: milestone auto-post
+	disciplineService   *services.DisciplineService // Daily Disciplines
 }
 
 // NewVerseHandler creates a new VerseHandler
@@ -52,6 +53,11 @@ func NewVerseHandler(
 // SetCommunityService wires the community service for milestone auto-posts (Phase 9).
 func (h *VerseHandler) SetCommunityService(cs *services.CommunityService) {
 	h.communityService = cs
+}
+
+// SetDisciplineService wires the discipline service for read_verse and share_verse hooks.
+func (h *VerseHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
 }
 
 // resolveVersion selects the API.Bible version to use for a request.
@@ -287,6 +293,13 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 					}
 				}()
 			}
+
+			// Daily Disciplines: credit read_verse on first daily view.
+			if h.disciplineService != nil {
+				if _, dcErr := h.disciplineService.TryComplete(userID.(uint), "read_verse", c.GetBool("isPremium")); dcErr != nil {
+					log.Printf("discipline TryComplete read_verse failed user %d: %v", userID, dcErr)
+				}
+			}
 		}
 	}
 
@@ -476,5 +489,13 @@ func (h *VerseHandler) RecordShare(c *gin.Context) {
 		log.Printf("RecordShare: blessings credit failed for user %d: %v", userID, err)
 	}
 
-	c.JSON(http.StatusOK, gin.H{"blessings_credited": credited})
+	resp := gin.H{"blessings_credited": credited}
+	if h.disciplineService != nil {
+		if dcCredits, dcErr := h.disciplineService.TryComplete(userID.(uint), "share_verse", c.GetBool("isPremium")); dcErr != nil {
+			log.Printf("discipline TryComplete share_verse failed user %d: %v", userID, dcErr)
+		} else if dcCredits > 0 {
+			resp["discipline_completed"] = gin.H{"key": "share_verse", "blessings_credited": dcCredits}
+		}
+	}
+	c.JSON(http.StatusOK, resp)
 }

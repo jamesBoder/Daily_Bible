@@ -691,6 +691,7 @@
     "contact": "Contacto",
     "comment": "Agregar una reflexión",
     "help": "Ayuda",
+    "learnMore": "Más información",
     "comingSoon": "Próximamente",
     "goHome": "Ir al Inicio",
     "somethingWentWrong": "¡Ups! Algo salió mal",
@@ -730,7 +731,29 @@
       "manna_solved": "Puzzle de Maná resuelto",
       "manna_played": "Puzzle de Maná jugado",
       "manna_streak_bonus": "Bonificación de racha de Maná",
+      "discipline_complete": "Disciplina completada",
       "generic": "Bendiciones ganadas"
+    }
+  },
+  "disciplines": {
+    "title": "Disciplinas de Hoy",
+    "progress": "{{done}} de {{total}} completadas",
+    "allDone": "¡Todo listo!",
+    "startPlan": "Comenzar un plan de lectura →",
+    "continuePlan": "Continuar tu plan →",
+    "unlockPremium": "Desbloquear con Premium",
+    "keys": {
+      "read_verse": "Leer el versículo de hoy",
+      "write_journal": "Escribir una entrada en el diario",
+      "favorite_verse": "Marcar un versículo como favorito",
+      "share_verse": "Compartir el versículo diario",
+      "annotate_verse": "Añadir una nota a un versículo",
+      "advance_plan_day": "Completar un día del plan de lectura",
+      "solve_manna_any": "Resolver el Maná de hoy",
+      "solve_manna_4": "Resolver el Maná en 4 intentos",
+      "write_reflection_50": "Escribir una reflexión profunda (50+ palabras)",
+      "react_community": "Orar por alguien",
+      "complete_rosary": "Completar un Rosario"
     }
   },
   "graceDay": {
@@ -1104,6 +1127,7 @@
     "edit": "Editar",
     "deleteConfirm": "¿Eliminar esta anotación?",
     "delete": "Eliminar",
+    "notes": "Notas",
     "saveError": "No se pudo guardar la anotación. Por favor, inténtalo de nuevo.",
     "deleteError": "No se pudo eliminar la anotación. Por favor, inténtalo de nuevo."
   },
@@ -1126,7 +1150,7 @@
     "day": "Día",
     "reflection": "Reflexión",
     "currentDay": "Lectura de Hoy",
-    "memoryVerse": "Versículo de memoria de esta semana",
+    "memoryVerse": "Versículo de memoria",
     "historicalContext": "Contexto histórico",
     "todayLabel": "Hoy",
     "reflectLabel": "Reflexiona",
@@ -1186,7 +1210,8 @@
       "share": "Comparte tu logro",
       "backToLibrary": "Volver a la biblioteca",
       "dismiss": "Cerrar",
-      "shareText": "Acabo de completar \"{{title}}\" — ¡un plan de lectura de {{days}} días en Words of Praise! 🙏"
+      "shareText": "Acabo de completar \"{{title}}\" — ¡un plan de lectura de {{days}} días en Words of Praise! 🙏",
+      "appName": "Words of Praise"
     },
     "enrollError": "No se pudo iniciar este plan. Por favor, inténtalo de nuevo.",
     "unenrollError": "No se pudo salir de este plan. Por favor, inténtalo de nuevo."
@@ -1205,6 +1230,13 @@
     "unenroll": "Salir",
     "unenrollConfirm": "¿Salir de \"{{title}}\"? Tu progreso se perderá.",
     "blessingsEarned": "+{{count}} Bendiciones",
-    "seasonalBannerSub": "Hay un plan de lectura disponible para esta temporada"
+    "seasonalBannerSub": "Hay un plan de lectura disponible para esta temporada",
+    "notFound": "Plan no encontrado.",
+    "season": {
+      "advent": "Adviento",
+      "lent": "Cuaresma",
+      "holy-week": "Semana Santa",
+      "pentecost": "Pentecostés"
+    }
   }
 }

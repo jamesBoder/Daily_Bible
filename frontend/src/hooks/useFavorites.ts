@@ -33,6 +33,9 @@ export const useFavorites = () => {
           showBlessingsToast(data.blessings_credited, 'verse_favorited');
           refreshStreak().catch(() => {});
         }
+        if (data?.discipline_completed) {
+          queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
+        }
       }
     },
   });

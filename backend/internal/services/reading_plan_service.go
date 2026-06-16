@@ -10,7 +10,12 @@ import (
 	"gorm.io/gorm"
 )
 
-const maxActivePlans = 3
+const (
+	maxActivePlans             = 3
+	BlessingsPerPlanDay        = 10
+	BlessingsForPlanCompletion = 50
+	journalExcerptRunes        = 80
+)
 
 var (
 	ErrPlanNotFound    = errors.New("plan not found")
@@ -291,26 +296,27 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 }
 
 // AdvanceDay marks the next day as read, credits Blessings, and returns updated progress.
-// Returns the progress row and a bool indicating whether the plan just completed.
-func (s *ReadingPlanService) AdvanceDay(userID uint, slug string) (*models.UserPlanProgress, bool, error) {
+// Returns the progress row, a bool indicating whether the plan just completed, and the
+// number of blessings actually credited (BlessingsPerPlanDay or BlessingsForPlanCompletion).
+func (s *ReadingPlanService) AdvanceDay(userID uint, slug string) (*models.UserPlanProgress, bool, int, error) {
 	var plan models.ReadingPlan
 	if err := s.db.Where("slug = ? AND is_active = true", slug).First(&plan).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, false, ErrPlanNotFound
+			return nil, false, 0, ErrPlanNotFound
 		}
-		return nil, false, err
+		return nil, false, 0, err
 	}
 
 	var prog models.UserPlanProgress
 	if err := s.db.Where("user_id = ? AND plan_id = ? AND is_active = true", userID, plan.ID).
 		First(&prog).Error; err != nil {
 		if errors.Is(err, gorm.ErrRecordNotFound) {
-			return nil, false, ErrNotEnrolled
+			return nil, false, 0, ErrNotEnrolled
 		}
-		return nil, false, err
+		return nil, false, 0, err
 	}
 	if prog.CompletedAt != nil {
-		return nil, false, ErrPlanComplete
+		return nil, false, 0, ErrPlanComplete
 	}
 
 	prog.LastReadDay++
@@ -338,20 +344,20 @@ func (s *ReadingPlanService) AdvanceDay(userID uint, slug string) (*models.UserP
 	prog.LastPlanReadDate = &dateStr
 
 	if err := s.db.Save(&prog).Error; err != nil {
-		return nil, false, err
+		return nil, false, 0, err
 	}
 
-	amount := 10
+	amount := BlessingsPerPlanDay
 	reason := "read_plan_entry"
 	if justCompleted {
-		amount = 50
+		amount = BlessingsForPlanCompletion
 		reason = "complete_reading_plan"
 	}
 	if _, err := s.blessingsService.Credit(userID, amount, reason, 1.0); err != nil {
 		log.Printf("blessings credit failed for user %d reason %s: %v", userID, reason, err)
 	}
 
-	return &prog, justCompleted, nil
+	return &prog, justCompleted, amount, nil
 }
 
 // GetActiveEnrollments returns the user's active plan enrollments with plan metadata.
@@ -441,9 +447,9 @@ func (s *ReadingPlanService) GetPlanForToday(userID uint, slug string) (*Reading
 				Order("created_at DESC").
 				First(&je).Error; err == nil && je.ContentPlain != "" {
 				excerpt := je.ContentPlain
-				if len([]rune(excerpt)) > 80 {
+				if len([]rune(excerpt)) > journalExcerptRunes {
 					runes := []rune(excerpt)
-					excerpt = string(runes[:80]) + "…"
+					excerpt = string(runes[:journalExcerptRunes]) + "…"
 				}
 				prev.JournalExcerpt = excerpt
 			}

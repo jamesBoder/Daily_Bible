@@ -691,6 +691,7 @@
     "contact": "Contact",
     "comment": "Add a reflection",
     "help": "Help",
+    "learnMore": "Learn More",
     "comingSoon": "Coming soon",
     "goHome": "Go Home",
     "somethingWentWrong": "Oops! Something went wrong",
@@ -730,7 +731,29 @@
       "manna_solved": "Manna puzzle solved",
       "manna_played": "Manna puzzle played",
       "manna_streak_bonus": "Manna streak bonus",
+      "discipline_complete": "Discipline completed",
       "generic": "Blessings earned"
+    }
+  },
+  "disciplines": {
+    "title": "Today's Disciplines",
+    "progress": "{{done}} of {{total}} complete",
+    "allDone": "All done",
+    "startPlan": "Start a reading plan →",
+    "continuePlan": "Continue your plan →",
+    "unlockPremium": "Unlock with Premium",
+    "keys": {
+      "read_verse": "Read today's verse",
+      "write_journal": "Write a journal entry",
+      "favorite_verse": "Favorite a verse",
+      "share_verse": "Share the daily verse",
+      "annotate_verse": "Add a note to a verse",
+      "advance_plan_day": "Complete a reading plan day",
+      "solve_manna_any": "Solve today's Manna",
+      "solve_manna_4": "Solve Manna in 4 guesses",
+      "write_reflection_50": "Write a deep reflection (50+ words)",
+      "react_community": "Pray for someone",
+      "complete_rosary": "Complete a Rosary"
     }
   },
   "graceDay": {
@@ -1104,6 +1127,7 @@
     "edit": "Edit",
     "deleteConfirm": "Delete this annotation?",
     "delete": "Delete",
+    "notes": "Notes",
     "saveError": "Could not save annotation. Please try again.",
     "deleteError": "Could not delete annotation. Please try again."
   },
@@ -1126,7 +1150,7 @@
     "day": "Day",
     "reflection": "Reflection",
     "currentDay": "Today's Reading",
-    "memoryVerse": "This week's memory verse",
+    "memoryVerse": "Memory verse",
     "historicalContext": "Historical context",
     "todayLabel": "Today",
     "reflectLabel": "Reflect",
@@ -1186,7 +1210,8 @@
       "share": "Share your achievement",
       "backToLibrary": "Back to Library",
       "dismiss": "Dismiss",
-      "shareText": "I just completed \"{{title}}\" — a {{days}}-day reading plan on Words of Praise! 🙏"
+      "shareText": "I just completed \"{{title}}\" — a {{days}}-day reading plan on Words of Praise! 🙏",
+      "appName": "Words of Praise"
     },
     "enrollError": "Could not start this plan. Please try again.",
     "unenrollError": "Could not leave this plan. Please try again."
@@ -1205,6 +1230,13 @@
     "unenroll": "Leave",
     "unenrollConfirm": "Leave \"{{title}}\"? Your progress will be lost.",
     "blessingsEarned": "+{{count}} Blessings",
-    "seasonalBannerSub": "A reading path is available for this season"
+    "seasonalBannerSub": "A reading path is available for this season",
+    "notFound": "Plan not found.",
+    "season": {
+      "advent": "Advent",
+      "lent": "Lent",
+      "holy-week": "Holy Week",
+      "pentecost": "Pentecost"
+    }
   }
 }

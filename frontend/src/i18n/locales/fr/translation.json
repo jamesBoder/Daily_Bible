@@ -691,6 +691,7 @@
     "contact": "Contact",
     "comment": "Ajouter une réflexion",
     "help": "Aide",
+    "learnMore": "En savoir plus",
     "comingSoon": "Bientôt disponible",
     "goHome": "Accueil",
     "somethingWentWrong": "Oups ! Quelque chose s'est mal passé",
@@ -992,7 +993,29 @@
       "manna_solved": "Puzzle Manna résolu",
       "manna_played": "Puzzle Manna joué",
       "manna_streak_bonus": "Bonus de série Manna",
+      "discipline_complete": "Discipline accomplie",
       "generic": "Bénédictions gagnées"
+    }
+  },
+  "disciplines": {
+    "title": "Disciplines du Jour",
+    "progress": "{{done}} sur {{total}} complétées",
+    "allDone": "Tout accompli",
+    "startPlan": "Commencer un plan de lecture →",
+    "continuePlan": "Continuer votre plan →",
+    "unlockPremium": "Débloquer avec Premium",
+    "keys": {
+      "read_verse": "Lire le verset du jour",
+      "write_journal": "Écrire dans le journal",
+      "favorite_verse": "Mettre un verset en favori",
+      "share_verse": "Partager le verset quotidien",
+      "annotate_verse": "Ajouter une note à un verset",
+      "advance_plan_day": "Compléter un jour du plan de lecture",
+      "solve_manna_any": "Résoudre le Manna du jour",
+      "solve_manna_4": "Résoudre le Manna en 4 essais",
+      "write_reflection_50": "Écrire une réflexion profonde (50+ mots)",
+      "react_community": "Prier pour quelqu'un",
+      "complete_rosary": "Compléter un Rosaire"
     }
   },
   "graceDayTutorial": {
@@ -1087,6 +1110,7 @@
     "edit": "Modifier",
     "deleteConfirm": "Supprimer cette annotation?",
     "delete": "Supprimer",
+    "notes": "Notes",
     "saveError": "Impossible d'enregistrer l'annotation. Veuillez réessayer.",
     "deleteError": "Impossible de supprimer l'annotation. Veuillez réessayer."
   },
@@ -1109,7 +1133,7 @@
     "day": "Jour",
     "reflection": "Réflexion",
     "currentDay": "Lecture du Jour",
-    "memoryVerse": "Verset de mémoire de la semaine",
+    "memoryVerse": "Verset de mémoire",
     "historicalContext": "Contexte historique",
     "todayLabel": "Aujourd'hui",
     "reflectLabel": "Réfléchis",
@@ -1169,7 +1193,8 @@
       "share": "Partagez votre réussite",
       "backToLibrary": "Retour à la bibliothèque",
       "dismiss": "Fermer",
-      "shareText": "Je viens de terminer « {{title}} » — un plan de lecture de {{days}} jours sur Words of Praise ! 🙏"
+      "shareText": "Je viens de terminer « {{title}} » — un plan de lecture de {{days}} jours sur Words of Praise ! 🙏",
+      "appName": "Words of Praise"
     },
     "enrollError": "Impossible de démarrer ce plan. Veuillez réessayer.",
     "unenrollError": "Impossible de quitter ce plan. Veuillez réessayer."
@@ -1188,7 +1213,14 @@
     "unenroll": "Quitter",
     "unenrollConfirm": "Quitter \"{{title}}\" ? Votre progression sera perdue.",
     "blessingsEarned": "+{{count}} Bénédictions",
-    "seasonalBannerSub": "Un plan de lecture est disponible pour cette saison"
+    "seasonalBannerSub": "Un plan de lecture est disponible pour cette saison",
+    "notFound": "Plan introuvable.",
+    "season": {
+      "advent": "Avent",
+      "lent": "Carême",
+      "holy-week": "Semaine Sainte",
+      "pentecost": "Pentecôte"
+    }
   },
   "graceDay": {
     "errors": {

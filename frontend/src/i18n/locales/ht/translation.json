@@ -691,6 +691,7 @@
     "contact": "Kontak",
     "comment": "Ajoute yon refleksyon",
     "help": "Èd",
+    "learnMore": "Aprann plis",
     "comingSoon": "Byento disponib",
     "errorRefresh": "Nou regrèt enkonvenyans lan. Tanpri eseye rechaje paj la.",
     "goHome": "Ale lakay",
@@ -992,7 +993,29 @@
       "manna_solved": "Puzzle Manna rezoud",
       "manna_played": "Puzzle Manna jwe",
       "manna_streak_bonus": "Bonis seri Manna",
+      "discipline_complete": "Disiplin akonpli",
       "generic": "Benediksyon ranmase"
+    }
+  },
+  "disciplines": {
+    "title": "Disiplin Jodi a",
+    "progress": "{{done}} nan {{total}} akonpli",
+    "allDone": "Tout fini",
+    "startPlan": "Kòmanse yon plan lekti →",
+    "continuePlan": "Kontinye plan ou →",
+    "unlockPremium": "Debloke ak Premium",
+    "keys": {
+      "read_verse": "Li vèsè jodi a",
+      "write_journal": "Ekri nan jounal ou",
+      "favorite_verse": "Mete yon vèsè nan favori",
+      "share_verse": "Pataje vèsè chak jou",
+      "annotate_verse": "Ajoute yon nòt sou yon vèsè",
+      "advance_plan_day": "Ranpli yon jou nan plan lekti",
+      "solve_manna_any": "Rezoud Manna jodi a",
+      "solve_manna_4": "Rezoud Manna nan 4 eseye",
+      "write_reflection_50": "Ekri yon reyeksyon fon (50+ mo)",
+      "react_community": "Priye pou yon moun",
+      "complete_rosary": "Ranpli yon Chaplet"
     }
   },
   "graceDayTutorial": {
@@ -1087,6 +1110,7 @@
     "edit": "Modifye",
     "deleteConfirm": "Efase anotasyon sa a?",
     "delete": "Efase",
+    "notes": "Nòt yo",
     "saveError": "Pa ka sove anotasyon an. Tanpri eseye ankò.",
     "deleteError": "Pa ka efase anotasyon an. Tanpri eseye ankò."
   },
@@ -1109,7 +1133,7 @@
     "day": "Jou",
     "reflection": "Refleksyon",
     "currentDay": "Lekti Jodi a",
-    "memoryVerse": "Vèsè memwa semèn sa a",
+    "memoryVerse": "Vèsè pou memwa",
     "historicalContext": "Kontèks istorik",
     "todayLabel": "Jodi a",
     "reflectLabel": "Reflechi",
@@ -1169,7 +1193,8 @@
       "share": "Pataje akonplisman ou",
       "backToLibrary": "Retounen nan bibliyotèk",
       "dismiss": "Fèmen",
-      "shareText": "Mwen fini « {{title}} » — yon plan lekti {{days}} jou sou Words of Praise! 🙏"
+      "shareText": "Mwen fini « {{title}} » — yon plan lekti {{days}} jou sou Words of Praise! 🙏",
+      "appName": "Words of Praise"
     },
     "enrollError": "Pa ka kòmanse plan sa a. Tanpri eseye ankò.",
     "unenrollError": "Pa ka kite plan sa a. Tanpri eseye ankò."
@@ -1188,7 +1213,14 @@
     "unenroll": "Kite",
     "unenrollConfirm": "Kite \"{{title}}\"? Pwogrè ou ap pèdu.",
     "blessingsEarned": "+{{count}} Benediksyon",
-    "seasonalBannerSub": "Gen yon plan lekti disponib pou sezon sa a"
+    "seasonalBannerSub": "Gen yon plan lekti disponib pou sezon sa a",
+    "notFound": "Plan pa jwenn.",
+    "season": {
+      "advent": "Avent",
+      "lent": "Karèm",
+      "holy-week": "Semèn Sen",
+      "pentecost": "Pentekòt"
+    }
   },
   "graceDay": {
     "errors": {

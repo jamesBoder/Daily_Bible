@@ -72,7 +72,7 @@ const CompletionCertificate: React.FC<CompletionCertificateProps> = ({
 
           {/* App name */}
           <p className="text-[10px] font-bold uppercase tracking-[0.25em] text-[var(--journal-text-muted)] mb-1.5">
-            Words of Praise
+            {t('plan.certificate.appName', 'Words of Praise')}
           </p>
 
           {/* Certificate heading */}

@@ -69,6 +69,21 @@ if resolvedVersion.ID != kjvVersionID {
 
 All sounds are synthesized via Web Audio API in `frontend/src/services/SoundService.ts` — no audio files. Sounds are **off by default** and toggled via settings (stored in `localStorage`). To add a new sound cue: add the cue name to the `AudioCue` type, add a `case` in `play()`, and implement the private method.
 
+### Daily Disciplines — Config-Driven Rotation, Idempotent Completion
+
+Daily Disciplines are a 14-day rotating set of optional goals shown below the daily verse (`DisciplinesCard`). The catalogue and schedule are **config, not seed data** — they live in `backend/internal/config/disciplines.go`:
+
+- `DisciplineDefinitions` — the catalogue: `Key`, `Blessings`, `Active`, `RequiresPremium`.
+- `DisciplineRotation` — the ordered 14-day schedule (cycle length = `len(DisciplineRotation)`, never hardcoded elsewhere). Cycle day = `(date - epoch) % len`, pure UTC-10 date math against a fixed epoch (`2026-05-01`). **Do not change the epoch after launch** — it shifts every user's schedule.
+
+Only completions are persisted: `models.UserDisciplineCompletion`, one row per `(UserID, DateUTC10, DisciplineKey)` with a composite unique index (added via GORM `AutoMigrate`).
+
+**Completion is automatic and idempotent.** Action handlers (verse view, share, favorite, journal, reflection ≥50 words, annotation, plan advance, Manna solve) call `DisciplineService.TryComplete(userID, key, isPremium)` internally. `TryComplete` inserts the completion row with `OnConflict DoNothing` and credits blessings **only** when (a) a new row lands (`RowsAffected > 0`) and (b) the key is in today's rotation. Blessings are flat (multiplier `1.0`, no premium bonus) so the card's displayed `+N ✦` is always exact. Date boundary is **UTC-10**, like verse/Manna/streak resets.
+
+Handlers return an optional `discipline_completed` field; the frontend invalidates the `['disciplines', 'today']` query to refresh the card. `POST /api/disciplines/:key/complete` is a manual fallback only — prefer the automatic hooks.
+
+**To add a discipline:** append to `DisciplineDefinitions`, add its key to `DisciplineRotation` rows, add the i18n key under `disciplines.keys.*` in **all four** locale files (EN/ES/FR/HT), and call `TryComplete` from the relevant action handler.
+
 ## Git Workflow
 
 ### Branch Model

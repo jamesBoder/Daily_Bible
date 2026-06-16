@@ -42,7 +42,7 @@ type ReadingPlanEntry struct {
 	Question      string `gorm:"type:text"`               // journaling / reflection prompt
 	ContextNote   string `gorm:"type:text"`               // brief historical or literary context
 	ContentType   string `gorm:"size:30;default:'verse'"` // verse | passage | psalm | chapter | meditation
-	IsMemoryVerse bool   `gorm:"default:false"`           // highlight as the week's memory verse
+	IsMemoryVerse bool   `gorm:"default:false"`           // show memory-verse flashcard before advancing on this day
 	PassageText   string `gorm:"type:text"`               // full passage text stored in seed; avoids verse-lookup for ranges
 	DayTitle      string `gorm:"size:200"`                // e.g. "The Peace That Passes Understanding"
 	// Interactive features (Part 2)

@@ -50,6 +50,7 @@ export interface GuessResult {
   blessings_awarded?: number;
   streak_bonus?: number;
   win_streak?: number;
+  discipline_completed?: { key: string; blessings_credited: number }
 }
 
 export interface HintResult {
