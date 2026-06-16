@@ -11,6 +11,7 @@
 import React from 'react';
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { CommentSection } from '../features/verse/CommentSection';
 import { commentService } from '../services/api/comment';
 
@@ -53,8 +54,14 @@ jest.mock('../components/BlessingsToast', () => ({
   showBlessingsToast: jest.fn(),
 }));
 
-const renderComponent = () =>
-  render(<CommentSection verseId={1} verseReference="John 3:16" />);
+const renderComponent = () => {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
+  return render(
+    <QueryClientProvider client={queryClient}>
+      <CommentSection verseId={1} verseReference="John 3:16" />
+    </QueryClientProvider>
+  );
+};
 
 const withComment = {
   id: 42,
