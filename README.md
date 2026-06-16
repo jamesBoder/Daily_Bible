@@ -175,7 +175,7 @@ Daily_Bible/
 - **JWT** tokens with 168-hour expiry
 - **Guest sessions** use `sessionStorage` (cleared on tab close); 401 interceptor skips redirect for guests
 - **User enumeration prevention** — forgot password, forgot username & resend verification always return generic responses
-- **Rate limiting** — per-IP sliding window on auth endpoints (login, register, password reset, and email-senders); 429 + `Retry-After` when exceeded. Real client IP resolved from Fly's `Fly-Client-IP` header in production (spoof-resistant)
+- **Rate limiting** — per-IP sliding window on auth endpoints (login, register, password reset, and email-senders); 429 + `Retry-After` when exceeded. Real client IP resolved from Fly's `Fly-Client-IP` header in production (spoof-resistant). Trips emit a WARN log + Sentry warning event for brute-force visibility
 - Parameterized queries, CORS configuration, input validation on all endpoints
 
 ---
