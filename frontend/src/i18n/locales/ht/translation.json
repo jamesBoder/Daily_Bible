@@ -208,6 +208,7 @@
       "password": "Modpas",
       "rememberMe": "Sonje mwen pou 30 jou",
       "forgotPassword": "Ou bliye modpas ou?",
+      "forgotUsername": "Ou bliye non itilizatè ou?",
       "submit": "Konekte",
       "noAccount": "Ou pa gen kont?",
       "signUp": "Enskri",
@@ -258,6 +259,18 @@
       "backToLogin": "Retounen nan koneksyon",
       "checkEmailTitle": "Verifye imèl ou",
       "checkEmailBody": "Si yon kont ak {{email}} egziste, nou voye yon lyen pou reyinisyalize modpas. Lyen an ekspire nan 1 èdtan.",
+      "forgotUsernameInstead": "Ou bliye non itilizatè ou?",
+      "genericError": "Yon bagay mal pase. Tanpri eseye ankò."
+    },
+    "forgotUsername": {
+      "title": "Bliye Non Itilizatè",
+      "subtitle": "Antre imèl ou epi nou pral voye non itilizatè pou kont sa a.",
+      "emailLabel": "Adrès imèl",
+      "submit": "Voye Non Itilizatè Mwen",
+      "backToLogin": "Retounen nan koneksyon",
+      "checkEmailTitle": "Verifye imèl ou",
+      "checkEmailBody": "Si yon kont ak {{email}} egziste, nou voye non itilizatè pou kont sa a ba ou.",
+      "forgotPasswordInstead": "Ou bliye modpas ou?",
       "genericError": "Yon bagay mal pase. Tanpri eseye ankò."
     },
     "resetPassword": {

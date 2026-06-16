@@ -113,6 +113,15 @@ export const Login: React.FC = () => {
               autoComplete="email"
             />
 
+            <div className="-mt-3 text-right">
+              <Link
+                to="/forgot-username"
+                className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
+              >
+                {t('auth.login.forgotUsername', 'Forgot username?')}
+              </Link>
+            </div>
+
             {/* Password field with Forgot Password link */}
             <div>
               <div className="flex items-center justify-between mb-1">

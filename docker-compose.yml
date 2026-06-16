@@ -46,6 +46,10 @@ services:
       REMINDER_SEND_HOUR: ${REMINDER_SEND_HOUR:-8}
       REMINDER_BATCH_SIZE: ${REMINDER_BATCH_SIZE:-100}
       SENTRY_DSN: ${SENTRY_DSN:-}
+      # Trust the Docker bridge network (the nginx frontend container) so the
+      # backend resolves the real client IP from X-Forwarded-For instead of a
+      # spoofable value. Required for the auth rate limiter to key correctly.
+      TRUSTED_PROXIES: ${TRUSTED_PROXIES:-172.16.0.0/12}
     depends_on:
       postgres:
         condition: service_healthy

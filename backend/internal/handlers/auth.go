@@ -461,6 +461,37 @@ func (h *AuthHandler) ForgotPassword(c *gin.Context) {
 	c.JSON(http.StatusOK, genericMsg)
 }
 
+// ── ForgotUsername ────────────────────────────────────────────────────────────
+
+type ForgotUsernameRequest struct {
+	Email string `json:"email" validate:"required,email"`
+}
+
+// ForgotUsername emails the user the username associated with their email
+// address. Login is by email, so the username is a community/display handle the
+// user may forget. Always returns a generic message to prevent user enumeration.
+func (h *AuthHandler) ForgotUsername(c *gin.Context) {
+	genericMsg := gin.H{"message": "If that email exists, we sent the associated username."}
+
+	var req ForgotUsernameRequest
+	if err := c.ShouldBindJSON(&req); err != nil {
+		c.JSON(http.StatusOK, genericMsg)
+		return
+	}
+
+	user, err := h.userRepo.GetByEmail(req.Email)
+	if err != nil || user == nil {
+		c.JSON(http.StatusOK, genericMsg)
+		return
+	}
+
+	if err := h.emailService.SendUsernameReminderEmail(user.Email, user.Username); err != nil {
+		log.Printf("Failed to send username reminder email to %s: %v", user.Email, err)
+	}
+
+	c.JSON(http.StatusOK, genericMsg)
+}
+
 // ── ResetPassword ─────────────────────────────────────────────────────────────
 
 type ResetPasswordRequest struct {
