@@ -16,6 +16,20 @@ const StreakCandle: React.FC = () => {
   const hoverTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const autoCloseTimerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const isHoverSourceRef = useRef(false);
+  const [isFlashing, setIsFlashing] = useState(false);
+  const prevStreakRef = useRef<number | null>(null);
+
+  // Flash the chip when the streak count increases (e.g. a new day is logged).
+  useEffect(() => {
+    const streak = streakData?.current_streak ?? null;
+    if (streak !== null && prevStreakRef.current !== null && streak > prevStreakRef.current) {
+      setIsFlashing(true);
+      const timer = setTimeout(() => setIsFlashing(false), 700);
+      prevStreakRef.current = streak;
+      return () => clearTimeout(timer);
+    }
+    prevStreakRef.current = streak;
+  }, [streakData?.current_streak]);
 
   // Right-aligns with the button but clamps to stay within viewport
   const calcPos = useCallback(() => {
@@ -101,14 +115,17 @@ const StreakCandle: React.FC = () => {
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
         onKeyDown={e => e.key === 'Enter' && handleClick()}
-        className="flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-lg
-                   bg-gradient-to-r from-orange-50 to-amber-50
-                   dark:from-orange-900/20 dark:to-amber-900/20
-                   border border-orange-200 dark:border-orange-800
-                   hover:shadow-md transition-all duration-200 cursor-pointer select-none"
+        className={[
+          'flex items-center space-x-1.5 px-2.5 py-1 min-h-[44px] md:min-h-0 rounded-lg',
+          'bg-gradient-to-r from-orange-50 to-amber-50',
+          'dark:from-orange-900/20 dark:to-amber-900/20',
+          'border border-orange-200 dark:border-orange-800',
+          'hover:shadow-md transition-all duration-200 cursor-pointer select-none',
+          isFlashing ? 'animate-streak-flash' : '',
+        ].join(' ')}
         aria-label={t('streak.tooltip', 'Day {{count}} streak', { count: streakData.current_streak })}
       >
-        <Fire size={20} weight="duotone" className="flex-shrink-0 text-orange-500 dark:text-orange-400" />
+        <Fire size={20} weight="duotone" className="flex-shrink-0 animate-flame-flicker text-orange-500 dark:text-orange-400" />
         <span className="text-xs font-semibold text-[var(--foreground)]">
           {streakData.current_streak}
         </span>

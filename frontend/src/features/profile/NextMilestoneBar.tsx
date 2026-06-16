@@ -37,6 +37,8 @@ const NextMilestoneBar: React.FC<NextMilestoneBarProps> = ({ currentStreak, next
   const milestoneName = t(`milestone.${nextMilestone.key}.name`, nextMilestone.name);
   // For large milestones, emphasize the text progress label over the thin bar fill.
   const isLargeMilestone = nextMilestone.days_required > 60;
+  // Within striking distance — draw the eye to the reward to encourage finishing.
+  const isNearComplete = daysRemaining > 0 && daysRemaining <= 3;
 
   return (
     <div className="space-y-2 pt-1">
@@ -52,7 +54,10 @@ const NextMilestoneBar: React.FC<NextMilestoneBarProps> = ({ currentStreak, next
       </div>
       <div className="flex items-center justify-between gap-2 mb-1 min-w-0">
         <span className="text-sm font-semibold text-[var(--foreground)] truncate">{milestoneName}</span>
-        <span className="text-xs font-bold tabular-nums flex-shrink-0" style={{ color: 'var(--blessing-gold)' }}>
+        <span
+          className={`text-xs font-bold tabular-nums flex-shrink-0${isNearComplete ? ' animate-reward-pulse' : ''}`}
+          style={{ color: 'var(--blessing-gold)', transformOrigin: 'right center' }}
+        >
           +{nextMilestone.blessings_awarded} ✦
         </span>
       </div>
@@ -63,14 +68,26 @@ const NextMilestoneBar: React.FC<NextMilestoneBarProps> = ({ currentStreak, next
         aria-hidden="true"
       >
         <div
-          className="h-full rounded-full"
+          className="relative h-full overflow-hidden rounded-full"
           style={{
             width: `${barWidth}%`,
             background: 'linear-gradient(90deg, var(--candle-amber), var(--blessing-gold))',
             transition: 'width 1s ease-out',
             willChange: 'width',
           }}
-        />
+        >
+          {/* Light sheen sweeping across the filled portion while in progress */}
+          {pct < 100 && pct > 0 && (
+            <span
+              aria-hidden="true"
+              className="animate-progress-sheen absolute inset-y-0 left-0 w-1/3"
+              style={{
+                background:
+                  'linear-gradient(90deg, transparent, rgba(255,255,255,0.55), transparent)',
+              }}
+            />
+          )}
+        </div>
       </div>
 
       <span className="sr-only">{Math.round(pct)}% towards {milestoneName}</span>
