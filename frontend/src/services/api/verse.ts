@@ -44,13 +44,13 @@ export const verseService = {
   },
 
   // Record a verse share and credit Blessings (capped at 2/day).
-  // Returns the number of Blessings credited (0 when cap is reached).
-  recordShare: async (): Promise<number> => {
+  // Returns blessings_credited and an optional discipline_completed field.
+  recordShare: async (): Promise<{ blessings_credited: number; discipline_completed?: { key: string; blessings_credited: number } }> => {
     try {
-      const response = await apiClient.post<{ blessings_credited: number }>('/api/verses/share');
-      return response.data.blessings_credited ?? 0;
+      const response = await apiClient.post<{ blessings_credited: number; discipline_completed?: { key: string; blessings_credited: number } }>('/api/verses/share');
+      return { blessings_credited: response.data.blessings_credited ?? 0, discipline_completed: response.data.discipline_completed };
     } catch {
-      return 0;
+      return { blessings_credited: 0 };
     }
   },
 

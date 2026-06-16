@@ -59,6 +59,9 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
       qc.invalidateQueries({ queryKey: ['plans-my'] });
       qc.invalidateQueries({ queryKey: ['plans-library'] });
       qc.invalidateQueries({ queryKey: ['streak'] });
+      if (data.discipline_completed) {
+        qc.invalidateQueries({ queryKey: ['disciplines', 'today'] });
+      }
 
       setBlessingsEarned(data.blessings_earned);
 

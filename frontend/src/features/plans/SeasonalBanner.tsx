@@ -7,13 +7,6 @@ import plansApi from '../../services/api/plans';
 import { useStreak } from '../../contexts/StreakContext';
 import { usePricingModal } from '../../hooks/usePricingModal';
 
-const SEASON_LABELS: Record<string, string> = {
-  advent: 'Advent',
-  lent: 'Lent',
-  'holy-week': 'Holy Week',
-  pentecost: 'Pentecost',
-};
-
 const SeasonalBanner: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -29,7 +22,7 @@ const SeasonalBanner: React.FC = () => {
 
   if (!seasonalPlan) return null;
 
-  const seasonLabel = SEASON_LABELS[seasonalPlan.season_key] ?? seasonalPlan.season_key;
+  const seasonLabel = t(`plans.season.${seasonalPlan.season_key}`, seasonalPlan.season_key);
 
   const handleClick = () => {
     if (navigator.vibrate) navigator.vibrate(8);

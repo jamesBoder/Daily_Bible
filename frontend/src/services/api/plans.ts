@@ -89,6 +89,7 @@ export interface AdvanceResponse {
   just_completed: boolean;
   blessings_earned: number;
   plan_streak: number;
+  discipline_completed?: { key: string; blessings_credited: number }
 }
 
 const plansApi = {

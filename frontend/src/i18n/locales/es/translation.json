@@ -731,7 +731,29 @@
       "manna_solved": "Puzzle de Maná resuelto",
       "manna_played": "Puzzle de Maná jugado",
       "manna_streak_bonus": "Bonificación de racha de Maná",
+      "discipline_complete": "Disciplina completada",
       "generic": "Bendiciones ganadas"
+    }
+  },
+  "disciplines": {
+    "title": "Disciplinas de Hoy",
+    "progress": "{{done}} de {{total}} completadas",
+    "allDone": "¡Todo listo!",
+    "startPlan": "Comenzar un plan de lectura →",
+    "continuePlan": "Continuar tu plan →",
+    "unlockPremium": "Desbloquear con Premium",
+    "keys": {
+      "read_verse": "Leer el versículo de hoy",
+      "write_journal": "Escribir una entrada en el diario",
+      "favorite_verse": "Marcar un versículo como favorito",
+      "share_verse": "Compartir el versículo diario",
+      "annotate_verse": "Añadir una nota a un versículo",
+      "advance_plan_day": "Completar un día del plan de lectura",
+      "solve_manna_any": "Resolver el Maná de hoy",
+      "solve_manna_4": "Resolver el Maná en 4 intentos",
+      "write_reflection_50": "Escribir una reflexión profunda (50+ palabras)",
+      "react_community": "Orar por alguien",
+      "complete_rosary": "Completar un Rosario"
     }
   },
   "graceDay": {

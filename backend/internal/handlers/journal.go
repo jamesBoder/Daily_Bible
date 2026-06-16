@@ -3,6 +3,7 @@ package handlers
 import (
 	"dailybible/internal/services"
 	"errors"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -17,6 +18,7 @@ type JournalHandler struct {
 	journalService      *services.JournalService
 	subscriptionChecker services.SubscriptionChecker
 	subscriptionService *services.SubscriptionService // for HasOneTimePurchase("journal_unlock")
+	disciplineService   *services.DisciplineService
 }
 
 // NewJournalHandler creates a new JournalHandler.
@@ -34,6 +36,11 @@ func NewJournalHandler(
 // Called from main.go after both services are initialized (breaks the initialization cycle).
 func (h *JournalHandler) SetSubscriptionService(s *services.SubscriptionService) {
 	h.subscriptionService = s
+}
+
+// SetDisciplineService wires the discipline service for the write_journal hook.
+func (h *JournalHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
 }
 
 // journalEntryResponse is the JSON shape returned for a single entry.
@@ -197,6 +204,13 @@ func (h *JournalHandler) CreateEntry(c *gin.Context) {
 	}
 	if blessingsCredited > 0 {
 		resp["blessings_credited"] = blessingsCredited
+	}
+	if h.disciplineService != nil {
+		if dcCredits, dcErr := h.disciplineService.TryComplete(userID, "write_journal", isPremium); dcErr != nil {
+			log.Printf("discipline TryComplete write_journal failed user %d: %v", userID, dcErr)
+		} else if dcCredits > 0 {
+			resp["discipline_completed"] = gin.H{"key": "write_journal", "blessings_credited": dcCredits}
+		}
 	}
 	c.JSON(http.StatusCreated, resp)
 }

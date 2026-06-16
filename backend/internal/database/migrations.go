@@ -50,6 +50,8 @@ func RunMigrations(db *gorm.DB) error {
 		&models.SubscriberReminderLog{},
 		// Streak-break warning emails
 		&models.StreakReminderLog{},
+		// Daily Disciplines
+		&models.UserDisciplineCompletion{},
 	); err != nil {
 		return err
 	}

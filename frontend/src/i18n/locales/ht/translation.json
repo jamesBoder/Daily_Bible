@@ -993,7 +993,29 @@
       "manna_solved": "Puzzle Manna rezoud",
       "manna_played": "Puzzle Manna jwe",
       "manna_streak_bonus": "Bonis seri Manna",
+      "discipline_complete": "Disiplin akonpli",
       "generic": "Benediksyon ranmase"
+    }
+  },
+  "disciplines": {
+    "title": "Disiplin Jodi a",
+    "progress": "{{done}} nan {{total}} akonpli",
+    "allDone": "Tout fini",
+    "startPlan": "Kòmanse yon plan lekti →",
+    "continuePlan": "Kontinye plan ou →",
+    "unlockPremium": "Debloke ak Premium",
+    "keys": {
+      "read_verse": "Li vèsè jodi a",
+      "write_journal": "Ekri nan jounal ou",
+      "favorite_verse": "Mete yon vèsè nan favori",
+      "share_verse": "Pataje vèsè chak jou",
+      "annotate_verse": "Ajoute yon nòt sou yon vèsè",
+      "advance_plan_day": "Ranpli yon jou nan plan lekti",
+      "solve_manna_any": "Rezoud Manna jodi a",
+      "solve_manna_4": "Rezoud Manna nan 4 eseye",
+      "write_reflection_50": "Ekri yon reyeksyon fon (50+ mo)",
+      "react_community": "Priye pou yon moun",
+      "complete_rosary": "Ranpli yon Chaplet"
     }
   },
   "graceDayTutorial": {
