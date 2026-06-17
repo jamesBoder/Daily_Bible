@@ -58,9 +58,6 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   const [favoriteError, setFavoriteError] = useState<string | null>(null);
   const [justFavorited, setJustFavorited] = useState(false);
   const [heartbeatKey, setHeartbeatKey] = useState(0);
-  const [isLongPressing, setIsLongPressing] = useState(false);
-  const longPressTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const longPressOrigin = useRef<{ x: number; y: number } | null>(null);
 
   const handleCommentSaved = async () => {
     // Guard — CommentSection is hidden for unauthenticated users, but safety net
@@ -199,43 +196,6 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
 
   const isVerseAlreadyFavorited = isFavorited(verse.id);
 
-  // Long-press on the verse card to copy text (800ms, cancelled if pointer moves >10px)
-  const handleLongPressStart = (e: React.PointerEvent) => {
-    longPressOrigin.current = { x: e.clientX, y: e.clientY };
-    setIsLongPressing(true);
-    longPressTimer.current = setTimeout(async () => {
-      longPressOrigin.current = null;
-      setIsLongPressing(false);
-      try {
-        await navigator.clipboard.writeText(buildCopyBlock(verse));
-        setIsCopied(true);
-        setTimeout(() => setIsCopied(false), 2500);
-        if (navigator.vibrate) navigator.vibrate(40);
-        trackShare('longpress');
-      } catch {
-        // Silently ignore clipboard errors
-      }
-    }, 800);
-  };
-
-  const handleLongPressMove = (e: React.PointerEvent) => {
-    if (!longPressOrigin.current || !longPressTimer.current) return;
-    const dx = e.clientX - longPressOrigin.current.x;
-    const dy = e.clientY - longPressOrigin.current.y;
-    if (Math.hypot(dx, dy) > 10) {
-      handleLongPressEnd();
-    }
-  };
-
-  const handleLongPressEnd = () => {
-    longPressOrigin.current = null;
-    setIsLongPressing(false);
-    if (longPressTimer.current) {
-      clearTimeout(longPressTimer.current);
-      longPressTimer.current = null;
-    }
-  };
-
   // Fade in effect when verse changes
   useEffect(() => {
     // Fade out
@@ -260,21 +220,7 @@ export const VerseCard: React.FC<VerseCardProps> = ({ verse, lang = "en", onVers
   return (
     <Card
       className={`relative transition-all duration-500 ease-out ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
-      onPointerDown={handleLongPressStart}
-      onPointerMove={handleLongPressMove}
-      onPointerUp={handleLongPressEnd}
-      onPointerLeave={handleLongPressEnd}
-      onPointerCancel={handleLongPressEnd}
     >
-      {/* Long-press copy indicator */}
-      {isLongPressing && (
-        <div className="absolute inset-0 rounded-2xl bg-primary-500/10 dark:bg-primary-400/10 ring-2 ring-primary-400/50 dark:ring-primary-500/50 pointer-events-none transition-opacity duration-150 z-20 flex items-center justify-center">
-          <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-[var(--theme-surface)]/80 px-3 py-1 rounded-full shadow-sm">
-            Hold to copy…
-          </span>
-        </div>
-      )}
-
       {/* Decorative quote mark */}
       <div className="absolute top-4 left-4 text-4xl text-primary-100 dark:text-primary-900 font-serif">
         "
