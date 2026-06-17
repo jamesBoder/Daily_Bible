@@ -2,6 +2,11 @@ package config
 
 import "sort"
 
+// KJVVersionID is the API.Bible version ID for the King James Version, the
+// translation the daily verse service always caches. It is the single source of
+// truth for this ID — reference it instead of repeating the literal string.
+const KJVVersionID = "de4e12af7f28f599-02"
+
 // BibleVersion represents a single Bible translation with its API.Bible metadata.
 type BibleVersion struct {
 	ID              string // API.Bible version ID (empty for unlicensed premium translations)
@@ -18,7 +23,7 @@ type BibleVersion struct {
 var BibleVersions = map[string]BibleVersion{
 	// ── English — Free (public domain) ───────────────────────────────────────
 	"kjv": {
-		ID:              "de4e12af7f28f599-02",
+		ID:              KJVVersionID,
 		Name:            "King James Version",
 		Abbreviation:    "KJV",
 		Language:        "English",

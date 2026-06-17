@@ -168,9 +168,8 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 		}
 
 		resolvedVersion := h.resolveVersion(c, language, nil)
-		const kjvVersionID = "de4e12af7f28f599-02"
 		verseText := verse.Text
-		if resolvedVersion.ID != kjvVersionID && resolvedVersion.ID != "" {
+		if resolvedVersion.ID != config.KJVVersionID && resolvedVersion.ID != "" {
 			if translatedVerse, err := h.bibleAPIService.GetVerseWithVersionID(verse.Reference, resolvedVersion.ID); err == nil {
 				verseText = translatedVerse.Text
 			} else {
@@ -329,13 +328,12 @@ func (h *VerseHandler) GetDailyVerse(c *gin.Context) {
 	resolvedVersion := h.resolveVersion(c, language, cachedSettings)
 
 	// If the resolved version differs from the cached KJV text, fetch the translation.
-	// The daily verse service always caches KJV (ID: "de4e12af7f28f599-02"); any other
+	// The daily verse service always caches KJV (config.KJVVersionID); any other
 	// version requires an additional API call (served from in-memory cache on repeat hits).
 	// IMPORTANT: never mutate verse.Text — it points into the in-process memory cache.
 	// Mutating it would poison the cache for all subsequent requests.
-	const kjvVersionID = "de4e12af7f28f599-02"
 	verseText := verse.Text
-	if resolvedVersion.ID != kjvVersionID && resolvedVersion.ID != "" {
+	if resolvedVersion.ID != config.KJVVersionID && resolvedVersion.ID != "" {
 		if translatedVerse, err := h.bibleAPIService.GetVerseWithVersionID(verse.Reference, resolvedVersion.ID); err == nil {
 			verseText = translatedVerse.Text
 		} else {

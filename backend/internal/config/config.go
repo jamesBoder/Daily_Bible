@@ -74,7 +74,7 @@ func Load() (*Config, error) {
 		Port:                      getEnvOrDefault("PORT", "8888"),
 		JWTSecret:                 os.Getenv("JWT_SECRET"),
 		BibleAPIKey:               os.Getenv("BIBLE_API_KEY"),
-		BibleVersionID:            getEnvOrDefault("BIBLE_VERSION_ID", "de4e12af7f28f599-02"),
+		BibleVersionID:            getEnvOrDefault("BIBLE_VERSION_ID", KJVVersionID),
 		BibleAPIBaseURL:           getEnvOrDefault("BIBLE_API_BASE_URL", "https://rest.api.bible/v1"),
 		ServerAddress:             "0.0.0.0:" + getEnvOrDefault("PORT", "8888"),
 		ResendAPIKey:              os.Getenv("RESEND_API_KEY"),
