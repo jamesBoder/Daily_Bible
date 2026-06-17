@@ -189,8 +189,6 @@ export const DailyVerse: React.FC = () => {
     if (sessionStorage.getItem(sessionKey)) return;
     sessionStorage.setItem(sessionKey, '1');
     showBlessingsToast(blessingsCredited, 'daily_view');
-    // Invalidate disciplines so read_verse shows as complete immediately.
-    queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
     // Delay so this refresh always falls outside the 1-second debounce window
     // (StreakContext fetches streak on mount, ~0ms; verse arrives ~200-800ms later).
     // The backend now writes milestones synchronously before the verse response
@@ -199,6 +197,23 @@ export const DailyVerse: React.FC = () => {
     return () => clearTimeout(tid);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [verse, blessingsCredited]);
+
+  // Refresh the Daily Disciplines card whenever today's verse is shown so the
+  // read_verse discipline checks off reliably. This is deliberately decoupled from
+  // blessingsCredited: the backend now completes read_verse on any authenticated
+  // fetch of today's verse, but the credit (wasNew) is often consumed by the
+  // lang=en prefetch, so the on-screen fetch returns blessingsCredited=0 — yet the
+  // discipline IS complete server-side and the card must reflect it. The verse
+  // object is only present after that fetch resolves, so the completion is already
+  // committed by the time this runs. Guarded once per UTC-10 day per session.
+  useEffect(() => {
+    if (!user || !verse || historyIndex !== 0) return;
+    const sessionKey = `disciplines-verse-refreshed-${todayStr}`;
+    if (sessionStorage.getItem(sessionKey)) return;
+    sessionStorage.setItem(sessionKey, '1');
+    queryClient.invalidateQueries({ queryKey: ['disciplines', 'today'] });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [verse, historyIndex]);
 
   // Track the previous language so we can detect actual language *changes*
   // (as opposed to initial mount, where we must not nuke the prefetched verse).
