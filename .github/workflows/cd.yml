@@ -16,7 +16,7 @@ jobs:
       url: https://wordsofpraise.app
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
@@ -53,7 +53,7 @@ jobs:
       url: https://wordsofpraise.app
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: superfly/flyctl-actions/setup-flyctl@master
 
