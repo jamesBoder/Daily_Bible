@@ -73,6 +73,6 @@
     "source-map-explorer": "^2.5.3",
     "tailwindcss": "^3.4.19",
     "typescript": "^5.9.3",
-    "webpack-bundle-analyzer": "^5.2.0"
+    "webpack-bundle-analyzer": "^5.3.0"
   }
 }
