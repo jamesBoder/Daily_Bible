@@ -1874,7 +1874,7 @@ FROM reading_plans p,
    'Jesus makes the observable love between believers the primary apologetic for the reality of the gospel. Not doctrine, not miracles — the visible quality of mutual love in the community. The new commandment is given not in an idealized setting but in the room where Judas has just left to betray Jesus — love is commanded in the presence of its refusal.'
   ),
   (9,
-   'In Luke 6:27-31, Jesus gives four specific responses to enemies. Which of these four does He list?',
+   'In Luke 6:27-28, what does Jesus tell His followers to do toward their enemies?',
    '[{"label":"A","text":"Love, do good, bless, and pray for them","correct":true},{"label":"B","text":"Only avoid retaliation and resentment","correct":false},{"label":"C","text":"Forgive them once and then keep distance","correct":false}]',
    'Jesus moves from interior (chosen goodwill) to the most concrete (pray for them by name): love, do good, bless, pray. The Golden Rule in verse 31 is given in its active, positive form — initiate the good you would want — rather than the negative form known in Hillel, Confucius, and Tobit. Enemy-love is not passive neutrality but active goodwill.'
   ),
@@ -2037,5 +2037,1784 @@ FROM reading_plans p,
   )
 ) AS v(day_number, text, refs)
 WHERE p.slug = 'rooted-in-love'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- The Names of God (7 days) — base entries.
+-- Content run 2026-07-02. Evergreen plan, sort_order 6.
+-- Idempotent: inserted only when the plan has zero entries.
+-- ============================================================
+INSERT INTO reading_plan_entries (plan_id, day_number, verse_ref, reflection, created_at)
+SELECT p.id, v.day_number, v.verse_ref, v.reflection, NOW()
+FROM reading_plans p,
+(VALUES
+  (1, 'Genesis 1:1-3',   'Before God is described by any single attribute, He acts — He creates. Elohim is the first name Scripture gives Him, and it is plural in form, hinting at a fullness the Hebrew mind could not yet fathom. Everything that exists began at His word.'),
+  (2, 'Genesis 16:13',   'Hagar, a runaway slave with no status and no future, becomes the first person in Scripture to give God a name — El Roi, the God who sees me. He found her in the wilderness precisely because He had never lost sight of her.'),
+  (3, 'Genesis 22:13-14','On the mountain where Abraham raised the knife over his son, God provided a ram in the thicket. Abraham named the place Jehovah-Jireh — the LORD will provide. The provision came at the last moment, but it came.'),
+  (4, 'Exodus 15:26',    'Three days after crossing the Red Sea, Israel found only bitter water. There God revealed Himself as Jehovah-Rapha — the LORD who heals. He heals not only bodies but the bitterness of a people who have forgotten His power.'),
+  (5, 'Genesis 17:1',    'When Abram was ninety-nine and long past hope of a child, God appeared as El Shaddai — God Almighty, God all-sufficient. The name answers the question every waiting heart asks: is He enough for what I cannot do myself?'),
+  (6, 'Isaiah 40:10-11', 'The same God whose arm rules the nations gathers lambs in that arm and carries them close. Jehovah-Raah, the LORD my Shepherd, is not a distant sovereign but a tender guide who leads the weak gently, at their pace.'),
+  (7, 'Exodus 17:15-16', 'After Israel defeated Amalek while Moses held up his hands, Moses built an altar and named it Jehovah-Nissi — the LORD my Banner. In ancient war a banner was the rallying point; God Himself is the standard His people gather under.')
+) AS v(day_number, verse_ref, reflection)
+WHERE p.slug = 'names-of-god'
+  AND NOT EXISTS (SELECT 1 FROM reading_plan_entries WHERE plan_id = p.id);
+
+-- The Names of God — text, titles, passages, prayer, application, question, context, memory flags.
+UPDATE reading_plan_entries e
+SET
+  day_title       = v.day_title,
+  passage_text    = v.passage_text,
+  passage_refs    = v.passage_refs,
+  prayer          = v.prayer,
+  application     = v.application,
+  question        = v.question,
+  context_note    = v.context_note,
+  content_type    = 'passage',
+  is_memory_verse = v.is_memory_verse
+FROM reading_plans p,
+(VALUES
+  (1,
+   'Elohim: The Creator God',
+   'In the beginning God created the heaven and the earth. And the earth was without form, and void; and darkness was upon the face of the deep. And the Spirit of God moved upon the face of the waters. And God said, Let there be light: and there was light.',
+   '["Nehemiah 9:6", "Colossians 1:16"]',
+   'Elohim, my Maker, You spoke light into darkness and order into chaos. Speak into the formless places of my life today, and let there be light where I have only known shadow. Amen.',
+   'Step outside for two minutes and look at one created thing — a tree, the sky, your own hands. Say aloud: "Elohim made this." Let creation preach to you before the day begins.',
+   'The name Elohim is grammatically plural yet takes singular verbs. What does it stir in you to know the God who made the galaxies also chose to make you?',
+   'Elohim is the name used throughout Genesis 1 — 35 times in the creation account alone. Its plural form (a plural of majesty) hints at a fullness later revealed as the Trinity.',
+   true
+  ),
+  (2,
+   'El Roi: The God Who Sees Me',
+   'And she called the name of the LORD that spake unto her, Thou God seest me: for she said, Have I also here looked after him that seeth me?',
+   '["Psalm 139:1-4", "Hebrews 4:13"]',
+   'El Roi, You see me — not just my actions but my aching, unspoken places. Thank You that I am never invisible to You. Meet me in my wilderness as You met Hagar. Amen.',
+   'Think of the part of your life you feel no one notices. Bring it to God in one honest sentence, knowing you are already fully seen and still fully loved.',
+   'Hagar was overlooked by everyone around her, yet fully seen by God. Where in your life do you most need to remember that you are not invisible to Him?',
+   'Hagar, an Egyptian slave, is the only person in the Bible to give God a name. God met her twice in the desert — the God who sees pursues the forgotten.',
+   false
+  ),
+  (3,
+   'Jehovah-Jireh: The LORD Will Provide',
+   'And Abraham lifted up his eyes, and looked, and behold behind him a ram caught in a thicket by his horns: and Abraham went and took the ram, and offered him up for a burnt offering in the stead of his son. And Abraham called the name of that place Jehovahjireh: as it is said to this day, In the mount of the LORD it shall be seen.',
+   '["Philippians 4:19", "Matthew 6:31-33"]',
+   'Jehovah-Jireh, You provided a ram for Abraham and Your own Son for me. Teach me to trust Your provision even when I cannot yet see it in the thicket. Amen.',
+   'Name one thing you are anxious about providing for. Write "Jehovah-Jireh" next to it and choose to release the timeline of the provision to God.',
+   'Abraham named the place "The LORD will provide" before he saw how. What would change if you named your current need by God''s character instead of your fear?',
+   'The name means literally "the LORD will see to it." Provision and seeing share the same Hebrew root (ra''ah) — God provides because He sees ahead to the need.',
+   false
+  ),
+  (4,
+   'Jehovah-Rapha: The LORD Who Heals',
+   'And said, If thou wilt diligently hearken to the voice of the LORD thy God, and wilt do that which is right in his sight, and wilt give ear to his commandments, and keep all his statutes, I will put none of these diseases upon thee, which I have brought upon the Egyptians: for I am the LORD that healeth thee.',
+   '["Psalm 103:2-3", "1 Peter 2:24"]',
+   'Jehovah-Rapha, You are the LORD who heals. Where I am broken in body, mind, or memory, bring Your restoring touch. I trust the timing and the depth of Your healing. Amen.',
+   'Bring one wound — physical or emotional — before God today. Instead of demanding a cure, ask Him to be present in it as the Healer, and notice what shifts.',
+   'God revealed Himself as Healer at bitter waters, not beside a spring. Why do you think He so often reveals this name in the hard places rather than the easy ones?',
+   'The bitter water at Marah was made sweet when God showed Moses a tree to cast in — an early picture of healing coming through wood, later fulfilled at the cross.',
+   false
+  ),
+  (5,
+   'El Shaddai: God Almighty',
+   'And when Abram was ninety years old and nine, the LORD appeared to Abram, and said unto him, I am the Almighty God; walk before me, and be thou perfect.',
+   '["Genesis 35:11", "Revelation 1:8"]',
+   'El Shaddai, God all-sufficient, You are enough where I am not. When my strength and my options run out, You are only beginning. Be my sufficiency today. Amen.',
+   'Identify one place you have been striving in your own strength. Consciously hand it to El Shaddai and take one small step of obedience, trusting Him for the outcome.',
+   'God revealed this name to a man far past his own ability to fulfill the promise. Where are you waiting on something you cannot produce yourself?',
+   'El Shaddai is often translated "God Almighty," suggesting all-sufficiency and overflowing supply. God gave Abram this name — and a new name, Abraham — in the same encounter.',
+   false
+  ),
+  (6,
+   'Jehovah-Raah: The LORD My Shepherd',
+   'Behold, the Lord GOD will come with strong hand, and his arm shall rule for him: behold, his reward is with him, and his work before him. He shall feed his flock like a shepherd: he shall gather the lambs with his arm, and carry them in his bosom, and shall gently lead those that are with young.',
+   '["Psalm 23:1", "John 10:11"]',
+   'Jehovah-Raah, my Shepherd, gather me when I stray and carry me when I am too weak to walk. Lead me gently today, at the pace You know I can bear. Amen.',
+   'Where are you exhausted from trying to lead yourself? Picture the Shepherd carrying you today, and let one decision be surrendered to His leading rather than your striving.',
+   'Isaiah pairs God''s ruling arm with His carrying arm in a single breath. How does it change your view of God''s power to know it is used to carry the weak gently?',
+   'Isaiah 40 was written to exiles who felt abandoned. Into that despair God reveals Himself not first as ruler but as Shepherd — strength expressed as tenderness.',
+   true
+  ),
+  (7,
+   'Jehovah-Nissi: The LORD My Banner',
+   'And Moses built an altar, and called the name of it Jehovahnissi: For he said, Because the LORD hath sworn that the LORD will have war with Amalek from generation to generation.',
+   '["Exodus 17:11-13", "2 Corinthians 2:14"]',
+   'Jehovah-Nissi, You are the banner I rally under. When I am tempted to fight my battles alone, remind me that the victory is Yours and my place is beneath Your standard. Amen.',
+   'Name a battle you are facing. Rather than strategizing first, begin today by lifting it to God in prayer — raising the banner before raising your own hands.',
+   'Israel prevailed only while Moses'' hands were lifted, held up by others. Who helps hold up your hands in the long battles — and whose hands can you help hold today?',
+   'A "banner" (Hebrew nes) was the standard an army rallied around and could see from afar. Moses names God Himself as that rallying point after the victory over Amalek.',
+   false
+  )
+) AS v(day_number, day_title, passage_text, passage_refs, prayer, application, question, context_note, is_memory_verse)
+WHERE p.slug = 'names-of-god'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- The Names of God — comprehension check questions (all 7 days).
+UPDATE reading_plan_entries e
+SET
+  quiz_question    = v.question,
+  quiz_options     = v.options,
+  quiz_explanation = v.explanation
+FROM reading_plans p,
+(VALUES
+  (1,
+   'What is the first thing Scripture tells us Elohim does?',
+   '[{"label":"A","text":"He speaks His law","correct":false},{"label":"B","text":"He creates","correct":true},{"label":"C","text":"He judges","correct":false}]',
+   'Genesis 1:1 opens with action: "In the beginning God created." Before any attribute is named, Elohim is revealed as the Maker of everything that exists.'
+  ),
+  (2,
+   'Who gave God the name El Roi, "the God who sees me"?',
+   '[{"label":"A","text":"Abraham","correct":false},{"label":"B","text":"Moses","correct":false},{"label":"C","text":"Hagar","correct":true}]',
+   'Hagar, an overlooked Egyptian slave, is the only person in Scripture to give God a name — El Roi — after He met her in the wilderness.'
+  ),
+  (3,
+   'What did God provide on the mountain in place of Abraham''s son?',
+   '[{"label":"A","text":"A ram caught in a thicket","correct":true},{"label":"B","text":"A dove","correct":false},{"label":"C","text":"A lamb from the flock","correct":false}]',
+   'Abraham saw "a ram caught in a thicket by his horns" and offered it in his son''s place, then named the place Jehovah-Jireh, the LORD will provide.'
+  ),
+  (4,
+   'Where did God reveal Himself as Jehovah-Rapha, the LORD who heals?',
+   '[{"label":"A","text":"At the Red Sea","correct":false},{"label":"B","text":"At the bitter waters of Marah","correct":true},{"label":"C","text":"On Mount Sinai","correct":false}]',
+   'Three days past the Red Sea, Israel found only bitter water at Marah. There God made it sweet and declared, "I am the LORD that healeth thee."'
+  ),
+  (5,
+   'How old was Abram when God appeared to him as El Shaddai?',
+   '[{"label":"A","text":"Seventy-five","correct":false},{"label":"B","text":"Ninety-nine","correct":true},{"label":"C","text":"One hundred twenty","correct":false}]',
+   'Genesis 17:1 says Abram was "ninety years old and nine" — long past natural hope of a child — when God revealed Himself as God Almighty, the all-sufficient One.'
+  ),
+  (6,
+   'In Isaiah 40:11, how does the LORD the Shepherd treat the lambs?',
+   '[{"label":"A","text":"He drives them forward","correct":false},{"label":"B","text":"He gathers and carries them","correct":true},{"label":"C","text":"He leaves them to follow","correct":false}]',
+   'Isaiah says He "shall gather the lambs with his arm, and carry them in his bosom, and shall gently lead" — power expressed as tenderness toward the weak.'
+  ),
+  (7,
+   'What does the name Jehovah-Nissi mean?',
+   '[{"label":"A","text":"The LORD my Peace","correct":false},{"label":"B","text":"The LORD my Banner","correct":true},{"label":"C","text":"The LORD my Rock","correct":false}]',
+   'Moses named the altar Jehovah-Nissi, "the LORD my Banner" — the rallying standard His people gather under — after the victory over Amalek.'
+  )
+) AS v(day_number, question, options, explanation)
+WHERE p.slug = 'names-of-god'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- The Names of God — word studies (the Hebrew name for each day).
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (1, '{"god":{"original":"אֱלֹהִים","transliteration":"Elohim","definition":"God, the Creator — a plural form used with singular verbs, expressing majesty and fullness. The name emphasizes God''s power and sovereignty over all He has made.","refs":["Genesis 1:1","Deuteronomy 10:17"]}}'),
+  (2, '{"seest":{"original":"אֵל רֳאִי","transliteration":"El Roi","definition":"The God who sees me. Roi comes from ra''ah, to see or perceive. God is the One whose attentive gaze reaches the overlooked and the hidden.","refs":["Genesis 16:13","Psalm 139:1-4"]}}'),
+  (3, '{"jehovahjireh":{"original":"יְהוָה יִרְאֶה","transliteration":"Yahweh Yireh","definition":"The LORD will provide — literally, the LORD will see to it. Provision and seeing share the same root: God provides because He sees the need ahead of time.","refs":["Genesis 22:14","Philippians 4:19"]}}'),
+  (4, '{"healeth":{"original":"יְהוָה רֹפְאֶךָ","transliteration":"Yahweh Rapha","definition":"The LORD who heals. Rapha means to mend, restore, or make whole — used of physical healing and of God restoring what is broken in body, soul, and nation.","refs":["Exodus 15:26","Psalm 103:3"]}}'),
+  (5, '{"almighty":{"original":"אֵל שַׁדַּי","transliteration":"El Shaddai","definition":"God Almighty, God all-sufficient. Often linked to the idea of overflowing supply — the God who is enough when human strength has run out.","refs":["Genesis 17:1","Genesis 35:11"]}}'),
+  (6, '{"shepherd":{"original":"רָעָה","transliteration":"raah","definition":"To shepherd, to tend, to feed. The verb behind Jehovah-Raah (Psalm 23:1) — it pictures the constant, caring work of a shepherd toward a flock that cannot guide itself.","refs":["Psalm 23:1","Ezekiel 34:11-12"]}}'),
+  (7, '{"jehovahnissi":{"original":"נִסִּי","transliteration":"nissi","definition":"My banner or standard (from nes). The raised pole an army rallied around and could see from far off. God Himself is the banner His people gather beneath.","refs":["Exodus 17:15","Isaiah 11:10"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'names-of-god'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- The Names of God — dig deeper commentary (days 1, 4, 7).
+UPDATE reading_plan_entries e
+SET
+  deep_dive_text = v.text,
+  deep_dive_refs = v.refs
+FROM reading_plans p,
+(VALUES
+  (1,
+   'The very first sentence of the Bible makes a claim that shapes everything after it: reality is not an accident. Elohim (אֱלֹהִים) is grammatically plural, yet Genesis 1 pairs it with singular verbs — "God created," not "the gods created." Hebrew scholars call this a plural of majesty, a way of expressing fullness and greatness beyond what a singular form could hold. Christians have long seen in it a whisper of what is later revealed: the Father speaking, the Spirit hovering over the waters (v.2), and the Word through whom all things were made (John 1:1-3, Colossians 1:16). Notice also how God creates — not by struggle or by shaping pre-existing matter, as the surrounding creation myths described, but by speech. "And God said... and there was." The universe is spoken, not wrestled into being. That has a pastoral edge: the same voice that ordered galaxies can speak order into a chaotic life. Where you see formlessness and void today, the Creator is not intimidated. He has done His best work in exactly such places.',
+   '["John 1:1-3", "Colossians 1:16-17"]'
+  ),
+  (4,
+   'Jehovah-Rapha (יְהוָה רֹפְאֶךָ) is revealed at Marah, where water that should have refreshed instead turned bitter (Exodus 15:22-26). The setting matters. God does not announce Himself as Healer beside a clear spring but beside undrinkable water, only three days after the greatest deliverance in Israel''s history. The lesson is that rescue and disappointment can sit close together, and God is Lord of both. The Hebrew rapha means to mend, to stitch, to restore — it is used of repairing an altar, healing a body, and restoring a broken people. Crucially, the healing at Marah came through a tree that Moses cast into the water (v.25), an image the church has long read as a foreshadowing of the cross, where "by his wounds we are healed" (1 Peter 2:24, Isaiah 53:5). Not every healing in this life is physical or immediate; Paul carried a thorn God chose not to remove (2 Corinthians 12:7-9). But the name holds: the trajectory of everyone under Jehovah-Rapha is toward wholeness, even when the final healing waits for the world made new.',
+   '["Isaiah 53:4-5", "Revelation 21:4"]'
+  ),
+  (7,
+   'Jehovah-Nissi (יְהוָה נִסִּי) closes this journey through the names, and it gathers the others into a posture. The battle against Amalek (Exodus 17:8-16) is strange: Israel prevailed only while Moses held up his hands, and when his arms grew heavy, Aaron and Hur held them up on either side. The victory was real, but it was never Israel''s achievement — it flowed from lifted hands, sustained by community, directed upward. A nes was the standard raised on a hill so a scattered army could find its rallying point; to name God your banner is to say that He, not your strategy or your strength, is what you gather around and fight beneath. Paul later picks up the same military image and turns it into a procession: "thanks be unto God, which always causeth us to triumph in Christ" (2 Corinthians 2:14). The names build to this. Elohim made you, El Roi sees you, Jehovah-Jireh provides for you, Jehovah-Rapha heals you, El Shaddai is enough for you, Jehovah-Raah shepherds you — and Jehovah-Nissi is the standard over it all. Knowing God''s name is not trivia; it is learning where to run in every kind of trouble.',
+   '["Exodus 17:8-16", "2 Corinthians 2:14"]'
+  )
+) AS v(day_number, text, refs)
+WHERE p.slug = 'names-of-god'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Holy Week (7 days) — base entries. Seasonal (season_key 'holy-week').
+-- Content run 2026-07-02. Palm Sunday through Easter morning.
+-- Idempotent: inserted only when the plan has zero entries.
+-- ============================================================
+INSERT INTO reading_plan_entries (plan_id, day_number, verse_ref, reflection, created_at)
+SELECT p.id, v.day_number, v.verse_ref, v.reflection, NOW()
+FROM reading_plans p,
+(VALUES
+  (1, 'Luke 19:37-40',  'The crowd hailed Jesus as King as He rode into Jerusalem on a borrowed colt — not a war horse. The praise was real, yet within days many of these same voices would fall silent. He received the worship knowing exactly what the week would hold.'),
+  (2, 'Mark 11:15-17',  'Jesus'' first public act in the temple was not to teach but to cleanse. Zeal for His Father''s house overturned both the money-changers'' tables and everyone''s expectations. Worship had become commerce, and He would not let it stand.'),
+  (3, 'Mark 12:28-31',  'Asked to name the greatest commandment, Jesus refused to separate love for God from love for neighbor. The whole law hangs on these two loves held together — the vertical and the horizontal, never one without the other.'),
+  (4, 'Mark 14:3-9',    'While religious leaders plotted His death, an unnamed woman poured out a year''s wages in worship. Jesus called it a beautiful thing, done for His burial. Extravagant love always looks like waste to those who are only calculating.'),
+  (5, 'Luke 22:19-20',  'On the night He was betrayed, Jesus took bread and wine and gave them new meaning: His body broken, His blood poured out. The new covenant would be sealed not in ceremony but in sacrifice — and remembered at every table since.'),
+  (6, 'Luke 23:33-46',  'At Calvary the King wore thorns. Jesus prayed forgiveness over the very hands that nailed Him. When He gave up His spirit, the temple veil tore from top to bottom — the barrier between God and humanity opened from heaven''s side.'),
+  (7, 'Luke 24:1-6',    'The women came to anoint a body and found an empty tomb. "Why seek ye the living among the dead?" The stone was not rolled away to let Jesus out, but to let the world see in. He is not here — He is risen.')
+) AS v(day_number, verse_ref, reflection)
+WHERE p.slug = 'holy-week'
+  AND NOT EXISTS (SELECT 1 FROM reading_plan_entries WHERE plan_id = p.id);
+
+-- Holy Week — text, titles, passages, prayer, application, question, context, memory flags.
+UPDATE reading_plan_entries e
+SET
+  day_title       = v.day_title,
+  passage_text    = v.passage_text,
+  passage_refs    = v.passage_refs,
+  prayer          = v.prayer,
+  application     = v.application,
+  question        = v.question,
+  context_note    = v.context_note,
+  content_type    = 'passage',
+  is_memory_verse = v.is_memory_verse
+FROM reading_plans p,
+(VALUES
+  (1,
+   'The King on a Colt',
+   'And when he was come nigh, even now at the descent of the mount of Olives, the whole multitude of the disciples began to rejoice and praise God with a loud voice for all the mighty works that they had seen; Saying, Blessed be the King that cometh in the name of the Lord: peace in heaven, and glory in the highest. And some of the Pharisees from among the multitude said unto him, Master, rebuke thy disciples. And he answered and said unto them, I tell you that, if these should hold their peace, the stones would immediately cry out.',
+   '["Zechariah 9:9", "Psalm 118:26"]',
+   'King Jesus, You entered Jerusalem knowing the cross awaited. Teach me to worship You for who You are, not only for what I hope You will do. Let my praise hold even when the road turns hard. Amen.',
+   'Begin Holy Week by naming Jesus as King over one specific area of your life you have been quietly running yourself. Hand Him the reins there today.',
+   'The crowds praised Jesus for the "mighty works" they had seen. How does your worship change when it is rooted in His character rather than in your circumstances?',
+   'Jesus deliberately fulfilled Zechariah 9:9 by riding a colt — the mount of a king coming in peace, not a war horse. The crowd''s cry echoed Psalm 118, a psalm sung at Passover.',
+   false
+  ),
+  (2,
+   'Cleansing the Temple',
+   'And they come to Jerusalem: and Jesus went into the temple, and began to cast out them that sold and bought in the temple, and overthrew the tables of the moneychangers, and the seats of them that sold doves; And would not suffer that any man should carry any vessel through the temple. And he taught, saying unto them, Is it not written, My house shall be called of all nations the house of prayer? but ye have made it a den of thieves.',
+   '["Isaiah 56:7", "John 2:17"]',
+   'Lord, You are jealous for true worship. Search the temple of my own heart and overturn whatever I have let crowd out prayer. Make me a house of prayer, not a marketplace. Amen.',
+   'Identify one thing that has quietly turned your devotional life into a transaction — a box to check, a bargain with God. Name it and clear the table today.',
+   'Jesus was angriest at religion that exploited the poor and blocked access to God. What "tables" in your own spiritual life might He want to overturn?',
+   'The money-changers and dove-sellers operated in the Court of the Gentiles — the one place non-Jews could pray. Their commerce literally crowded out the nations Jesus said the temple was for.',
+   false
+  ),
+  (3,
+   'The Greatest Commandment',
+   'And one of the scribes came, and having heard them reasoning together, and perceiving that he had answered them well, asked him, Which is the first commandment of all? And Jesus answered him, The first of all the commandments is, Hear, O Israel; The Lord our God is one Lord: And thou shalt love the Lord thy God with all thy heart, and with all thy soul, and with all thy mind, and with all thy strength: this is the first commandment. And the second is like, namely this, Thou shalt love thy neighbour as thyself. There is none other commandment greater than these.',
+   '["Deuteronomy 6:4-5", "1 John 4:20-21"]',
+   'Father, You ask for my whole heart, soul, mind, and strength — and then send me to my neighbor. Unite these two loves in me so that loving You overflows into loving the people right in front of me. Amen.',
+   'Pick one person who is hard for you to love. Do one concrete, unrequested act of kindness for them today as an expression of loving God.',
+   'Jesus binds love for God and love for neighbor into a single command. Which of the two comes harder for you right now, and why?',
+   'Jesus quotes the Shema (Deuteronomy 6:4-5), the prayer every faithful Jew recited daily, then joins it to Leviticus 19:18 — welding worship and ethics into one inseparable whole.',
+   false
+  ),
+  (4,
+   'The Extravagant Offering',
+   'And being in Bethany in the house of Simon the leper, as he sat at meat, there came a woman having an alabaster box of ointment of spikenard very precious; and she brake the box, and poured it on his head. And there were some that had indignation within themselves, and said, Why was this waste of the ointment made? And they murmured against her. And Jesus said, Let her alone; why trouble ye her? she hath wrought a good work on me. She hath done what she could: she is come aforehand to anoint my body to the burying. Verily I say unto you, Wheresoever this gospel shall be preached throughout the whole world, this also that she hath done shall be spoken of for a memorial of her.',
+   '["John 12:3", "2 Corinthians 8:9"]',
+   'Jesus, teach me the freedom of extravagant love that does not count the cost. Where I have been cautious with You, let me break the jar and pour it out. You are worth it. Amen.',
+   'Do one thing for God today that others might call impractical — a gift, an hour, an act of worship that makes no strategic sense except love.',
+   'The onlookers saw waste; Jesus saw worship. Where in your life has caution masqueraded as wisdom when love was actually being called for?',
+   'Spikenard was imported from India; the alabaster jar held roughly a year''s wages. Breaking the neck of the jar meant it could never be resealed — the gift was total and irreversible.',
+   false
+  ),
+  (5,
+   'The Last Supper',
+   'And he took bread, and gave thanks, and brake it, and gave unto them, saying, This is my body which is given for you: this do in remembrance of me. Likewise also the cup after supper, saying, This cup is the new testament in my blood, which is shed for you.',
+   '["1 Corinthians 11:23-26", "Jeremiah 31:31-34"]',
+   'Lord Jesus, at Your table I remember that Your body was broken and Your blood poured out for me. Let this not become routine. Feed my soul afresh on Your sacrifice today. Amen.',
+   'Pause before your next meal and take the bread slowly, deliberately, remembering His body given for you. Let one ordinary meal become an act of remembrance.',
+   'Jesus turned a memorial of the exodus into a memorial of Himself. What does it mean to you that He asked to be remembered specifically through His broken body and shed blood?',
+   'Jesus reinterpreted the Passover meal — Israel''s memorial of rescue from Egypt — around Himself, inaugurating the new covenant Jeremiah had promised centuries earlier.',
+   true
+  ),
+  (6,
+   'The Torn Veil',
+   'And when they were come to the place, which is called Calvary, there they crucified him, and the malefactors, one on the right hand, and the other on the left. Then said Jesus, Father, forgive them; for they know not what they do. And they parted his raiment, and cast lots. And it was about the sixth hour, and there was a darkness over all the earth until the ninth hour. And the sun was darkened, and the veil of the temple was rent in the midst. And when Jesus had cried with a loud voice, he said, Father, into thy hands I commend my spirit: and having said thus, he gave up the ghost.',
+   '["Hebrews 10:19-20", "Isaiah 53:5"]',
+   'Jesus, from the cross You forgave. The veil is torn and the way to the Father is open because of Your sacrifice. I come boldly now, only because You bled. Thank You. Amen.',
+   'Sit for five minutes in silence before the cross today. Do not rush to Easter. Let the weight of what it cost Him rest on you before the joy of Sunday.',
+   'The veil that separated the Holy of Holies was torn from top to bottom — from God''s side down. What does it mean to you that God Himself removed the barrier?',
+   'The temple veil was a heavy curtain separating the Most Holy Place, where God''s presence dwelt, from everyone else. Its tearing at the moment of Jesus'' death signaled open access to God for all.',
+   false
+  ),
+  (7,
+   'He Is Risen',
+   'Now upon the first day of the week, very early in the morning, they came unto the sepulchre, bringing the spices which they had prepared, and certain others with them. And they found the stone rolled away from the sepulchre. And they entered in, and found not the body of the Lord Jesus. And it came to pass, as they were much perplexed thereabout, behold, two men stood by them in shining garments: And as they were afraid, and bowed down their faces to the earth, they said unto them, Why seek ye the living among the dead? He is not here, but is risen.',
+   '["1 Corinthians 15:20", "Romans 6:9"]',
+   'Risen Lord, the tomb is empty and death is undone. Let the power that raised You from the grave raise every dead and hopeless place in me. He is risen — He is risen indeed. Amen.',
+   'Tell one person today the simple news the angels gave: He is risen. Let the week end not in private reflection but in shared, spoken joy.',
+   'The women expected a corpse and met a resurrection. Where are you still bringing spices to a tomb — grieving something God may be about to raise?',
+   'The women came to complete a burial, not to witness a resurrection. Their bewilderment is the honest starting point of Easter faith: the empty tomb made no sense until the risen Christ explained it.',
+   true
+  )
+) AS v(day_number, day_title, passage_text, passage_refs, prayer, application, question, context_note, is_memory_verse)
+WHERE p.slug = 'holy-week'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Holy Week — comprehension check questions (all 7 days).
+UPDATE reading_plan_entries e
+SET
+  quiz_question    = v.question,
+  quiz_options     = v.options,
+  quiz_explanation = v.explanation
+FROM reading_plans p,
+(VALUES
+  (1,
+   'According to Jesus, what would happen if the crowd fell silent?',
+   '[{"label":"A","text":"The disciples would be scattered","correct":false},{"label":"B","text":"The stones would cry out","correct":true},{"label":"C","text":"The Pharisees would rejoice","correct":false}]',
+   'Jesus said "if these should hold their peace, the stones would immediately cry out" — creation itself would praise the King the crowds hailed.'
+  ),
+  (2,
+   'What did Jesus say the temple was meant to be called?',
+   '[{"label":"A","text":"A house of prayer","correct":true},{"label":"B","text":"A house of sacrifice","correct":false},{"label":"C","text":"A house of teaching","correct":false}]',
+   'Quoting Isaiah 56:7, Jesus said "My house shall be called of all nations the house of prayer" — but it had been made "a den of thieves."'
+  ),
+  (3,
+   'To what second command did Jesus join "love the Lord your God"?',
+   '[{"label":"A","text":"Honor your father and mother","correct":false},{"label":"B","text":"Love your neighbour as yourself","correct":true},{"label":"C","text":"Keep the Sabbath holy","correct":false}]',
+   'Jesus said the second is like the first: "Thou shalt love thy neighbour as thyself. There is none other commandment greater than these."'
+  ),
+  (4,
+   'How did Jesus describe the woman''s anointing at Bethany?',
+   '[{"label":"A","text":"A waste of costly ointment","correct":false},{"label":"B","text":"A good work, done for His burial","correct":true},{"label":"C","text":"A gift for the poor","correct":false}]',
+   'Against the critics, Jesus said "she hath wrought a good work on me... she is come aforehand to anoint my body to the burying."'
+  ),
+  (5,
+   'What did Jesus say the cup represented at the Last Supper?',
+   '[{"label":"A","text":"The old covenant renewed","correct":false},{"label":"B","text":"The new testament in His blood","correct":true},{"label":"C","text":"The Passover of Egypt","correct":false}]',
+   'Jesus said "This cup is the new testament in my blood, which is shed for you" — sealing a new covenant through His own sacrifice.'
+  ),
+  (6,
+   'What happened to the temple veil at the moment of Jesus'' death?',
+   '[{"label":"A","text":"It was drawn shut","correct":false},{"label":"B","text":"It was rent in the midst","correct":true},{"label":"C","text":"It caught fire","correct":false}]',
+   'Luke records "the veil of the temple was rent in the midst" — the barrier to God''s presence torn open at the instant Christ died.'
+  ),
+  (7,
+   'What did the two men in shining garments tell the women at the tomb?',
+   '[{"label":"A","text":"He is not here, but is risen","correct":true},{"label":"B","text":"He has gone before you to Galilee","correct":false},{"label":"C","text":"Do not touch him","correct":false}]',
+   'They asked "Why seek ye the living among the dead?" and declared "He is not here, but is risen" — the heart of the Easter message.'
+  )
+) AS v(day_number, question, options, explanation)
+WHERE p.slug = 'holy-week'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Holy Week — word studies (a key word from each day''s passage).
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (1, '{"blessed":{"original":"εὐλογημένος","transliteration":"eulogēmenos","definition":"Spoken well of, praised, blessed. From eu (well) and logos (word) — to invoke good upon someone. The crowd blesses the King who comes in the LORD''s name.","refs":["Psalm 118:26","Luke 19:38"]}}'),
+  (2, '{"prayer":{"original":"προσευχή","transliteration":"proseuchē","definition":"Prayer directed to God; by extension, a place of prayer. Jesus insists the temple''s defining purpose is communion with God, not commerce.","refs":["Isaiah 56:7","Mark 11:17"]}}'),
+  (3, '{"love":{"original":"ἀγαπάω","transliteration":"agapaō","definition":"To love with the will as well as the affections — a deliberate, self-giving love that seeks the good of the other. The word for loving both God and neighbor.","refs":["Deuteronomy 6:5","Mark 12:30"]}}'),
+  (4, '{"memorial":{"original":"μνημόσυνον","transliteration":"mnēmosynon","definition":"A remembrance, a memorial — something done that keeps a person or act alive in memory. Jesus promises the woman''s worship will be told wherever the gospel goes.","refs":["Mark 14:9","Acts 10:4"]}}'),
+  (5, '{"remembrance":{"original":"ἀνάμνησις","transliteration":"anamnēsis","definition":"A calling to mind, a memorial re-enactment. More than recollection — it makes a past reality present. Jesus asks to be remembered this way at every table.","refs":["Luke 22:19","1 Corinthians 11:24"]}}'),
+  (6, '{"forgive":{"original":"ἀφίημι","transliteration":"aphiēmi","definition":"To send away, release, cancel a debt. The word for forgiveness pictures a burden let go. Jesus releases His executioners even as they crucify Him.","refs":["Luke 23:34","Matthew 6:12"]}}'),
+  (7, '{"risen":{"original":"ἐγείρω","transliteration":"egeirō","definition":"To wake, to raise up, to rise from the dead. The verb of resurrection — used throughout the New Testament for God raising Jesus and, one day, all who are His.","refs":["Luke 24:6","1 Corinthians 15:20"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'holy-week'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Holy Week — dig deeper commentary (days 5, 6, 7).
+UPDATE reading_plan_entries e
+SET
+  deep_dive_text = v.text,
+  deep_dive_refs = v.refs
+FROM reading_plans p,
+(VALUES
+  (5,
+   'When Jesus lifted the bread and said "this is my body," He was sitting at a Passover table saturated with meaning. For over a thousand years, Jewish families had eaten this meal to remember the night the angel of death passed over Egypt and God led their ancestors out of slavery (Exodus 12). Every element pointed backward to that rescue. Then Jesus did something startling: He made the meal point to Himself. The unleavened bread of affliction became His body "given for you"; the cup of redemption became "the new testament in my blood." The exodus had rescued a nation from Pharaoh; this new exodus would rescue humanity from sin and death. The word He used, anamnēsis ("remembrance"), does not mean merely recalling a fact. In Hebrew worship, to remember was to make a past reality present and active. Every time the church breaks bread, it is not staging a reenactment but participating afresh in the one sacrifice that saves. Jeremiah had promised a coming day when God would write His law on hearts and remember sins no more (Jeremiah 31:31-34). At this table, that day arrived.',
+   '["Exodus 12:21-27", "Jeremiah 31:31-34"]'
+  ),
+  (6,
+   'Two details in Luke''s account of the crucifixion carry enormous theological weight. The first is Jesus'' prayer: "Father, forgive them; for they know not what they do." He does not wait until the pain is over to forgive; He forgives in the act of being killed, interceding for His executioners while the nails are still being driven. This is the love of God on display at its most costly — not sentiment but sacrifice. The second is the torn veil. The curtain before the Most Holy Place was, by tradition, a hand''s-breadth thick, woven so densely that horses tied to each side could not pull it apart. It existed to keep sinful humanity at a distance from the holy presence of God; only the high priest could pass through it, and only once a year, with sacrificial blood. At the instant Jesus died, that veil "was rent in the midst" — and Matthew notes it tore from top to bottom, from God''s side down, not man''s. The message is unmistakable: the barrier is gone, torn by God Himself. Hebrews later names Jesus'' own flesh as the new and living way opened through the veil (Hebrews 10:19-20). The access we have to the Father in prayer was purchased at Calvary.',
+   '["Hebrews 10:19-22", "Isaiah 53:4-6"]'
+  ),
+  (7,
+   'The resurrection is the hinge on which the entire Christian faith turns, and the Gospel writers report it with a striking, almost awkward honesty: the first witnesses did not expect it. The women came at dawn "bringing the spices which they had prepared" — they were planning to finish a burial, not to celebrate a rising. Their perplexity, their fear, their bowed faces are not the marks of people inventing a triumphant legend but of people confronted by something that shattered their categories. The angels'' question — "Why seek ye the living among the dead?" — gently rebukes a grief that had already written the ending. Paul would later stake everything on this event: "if Christ be not raised, your faith is vain" (1 Corinthians 15:17). But he also calls the risen Christ "the firstfruits of them that slept" (15:20) — the first sheaf of a harvest still coming. The empty tomb is not only a fact about Jesus; it is a promise about everyone united to Him. Death, Paul says, no longer has dominion over Him (Romans 6:9) — and therefore its grip on His people has been broken too. Easter is the announcement that the worst thing is never the last thing.',
+   '["1 Corinthians 15:17-22", "Romans 6:8-11"]'
+  )
+) AS v(day_number, text, refs)
+WHERE p.slug = 'holy-week'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Pentecost: Breath of Fire (7 days) — base entries.
+-- Seasonal (season_key 'pentecost'). Content run 2026-07-02.
+-- The coming of the Holy Spirit and the birth of the Church.
+-- Idempotent: inserted only when the plan has zero entries.
+-- ============================================================
+INSERT INTO reading_plan_entries (plan_id, day_number, verse_ref, reflection, created_at)
+SELECT p.id, v.day_number, v.verse_ref, v.reflection, NOW()
+FROM reading_plans p,
+(VALUES
+  (1, 'John 14:16-17',  'Before He left, Jesus promised not to leave His followers as orphans. The Father would send another Comforter — the Spirit of truth — to abide with them forever. What Jesus had been beside them, the Spirit would now be within them.'),
+  (2, 'Acts 1:8-9',     'Jesus told the disciples to wait. Power was coming, but not yet. Then a cloud received Him from their sight. The waiting between promise and fulfillment is often where faith is forged and expectation is stretched.'),
+  (3, 'Acts 2:1-4',     'When Pentecost came, the Spirit arrived like wind and fire — unmistakable, uncontainable. The same Spirit that hovered over creation now filled ordinary people and set them speaking the wonders of God in every language under heaven.'),
+  (4, 'Acts 2:38-41',   'Peter, who had denied Jesus only weeks before, now preached without fear — and three thousand were added in a single day. The Spirit turns cowards into witnesses and a listening crowd into the living Church.'),
+  (5, 'Acts 2:42-47',   'The first believers devoted themselves to teaching, fellowship, the breaking of bread, and prayer. The Spirit did not merely save individuals; He knit them into a community so close they shared everything they had.'),
+  (6, 'Galatians 5:22-25','The surest evidence of the Spirit is not spectacle but character: love, joy, peace, patience. Fruit grows slowly, quietly, from the inside out. A Spirit-filled life looks less like fireworks and more like a tree in season.'),
+  (7, 'Romans 8:14-16', 'The Spirit does not make us slaves cowering in fear but children crying "Abba, Father." He bears witness with our spirit that we truly belong to God. Our deepest identity is settled by His quiet voice within us.')
+) AS v(day_number, verse_ref, reflection)
+WHERE p.slug = 'pentecost-breath-of-fire'
+  AND NOT EXISTS (SELECT 1 FROM reading_plan_entries WHERE plan_id = p.id);
+
+-- Pentecost — text, titles, passages, prayer, application, question, context, memory flags.
+UPDATE reading_plan_entries e
+SET
+  day_title       = v.day_title,
+  passage_text    = v.passage_text,
+  passage_refs    = v.passage_refs,
+  prayer          = v.prayer,
+  application     = v.application,
+  question        = v.question,
+  context_note    = v.context_note,
+  content_type    = 'passage',
+  is_memory_verse = v.is_memory_verse
+FROM reading_plans p,
+(VALUES
+  (1,
+   'The Promise of the Comforter',
+   'And I will pray the Father, and he shall give you another Comforter, that he may abide with you for ever; Even the Spirit of truth; whom the world cannot receive, because it seeth him not, neither knoweth him: but ye know him; for he dwelleth with you, and shall be in you.',
+   '["John 16:7", "Romans 8:9"]',
+   'Father, thank You for the gift of Your Spirit who abides with me forever. Make me aware today of the Comforter who is not far off but dwells within me. Amen.',
+   'Whenever you feel alone today, pause and quietly acknowledge the Spirit''s presence with a single sentence: "You are with me, and You are in me."',
+   'Jesus calls the Spirit "another Comforter" — one just like Himself. How does it change your day to know God is not only with you but in you?',
+   'The Greek word for "another" (allos) means another of the same kind. The Spirit is not a lesser substitute for Jesus but His very presence continued in every believer.',
+   false
+  ),
+  (2,
+   'Wait for the Power',
+   'But ye shall receive power, after that the Holy Ghost is come upon you: and ye shall be witnesses unto me both in Jerusalem, and in all Judaea, and in Samaria, and unto the uttermost part of the earth. And when he had spoken these things, while they beheld, he was taken up; and a cloud received him out of their sight.',
+   '["Luke 24:49", "Acts 2:33"]',
+   'Lord, teach me to wait well. Where I am tempted to run ahead in my own strength, hold me until Your power comes. Make me a witness, not by force but by Your Spirit. Amen.',
+   'Name one thing you have been trying to accomplish for God on willpower alone. Consciously wait on Him in prayer for it today before acting.',
+   'The disciples were told to wait before they witnessed. Why do you think God so often calls us to wait before He empowers us?',
+   'Jesus maps the mission outward — Jerusalem, Judea, Samaria, the ends of the earth — an outline the book of Acts then follows exactly. The Spirit''s power is given for witness, not comfort alone.',
+   false
+  ),
+  (3,
+   'Wind and Fire',
+   'And when the day of Pentecost was fully come, they were all with one accord in one place. And suddenly there came a sound from heaven as of a rushing mighty wind, and it filled all the house where they were sitting. And there appeared unto them cloven tongues like as of fire, and it sat upon each of them. And they were all filled with the Holy Ghost, and began to speak with other tongues, as the Spirit gave them utterance.',
+   '["Joel 2:28-29", "Acts 1:5"]',
+   'Holy Spirit, fill me as You filled the waiting disciples. Blow through the shut rooms of my heart and set a holy fire in me for the glory of God. Amen.',
+   'Ask God to fill you afresh with His Spirit this morning — simply and expectantly. Then look for one specific prompting to obey during the day.',
+   'The Spirit came on all of them, not just the leaders. What does it mean to you that God poured out His Spirit on ordinary believers without distinction?',
+   'Wind (ruach/pneuma) and fire were ancient signs of God''s presence — at Sinai, in the burning bush. At Pentecost they rest on each believer, marking the whole people as God''s dwelling.',
+   true
+  ),
+  (4,
+   'The Church Is Born',
+   'Then Peter said unto them, Repent, and be baptized every one of you in the name of Jesus Christ for the remission of sins, and ye shall receive the gift of the Holy Ghost. For the promise is unto you, and to your children, and to all that are afar off, even as many as the Lord our God shall call. Then they that gladly received his word were baptized: and the same day there were added unto them about three thousand souls.',
+   '["Acts 2:14-21", "Ephesians 2:19-22"]',
+   'Lord, the same Spirit who emboldened Peter lives in me. Give me courage to speak of Jesus when the moment comes, and trust You for the harvest. Amen.',
+   'Pray by name for one person who does not yet know Christ. Ask the Spirit for one natural opportunity to point them toward Jesus this week.',
+   'Peter had denied Jesus three times; here he preaches to thousands. What does his transformation tell you about what the Spirit can do with your failures?',
+   'Peter''s sermon interprets Pentecost through Joel''s prophecy of the Spirit poured out on all flesh. The "three thousand" mirrors the exodus — but where the law once brought death, the Spirit now brings life.',
+   false
+  ),
+  (5,
+   'The Fellowship of Believers',
+   'And they continued stedfastly in the apostles'' doctrine and fellowship, and in breaking of bread, and in prayers. And fear came upon every soul: and many wonders and signs were done by the apostles. And all that believed were together, and had all things common; And sold their possessions and goods, and parted them to all men, as every man had need. And they, continuing daily with one accord in the temple, and breaking bread from house to house, did eat their meat with gladness and singleness of heart, Praising God, and having favour with all the people. And the Lord added to the church daily such as should be saved.',
+   '["Hebrews 10:24-25", "1 John 1:7"]',
+   'Father, save me from a private faith. Weave me into Your people — to learn, to break bread, to pray, and to share. Make me a giver, not only a receiver. Amen.',
+   'Do one tangible thing for your church community today: a message of encouragement, a shared meal, a met need, a prayer for someone by name.',
+   'The early church shared teaching, table, prayer, and possessions. Which of these four marks is most missing from your own life with other believers?',
+   'Luke lists four devotions — doctrine, fellowship, breaking of bread, prayer — as the DNA of the Spirit-born church. Generosity was not commanded but overflowed naturally from shared life.',
+   false
+  ),
+  (6,
+   'The Fruit of the Spirit',
+   'But the fruit of the Spirit is love, joy, peace, longsuffering, gentleness, goodness, faith, Meekness, temperance: against such there is no law. And they that are Christ''s have crucified the flesh with the affections and lusts. If we live in the Spirit, let us also walk in the Spirit.',
+   '["John 15:4-5", "Ephesians 5:9"]',
+   'Spirit of God, grow Your fruit in me. Where I am impatient, unkind, or unruled, produce what I cannot manufacture myself. Let my character quietly testify to Your work. Amen.',
+   'Pick the one fruit you most lack right now. Ask the Spirit to grow it, then choose one concrete action today that practices it deliberately.',
+   'Paul calls it the "fruit" (singular) of the Spirit, not "fruits." How does seeing these nine qualities as one cluster change how you pursue them?',
+   'Fruit grows from within by the life of the plant, not by external effort. Paul contrasts it with the "works" of the flesh — the Spirit produces character; striving only imitates it.',
+   true
+  ),
+  (7,
+   'The Spirit of Adoption',
+   'For as many as are led by the Spirit of God, they are the sons of God. For ye have not received the spirit of bondage again to fear; but ye have received the Spirit of adoption, whereby we cry, Abba, Father. The Spirit itself beareth witness with our spirit, that we are the children of God.',
+   '["Galatians 4:6-7", "1 John 3:1"]',
+   'Abba, Father, by Your Spirit I know I am Yours — not a slave, but a beloved child. Quiet every fear with the assurance of belonging. Let me live today as one who is fully adopted. Amen.',
+   'When fear or striving to earn approval rises today, answer it out loud with the truth of your identity: "I am a child of God, and the Spirit says so."',
+   'The Spirit lets us cry "Abba" — an intimate, family word. Where does fear still make you relate to God as a slave rather than a child?',
+   'Adoption in the Roman world granted full legal sonship, inheritance included, irrevocably. Paul says the Spirit Himself confirms this new status — belonging is not something we achieve but receive.',
+   false
+  )
+) AS v(day_number, day_title, passage_text, passage_refs, prayer, application, question, context_note, is_memory_verse)
+WHERE p.slug = 'pentecost-breath-of-fire'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Pentecost — comprehension check questions (all 7 days).
+UPDATE reading_plan_entries e
+SET
+  quiz_question    = v.question,
+  quiz_options     = v.options,
+  quiz_explanation = v.explanation
+FROM reading_plans p,
+(VALUES
+  (1,
+   'How does Jesus describe the Comforter the Father will send?',
+   '[{"label":"A","text":"The Spirit of truth","correct":true},{"label":"B","text":"The Spirit of judgment","correct":false},{"label":"C","text":"The Spirit of the law","correct":false}]',
+   'Jesus calls Him "the Spirit of truth" who will "abide with you for ever" — dwelling with the disciples and, He promises, in them.'
+  ),
+  (2,
+   'What did Jesus say the disciples would receive when the Holy Ghost came?',
+   '[{"label":"A","text":"Wealth","correct":false},{"label":"B","text":"Power","correct":true},{"label":"C","text":"Rest","correct":false}]',
+   '"Ye shall receive power, after that the Holy Ghost is come upon you" — power specifically to be His witnesses to the ends of the earth.'
+  ),
+  (3,
+   'What two signs accompanied the Spirit''s coming at Pentecost?',
+   '[{"label":"A","text":"Thunder and rain","correct":false},{"label":"B","text":"A rushing wind and tongues of fire","correct":true},{"label":"C","text":"An earthquake and light","correct":false}]',
+   'There came "a rushing mighty wind" and "cloven tongues like as of fire" that sat upon each of them — and they were all filled with the Holy Ghost.'
+  ),
+  (4,
+   'About how many were added to the church on the day of Peter''s sermon?',
+   '[{"label":"A","text":"Three hundred","correct":false},{"label":"B","text":"One thousand","correct":false},{"label":"C","text":"Three thousand","correct":true}]',
+   'Those who gladly received the word were baptized, and "the same day there were added unto them about three thousand souls."'
+  ),
+  (5,
+   'To what four things did the first believers devote themselves?',
+   '[{"label":"A","text":"Fasting, tithing, teaching, and travel","correct":false},{"label":"B","text":"Doctrine, fellowship, breaking of bread, and prayers","correct":true},{"label":"C","text":"Preaching, healing, building, and giving","correct":false}]',
+   'They "continued stedfastly in the apostles'' doctrine and fellowship, and in breaking of bread, and in prayers" — the four marks of the Spirit-born church.'
+  ),
+  (6,
+   'Paul says "the fruit of the Spirit is..." — which word does he use, singular or plural?',
+   '[{"label":"A","text":"Fruit (singular)","correct":true},{"label":"B","text":"Fruits (plural)","correct":false},{"label":"C","text":"Gifts","correct":false}]',
+   'Paul writes "the fruit of the Spirit is love, joy, peace..." — one cluster of qualities, grown together by the Spirit''s life within.'
+  ),
+  (7,
+   'What intimate word does the Spirit of adoption let believers cry to God?',
+   '[{"label":"A","text":"Lord","correct":false},{"label":"B","text":"Abba, Father","correct":true},{"label":"C","text":"Master","correct":false}]',
+   'We have received "the Spirit of adoption, whereby we cry, Abba, Father" — a family word of belonging, not the language of a slave.'
+  )
+) AS v(day_number, question, options, explanation)
+WHERE p.slug = 'pentecost-breath-of-fire'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Pentecost — word studies (a key word from each day''s passage).
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (1, '{"comforter":{"original":"παράκλητος","transliteration":"paraklētos","definition":"One called alongside to help — an advocate, counselor, or helper. Used of the Holy Spirit and of Christ interceding for us. Jesus promises the Spirit as another of the same kind as Himself.","refs":["John 14:16","1 John 2:1"]}}'),
+  (2, '{"power":{"original":"δύναμις","transliteration":"dunamis","definition":"Power, ability, might — the root of the word dynamite. Not raw force but Spirit-given capacity to do what we could never do alone, here aimed at bold witness.","refs":["Acts 1:8","Ephesians 3:20"]}}'),
+  (3, '{"wind":{"original":"πνοή","transliteration":"pnoē","definition":"A blast of breath or wind, closely related to pneuma (spirit). At Pentecost the sound of rushing wind signals the Breath of God filling the house and its people.","refs":["Acts 2:2","Genesis 2:7"]}}'),
+  (4, '{"repent":{"original":"μετανοέω","transliteration":"metanoeō","definition":"To change one''s mind and direction — a complete turning of the whole person toward God. Peter''s first call to the crowd is not to try harder but to turn.","refs":["Acts 2:38","Mark 1:15"]}}'),
+  (5, '{"fellowship":{"original":"κοινωνία","transliteration":"koinōnia","definition":"Sharing, partnership, communion — holding things in common. More than friendly company, it is a shared life in the Spirit that reaches into possessions, prayer, and the table.","refs":["Acts 2:42","1 Corinthians 1:9"]}}'),
+  (6, '{"fruit":{"original":"καρπός","transliteration":"karpos","definition":"Fruit — the natural produce of a living plant. Paul uses the singular: one integrated harvest of character grown by the Spirit, not manufactured by effort.","refs":["Galatians 5:22","John 15:5"]}}'),
+  (7, '{"adoption":{"original":"υἱοθεσία","transliteration":"huiothesia","definition":"The placing of a son — the legal act granting full sonship and inheritance. Paul says the Spirit confirms believers as adopted children who may cry Abba, Father.","refs":["Romans 8:15","Galatians 4:5"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'pentecost-breath-of-fire'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Pentecost — dig deeper commentary (days 3, 6, 7).
+UPDATE reading_plan_entries e
+SET
+  deep_dive_text = v.text,
+  deep_dive_refs = v.refs
+FROM reading_plans p,
+(VALUES
+  (3,
+   'Pentecost was already an ancient festival before the Spirit fell. Fifty days after Passover, Jews gathered in Jerusalem to celebrate the wheat harvest and, by the first century, to commemorate the giving of the law at Sinai. That backdrop makes the day''s events resonate. At Sinai, God descended in fire, the mountain shook, and the law was written on tablets of stone; three thousand died after the golden calf (Exodus 32:28). At this new Pentecost, God descends in fire again — but the fire rests on people, not a mountain, and the law is written not on stone but on hearts, exactly as Jeremiah and Ezekiel had promised (Jeremiah 31:33, Ezekiel 36:26-27). And instead of three thousand dying, three thousand are given life (Acts 2:41). The "rushing mighty wind" recalls the Hebrew ruach and Greek pneuma — both meaning breath, wind, and spirit. The same breath that God breathed into Adam (Genesis 2:7), that blew over the valley of dry bones (Ezekiel 37), now fills the church. The tongues of fire distributed to each believer signal something revolutionary: the presence of God, once confined to the temple''s inner room, now dwells in ordinary people. Every believer becomes a temple.',
+   '["Jeremiah 31:31-34", "Ezekiel 36:26-27"]'
+  ),
+  (6,
+   'Paul''s language is deliberate: he does not call these qualities the "works" of the Spirit but its "fruit." The distinction is everything. Works are produced by effort; fruit is produced by life. No apple tree strains to make apples — it bears them naturally because of what it is and what flows through it. Earlier in the same chapter Paul lists the "works of the flesh" (Galatians 5:19-21), a frantic catalog of things people do. Against that, the fruit of the Spirit is what a person becomes when the Spirit''s life flows uninterrupted. Notice, too, that "fruit" is singular. These are not nine separate virtues to be collected like badges but one integrated character — love expressing itself as joy, peace, patience, and the rest. Jesus had used the same image: "I am the vine, ye are the branches... without me ye can do nothing" (John 15:5). The branch''s only job is to stay connected. This reframes the whole spiritual life: the goal is not to squeeze out more patience by willpower but to abide, to stay attached to the source, and to let the Spirit produce what striving never could. Growth is real, but it is grown, not forced.',
+   '["John 15:1-8", "Galatians 5:16-25"]'
+  ),
+  (7,
+   'The word Paul reaches for to describe the believer''s standing is huiothesia — "adoption," literally "the placing of a son." In the Roman world an adopted son was not a second-class member of the family. The act was legally binding and irreversible; it transferred a person out of one household and into another, cancelling old debts and granting full rights of inheritance. Paul deliberately chooses this cultural image over mere forgiveness: God does not simply pardon offenders and leave them at arm''s length — He brings them into the family as heirs. The proof is experiential. The Spirit prompts believers to cry "Abba, Father" — Abba being the warm Aramaic word a child used for a trusted father, the very word Jesus Himself prayed in Gethsemane (Mark 14:36). That the same word rises in us is no accident; the Spirit of the Son places the Son''s own prayer on our lips. And this Spirit "beareth witness with our spirit" — a double testimony assuring us of belonging when our feelings waver. Where fear whispers that we must earn our place, the Spirit answers with settled fact: you are a child of God. Identity, for the Christian, is not an achievement to be won but a gift to be received and rested in.',
+   '["Galatians 4:4-7", "Mark 14:36"]'
+  )
+) AS v(day_number, text, refs)
+WHERE p.slug = 'pentecost-breath-of-fire'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Word-study leveling (content run 2026-07-02): bring the 5
+-- original plans up to word studies on every day, matching the
+-- newer plans. Keys are lowercase, punctuation-stripped forms of
+-- a word that appears in each day''s passage_text.
+-- Idempotent UPDATEs keyed on (plan_slug, day_number).
+-- ============================================================
+
+-- Walking in Peace — word studies for days 2, 3, 5, 6, 7.
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (2, '{"shepherd":{"original":"רֹעִי","transliteration":"roi","definition":"My shepherd — from raah, to tend or feed a flock. To call the LORD my shepherd is to claim personal, attentive care from the One who guides, provides, and protects.","refs":["Psalm 23:1","John 10:11"]}}'),
+  (3, '{"trust":{"original":"בָּטַח","transliteration":"batach","definition":"To lean on, rely upon, feel secure. Trust here is not a leap in the dark but resting your full weight on someone proven trustworthy — the ground of perfect peace.","refs":["Isaiah 26:3","Proverbs 3:5"]}}'),
+  (5, '{"yoke":{"original":"ζυγός","transliteration":"zygos","definition":"A wooden yoke joining two animals; in Jewish usage, a rabbi''s body of teaching. Jesus offers His yoke as a burden shared alongside Him, not one carried alone.","refs":["Matthew 11:29","Acts 15:10"]}}'),
+  (6, '{"refuge":{"original":"מַחֲסֶה","transliteration":"machaseh","definition":"A shelter from storm or danger, a place of safety. God is not a refuge we run to after the trouble passes but one available in the very midst of it.","refs":["Psalm 46:1","Psalm 91:2"]}}'),
+  (7, '{"hope":{"original":"ἐλπίς","transliteration":"elpis","definition":"Confident expectation, not wishful thinking. Biblical hope is certainty about the future grounded in God''s character — the overflow the Spirit produces in the believing heart.","refs":["Romans 15:13","Hebrews 6:19"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'walking-in-peace'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Strength in the Storm — word studies for days 2, 3, 5, 6, 7.
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (2, '{"strengthen":{"original":"אָמַץ","transliteration":"amats","definition":"To be strong, to make firm, to fortify. God does not merely wish us courage — He supplies the strength Himself, holding us up with His own right hand.","refs":["Isaiah 41:10","Joshua 1:9"]}}'),
+  (3, '{"patience":{"original":"ὑπομονή","transliteration":"hupomonē","definition":"Steadfast endurance — literally remaining under a weight rather than escaping it. Not passive waiting but active perseverance forged in the trial itself.","refs":["James 1:3","Romans 5:3-4"]}}'),
+  (5, '{"intercession":{"original":"ἐντυγχάνω","transliteration":"entygchanō","definition":"To appeal to, to plead on another''s behalf. When suffering steals our words, the Spirit Himself carries the prayer to the Father with groanings too deep for speech.","refs":["Romans 8:26","Hebrews 7:25"]}}'),
+  (6, '{"broken":{"original":"שָׁבַר","transliteration":"shabar","definition":"To break, shatter, burst. A broken heart is one crushed under grief — and this is precisely the condition the LORD is said to draw nearest to, not turn away from.","refs":["Psalm 34:18","Psalm 51:17"]}}'),
+  (7, '{"trust":{"original":"חָסָה","transliteration":"chasah","definition":"To seek shelter, to flee for protection. Different from mere belief — it is the act of running to God as your hiding place in the day of trouble. He knows by name all who do.","refs":["Nahum 1:7","Psalm 2:12"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'strength-in-the-storm'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Heart of Gratitude — word studies for days 2-6, 8-14 (the range of biblical thanks-vocabulary).
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (2,  '{"rejoice":{"original":"χαίρω","transliteration":"chairō","definition":"To rejoice, to be glad — the root of charis (grace) and chara (joy). Paul pairs it with unceasing prayer and constant thanks as marks of a life aligned with God''s will.","refs":["1 Thessalonians 5:16","Philippians 4:4"]}}'),
+  (3,  '{"redeemed":{"original":"גָּאַל","transliteration":"gaal","definition":"To redeem, to buy back, to act as a kinsman who rescues. The redeemed are those God has personally reclaimed from the enemy''s hand — and gratitude is their proper response.","refs":["Psalm 107:2","Isaiah 43:1"]}}'),
+  (4,  '{"thankful":{"original":"εὐχάριστος","transliteration":"eucharistos","definition":"Grateful, thankful — literally full of good grace. Paul makes thankfulness the atmosphere in which the peace of Christ rules and His word dwells richly.","refs":["Colossians 3:15","Colossians 4:2"]}}'),
+  (5,  '{"praise":{"original":"יָדָה","transliteration":"yadah","definition":"To give thanks, to praise — from a root meaning to extend the hand, to throw. Praise here is a whole-hearted, outward-reaching acknowledgment of what God has done.","refs":["Psalm 9:1","Psalm 100:4"]}}'),
+  (6,  '{"remember":{"original":"זָכַר","transliteration":"zakar","definition":"To remember, to call to mind, to mention. In Hebrew thought remembering is active — it summons the past into the present as fuel for present worship and trust.","refs":["1 Chronicles 16:12","Deuteronomy 8:2"]}}'),
+  (8,  '{"thanks":{"original":"εὐχαριστέω","transliteration":"eucharisteō","definition":"To give thanks, to express gratitude. Only one leper of ten returned to give it — a reminder that receiving a gift and thanking the Giver are two separate acts.","refs":["Luke 17:16","Colossians 3:17"]}}'),
+  (9,  '{"bless":{"original":"בָּרַךְ","transliteration":"barak","definition":"To bless — its root pictures kneeling, the posture of homage. To bless the LORD at all times is to bow the heart in gratitude whether or not circumstances warrant it.","refs":["Psalm 34:1","Psalm 103:1"]}}'),
+  (10, '{"melody":{"original":"ψάλλω","transliteration":"psallō","definition":"To pluck a string, to make music, to sing praise. The Spirit-filled life overflows into song — melody made in the heart to the Lord, thanks set to music.","refs":["Ephesians 5:19","Psalm 98:5"]}}'),
+  (11, '{"thanksgiving":{"original":"תּוֹדָה","transliteration":"todah","definition":"A thank-offering, a confession of praise. God owns every beast on a thousand hills and needs nothing; what He desires is the voluntary offering of a grateful heart.","refs":["Psalm 50:14","Psalm 100:4"]}}'),
+  (12, '{"praise":{"original":"αἴνεσις","transliteration":"ainesis","definition":"Praise, a sacrifice of thanksgiving spoken aloud. Hebrews defines this sacrifice precisely: the fruit of lips that give thanks to His name, offered continually.","refs":["Hebrews 13:15","Psalm 50:23"]}}'),
+  (13, '{"lovingkindness":{"original":"חֶסֶד","transliteration":"chesed","definition":"Steadfast covenant love, mercy, loyal kindness. To declare His lovingkindness in the morning and faithfulness at night is to bracket the whole day in gratitude.","refs":["Psalm 92:2","Lamentations 3:22-23"]}}'),
+  (14, '{"thanksgiving":{"original":"εὐχαριστία","transliteration":"eucharistia","definition":"Thanksgiving, the giving of thanks. In heaven''s sevenfold doxology it stands at the center — proof that gratitude is not a passing duty but the permanent language of worship.","refs":["Revelation 7:12","Philippians 4:6"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'heart-of-gratitude'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Light for the Path — word studies for days 2-6, 8-14 (vocabulary of guidance).
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (2,  '{"acknowledge":{"original":"יָדַע","transliteration":"yada","definition":"To know, to recognize, to acknowledge relationally. To acknowledge God in all your ways is to bring Him into every decision as the One you know, not merely believe in.","refs":["Proverbs 3:6","Jeremiah 9:24"]}}'),
+  (3,  '{"understanding":{"original":"בִּין","transliteration":"bin","definition":"To discern, to perceive, to distinguish between things. Solomon asked not for riches but for a discerning heart — the ability to tell good from bad in the act of leading.","refs":["1 Kings 3:9","Proverbs 2:6"]}}'),
+  (4,  '{"wait":{"original":"חָכָה","transliteration":"chakah","definition":"To wait, to long for, to await expectantly. Isaiah pronounces a blessing on those who wait for the LORD — guidance often comes to those willing to pause for it.","refs":["Isaiah 30:18","Psalm 27:14"]}}'),
+  (5,  '{"light":{"original":"φῶς","transliteration":"phōs","definition":"Light — illumination, and by extension truth and life. Jesus does not merely give light for the road; He is the Light, and following Him is what keeps one out of darkness.","refs":["John 8:12","John 1:4"]}}'),
+  (6,  '{"steps":{"original":"צַעַד","transliteration":"tsaad","definition":"A step, a pace, a going. A person plans the route in the heart, but the LORD establishes the actual steps — guidance is God''s quiet work within our honest planning.","refs":["Proverbs 16:9","Psalm 37:23"]}}'),
+  (8,  '{"transformed":{"original":"μεταμορφόω","transliteration":"metamorphoō","definition":"To be changed in form from the inside out — the root of metamorphosis. God guides not chiefly by external signs but by renewing the mind until it discerns His will.","refs":["Romans 12:2","2 Corinthians 3:18"]}}'),
+  (9,  '{"thoughts":{"original":"מַחֲשָׁבָה","transliteration":"machashabah","definition":"A thought, plan, intention, design. The plans God thinks toward His people are purposed and deliberate — thoughts of peace and a future, even spoken into exile.","refs":["Jeremiah 29:11","Isaiah 55:8-9"]}}'),
+  (10, '{"instruct":{"original":"שָׂכַל","transliteration":"sakal","definition":"To be prudent, to give insight, to make wise. God promises not just to point the way but to impart understanding — to instruct the traveler, not only mark the road.","refs":["Psalm 32:8","Psalm 25:12"]}}'),
+  (11, '{"safety":{"original":"תְּשׁוּעָה","transliteration":"teshuah","definition":"Deliverance, safety, victory. Proverbs locates safety not in the lone decision-maker but in a multitude of counsellors — wise guidance is a community, not a solo act.","refs":["Proverbs 11:14","Proverbs 24:6"]}}'),
+  (12, '{"ask":{"original":"αἰτέω","transliteration":"aiteō","definition":"To ask, to request, to beg. The present-tense force is keep asking. Jesus grounds guidance in a Father who delights to give good gifts to children who simply ask.","refs":["Matthew 7:7","James 1:5"]}}'),
+  (13, '{"knowledge":{"original":"ἐπίγνωσις","transliteration":"epignōsis","definition":"Full, thorough knowledge — deeper than mere information. To be filled with the knowledge of God''s will is to know Him well enough that His desires shape the walk.","refs":["Colossians 1:9","Ephesians 1:17"]}}'),
+  (14, '{"guide":{"original":"נָהַג","transliteration":"nahag","definition":"To lead, to guide, to drive a flock along. The word pictures a shepherd steadily conducting the flock all the way home — God guides not for a season but even unto death.","refs":["Psalm 48:14","Isaiah 58:11"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'light-for-the-path'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Rooted in Love — word studies for days 2-10, 12-20, 22-30.
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (2,  '{"propitiation":{"original":"ἱλασμός","transliteration":"hilasmos","definition":"An atoning sacrifice that satisfies and turns away wrath. John locates the definition of love here: not that we loved God, but that He sent His Son as the propitiation for our sins.","refs":["1 John 4:10","1 John 2:2"]}}'),
+  (3,  '{"healed":{"original":"רָפָא","transliteration":"rapha","definition":"To heal, mend, restore. God tended Israel like a parent teaching a child to walk — healing them even while they did not recognize the hand that held them.","refs":["Hosea 11:3","Exodus 15:26"]}}'),
+  (4,  '{"beareth":{"original":"στέγω","transliteration":"stegō","definition":"To cover, to bear up under, to endure without leaking. Love bears all things the way a sound roof holds back the storm — protecting rather than exposing.","refs":["1 Corinthians 13:7","1 Corinthians 9:12"]}}'),
+  (5,  '{"neighbour":{"original":"πλησίον","transliteration":"plēsion","definition":"The one near you, the fellow person. Jesus binds love for this near one to love for God — the second command is like the first, and the whole law hangs on both.","refs":["Matthew 22:39","Leviticus 19:18"]}}'),
+  (6,  '{"rooted":{"original":"ῥιζόω","transliteration":"rhizoō","definition":"To be firmly rooted, to take root like a tree. Paul prays believers would be rooted and grounded in love — drawing life from it as a plant draws from soil.","refs":["Ephesians 3:17","Colossians 2:7"]}}'),
+  (7,  '{"fear":{"original":"φόβος","transliteration":"phobos","definition":"Fear, dread, terror. The specific fear perfect love expels is the terror of judgment — love changes the ground of our standing so that dread has no place left to stand.","refs":["1 John 4:18","Romans 8:15"]}}'),
+  (8,  '{"new":{"original":"καινός","transliteration":"kainos","definition":"New in kind and quality, not merely recent. The command to love is new not because love was unknown but because its measure is new: as I have loved you.","refs":["John 13:34","2 Corinthians 5:17"]}}'),
+  (9,  '{"bless":{"original":"εὐλογέω","transliteration":"eulogeō","definition":"To speak well of, to invoke good upon. Jesus commands active blessing of those who curse us — answering hostility not with silence but with spoken good.","refs":["Luke 6:28","Romans 12:14"]}}'),
+  (10, '{"seal":{"original":"חוֹתָם","transliteration":"chotam","definition":"A signet, a seal of ownership pressed into wax or clay. To be set as a seal on the heart is to be carried as identity and belonging, not merely affection.","refs":["Song of Solomon 8:6","Haggai 2:23"]}}'),
+  (12, '{"merciful":{"original":"רַחוּם","transliteration":"rachum","definition":"Compassionate, merciful — from rechem, the womb. It pictures the deep, gut-level tenderness of a parent, the love from which God deals with us not as our sins deserve.","refs":["Psalm 103:8","Exodus 34:6"]}}'),
+  (13, '{"reconciled":{"original":"καταλλάσσω","transliteration":"katallassō","definition":"To change from enmity to friendship, to restore a relationship. While we were still enemies, the death of God''s Son turned the hostility to peace.","refs":["Romans 5:10","2 Corinthians 5:18"]}}'),
+  (14, '{"liberty":{"original":"ἐλευθερία","transliteration":"eleutheria","definition":"Freedom, liberty. Paul insists gospel freedom is not license for the flesh but freedom to serve one another in love — the free person voluntarily becomes a servant.","refs":["Galatians 5:13","2 Corinthians 3:17"]}}'),
+  (15, '{"beloved":{"original":"ἀγαπητός","transliteration":"agapētos","definition":"Dearly loved, beloved. Before Paul lists the virtues to put on, he names the identity underneath them: the elect of God, holy and beloved. We clothe ourselves out of belovedness.","refs":["Colossians 3:12","Romans 1:7"]}}'),
+  (16, '{"friend":{"original":"רֵעַ","transliteration":"rea","definition":"A companion, friend, associate. Proverbs defines friendship not by feeling but by constancy — a friend loves at all times, and is most recognizable in adversity.","refs":["Proverbs 17:17","Proverbs 18:24"]}}'),
+  (17, '{"abide":{"original":"μένω","transliteration":"menō","definition":"To remain, dwell, continue. Jesus repeats it like a refrain: abide in my love. Love is not a single act but a dwelling place we are told to stay inside.","refs":["John 15:9","John 15:4"]}}'),
+  (18, '{"hospitality":{"original":"φιλοξενία","transliteration":"philoxenia","definition":"Literally love of strangers — the practice of welcome. Peter names it as fervent love made concrete: opening the door, and doing it without grudging.","refs":["1 Peter 4:9","Hebrews 13:2"]}}'),
+  (19, '{"precious":{"original":"יָקָר","transliteration":"yaqar","definition":"Precious, prized, costly, weighty. God tells a redeemed and renamed people that they are precious in His sight — love that assigns worth, not love earned by worth.","refs":["Isaiah 43:4","Psalm 116:15"]}}'),
+  (20, '{"humbly":{"original":"צָנַע","transliteration":"tsana","definition":"To be modest, humble, lowly. The LORD requires not grand offerings but a life walked humbly with Him — love expressed as quiet, ongoing alignment with God.","refs":["Micah 6:8","Proverbs 11:2"]}}'),
+  (22, '{"covenant":{"original":"בְּרִית","transliteration":"berith","definition":"A binding covenant, a sworn bond. God stakes His kindness on covenant, not on our behavior — the covenant of peace stands even when the mountains depart.","refs":["Isaiah 54:10","Genesis 9:16"]}}'),
+  (23, '{"perfect":{"original":"τέλειος","transliteration":"teleios","definition":"Complete, mature, brought to its intended end. The perfection Jesus calls for is love that, like the Father''s sun and rain, does not depend on the worthiness of its object.","refs":["Matthew 5:48","Colossians 1:28"]}}'),
+  (24, '{"longsuffering":{"original":"אֶרֶךְ אַפַּיִם","transliteration":"erek appayim","definition":"Literally long of nostrils — slow to anger, patient. It describes a God whose fuse is long, full of compassion and abounding in mercy toward His people.","refs":["Psalm 86:15","Exodus 34:6"]}}'),
+  (25, '{"plainly":{"original":"παρρησία","transliteration":"parrēsia","definition":"Openness, plain speech, boldness. Jesus promises to shift from veiled proverbs to plain disclosure of the Father — love that no longer keeps its distance behind a veil.","refs":["John 16:25","Ephesians 3:12"]}}'),
+  (26, '{"direct":{"original":"κατευθύνω","transliteration":"kateuthynō","definition":"To make straight, to guide, to set on a direct course. Paul prays the Lord would steer the heart into God''s love and into patient waiting for Christ.","refs":["2 Thessalonians 3:5","1 Thessalonians 3:11"]}}'),
+  (27, '{"faithfulness":{"original":"אֱמוּנָה","transliteration":"emunah","definition":"Firmness, steadfastness, faithfulness. Spoken from the ruins of Jerusalem, this word declares that God''s reliability is fresh every morning — great is His faithfulness.","refs":["Lamentations 3:23","Deuteronomy 7:9"]}}'),
+  (28, '{"faithful":{"original":"אָמַן","transliteration":"aman","definition":"To be firm, trustworthy, reliable — the root of amen. God is the faithful God who keeps covenant to a thousand generations; His love rests on His own character, not ours.","refs":["Deuteronomy 7:9","1 Corinthians 1:9"]}}'),
+  (29, '{"faith":{"original":"πίστις","transliteration":"pistis","definition":"Faith, trust, faithfulness. Paul''s final charges — watch, stand fast, be strong — are anchored in faith and framed by the command that all be done in love.","refs":["1 Corinthians 16:13","Hebrews 11:1"]}}'),
+  (30, '{"separate":{"original":"χωρίζω","transliteration":"chorizō","definition":"To divide, sever, put apart. Paul runs through every category of existence and declares that none of them can separate us from the love of God in Christ Jesus.","refs":["Romans 8:39","Romans 8:35"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'rooted-in-love'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Advent: Waiting for the Light (28 days) — base entries.
+-- Seasonal (season_key 'advent'). Content run 2026-07-02.
+-- A 4-week arc: Hope (prophecy) -> Peace (preparation) ->
+-- Joy (the announcements) -> Love (the incarnation).
+-- Idempotent: inserted only when the plan has zero entries.
+-- ============================================================
+INSERT INTO reading_plan_entries (plan_id, day_number, verse_ref, reflection, created_at)
+SELECT p.id, v.day_number, v.verse_ref, v.reflection, NOW()
+FROM reading_plans p,
+(VALUES
+  (1,  'Genesis 3:15',    'Advent begins not in Bethlehem but in Eden. In the very sentence God speaks over the serpent, a promise is buried: the woman''s seed will one day crush his head. From humanity''s first failure, the rescue is already announced.'),
+  (2,  'Isaiah 9:2',      'The prophets learned to speak of salvation as light breaking into darkness. To a people walking in shadow, Isaiah promises not a lamp but a dawn — a great light that will rise on those who dwell in the land of death.'),
+  (3,  'Isaiah 9:6',      'Seven centuries before the manger, Isaiah names the child yet unborn: Wonderful, Counsellor, the mighty God, the everlasting Father, the Prince of Peace. The government of the whole world will rest on an infant''s shoulder.'),
+  (4,  'Isaiah 7:14',     'The sign God gives is a name: Immanuel — God with us. Not God above us, or God watching us, but God come near enough to be held. The whole hope of Advent is compressed into that one word.'),
+  (5,  'Micah 5:2',       'The Messiah''s birthplace is named centuries in advance — and it is nowhere important. Little Bethlehem, least among Judah''s towns, will cradle the One whose goings forth have been from everlasting.'),
+  (6,  'Isaiah 11:1-2',   'The royal line of David had been cut down to a stump. But from that dead-looking stump, Isaiah says, a living Branch will grow — the Spirit of the LORD resting upon Him. God specializes in life from what looks finished.'),
+  (7,  'Jeremiah 23:5-6', 'To a nation ruled by corrupt kings, Jeremiah promises a righteous Branch — a King who will reign in justice, whose very name is THE LORD OUR RIGHTEOUSNESS. The coming One will be everything the failed kings were not.'),
+  (8,  'Isaiah 40:3-5',   'A voice cries in the wilderness: prepare the way. Valleys lifted, mountains flattened, crooked places made straight. Advent is not only about God coming to us — it is a summons to make the road ready in our own hearts.'),
+  (9,  'Malachi 3:1',     'The last prophet before four centuries of silence promises a messenger who will prepare the way, and then the Lord Himself suddenly coming to His temple. The long wait that follows makes the eventual coming all the more startling.'),
+  (10, 'Malachi 4:2',     'Malachi closes the Old Testament with a sunrise: the Sun of righteousness will arise with healing in His wings. After the last prophetic word, four hundred years of darkness — and then the dawn Malachi foresaw.'),
+  (11, 'Isaiah 35:4-6',   'To fearful hearts Isaiah says: be strong, your God will come and save you. And when He comes, blind eyes open, deaf ears unstop, the lame leap. The coming of God is the healing of everything sin has broken.'),
+  (12, 'Zechariah 9:9',   'Zechariah tells Zion to rejoice: her King is coming — but not on a war horse. He comes just and having salvation, yet lowly, riding on a colt. The King of all the earth arrives in humility, exactly as He will.'),
+  (13, 'Isaiah 61:1-2',   'Isaiah gives the coming Messiah His mission statement centuries early: good news to the meek, binding up the brokenhearted, liberty to captives. Jesus will one day read these very words aloud and say, Today this is fulfilled.'),
+  (14, 'Numbers 24:17',   'Even a hired pagan prophet could not help but see it: a Star will come out of Jacob, a Sceptre out of Israel. The hope of a coming King was written so deep in Scripture that outsiders glimpsed it too.'),
+  (15, 'Luke 1:30-33',    'The waiting ends with an angel in a small town, speaking to a young woman. Fear not, Mary. The child she will bear is the Son of the Highest, heir to David''s throne, whose kingdom will never end. Prophecy becomes personal.'),
+  (16, 'Luke 1:38',       'Mary''s answer is four words that change history: be it unto me. No demand for explanation, no bargaining — only surrender. The whole plan of salvation waits on the yes of a servant willing to be interrupted by God.'),
+  (17, 'Luke 1:46-49',    'Mary responds to the impossible not with anxiety but a song. Her soul magnifies the Lord who has regarded her low estate. The Magnificat is the voice of every heart that discovers God lifts up exactly the ones the world overlooks.'),
+  (18, 'Luke 1:76-79',    'Zechariah, silent for nine months, finds his voice in prophecy over his infant son John. The dayspring — the dawn — from on high has visited us, to give light to those who sit in darkness and guide our feet into peace.'),
+  (19, 'Matthew 1:20-21', 'Joseph, too, receives an angel. The child is of the Holy Ghost; call His name Jesus, for He shall save His people from their sins. The name itself is the gospel: Yeshua means the LORD saves.'),
+  (20, 'Luke 2:10-11',    'To shepherds on a hillside, the announcement finally lands: good tidings of great joy, to all people. Unto you is born this day a Saviour, which is Christ the Lord. The long-promised One has arrived.'),
+  (21, 'Luke 2:13-14',    'Heaven cannot keep the news to itself. A multitude of angels erupts over the fields: Glory to God in the highest, and on earth peace. The birth of one baby splits the sky open with praise.'),
+  (22, 'Luke 2:6-7',      'The eternal Word enters the world with no room to receive Him — wrapped in swaddling clothes, laid in a feeding trough. The God who made the inn is turned away from it, and begins His life among the overlooked.'),
+  (23, 'John 1:1-5',      'John tells the Christmas story without a stable. In the beginning was the Word, and the Word was God — and all things were made by Him. The baby in the manger is the One through whom the universe came to be.'),
+  (24, 'John 1:14',       'Here is the heart of Advent: the Word was made flesh and dwelt among us. The Greek says He tabernacled — pitched His tent — among us. The God who once filled the temple now takes on skin and moves into the neighborhood.'),
+  (25, 'Luke 2:15-16',    'The shepherds do not merely believe the message; they go. They come with haste, find the babe in the manger, and return glorifying God. The right response to good news is to seek Him out and then to tell it everywhere.'),
+  (26, 'Matthew 2:1-2',   'From the east, wise men follow a star, asking where the King of the Jews is born, for they have come to worship Him. The first to seek the newborn King are outsiders — a sign that this salvation is for all nations.'),
+  (27, 'Matthew 2:10-11', 'The magi rejoice with exceeding great joy, fall down, and worship, opening their treasures: gold for a king, frankincense for God, myrrh for one who will die. Their gifts preach the whole gospel over a cradle.'),
+  (28, 'John 3:16-17',    'Advent ends where the coming was always aimed: God so loved the world that He gave His only Son. The star, the manger, the prophecies — all of it flows from love, and all of it is offered so that the world might be saved.')
+) AS v(day_number, verse_ref, reflection)
+WHERE p.slug = 'advent-waiting-for-the-light'
+  AND NOT EXISTS (SELECT 1 FROM reading_plan_entries WHERE plan_id = p.id);
+
+-- Advent — text, titles, passages, prayer, application, question, context, memory flags.
+UPDATE reading_plan_entries e
+SET
+  day_title       = v.day_title,
+  passage_text    = v.passage_text,
+  passage_refs    = v.passage_refs,
+  prayer          = v.prayer,
+  application     = v.application,
+  question        = v.question,
+  context_note    = v.context_note,
+  content_type    = 'passage',
+  is_memory_verse = v.is_memory_verse
+FROM reading_plans p,
+(VALUES
+  (1, 'The First Promise',
+   'And I will put enmity between thee and the woman, and between thy seed and her seed; it shall bruise thy head, and thou shalt bruise his heel.',
+   '["Romans 16:20", "Galatians 4:4"]',
+   'Father, even in my failures You are already speaking rescue. Thank You that Advent begins with a promise made in the dark. Teach me to wait in hope. Amen.',
+   'Write down one situation that feels beyond repair. Beside it, note that God announced the rescue before the wound of Eden had even healed — He is not finished.',
+   'Where in your life do you most need to believe that God has already set a rescue in motion, even if you cannot yet see it?',
+   'Genesis 3:15 is called the protoevangelium — the "first gospel." Spoken as judgment on the serpent, it is the earliest promise of a coming deliverer born of a woman who will crush evil at the cost of His own wounding.',
+   false),
+  (2, 'A Great Light',
+   'The people that walked in darkness have seen a great light: they that dwell in the land of the shadow of death, upon them hath the light shined.',
+   '["John 8:12", "Matthew 4:16"]',
+   'Lord, You are the light that darkness cannot overcome. Where I am walking in shadow, let Your dawn break. I wait for You as the watchman waits for morning. Amen.',
+   'Notice one area of your life you tend to think of as "shadowed." Speak Isaiah''s promise over it aloud: the light has shined on those who dwell in darkness.',
+   'What does it mean to you that God comes to people specifically while they are still in the darkness, not after they have found their own way out?',
+   'Isaiah spoke this to the northern territories of Israel first to fall to Assyria — a region of defeat and darkness. Matthew later quotes it as fulfilled when Jesus began His ministry in that same Galilee.',
+   false),
+  (3, 'Unto Us a Child Is Born',
+   'For unto us a child is born, unto us a son is given: and the government shall be upon his shoulder: and his name shall be called Wonderful, Counsellor, The mighty God, The everlasting Father, The Prince of Peace.',
+   '["Luke 2:11", "Isaiah 9:7"]',
+   'Wonderful Counsellor, mighty God, Prince of Peace — every name is a promise. Be all of these to me today, and let me rest under the government that sits on Your shoulder. Amen.',
+   'Choose the one name from Isaiah 9:6 you most need right now — Counsellor, mighty God, everlasting Father, Prince of Peace — and carry it with you as a prayer through the day.',
+   'Which of the four names given to the coming child speaks most directly to what you are facing this season, and why?',
+   'These titles pile divine names onto a human child — an astonishing claim in a fiercely monotheistic culture. "The mighty God" (El Gibbor) is used of Yahweh Himself elsewhere in Isaiah. The child is fully God.',
+   true),
+  (4, 'Immanuel: God With Us',
+   'Therefore the Lord himself shall give you a sign; Behold, a virgin shall conceive, and bear a son, and shall call his name Immanuel.',
+   '["Matthew 1:23", "Isaiah 8:10"]',
+   'Immanuel, You are God with us — not distant, not watching from afar, but near. Thank You that You came close enough to be held. Be with me in the ordinary of this day. Amen.',
+   'All day, when you feel alone, quietly say the one word: "Immanuel." Let the name preach to you that God is not far off but present.',
+   'The name Immanuel means "God with us." Where do you most need to know God''s nearness rather than merely His existence right now?',
+   'Given as a sign to faithless King Ahaz, the promise reached beyond his day. Matthew declares its ultimate fulfillment in Jesus — the moment God did what the name Immanuel says: came to dwell with His people in person.',
+   true),
+  (5, 'O Little Town of Bethlehem',
+   'But thou, Bethlehem Ephratah, though thou be little among the thousands of Judah, yet out of thee shall he come forth unto me that is to be ruler in Israel; whose goings forth have been from of old, from everlasting.',
+   '["Matthew 2:6", "John 7:42"]',
+   'Lord, You choose the small and overlooked to carry Your greatest works. Do not let me despise the little places of my life, for You love to arrive there. Amen.',
+   'Think of the most "insignificant" part of your life or day. Offer it to God as a Bethlehem — a small place He may be planning to use.',
+   'Bethlehem was too small to matter, yet God chose it centuries in advance. What small or hidden thing might God be preparing to use in your life?',
+   'Micah names both the town and the paradox: the ruler born there has "goings forth from everlasting." The One with a birthplace in time is also the eternal God who has always existed.',
+   false),
+  (6, 'The Branch from Jesse''s Stump',
+   'And there shall come forth a rod out of the stem of Jesse, and a Branch shall grow out of his roots: And the spirit of the LORD shall rest upon him, the spirit of wisdom and understanding, the spirit of counsel and might, the spirit of knowledge and of the fear of the LORD.',
+   '["Revelation 22:16", "Isaiah 11:10"]',
+   'Lord, You bring life out of what looks dead. Where my hope has been cut down to a stump, grow something new by Your Spirit. I trust Your resurrection habit. Amen.',
+   'Name one area of your life that feels like a cut-down stump. Ask God, who grows Branches from dead wood, to bring unexpected life there.',
+   'Isaiah pictures David''s fallen dynasty as a stump. Where in your life do you need to trust that God can grow something living from what looks finished?',
+   'By Isaiah''s prophecy the Davidic monarchy would be reduced to a "stump" in exile. The Branch (netzer) growing from it is the Messiah — and some hear an echo of "Nazarene" in the word.',
+   false),
+  (7, 'The LORD Our Righteousness',
+   'Behold, the days come, saith the LORD, that I will raise unto David a righteous Branch, and a King shall reign and prosper, and shall execute judgment and justice in the earth. In his days Judah shall be saved, and Israel shall dwell safely: and this is his name whereby he shall be called, THE LORD OUR RIGHTEOUSNESS.',
+   '["1 Corinthians 1:30", "Jeremiah 33:15-16"]',
+   'Righteous King, You are my righteousness — not my own record, but Yours given to me. Reign in me with the justice and mercy the earthly kings never had. Amen.',
+   'Where you are tempted today to rely on your own goodness, consciously rest instead in the truth that Christ Himself is called "the LORD our righteousness."',
+   'The coming King''s name is "the LORD our righteousness." What changes when your standing before God rests on His righteousness rather than your own performance?',
+   'Jeremiah wrote as Judah''s last kings failed catastrophically. The promised Branch would be the true King — and Paul later says Christ "is made unto us... righteousness," fulfilling the name.',
+   false),
+  (8, 'Prepare the Way',
+   'The voice of him that crieth in the wilderness, Prepare ye the way of the LORD, make straight in the desert a highway for our God. Every valley shall be exalted, and every mountain and hill shall be made low: and the crooked shall be made straight, and the rough places plain: And the glory of the LORD shall be revealed, and all flesh shall see it together: for the mouth of the LORD hath spoken it.',
+   '["Mark 1:2-3", "Luke 3:4-6"]',
+   'Lord, prepare the way in me. Level my pride, lift my discouragement, straighten what is crooked, so there is a clear road for You to arrive. Amen.',
+   'Identify one "mountain" (a pride, a grudge) or one "valley" (a discouragement) in your heart. Name it in prayer as ground you are asking God to level to prepare His way.',
+   'Advent is a season of preparation. What in your heart most needs to be leveled or straightened to make room for God this year?',
+   'All four Gospels apply this text to John the Baptist. In the ancient world, roads were built ahead of a visiting king; Isaiah casts repentance as roadwork done in the heart to welcome the coming LORD.',
+   false),
+  (9, 'The Messenger of the Covenant',
+   'Behold, I will send my messenger, and he shall prepare the way before me: and the Lord, whom ye seek, shall suddenly come to his temple, even the messenger of the covenant, whom ye delight in: behold, he shall come, saith the LORD of hosts.',
+   '["Matthew 11:10", "Mark 1:2"]',
+   'Lord, You promise that after every silence You will suddenly come. Sustain my hope in the seasons when heaven seems quiet, for You are never late. Amen.',
+   'Is there a place you have been waiting on God so long you have stopped expecting Him? Renew your watch there today, remembering He "shall suddenly come."',
+   'God''s people waited four centuries after this promise before it was fulfilled. Where are you being asked to keep waiting on a promise that seems delayed?',
+   'Malachi 3:1 is the last book of the Old Testament chronologically for many readers. After it came roughly 400 "silent years" with no prophet — until John the Baptist arrived as the promised messenger.',
+   false),
+  (10, 'The Sun of Righteousness',
+   'But unto you that fear my name shall the Sun of righteousness arise with healing in his wings; and ye shall go forth, and grow up as calves of the stall.',
+   '["Luke 1:78", "Malachi 3:1"]',
+   'Sun of righteousness, rise on me with healing today. Where I have been shut in by cold and fear, let Your warmth draw me out into freedom and life. Amen.',
+   'Step into literal sunlight for a moment today and let it remind you: the Sun of righteousness rises with healing. Name one thing you are asking Him to heal.',
+   'Malachi pictures the Messiah as a sunrise with "healing in his wings." What area of your life most needs the warmth and healing of His coming?',
+   'These are the final words of the Old Testament. The image of a winged sun was common in the ancient Near East; Malachi redeems it, promising the true dawn — Christ — after the long night of silence.',
+   false),
+  (11, 'He Will Come and Save',
+   'Say to them that are of a fearful heart, Be strong, fear not: behold, your God will come with vengeance, even God with a recompence; he will come and save you. Then the eyes of the blind shall be opened, and the ears of the deaf shall be unstopped. Then shall the lame man leap as an hart, and the tongue of the dumb sing.',
+   '["Matthew 11:4-5", "Isaiah 61:1"]',
+   'Lord, You come to save, not only to rule. Open what is blind and deaf and bound in me, and let me leap and sing at Your coming. Amen.',
+   'Where fear has made your heart weak, speak Isaiah''s command to yourself today: "Be strong, fear not — your God will come and save you."',
+   'Isaiah lists the signs of God''s coming as healing and restoration. Which of these — sight, hearing, freedom, song — do you most long for God to work in you?',
+   'When John the Baptist later doubted in prison, Jesus answered by pointing to exactly these signs — the blind seeing, the lame walking — as proof that Isaiah''s promised salvation had arrived in Him.',
+   false),
+  (12, 'Behold, Your King',
+   'Rejoice greatly, O daughter of Zion; shout, O daughter of Jerusalem: behold, thy King cometh unto thee: he is just, and having salvation; lowly, and riding upon an ass, and upon a colt the foal of an ass.',
+   '["Matthew 21:5", "John 12:15"]',
+   'King Jesus, You come in humility, not in the pomp I expect. Teach me to welcome a Saviour who rides low, and to follow You in the same lowliness. Amen.',
+   'Where do you expect God to act with power and spectacle? Look today for Him arriving instead in something humble and easily missed.',
+   'The prophesied King comes "lowly," not in grandeur. How does a humble Messiah challenge your expectations of how God should show up?',
+   'Zechariah''s prophecy was fulfilled on Palm Sunday when Jesus entered Jerusalem on a colt. The King who could have come on a war horse chose the mount of peace, exactly as foretold.',
+   false),
+  (13, 'The Spirit of the Lord Is Upon Me',
+   'The Spirit of the Lord GOD is upon me; because the LORD hath anointed me to preach good tidings unto the meek; he hath sent me to bind up the brokenhearted, to proclaim liberty to the captives, and the opening of the prison to them that are bound; To proclaim the acceptable year of the LORD.',
+   '["Luke 4:18-19", "Isaiah 42:1"]',
+   'Anointed Saviour, You came for the meek, the brokenhearted, the captive. I am one of these. Preach Your good news to me and set me free today. Amen.',
+   'Which word describes you most right now — meek, brokenhearted, captive, bound? Bring that exact condition to the Messiah who was anointed for it.',
+   'Jesus opened His public ministry by reading this passage and saying it was fulfilled in Him. Which part of His mission do you most need Him to fulfill in you this season?',
+   'In Luke 4, Jesus read these very verses in the Nazareth synagogue, stopped mid-sentence, and declared, "This day is this scripture fulfilled in your ears" — claiming Isaiah''s Servant as Himself.',
+   false),
+  (14, 'A Star Out of Jacob',
+   'I shall see him, but not now: I shall behold him, but not nigh: there shall come a Star out of Jacob, and a Sceptre shall rise out of Israel.',
+   '["Matthew 2:2", "Revelation 22:16"]',
+   'Lord, the hope of Your coming was written so deep that even strangers glimpsed it. Give me eyes to see Your light rising, however far off it seems. Amen.',
+   'Look up at the night sky tonight if you can. Let the stars remind you of a promise so certain that God wrote it into the expectation of the nations.',
+   'Balaam, no friend of Israel, still foresaw the Star. Where have you noticed hints of God''s truth in unexpected places or people?',
+   'Balaam, a pagan diviner hired to curse Israel, instead prophesied a coming Star and Sceptre. Many scholars connect this ancient oracle to the star the magi followed to Bethlehem.',
+   false),
+  (15, 'The Angel to Mary',
+   'And the angel said unto her, Fear not, Mary: for thou hast found favour with God. And, behold, thou shalt conceive in thy womb, and bring forth a son, and shalt call his name JESUS. He shall be great, and shall be called the Son of the Highest: and the Lord God shall give unto him the throne of his father David: And he shall reign over the house of Jacob for ever; and of his kingdom there shall be no end.',
+   '["Isaiah 9:7", "2 Samuel 7:16"]',
+   'Lord, You still come to ordinary people in ordinary places with extraordinary callings. Give me Mary''s open heart to receive whatever You ask. Amen.',
+   'Consider one way God may be inviting you into something larger than you feel ready for. Practice Mary''s posture: "Fear not" comes before the calling.',
+   'The angel came to an unknown girl in an unimportant town. What does it tell you about God that He entrusts His greatest work to the overlooked?',
+   'Gabriel''s announcement ties the child directly to the promise God made David in 2 Samuel 7 — an everlasting throne. Centuries of prophecy converge on this single conversation in Nazareth.',
+   false),
+  (16, 'Let It Be',
+   'And Mary said, Behold the handmaid of the Lord; be it unto me according to thy word. And the angel departed from her.',
+   '["1 Samuel 3:10", "Luke 1:45"]',
+   'Lord, teach me to say yes to You before I understand. Like Mary, let my answer be simple surrender: be it unto me according to Your word. Amen.',
+   'Bring one area where you have been bargaining with God instead of surrendering. Pray Mary''s words over it: "Be it unto me according to Thy word."',
+   'Mary said yes with no guarantee of how it would go. What is God asking you to surrender before you can see the outcome?',
+   'Mary faced real risk — an unexplained pregnancy could mean shame or worse. Her consent was not naive but courageous trust, given before she knew how the story would unfold.',
+   false),
+  (17, 'Mary''s Song',
+   'And Mary said, My soul doth magnify the Lord, And my spirit hath rejoiced in God my Saviour. For he hath regarded the low estate of his handmaiden: for, behold, from henceforth all generations shall call me blessed. For he that is mighty hath done to me great things; and holy is his name.',
+   '["1 Samuel 2:1-2", "Psalm 34:3"]',
+   'Lord, like Mary let my first response to Your work be a song. You have regarded my low estate. My soul magnifies You. Amen.',
+   'Write your own one-line "magnificat" today: a single sentence naming one great thing God has done for you, and say it aloud as praise.',
+   'Mary''s instinct in the face of the impossible was worship, not worry. What would change if praise became your first response instead of anxiety?',
+   'The Magnificat echoes Hannah''s song (1 Samuel 2) and is saturated with Old Testament language — evidence that this young woman knew her Scriptures deeply. Her theology fuels her joy.',
+   false),
+  (18, 'The Dayspring from on High',
+   'And thou, child, shalt be called the prophet of the Highest: for thou shalt go before the face of the Lord to prepare his ways; To give knowledge of salvation unto his people by the remission of their sins, Through the tender mercy of our God; whereby the dayspring from on high hath visited us, To give light to them that sit in darkness and in the shadow of death, to guide our feet into the way of peace.',
+   '["Malachi 4:2", "Isaiah 9:2"]',
+   'Tender God, Your mercy is the dawn that visits me. Give light where I sit in shadow, and guide my feet into the way of peace today. Amen.',
+   'Name one place you are "sitting in darkness." Ask the Dayspring to visit it, and take one small step today toward the way of peace.',
+   'Zechariah calls Christ''s coming the "dayspring" — the sunrise — born of God''s tender mercy. Where do you most need that mercy to dawn on you?',
+   'Zechariah had been struck mute for doubting the angel; these are his first words when speech returns. Nine months of silence give way to some of the richest prophecy in the Gospels.',
+   false),
+  (19, 'The Angel to Joseph',
+   'But while he thought on these things, behold, the angel of the Lord appeared unto him in a dream, saying, Joseph, thou son of David, fear not to take unto thee Mary thy wife: for that which is conceived in her is of the Holy Ghost. And she shall bring forth a son, and thou shalt call his name JESUS: for he shall save his people from their sins.',
+   '["Matthew 1:23", "Psalm 130:8"]',
+   'Lord, like Joseph I want to obey even what I do not fully understand. Give me quiet courage to do the next right thing and trust You with the rest. Amen.',
+   'Where obedience to God will cost you something (comfort, reputation, a plan), take Joseph''s next quiet step of trust today without needing every answer.',
+   'Joseph obeyed at real cost to his reputation. What act of quiet, costly obedience might God be asking of you this season?',
+   'The name Jesus (Yeshua) means "the LORD saves," and the angel explains it: "he shall save his people from their sins." The mission of the cross is embedded in the name given at the cradle.',
+   false),
+  (20, 'Good Tidings of Great Joy',
+   'And the angel said unto them, Fear not: for, behold, I bring you good tidings of great joy, which shall be to all people. For unto you is born this day in the city of David a Saviour, which is Christ the Lord.',
+   '["Isaiah 9:6", "Titus 2:11"]',
+   'Saviour, the news that reached the shepherds reaches me: unto you is born a Saviour. Let that joy be mine today, and let me carry it to others. Amen.',
+   'Tell one person today a piece of genuinely good news about Jesus. The angels announced it to be shared, not hoarded — pass the great joy along.',
+   'The announcement came first to shepherds — laborers on the margins. What does it mean that God addressed His best news to the overlooked "you"?',
+   'Shepherds were considered ceremonially unclean and were often distrusted. That the angelic announcement of the Messiah came to them first signals a kingdom that begins with the lowly.',
+   true),
+  (21, 'Glory in the Highest',
+   'And suddenly there was with the angel a multitude of the heavenly host praising God, and saying, Glory to God in the highest, and on earth peace, good will toward men.',
+   '["Luke 19:38", "Isaiah 6:3"]',
+   'Lord, heaven could not stay silent at Your coming. Let my life join that chorus: glory to God in the highest, and peace on the earth You love. Amen.',
+   'Pause at some point today and simply add your voice to the angels'': say or sing "Glory to God in the highest." Let praise interrupt your ordinary hours.',
+   'The birth of one baby made heaven erupt in praise. What in the story of Christ''s coming most stirs worship in you?',
+   'The angelic song links God''s glory in heaven with peace on earth — the two are connected. The peace announced is not merely absence of conflict but the wholeness (shalom) that comes when God draws near.',
+   false),
+  (22, 'No Room in the Inn',
+   'And so it was, that, while they were there, the days were accomplished that she should be delivered. And she brought forth her firstborn son, and wrapped him in swaddling clothes, and laid him in a manger; because there was no room for them in the inn.',
+   '["Philippians 2:6-7", "2 Corinthians 8:9"]',
+   'Lord, You entered the world with no room and no comfort, choosing the lowest place. Do not let me crowd You out of my life. I make room for You today. Amen.',
+   'Ask honestly: what has been crowding God out of your days lately? Clear one small space — a few quiet minutes, a turned-off screen — to make room for Him.',
+   'The Lord of all was born where animals fed, with no room prepared for Him. Where in your busy life have you left "no room" for Christ?',
+   'A "manger" was a feeding trough; "swaddling clothes" were strips of cloth. Every detail underscores the humility of the incarnation — the King of glory laid where livestock ate.',
+   false),
+  (23, 'In the Beginning Was the Word',
+   'In the beginning was the Word, and the Word was with God, and the Word was God. The same was in the beginning with God. All things were made by him; and without him was not any thing made that was made. In him was life; and the life was the light of men. And the light shineth in darkness; and the darkness comprehended it not.',
+   '["Genesis 1:1", "Colossians 1:16-17"]',
+   'Eternal Word, the baby of Bethlehem is the God who made all things. Let me never shrink You to sentiment — You are the Author of life, come in person. Amen.',
+   'Hold together two truths today: the vulnerable infant of the manger and the eternal Word who made the stars. Let both shape how you approach Him.',
+   'John tells the Christmas story with no stable — only the eternal Word. How does knowing the baby is the Creator change the way you see the manger?',
+   'John deliberately opens with "In the beginning," echoing Genesis 1:1. Before Bethlehem, the Son already existed as the eternal Word (Logos) through whom everything was made.',
+   false),
+  (24, 'The Word Made Flesh',
+   'And the Word was made flesh, and dwelt among us, (and we beheld his glory, the glory as of the only begotten of the Father,) full of grace and truth.',
+   '["Philippians 2:7", "Colossians 2:9"]',
+   'Immanuel, You did not stay far off — You were made flesh and moved in among us. Thank You for coming this close. Let me behold Your glory today. Amen.',
+   'Sit for three quiet minutes with one thought: God became a human being. Let the wonder of the incarnation rest on you before you rush into the day.',
+   'The infinite God took on a finite body. What does it mean to you that God chose to draw this near — to become flesh and dwell among us?',
+   'The Greek for "dwelt" (skēnoō) means to pitch a tent or tabernacle. As God once dwelt with Israel in the tabernacle, now He tabernacles in human flesh — the glory of God housed in a body.',
+   true),
+  (25, 'The Shepherds'' Worship',
+   'And it came to pass, as the angels were gone away from them into heaven, the shepherds said one to another, Let us now go even unto Bethlehem, and see this thing which is come to pass, which the Lord hath made known unto us. And they came with haste, and found Mary, and Joseph, and the babe lying in a manger. And the shepherds returned, glorifying and praising God for all the things that they had heard and seen.',
+   '["Luke 2:20", "Psalm 96:2-3"]',
+   'Lord, let me be like the shepherds: quick to seek You, and quick to tell others what I have found. Turn my wonder into worship and my worship into witness. Amen.',
+   'Do both things the shepherds did today: seek Christ with intention (a few minutes of prayer), and tell someone one true thing about Him.',
+   'The shepherds did not just marvel — they went, and then they told. Which comes harder for you: seeking Christ out, or speaking of Him to others?',
+   'The shepherds model the full response to the gospel: they hear, they seek "with haste," they find, and they return "glorifying and praising God." Wonder becomes worship becomes witness.',
+   false),
+  (26, 'Wise Men from the East',
+   'Now when Jesus was born in Bethlehem of Judaea in the days of Herod the king, behold, there came wise men from the east to Jerusalem, Saying, Where is he that is born King of the Jews? for we have seen his star in the east, and are come to worship him.',
+   '["Isaiah 60:3", "Numbers 24:17"]',
+   'Lord, You drew strangers from far away to worship a Jewish infant King. Thank You that Your salvation reaches every nation — including me. Amen.',
+   'Consider someone far outside your circle of faith. Pray today that the same God who drew the magi from the east would draw them to Christ.',
+   'The first worshippers of the King were Gentile outsiders following a star. What does that tell you about who this salvation is for?',
+   'The magi were likely astrologers or scholars from Persia or Babylon — Gentiles with no covenant claim on Israel''s God. Their arrival signals from the outset that the newborn King is for all nations.',
+   false),
+  (27, 'Gold, Frankincense, and Myrrh',
+   'When they saw the star, they rejoiced with exceeding great joy. And when they were come into the house, they saw the young child with Mary his mother, and fell down, and worshipped him: and when they had opened their treasures, they presented unto him gifts; gold, and frankincense, and myrrh.',
+   '["Psalm 72:10-11", "Isaiah 60:6"]',
+   'Lord, the magi gave their best and their most costly. Show me what treasure I am holding back, and give me the joy to lay it down before You. Amen.',
+   'Identify one "treasure" — time, money, a talent, a comfort — you have been reluctant to offer God. Present it to Him deliberately today.',
+   'The magi opened their treasures and gave their best. What treasure of yours is God inviting you to open and offer this season?',
+   'The gifts are read as a threefold confession: gold for a king, frankincense for God, and myrrh — a burial spice — for one destined to die. The magi''s offering quietly foretells the whole gospel.',
+   false),
+  (28, 'For God So Loved the World',
+   'For God so loved the world, that he gave his only begotten Son, that whosoever believeth in him should not perish, but have everlasting life. For God sent not his Son into the world to condemn the world; but that the world through him might be saved.',
+   '["Romans 5:8", "1 John 4:9-10"]',
+   'Father, all of Advent flows from this: You so loved that You gave. Let me receive Your Son, and let Your love become the center of my Christmas and my life. Amen.',
+   'End this Advent by receiving the gift plainly. Pray a simple sentence of trust in the Son God gave, and thank Him that the whole story was love from the start.',
+   'Every prophecy and every part of the Christmas story flows from one source: love. How does it change Christmas to see it as God''s gift of love to you personally?',
+   'This single verse gathers the whole of Advent: the giving God, the given Son, the loved world. The coming was never about condemnation but rescue — love enacted so the world "might be saved."',
+   true)
+) AS v(day_number, day_title, passage_text, passage_refs, prayer, application, question, context_note, is_memory_verse)
+WHERE p.slug = 'advent-waiting-for-the-light'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Advent — comprehension check questions (all 28 days).
+UPDATE reading_plan_entries e
+SET
+  quiz_question    = v.question,
+  quiz_options     = v.options,
+  quiz_explanation = v.explanation
+FROM reading_plans p,
+(VALUES
+  (1,  'In Genesis 3:15, whose "seed" is promised to bruise the serpent''s head?',
+       '[{"label":"A","text":"The serpent''s seed","correct":false},{"label":"B","text":"The woman''s seed","correct":true},{"label":"C","text":"Adam''s seed","correct":false}]',
+       'God promises enmity between the serpent and "the woman''s seed" — the earliest hint of a deliverer born of a woman who will crush evil at the cost of His own wounding.'),
+  (2,  'What do the people walking in darkness see in Isaiah 9:2?',
+       '[{"label":"A","text":"A great light","correct":true},{"label":"B","text":"A distant city","correct":false},{"label":"C","text":"A guiding cloud","correct":false}]',
+       '"The people that walked in darkness have seen a great light." Isaiah casts salvation as a dawn breaking over those who dwell in the shadow of death.'),
+  (3,  'Which title is given to the child in Isaiah 9:6?',
+       '[{"label":"A","text":"King of Kings","correct":false},{"label":"B","text":"Lamb of God","correct":false},{"label":"C","text":"Prince of Peace","correct":true}]',
+       'Isaiah names the coming child "Wonderful, Counsellor, The mighty God, The everlasting Father, The Prince of Peace" — divine titles piled onto an unborn infant.'),
+  (4,  'What does the name Immanuel mean?',
+       '[{"label":"A","text":"God is coming","correct":false},{"label":"B","text":"God with us","correct":true},{"label":"C","text":"God saves","correct":false}]',
+       'Immanuel means "God with us." The sign God gives is a name that captures the whole hope of Advent — God come near enough to be held.'),
+  (5,  'What town does Micah name as the Messiah''s birthplace?',
+       '[{"label":"A","text":"Nazareth","correct":false},{"label":"B","text":"Jerusalem","correct":false},{"label":"C","text":"Bethlehem","correct":true}]',
+       'Micah 5:2 names "Bethlehem Ephratah," though it was "little among the thousands of Judah" — the small town chosen centuries in advance to cradle the eternal Ruler.'),
+  (6,  'In Isaiah 11:1, out of whose roots does the Branch grow?',
+       '[{"label":"A","text":"Jesse","correct":true},{"label":"B","text":"Abraham","correct":false},{"label":"C","text":"Solomon","correct":false}]',
+       'The Branch grows "out of the stem of Jesse" — David''s father. From the cut-down stump of the royal line, God grows new, Spirit-anointed life.'),
+  (7,  'What name is given to the righteous Branch in Jeremiah 23:6?',
+       '[{"label":"A","text":"The Prince of Peace","correct":false},{"label":"B","text":"THE LORD OUR RIGHTEOUSNESS","correct":true},{"label":"C","text":"The Ancient of Days","correct":false}]',
+       'The coming King''s name is "THE LORD OUR RIGHTEOUSNESS" — He will be the very righteousness His people could never produce themselves.'),
+  (8,  'What does the voice in the wilderness command in Isaiah 40:3?',
+       '[{"label":"A","text":"Prepare ye the way of the LORD","correct":true},{"label":"B","text":"Flee to the mountains","correct":false},{"label":"C","text":"Rebuild the temple","correct":false}]',
+       '"Prepare ye the way of the LORD, make straight in the desert a highway for our God." Advent is a summons to make the road ready in the heart.'),
+  (9,  'In Malachi 3:1, who will suddenly come to His temple?',
+       '[{"label":"A","text":"The messenger who prepares the way","correct":false},{"label":"B","text":"The Lord, the messenger of the covenant","correct":true},{"label":"C","text":"The high priest","correct":false}]',
+       'After the messenger prepares the way, "the Lord, whom ye seek, shall suddenly come to his temple, even the messenger of the covenant."'),
+  (10, 'What arises "with healing in his wings" in Malachi 4:2?',
+       '[{"label":"A","text":"The morning star","correct":false},{"label":"B","text":"The Sun of righteousness","correct":true},{"label":"C","text":"The angel of the LORD","correct":false}]',
+       'Malachi closes the Old Testament with a sunrise: "the Sun of righteousness" arising with healing — the dawn after four centuries of prophetic silence.'),
+  (11, 'According to Isaiah 35:5, what happens when God comes to save?',
+       '[{"label":"A","text":"The eyes of the blind are opened","correct":true},{"label":"B","text":"The seas are calmed","correct":false},{"label":"C","text":"The nations bow","correct":false}]',
+       'When God comes, "the eyes of the blind shall be opened" and the lame leap — the coming of God is the healing of everything sin has broken.'),
+  (12, 'How does the King come to Zion in Zechariah 9:9?',
+       '[{"label":"A","text":"On a war horse in triumph","correct":false},{"label":"B","text":"Lowly, riding on a colt","correct":true},{"label":"C","text":"On the clouds of heaven","correct":false}]',
+       'The King comes "lowly, and riding upon an ass, and upon a colt" — humility fulfilled on Palm Sunday, not the grandeur people expected.'),
+  (13, 'In Isaiah 61:1, what is the Anointed One sent to do for the brokenhearted?',
+       '[{"label":"A","text":"To bind them up","correct":true},{"label":"B","text":"To judge them","correct":false},{"label":"C","text":"To scatter them","correct":false}]',
+       'The Spirit-anointed Servant is sent "to bind up the brokenhearted" and proclaim liberty — the mission Jesus claimed as His own in Luke 4.'),
+  (14, 'What does Balaam foresee coming out of Jacob in Numbers 24:17?',
+       '[{"label":"A","text":"A river","correct":false},{"label":"B","text":"A Star","correct":true},{"label":"C","text":"A cloud","correct":false}]',
+       '"There shall come a Star out of Jacob, and a Sceptre out of Israel" — a coming King foreseen even by a pagan diviner, later linked to the magi''s star.'),
+  (15, 'In Gabriel''s announcement, how long will the child''s kingdom last?',
+       '[{"label":"A","text":"A thousand years","correct":false},{"label":"B","text":"Until the exile ends","correct":false},{"label":"C","text":"There shall be no end","correct":true}]',
+       'Of His kingdom "there shall be no end" — Gabriel ties the child directly to God''s everlasting-throne promise to David in 2 Samuel 7.'),
+  (16, 'How does Mary respond to the angel in Luke 1:38?',
+       '[{"label":"A","text":"Be it unto me according to thy word","correct":true},{"label":"B","text":"How can this be?","correct":false},{"label":"C","text":"Depart from me","correct":false}]',
+       'Mary answers with surrender: "Behold the handmaid of the Lord; be it unto me according to thy word" — a yes given before she could see the outcome.'),
+  (17, 'What does Mary''s soul do in the opening of her song?',
+       '[{"label":"A","text":"Fears the Lord","correct":false},{"label":"B","text":"Magnifies the Lord","correct":true},{"label":"C","text":"Questions the Lord","correct":false}]',
+       '"My soul doth magnify the Lord." Mary''s instinct before the impossible is worship — the Magnificat, steeped in Scripture she clearly knew by heart.'),
+  (18, 'What does Zechariah call the coming Christ in Luke 1:78?',
+       '[{"label":"A","text":"The dayspring from on high","correct":true},{"label":"B","text":"The bright cloud","correct":false},{"label":"C","text":"The lamp of Israel","correct":false}]',
+       'Zechariah calls Him "the dayspring from on high" — the sunrise, born of God''s tender mercy, to give light to those who sit in darkness.'),
+  (19, 'Why is the child to be named Jesus, according to Matthew 1:21?',
+       '[{"label":"A","text":"For he shall rule the nations","correct":false},{"label":"B","text":"For he shall save his people from their sins","correct":true},{"label":"C","text":"For he shall rebuild the temple","correct":false}]',
+       '"Thou shalt call his name JESUS: for he shall save his people from their sins." The name (Yeshua, "the LORD saves") carries the mission of the cross.'),
+  (20, 'What is born "in the city of David" in Luke 2:11?',
+       '[{"label":"A","text":"A prophet","correct":false},{"label":"B","text":"A Saviour, which is Christ the Lord","correct":true},{"label":"C","text":"A priest","correct":false}]',
+       '"Unto you is born this day in the city of David a Saviour, which is Christ the Lord" — good tidings of great joy announced first to shepherds.'),
+  (21, 'What do the angels say comes to earth in Luke 2:14?',
+       '[{"label":"A","text":"Peace, good will toward men","correct":true},{"label":"B","text":"Fire and judgment","correct":false},{"label":"C","text":"A new law","correct":false}]',
+       '"Glory to God in the highest, and on earth peace, good will toward men." Heaven links God''s glory above with the wholeness (shalom) His coming brings.'),
+  (22, 'Where was the newborn Jesus laid in Luke 2:7?',
+       '[{"label":"A","text":"In a cradle at the inn","correct":false},{"label":"B","text":"In a manger","correct":true},{"label":"C","text":"In the temple","correct":false}]',
+       'She "laid him in a manger; because there was no room for them in the inn" — the King of glory placed in a feeding trough.'),
+  (23, 'What does John 1:1 say the Word was?',
+       '[{"label":"A","text":"With God, and was God","correct":true},{"label":"B","text":"A created spirit","correct":false},{"label":"C","text":"An angel of light","correct":false}]',
+       '"The Word was with God, and the Word was God." John tells the Christmas story by revealing the baby as the eternal Creator through whom all things were made.'),
+  (24, 'What was the Word "made" in John 1:14?',
+       '[{"label":"A","text":"Spirit","correct":false},{"label":"B","text":"Flesh","correct":true},{"label":"C","text":"Light","correct":false}]',
+       '"The Word was made flesh, and dwelt among us." The Greek for "dwelt" means to tabernacle — God pitching His tent in human flesh.'),
+  (25, 'What did the shepherds do after the angels departed?',
+       '[{"label":"A","text":"Returned to their flocks in silence","correct":false},{"label":"B","text":"Went with haste to Bethlehem","correct":true},{"label":"C","text":"Waited for a further sign","correct":false}]',
+       'They "came with haste" to find the babe, then "returned, glorifying and praising God" — wonder became worship became witness.'),
+  (26, 'What did the wise men follow to seek the newborn King?',
+       '[{"label":"A","text":"A prophet''s letter","correct":false},{"label":"B","text":"His star","correct":true},{"label":"C","text":"A pillar of cloud","correct":false}]',
+       '"We have seen his star in the east, and are come to worship him." Gentile outsiders were among the first to seek the King — salvation is for all nations.'),
+  (27, 'What three gifts did the magi present in Matthew 2:11?',
+       '[{"label":"A","text":"Gold, frankincense, and myrrh","correct":true},{"label":"B","text":"Bread, wine, and oil","correct":false},{"label":"C","text":"Silver, spices, and linen","correct":false}]',
+       'Gold for a king, frankincense for God, and myrrh — a burial spice — for one who would die. The gifts quietly preach the whole gospel over a cradle.'),
+  (28, 'According to John 3:16, why did God give His only Son?',
+       '[{"label":"A","text":"To condemn the world","correct":false},{"label":"B","text":"Because He so loved the world","correct":true},{"label":"C","text":"To test the world","correct":false}]',
+       '"For God so loved the world, that he gave his only begotten Son." Every part of Advent flows from love, offered so the world "might be saved."')
+) AS v(day_number, question, options, explanation)
+WHERE p.slug = 'advent-waiting-for-the-light'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Advent — word studies (a key word from each day''s passage, all 28 days).
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (1,  '{"seed":{"original":"זֶרַע","transliteration":"zera","definition":"Seed, offspring, descendant. God promises the woman''s seed will crush the serpent — a singular descendant Paul later identifies as Christ.","refs":["Genesis 3:15","Galatians 3:16"]}}'),
+  (2,  '{"light":{"original":"אוֹר","transliteration":"or","definition":"Light — the first thing God spoke into being. Isaiah uses it for salvation dawning on a people in the shadow of death.","refs":["Isaiah 9:2","John 1:5"]}}'),
+  (3,  '{"prince":{"original":"שַׂר","transliteration":"sar","definition":"A prince, ruler, chief. In Sar Shalom (Prince of Peace) the child is named the very ruler and source of the wholeness only God can give.","refs":["Isaiah 9:6","Daniel 8:25"]}}'),
+  (4,  '{"immanuel":{"original":"עִמָּנוּ אֵל","transliteration":"immanu el","definition":"Literally with-us God. Not a description of God''s power but of His nearness — the sign is a name announcing His presence among His people.","refs":["Isaiah 7:14","Matthew 1:23"]}}'),
+  (5,  '{"everlasting":{"original":"עוֹלָם","transliteration":"olam","definition":"Distant time, antiquity, eternity. The Ruler born in Bethlehem has goings forth from olam — He has a birthplace in time yet has always existed.","refs":["Micah 5:2","Psalm 90:2"]}}'),
+  (6,  '{"branch":{"original":"נֵצֶר","transliteration":"netzer","definition":"A green shoot or sprout. From the cut stump of David''s line a netzer grows — many hear an echo of Nazareth in the word for the Branch.","refs":["Isaiah 11:1","Isaiah 60:21"]}}'),
+  (7,  '{"righteousness":{"original":"צֶדֶק","transliteration":"tsedeq","definition":"Rightness, justice, righteousness. The King''s name declares He is the righteousness His people cannot manufacture — the LORD our righteousness.","refs":["Jeremiah 23:6","1 Corinthians 1:30"]}}'),
+  (8,  '{"prepare":{"original":"פָּנָה","transliteration":"panah","definition":"To turn, to clear away, to make ready. The command is to clear a road through the heart so the coming LORD has a straight way in.","refs":["Isaiah 40:3","Malachi 3:1"]}}'),
+  (9,  '{"messenger":{"original":"מַלְאָךְ","transliteration":"malak","definition":"A messenger or envoy (also translated angel). God promises a herald to prepare His way — fulfilled centuries later in John the Baptist.","refs":["Malachi 3:1","Mark 1:2"]}}'),
+  (10, '{"healing":{"original":"מַרְפֵּא","transliteration":"marpe","definition":"Healing, cure, restoration. The Sun of righteousness rises with marpe in His wings — the dawn of God''s coming brings the mending of what sin broke.","refs":["Malachi 4:2","Proverbs 4:22"]}}'),
+  (11, '{"save":{"original":"יָשַׁע","transliteration":"yasha","definition":"To save, deliver, rescue — the root behind the name Yeshua (Jesus). Isaiah promises God Himself will come and yasha His people.","refs":["Isaiah 35:4","Matthew 1:21"]}}'),
+  (12, '{"king":{"original":"מֶלֶךְ","transliteration":"melek","definition":"King, sovereign. Zion''s melek comes not on a war horse but on a colt — a king whose greatness is expressed in humility.","refs":["Zechariah 9:9","Psalm 24:8"]}}'),
+  (13, '{"anointed":{"original":"מָשַׁח","transliteration":"mashach","definition":"To anoint with oil, setting apart for God''s service — the root of Mashiach, Messiah. The Servant is the Anointed One sent to preach and heal.","refs":["Isaiah 61:1","Luke 4:18"]}}'),
+  (14, '{"star":{"original":"כּוֹכָב","transliteration":"kokab","definition":"A star. Balaam foresees a kokab rising out of Jacob — an ancient oracle many connect to the star that led the magi to Bethlehem.","refs":["Numbers 24:17","Matthew 2:2"]}}'),
+  (15, '{"jesus":{"original":"Ἰησοῦς","transliteration":"Iēsous","definition":"The Greek form of Hebrew Yeshua, meaning the LORD saves. The angel names the child before birth — the name itself announces His mission.","refs":["Luke 1:31","Matthew 1:21"]}}'),
+  (16, '{"handmaid":{"original":"δούλη","transliteration":"doulē","definition":"A female servant, bondmaid. Mary names herself the Lord''s doulē — her identity is glad submission, the posture from which she says her yes.","refs":["Luke 1:38","Luke 1:48"]}}'),
+  (17, '{"magnify":{"original":"μεγαλύνω","transliteration":"megalynō","definition":"To make great, to enlarge, to exalt. Mary''s soul magnifies the Lord — not adding to His greatness but making it large in her own sight and song.","refs":["Luke 1:46","Psalm 34:3"]}}'),
+  (18, '{"dayspring":{"original":"ἀνατολή","transliteration":"anatolē","definition":"A rising, the dawn, the sunrise (and elsewhere a shoot or branch). Zechariah calls Christ the anatolē from on high — the sunrise breaking on those in darkness.","refs":["Luke 1:78","Malachi 4:2"]}}'),
+  (19, '{"save":{"original":"σῴζω","transliteration":"sōzō","definition":"To save, rescue, heal, make whole. The angel explains the name Jesus by this verb: He shall sōzō His people from their sins — the cross is in the cradle.","refs":["Matthew 1:21","Luke 19:10"]}}'),
+  (20, '{"saviour":{"original":"σωτήρ","transliteration":"sōtēr","definition":"A saviour, deliverer, rescuer — a title the Roman world gave to Caesar. The angels give it to a baby in a manger: the true Saviour is Christ the Lord.","refs":["Luke 2:11","Titus 2:13"]}}'),
+  (21, '{"glory":{"original":"δόξα","transliteration":"doxa","definition":"Glory, splendor, radiant honor. The heavenly host ascribes doxa to God in the highest — the birth of one baby fills the sky with the weight of God''s worth.","refs":["Luke 2:14","John 1:14"]}}'),
+  (22, '{"manger":{"original":"φάτνη","transliteration":"phatnē","definition":"A feeding trough or stall for animals. The eternal Word is laid in a phatnē — the first bed of the King of glory is where the livestock ate.","refs":["Luke 2:7","Luke 2:16"]}}'),
+  (23, '{"word":{"original":"λόγος","transliteration":"logos","definition":"Word, reason, the self-expression of God. John names the pre-existent Christ the Logos — God speaking Himself into creation and, at Christmas, into flesh.","refs":["John 1:1","Revelation 19:13"]}}'),
+  (24, '{"dwelt":{"original":"σκηνόω","transliteration":"skēnoō","definition":"To pitch a tent, to tabernacle, to dwell. As God once dwelt with Israel in the tabernacle, the Word now tabernacles in human flesh among us.","refs":["John 1:14","Revelation 21:3"]}}'),
+  (25, '{"praising":{"original":"αἰνέω","transliteration":"aineō","definition":"To praise, to extol aloud. The shepherds return aineō God — having sought and found the child, their wonder overflows into vocal praise.","refs":["Luke 2:20","Psalm 148:1"]}}'),
+  (26, '{"worship":{"original":"προσκυνέω","transliteration":"proskyneō","definition":"To prostrate oneself, to do homage, to worship. The magi come to proskyneō the newborn King — Gentile outsiders bowing before Israel''s Messiah.","refs":["Matthew 2:2","John 4:24"]}}'),
+  (27, '{"gifts":{"original":"δῶρον","transliteration":"dōron","definition":"A gift, present, offering. The magi open their treasures and give their dōra — gold, frankincense, and myrrh — an offering that confesses king, God, and coming death.","refs":["Matthew 2:11","Ephesians 2:8"]}}'),
+  (28, '{"loved":{"original":"ἀγαπάω","transliteration":"agapaō","definition":"To love with deliberate, self-giving choice. God so agapaō the world that He gave His Son — the whole coming flows from this one costly love.","refs":["John 3:16","Romans 5:8"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'advent-waiting-for-the-light'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Advent — dig deeper commentary (days 1, 4, 17, 23, 24, 28).
+UPDATE reading_plan_entries e
+SET
+  deep_dive_text = v.text,
+  deep_dive_refs = v.refs
+FROM reading_plans p,
+(VALUES
+  (1,
+   'Theologians call Genesis 3:15 the protoevangelium — the "first gospel" — because it is the earliest announcement of redemption in the Bible, spoken before the couple is even sent out of Eden. Notice where it appears: not in a promise made to Adam and Eve directly, but in the sentence of judgment pronounced over the serpent. Grace is smuggled into the middle of the curse. The wording repays attention. God speaks of "her seed" — an unusual phrase, since offspring are normally reckoned through the father — which the church has long read as a quiet hint toward a child born of a woman in a singular way. Paul picks up this exact category in Galatians 3:16, insisting the promised "seed" is ultimately one person: Christ. And the outcome is a double wound: the serpent will "bruise his heel" (a real injury — the cross), while the seed will "bruise thy head" (a fatal blow — the resurrection and final defeat of evil). From humanity''s first catastrophe, God is already narrating the rescue. Advent begins here, in the dark, with a promise — which is exactly where hope is meant to be born.',
+   '["Romans 16:20", "Revelation 12:9"]'),
+  (4,
+   'Isaiah 7:14 was first spoken into a specific political crisis. King Ahaz of Judah faced invasion, and God offered him a sign; when Ahaz refused, God gave one anyway: "a virgin shall conceive... and shall call his name Immanuel." Scholars debate the immediate reference — the Hebrew almah means a young woman of marriageable age — but Matthew, writing under the Spirit and using the Greek translation''s parthenos (virgin), declares the ultimate fulfillment in the miraculous conception of Jesus (Matthew 1:22-23). What matters most is the name. Immanuel is not a statement about God''s attributes — His power, His holiness, His justice — but about His location. "God with us." The entire trajectory of Scripture bends toward this nearness: God walking in the garden, dwelling in the tabernacle, filling the temple, and finally taking on flesh. Matthew frames his whole Gospel with the promise: he opens with Immanuel, "God with us," and closes with the risen Jesus saying, "I am with you always" (Matthew 28:20). The name given at the manger is the promise kept at the empty tomb.',
+   '["Matthew 1:22-23", "Matthew 28:20"]'),
+  (17,
+   'Mary''s song, the Magnificat, is one of the most theologically dense passages in the Gospels — remarkable for coming from an unknown teenage girl. It is saturated with the Old Testament: its structure and themes closely follow Hannah''s song in 1 Samuel 2, and it weaves in language from the Psalms and the prophets. This is not the speech of someone stumbling for words but of a young woman whose imagination is furnished with Scripture. Her theology is a theology of reversal. God "hath regarded the low estate" of His servant; He scatters the proud, puts down the mighty, exalts the lowly, fills the hungry, and sends the rich away empty. In other words, the coming of Christ turns the world''s ranking system upside down — the very pattern the whole Gospel will follow, from a birth among animals to a throne that is a cross. Notice, too, the tenses: Mary speaks of God''s future acts as though already done ("he hath put down... he hath exalted"). Faith speaks of God''s promises in the past tense, so certain of them that they are counted as finished. Her first response to being handed the impossible is not anxiety but a song built on remembering who God has always been.',
+   '["1 Samuel 2:1-10", "Luke 6:20-21"]'),
+  (23,
+   'John opens his Gospel not in Bethlehem but in eternity: "In the beginning was the Word." The phrase is a deliberate echo of Genesis 1:1 — John is announcing a new creation and rooting it in the same God who spoke the first one into being. The term he chooses, Logos ("Word"), is a bridge between two worlds. To Jewish readers it recalled the God who created by speaking ("And God said... and there was") and the personified Wisdom of Proverbs 8. To Greek readers, Logos named the rational principle believed to order the cosmos. John takes this loaded word and makes a staggering claim: the Logos is not an abstract principle but a person, who "was with God, and was God," and who "was made flesh." Three assertions are stacked in a single verse: the Word is eternal (was in the beginning), personal (was with God — distinct), and fully divine (was God). Then verse 3 removes any category of created being: "all things were made by him." The baby in the manger is not a creature God made to save the world; He is the uncreated One through whom the world was made, stepping into His own creation. Christmas, John insists, is the Creator entering the story as a character in it.',
+   '["Genesis 1:1-3", "Colossians 1:15-17"]'),
+  (24,
+   'John 1:14 is the hinge of the whole Bible: "the Word was made flesh, and dwelt among us." Everything before it leans forward to this moment; everything after flows from it. The scandal of the claim is easy to miss from a distance. Greek philosophy generally held that the divine was pure spirit and that flesh was lower, even corrupting; the idea that God would become a body was not just surprising but offensive. John insists on it anyway, and his verb is precise: eskēnōsen, "he tabernacled" — he pitched his tent — among us. The word deliberately recalls the tabernacle of the Exodus, the tent where God''s glory came to dwell in the midst of Israel (Exodus 40:34). Now that dwelling is a human body. "We beheld his glory," John writes — the same glory that once filled the tent and the temple is now seen in a face. And it comes "full of grace and truth," echoing the character God revealed to Moses (Exodus 34:6). The incarnation means God did not save us from a safe distance. He entered the mess in person, took on hunger and weariness and tears, and made His dwelling in the middle of ordinary human life — which means no part of your life is now beneath His reach.',
+   '["Exodus 40:34-35", "Hebrews 2:14-17"]'),
+  (28,
+   'John 3:16 is so familiar it is easy to stop hearing it — but as the close of Advent it gathers the entire season into a single sentence. Every clause carries weight. "God so loved" — the coming was never God''s reluctant duty but the overflow of His nature; love is the engine of the whole story. "the world" — not a worthy or attractive world but the kosmos in rebellion, the very world that would reject Him. "that he gave" — the manger is already an act of giving that points to the greater giving of the cross; the same love that sends the Son to Bethlehem sends Him to Calvary. "his only begotten Son" — the gift is not something God has but the Someone God is, His own Son. "that whosoever believeth" — the door is flung open to anyone, of any nation, matching the Gentile magi who close the story. And verse 17 removes the last fear: God "sent not his Son... to condemn the world; but that the world through him might be saved." The star, the prophecies, the angels, the manger — trace them all back and you arrive here, at love that gives itself away. The proper response to Advent is not merely to admire the story but to receive the Gift.',
+   '["1 John 4:9-10", "Romans 8:32"]')
+) AS v(day_number, text, refs)
+WHERE p.slug = 'advent-waiting-for-the-light'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- ============================================================
+-- Lent: The Road to the Cross (40 days) — base entries.
+-- Seasonal (season_key 'lent'). Content run 2026-07-02.
+-- Repentance -> the wilderness -> dying to self -> the
+-- Suffering Servant (Isaiah 53 / Psalm 22) -> the cross.
+-- Complements Holy Week (Palm Sunday -> Easter).
+-- Idempotent: inserted only when the plan has zero entries.
+-- ============================================================
+INSERT INTO reading_plan_entries (plan_id, day_number, verse_ref, reflection, created_at)
+SELECT p.id, v.day_number, v.verse_ref, v.reflection, NOW()
+FROM reading_plans p,
+(VALUES
+  (1,  'Genesis 3:19',       'Lent begins with an honest word most of the year avoids: dust. Remember that you are mortal, that your days are numbered, that you will return to the ground. This is not despair but the ground of true repentance — a life measured against eternity.'),
+  (2,  'Psalm 51:1-4',       'David, confronted with his sin, does not minimize or excuse. He throws himself on God''s mercy: blot out my transgressions, wash me, cleanse me. Repentance begins where self-defense ends.'),
+  (3,  'Psalm 51:10-12',     'Beyond forgiveness, David asks for renovation: create in me a clean heart. He wants not just his record cleared but his heart remade — and only the God who created can create again.'),
+  (4,  'Joel 2:12-13',       'God calls for a return that is inward, not theatrical: rend your heart, not your garments. Real repentance is not a performance of sorrow but a torn-open heart turned back toward a God who is gracious and merciful.'),
+  (5,  'Isaiah 58:6-7',      'God rejects fasting that leaves the world untouched. The fast He chooses looses chains, frees the oppressed, feeds the hungry. Lenten self-denial that never spills into mercy has missed the point.'),
+  (6,  'Matthew 4:1-4',      'Before His ministry, Jesus is driven into the wilderness to fast forty days and face the tempter. Where Israel failed in the desert, He stands — answering hunger not with bread but with the word of God.'),
+  (7,  'Matthew 4:8-11',     'Offered all the kingdoms of the world without a cross, Jesus refuses the shortcut: worship God only. The road to His throne runs through Calvary, and He will not take the easier road the tempter offers.'),
+  (8,  'Psalm 32:1-5',       'David describes the misery of unconfessed sin — bones wasting, strength drying up — and then the relief of confession: I acknowledged my sin, and thou forgavest. Hidden sin festers; confessed sin is covered.'),
+  (9,  '1 John 1:8-9',       'To claim we have no sin is self-deception. But confession opens a sure promise: He is faithful and just to forgive. Repentance is not groveling to earn mercy but honesty that receives it.'),
+  (10, 'Luke 15:17-20',      'The prodigal rehearses a servant''s speech, but the father will not let him finish it. While he is still a great way off, the father runs. Repentance is met not by a grudging welcome but by a sprinting embrace.'),
+  (11, '2 Corinthians 7:9-10','Paul distinguishes two sorrows: godly sorrow that leads to repentance and life, and worldly sorrow that only produces death. The difference is direction — one turns us toward God, the other collapses inward.'),
+  (12, 'Psalm 130:1-5',      'From the depths the psalmist cries, and finds his footing on one truth: if God marked iniquities, no one could stand — but there is forgiveness with Him. Mercy, not merit, is what makes God approachable.'),
+  (13, 'Micah 7:18-19',      'Micah stands amazed at a God who pardons iniquity and delights in mercy — who casts our sins into the depths of the sea. The One we have sinned against is the same One most eager to forgive.'),
+  (14, 'Ezekiel 36:25-27',   'God promises what we cannot do for ourselves: a new heart, a heart of flesh in place of stone, His own Spirit within. Lent exposes our need; only God can supply the transplant.'),
+  (15, 'Matthew 16:24-26',   'Jesus names the terms plainly: deny yourself, take up your cross, follow me. The way to save your life is to lose it for His sake. The road to the cross is not only His to walk but ours to follow.'),
+  (16, 'Luke 9:57-62',       'Following Jesus costs more than eager volunteers expect — no place to lay His head, no looking back. He will not soften the terms to win a crowd. The plough is set forward, toward the cross.'),
+  (17, 'John 12:24-26',      'Jesus reveals the deep logic of the cross: a grain of wheat must fall and die to bear fruit. His death will bring a harvest — and the same pattern shapes every life that follows Him.'),
+  (18, 'Galatians 2:20',     'Paul locates his whole identity at the cross: I am crucified with Christ. The old self is not improved but put to death, so that Christ may live in him. This is what dying to self actually means.'),
+  (19, 'Romans 6:4-6',       'Baptism preaches a death and a resurrection: buried with Christ, raised to walk in newness of life. The old self was crucified with Him so that sin''s reign might be broken. Death is the doorway to new life.'),
+  (20, 'Philippians 3:8-10', 'Paul counts every gain as loss for the surpassing worth of knowing Christ — including the fellowship of His sufferings. To know Him fully means sharing not only His resurrection power but His road of suffering.'),
+  (21, 'Matthew 6:16-18',    'Jesus warns against fasting for an audience. Disfigure your face for others, and their notice is your whole reward. Fast for the Father who sees in secret, and the reward is Him.'),
+  (22, 'James 4:8-10',       'The way up is down: draw near to God, cleanse your hands, humble yourselves, and He will lift you up. Lent is a season of deliberate lowering, trusting God to do the raising.'),
+  (23, 'Isaiah 52:13-15',    'Seven centuries early, Isaiah unveils the Servant — exalted, yet with a visage marred more than any man. The paradox of the cross is here in seed: the highest glory reached through the deepest disfigurement.'),
+  (24, 'Isaiah 53:1-3',      'The Servant grows up like a root out of dry ground — no beauty, no status, despised and rejected. A man of sorrows, acquainted with grief. He does not arrive in splendor but in the company of the suffering.'),
+  (25, 'Isaiah 53:4-6',      'Here is the heart of the gospel, foretold: He was wounded for our transgressions, bruised for our iniquities. We wandered like sheep; the LORD laid on Him the iniquity of us all. The exchange is total.'),
+  (26, 'Isaiah 53:7-9',      'Oppressed and afflicted, He opens not His mouth — a lamb led to the slaughter, silent before the shearers. The Servant does not resist or protest. He goes willingly, and He goes without deceit.'),
+  (27, 'Isaiah 53:10-12',    'The strangest line in Scripture: it pleased the LORD to bruise Him. The cross was no accident but the deliberate plan of God, whose Servant pours out His soul unto death and bears the sin of many.'),
+  (28, 'Psalm 22:1-5',       'A thousand years early, David''s cry becomes the Messiah''s: My God, my God, why hast thou forsaken me? Jesus will pray this psalm from the cross — abandonment given voice, yet still addressed to God.'),
+  (29, 'Psalm 22:14-18',     'The psalm describes a death by crucifixion centuries before Rome invented it: bones out of joint, strength dried up, pierced hands and feet, garments parted by lot. David saw the cross from far off.'),
+  (30, 'Zechariah 12:10',    'God speaks of a day when His people will look on Him whom they have pierced and mourn as for an only son. Even in the piercing, He pours out a spirit of grace — the wound becomes the place of repentance.'),
+  (31, 'Luke 9:51',          'A quiet, decisive verse: when the time came, He stedfastly set His face to go to Jerusalem. Everything after this bends toward the cross. Jesus does not drift toward Calvary; He walks toward it on purpose.'),
+  (32, 'Mark 10:32-34',      'On the road up to Jerusalem, Jesus goes ahead, and the disciples are afraid. He tells them plainly what waits: betrayal, mocking, scourging, death — and resurrection. He walks into it with open eyes.'),
+  (33, 'Mark 10:45',         'In one sentence Jesus explains His whole mission: the Son of man came not to be served but to serve, and to give His life a ransom for many. The cross is not tragedy befalling Him but the purpose He came for.'),
+  (34, 'John 10:17-18',      'No one takes Jesus'' life from Him; He lays it down of Himself. The cross is not Rome overpowering a victim but the Good Shepherd freely laying down His life for the sheep, with power to take it up again.'),
+  (35, 'Hebrews 12:1-2',     'We run our race looking to Jesus, who for the joy set before Him endured the cross, despising its shame. He saw past the agony to the joy on the other side — and that vision carried Him through.'),
+  (36, 'Matthew 26:36-39',   'In Gethsemane the weight lands fully: fallen on His face, Jesus asks that the cup pass. Yet He surrenders — not as I will, but as thou wilt. The victory of the cross is won first in a garden of surrender.'),
+  (37, 'Isaiah 50:5-7',      'The Servant gives His back to the smiters and does not turn away. He sets His face like a flint, certain the Lord GOD will help Him. Obedience unto death is not weakness but resolve forged in trust.'),
+  (38, 'John 19:1-6',        'Scourged, crowned with thorns, draped in mock purple, Jesus is led out, and Pilate says, Behold the man. The King of glory stands beaten and humiliated — and even here, He is more royal than His judges.'),
+  (39, 'John 19:28-30',      'Knowing all was accomplished, Jesus says, It is finished, and gives up His spirit. It is not a cry of defeat but of completion — the work of salvation done, the debt paid in full, nothing left owing.'),
+  (40, '1 Peter 2:24',       'Lent ends at the tree, where He bore our sins in His own body, so that we might die to sin and live to righteousness. By His stripes we are healed. The road to the cross was, all along, the road to our healing.')
+) AS v(day_number, verse_ref, reflection)
+WHERE p.slug = 'lent-road-to-the-cross'
+  AND NOT EXISTS (SELECT 1 FROM reading_plan_entries WHERE plan_id = p.id);
+
+-- Lent — text, titles, passages, prayer, application, question, context, memory flags.
+UPDATE reading_plan_entries e
+SET
+  day_title       = v.day_title,
+  passage_text    = v.passage_text,
+  passage_refs    = v.passage_refs,
+  prayer          = v.prayer,
+  application     = v.application,
+  question        = v.question,
+  context_note    = v.context_note,
+  content_type    = 'passage',
+  is_memory_verse = v.is_memory_verse
+FROM reading_plans p,
+(VALUES
+  (1, 'Dust to Dust',
+   'In the sweat of thy face shalt thou eat bread, till thou return unto the ground; for out of it wast thou taken: for dust thou art, and unto dust shalt thou return.',
+   '["Psalm 103:14", "Ecclesiastes 12:7"]',
+   'Lord, I am dust, and my days are short. Teach me to number them, that I may spend this life on what will last. Let my mortality make me wise. Amen.',
+   'Sit for a moment with the fact of your own mortality — not morbidly, but honestly. Ask God what He would have you stop delaying if your time is truly limited.',
+   'How does remembering that you are mortal — dust, and returning to dust — change what you treat as urgent and what you treat as trivial?',
+   'The traditional Ash Wednesday words — "remember that you are dust" — come straight from this verse. Lent opens by facing mortality honestly, the ground from which real repentance grows.',
+   false),
+  (2, 'Have Mercy on Me',
+   'Have mercy upon me, O God, according to thy lovingkindness: according unto the multitude of thy tender mercies blot out my transgressions. Wash me throughly from mine iniquity, and cleanse me from my sin. For I acknowledge my transgressions: and my sin is ever before me. Against thee, thee only, have I sinned, and done this evil in thy sight: that thou mightest be justified when thou speakest, and be clear when thou judgest.',
+   '["2 Samuel 12:13", "Psalm 32:5"]',
+   'God, have mercy on me according to Your lovingkindness. I stop defending myself. I acknowledge my sin and throw myself on Your tender mercy. Amen.',
+   'Name one specific sin honestly before God today — no minimizing, no excuse. Then receive, by faith, the mercy David reached for.',
+   'David says "against thee only have I sinned." Why does true repentance ultimately reckon with God, even when others were also wronged?',
+   'David wrote Psalm 51 after the prophet Nathan confronted him over Bathsheba and Uriah (2 Samuel 11-12). It is the Bible''s deepest model of a repentance that hides nothing.',
+   false),
+  (3, 'Create in Me a Clean Heart',
+   'Create in me a clean heart, O God; and renew a right spirit within me. Cast me not away from thy presence; and take not thy holy spirit from me. Restore unto me the joy of thy salvation; and uphold me with thy free spirit.',
+   '["Ezekiel 36:26", "Psalm 24:3-4"]',
+   'Create in me a clean heart, O God. I cannot make myself new — only You can. Renew a right spirit in me and restore my joy. Amen.',
+   'Ask God not just to forgive a sin but to change the desire beneath it. Name the heart-level thing you long for Him to recreate.',
+   'David asks God to "create" a clean heart — the same verb as Genesis 1. Where do you need God to make something new rather than merely repair the old?',
+   'The Hebrew verb bara ("create") is used only of God and only for what He alone can make. David knows forgiveness is not enough; he needs a heart remade from nothing.',
+   true),
+  (4, 'Rend Your Heart',
+   'Therefore also now, saith the LORD, turn ye even to me with all your heart, and with fasting, and with weeping, and with mourning: And rend your heart, and not your garments, and turn unto the LORD your God: for he is gracious and merciful, slow to anger, and of great kindness, and repenteth him of the evil.',
+   '["Joel 2:14", "Psalm 34:18"]',
+   'Lord, I do not want a religion of torn clothes and untouched hearts. Rend my heart. Turn me back to You with everything I am, for You are gracious and merciful. Amen.',
+   'Ask where your devotion has become outward performance. Choose one inward act of return today — honest prayer over public display.',
+   'God says "rend your heart, and not your garments." Where might you be performing repentance outwardly while your heart stays intact?',
+   'Tearing one''s garments was the ancient sign of grief. Joel insists God wants the inner reality, not the ritual gesture — a heart genuinely turned, not a garment torn.',
+   false),
+  (5, 'The Fast God Chooses',
+   'Is not this the fast that I have chosen? to loose the bands of wickedness, to undo the heavy burdens, and to let the oppressed go free, and that ye break every yoke? Is it not to deal thy bread to the hungry, and that thou bring the poor that are cast out to thy house? when thou seest the naked, that thou cover him; and that thou hide not thyself from thine own flesh?',
+   '["Matthew 25:35-36", "James 1:27"]',
+   'Lord, let my fasting spill into mercy. Free me from a devotion that stays private while my neighbor goes hungry. Make my self-denial a doorway to love. Amen.',
+   'Pair your Lenten fasting with one act of justice or mercy today — give something you would have consumed to someone in need.',
+   'God ties true fasting to feeding the hungry and freeing the oppressed. How might your self-denial this season actually reach someone else?',
+   'Israel fasted while ignoring injustice, and God rejected it. Isaiah 58 redefines fasting: not merely going without food, but loosening the chains that bind the vulnerable.',
+   false),
+  (6, 'Tempted in the Wilderness',
+   'Then was Jesus led up of the Spirit into the wilderness to be tempted of the devil. And when he had fasted forty days and forty nights, he was afterward an hungred. And when the tempter came to him, he said, If thou be the Son of God, command that these stones be made bread. But he answered and said, It is written, Man shall not live by bread alone, but by every word that proceedeth out of the mouth of God.',
+   '["Deuteronomy 8:3", "Hebrews 4:15"]',
+   'Lord Jesus, You met temptation with the word of God, not with Your own power. When I am tested, put Your word in my mouth and hold me steady. Amen.',
+   'Identify the temptation that presses on you when you are depleted. Find one Scripture that answers it and keep it ready, as Jesus did.',
+   'Jesus answered hunger with Scripture, not with a shortcut. What "stones into bread" shortcut are you most tempted to reach for when weary?',
+   'Jesus'' forty days recall Israel''s forty years in the wilderness — but where Israel grumbled and failed, Jesus trusts and stands. Lent''s forty days trace His steps.',
+   false),
+  (7, 'Worship the Lord Only',
+   'Again, the devil taketh him up into an exceeding high mountain, and sheweth him all the kingdoms of the world, and the glory of them; And saith unto him, All these things will I give thee, if thou wilt fall down and worship me. Then saith Jesus unto him, Get thee hence, Satan: for it is written, Thou shalt worship the Lord thy God, and him only shalt thou serve. Then the devil leaveth him, and, behold, angels came and ministered unto him.',
+   '["Deuteronomy 6:13", "Philippians 2:8-9"]',
+   'Lord, keep me from every crown that skips the cross. I will worship You alone and serve You only, even when a shortcut is offered. Amen.',
+   'Name one "shortcut" you are tempted to take to get a good thing the wrong way. Refuse it today, choosing the harder, faithful road.',
+   'Satan offered the kingdoms without the cross. Where are you tempted to grasp a good end through a compromised means?',
+   'The tempter offered Jesus the world''s glory in exchange for worship — the throne without the cross. Jesus chose the long road to the same kingdoms, through Calvary.',
+   false),
+  (8, 'The Blessing of Confession',
+   'Blessed is he whose transgression is forgiven, whose sin is covered. Blessed is the man unto whom the LORD imputeth not iniquity, and in whose spirit there is no guile. When I kept silence, my bones waxed old through my roaring all the day long. For day and night thy hand was heavy upon me: my moisture is turned into the drought of summer. Selah. I acknowledged my sin unto thee, and mine iniquity have I not hid. I said, I will confess my transgressions unto the LORD; and thou forgavest the iniquity of my sin.',
+   '["Romans 4:7-8", "Proverbs 28:13"]',
+   'Lord, I am tired of the weight of what I have hidden. I bring it into the light before You now. Thank You that the confessed sin is the covered sin. Amen.',
+   'Break one silence today. Confess to God — and if wisdom allows, to a trusted person — something you have been carrying alone.',
+   'David describes hidden sin as physically draining. What has staying silent about a sin been costing you?',
+   'Psalm 32 is the flip side of Psalm 51 — the relief that follows confession. David describes concealment as a slow wasting, and honesty as sudden release.',
+   false),
+  (9, 'Faithful and Just to Forgive',
+   'If we say that we have no sin, we deceive ourselves, and the truth is not in us. If we confess our sins, he is faithful and just to forgive us our sins, and to cleanse us from all unrighteousness.',
+   '["Psalm 32:5", "Isaiah 1:18"]',
+   'Father, I will not pretend I have no sin. I confess it plainly, and I trust Your promise: You are faithful and just to forgive. Cleanse me now. Amen.',
+   'Take John at his word today. Confess honestly, then refuse to keep grovelling — rest in the promise that He is "faithful and just to forgive."',
+   'God is called "faithful and just" to forgive, not merely merciful. How does it steady you that forgiveness rests on His justice, secured at the cross?',
+   'John says God is "just" to forgive — not overlooking sin, but forgiving on the righteous basis of Christ''s atonement. Mercy and justice meet at the cross.',
+   false),
+  (10, 'The Long Way Home',
+   'And when he came to himself, he said, How many hired servants of my father''s have bread enough and to spare, and I perish with hunger! I will arise and go to my father, and will say unto him, Father, I have sinned against heaven, and before thee, And am no more worthy to be called thy son: make me as one of thy hired servants. And he arose, and came to his father. But when he was yet a great way off, his father saw him, and had compassion, and ran, and fell on his neck, and kissed him.',
+   '["Luke 15:7", "Ephesians 2:4-5"]',
+   'Father, I am the one who wandered, and You are the One who runs. Thank You that You meet my repentance not with a lecture but with an embrace. Amen.',
+   'If you have been avoiding God out of shame, take one step home today — a single honest prayer. The Father is already running toward you.',
+   'The son rehearsed a servant''s speech, but the father interrupted with an embrace. What false version of God''s welcome have you been believing?',
+   'The father''s running was scandalous in that culture — dignified elders did not run. Jesus paints God as a Father who abandons His dignity to reach a returning child.',
+   false),
+  (11, 'Godly Sorrow',
+   'Now I rejoice, not that ye were made sorry, but that ye sorrowed to repentance: for ye were made sorry after a godly manner, that ye might receive damage by us in nothing. For godly sorrow worketh repentance to salvation not to be repented of: but the sorrow of the world worketh death.',
+   '["Psalm 51:17", "2 Corinthians 7:11"]',
+   'Lord, give me godly sorrow that turns me toward You, not worldly sorrow that only sinks me in regret. Let my grief over sin lead to life. Amen.',
+   'Notice whether your sorrow over a fault turns you toward God or just spirals into self-pity. Aim today''s sorrow at repentance, not mere regret.',
+   'Paul distinguishes godly sorrow from worldly sorrow. How can you tell which one you are feeling when you fail?',
+   'Worldly sorrow grieves the consequences of sin; godly sorrow grieves the sin itself and turns to God. One produces death, the other salvation without regret.',
+   false),
+  (12, 'Out of the Depths',
+   'Out of the depths have I cried unto thee, O LORD. Lord, hear my voice: let thine ears be attentive to the voice of my supplications. If thou, LORD, shouldest mark iniquities, O Lord, who shall stand? But there is forgiveness with thee, that thou mayest be feared. I wait for the LORD, my soul doth wait, and in his word do I hope.',
+   '["Psalm 103:10", "Micah 7:18"]',
+   'Lord, from the depths I cry to You. If You kept a record of sins, I could not stand — but there is forgiveness with You. In Your word I put my hope. Amen.',
+   'Bring your lowest place to God today, unedited. Then rest on the one fact that lets you stand: "there is forgiveness with thee."',
+   'The psalmist says forgiveness leads to God being feared. Why might mercy, more than judgment, produce reverence in us?',
+   'Psalm 130 is one of the "songs of ascents" pilgrims sang going up to Jerusalem. It names the only ground on which any sinner can stand before God: His forgiveness.',
+   false),
+  (13, 'Who Is a God Like This?',
+   'Who is a God like unto thee, that pardoneth iniquity, and passeth by the transgression of the remnant of his heritage? he retaineth not his anger for ever, because he delighteth in mercy. He will turn again, he will have compassion upon us; he will subdue our iniquities; and thou wilt cast all their sins into the depths of the sea.',
+   '["Exodus 34:6-7", "Psalm 103:12"]',
+   'Lord, who is a God like You — delighting in mercy, casting my sins into the depths of the sea? I stand amazed at how eager You are to forgive. Amen.',
+   'Picture the specific sin that haunts you being cast into the depths of the sea, as Micah promises. Refuse to keep dragging it back up.',
+   'Micah says God "delights in mercy." Do you picture God as reluctant to forgive or delighting to? Where did that picture come from?',
+   'Micah''s name means "Who is like the LORD?" — and he ends his book answering it: a God who delights in mercy and drowns sin in the sea, remembering it no more.',
+   false),
+  (14, 'A New Heart',
+   'Then will I sprinkle clean water upon you, and ye shall be clean: from all your filthiness, and from all your idols, will I cleanse you. A new heart also will I give you, and a new spirit will I put within you: and I will take away the stony heart out of your flesh, and I will give you an heart of flesh. And I will put my spirit within you, and cause you to walk in my statutes, and ye shall keep my judgments, and do them.',
+   '["Jeremiah 31:33", "2 Corinthians 5:17"]',
+   'Lord, take out my heart of stone and give me a heart of flesh. Put Your Spirit in me and move me to walk in Your ways. Do what I cannot do for myself. Amen.',
+   'Name one "stony" place in you — a hardness, a resistance to God. Ask Him for the heart transplant only He can perform.',
+   'God promises to replace a heart of stone with a heart of flesh. Where do you sense hardness that only God can soften?',
+   'Ezekiel prophesied to exiles who had failed under the old covenant. God promises a new-covenant miracle: not just forgiveness but an inward transformation, His Spirit within.',
+   false),
+  (15, 'Take Up Your Cross',
+   'Then said Jesus unto his disciples, If any man will come after me, let him deny himself, and take up his cross, and follow me. For whosoever will save his life shall lose it: and whosoever will lose his life for my sake shall find it. For what is a man profited, if he shall gain the whole world, and lose his own soul? or what shall a man give in exchange for his soul?',
+   '["Luke 9:23", "Galatians 6:14"]',
+   'Lord, teach me the strange arithmetic of Your kingdom: that I find my life by losing it for You. Give me courage to take up my cross and follow. Amen.',
+   'Identify one thing you are clinging to for "life." Practice loosening your grip on it today for Christ''s sake, trusting His promise that you will find life.',
+   'Jesus says saving your life loses it, and losing it for Him finds it. What are you trying to save that He may be asking you to surrender?',
+   'To "take up the cross" was not a metaphor to Jesus'' hearers — they had seen condemned men carry crossbeams to execution. He is calling for a death: the end of self-rule.',
+   true),
+  (16, 'No Looking Back',
+   'And it came to pass, that, as they went in the way, a certain man said unto him, Lord, I will follow thee whithersoever thou goest. And Jesus said unto him, Foxes have holes, and birds of the air have nests; but the Son of man hath not where to lay his head. And another also said, Lord, I will follow thee; but let me first go bid them farewell, which are at home at my house. And Jesus said unto him, No man, having put his hand to the plough, and looking back, is fit for the kingdom of God.',
+   '["Philippians 3:13-14", "Genesis 19:26"]',
+   'Lord, I put my hand to the plough. Keep me from looking back at what I have left behind. Set my eyes forward on You. Amen.',
+   'Name one thing behind you that keeps pulling your gaze backward. Consciously set your face forward today, refusing to relitigate what you have already surrendered.',
+   'Jesus warns against looking back once the plough is set. What "backward glance" most tempts you away from wholehearted following?',
+   'A ploughman who looks back cuts a crooked furrow. Jesus uses the image to describe divided discipleship — a hand on the plough but a heart still facing home.',
+   false),
+  (17, 'Unless a Grain of Wheat',
+   'Verily, verily, I say unto you, Except a corn of wheat fall into the ground and die, it abideth alone: but if it die, it bringeth forth much fruit. He that loveth his life shall lose it; and he that hateth his life in this world shall keep it unto life eternal. If any man serve me, let him follow me; and where I am, there shall also my servant be: if any man serve me, him will my Father honour.',
+   '["1 Corinthians 15:36", "John 15:5"]',
+   'Lord, teach me the way of the seed: that death is the path to fruit. Where You are calling me to fall and die, give me faith that a harvest is coming. Amen.',
+   'Where is God asking something in you to "fall into the ground and die" — an ambition, a comfort, a right? Offer it, trusting the harvest He promises.',
+   'Jesus makes His own death the pattern for fruitfulness. What in your life might need to die for something greater to grow?',
+   'Jesus spoke this as Greeks came seeking Him, days before His death. His answer: the harvest of the nations would come only through His falling into the ground like a seed.',
+   false),
+  (18, 'Crucified with Christ',
+   'I am crucified with Christ: nevertheless I live; yet not I, but Christ liveth in me: and the life which I now live in the flesh I live by the faith of the Son of God, who loved me, and gave himself for me.',
+   '["Romans 6:6", "Colossians 3:3"]',
+   'Lord, I have been crucified with Christ. Let it not be I who live, but Christ in me. I live by faith in the Son who loved me and gave Himself for me. Amen.',
+   'Wherever "I want" rises up to rule you today, answer it with Paul''s words: "not I, but Christ liveth in me." Let Christ, not self, decide one thing.',
+   'Paul says the old "I" was crucified so Christ could live in him. What would change today if Christ, not self, were on the throne?',
+   'This is the paradox of Christian identity: a death that leads to life. The self that must be its own god is crucified; the self that lives by Christ''s love is set free.',
+   true),
+  (19, 'Buried and Raised',
+   'Therefore we are buried with him by baptism into death: that like as Christ was raised up from the dead by the glory of the Father, even so we also should walk in newness of life. For if we have been planted together in the likeness of his death, we shall be also in the likeness of his resurrection: Knowing this, that our old man is crucified with him, that the body of sin might be destroyed, that henceforth we should not serve sin.',
+   '["Colossians 2:12", "Galatians 2:20"]',
+   'Lord, I was buried with You and raised to walk in newness of life. Let sin no longer reign where You have already broken its power. Amen.',
+   'Name one habit of the "old man" you have been treating as still alive. Reckon it dead with Christ today, and take one step in "newness of life."',
+   'Paul says your old self is already crucified with Christ. How would you live differently if you truly believed sin''s reign was broken?',
+   'Baptism dramatizes the gospel: going under the water as burial, rising as resurrection. Paul argues that union with Christ makes His death and life ours.',
+   false),
+  (20, 'That I May Know Him',
+   'Yea doubtless, and I count all things but loss for the excellency of the knowledge of Christ Jesus my Lord: for whom I have suffered the loss of all things, and do count them but dung, that I may win Christ, And be found in him, not having mine own righteousness, which is of the law, but that which is through the faith of Christ, the righteousness which is of God by faith: That I may know him, and the power of his resurrection, and the fellowship of his sufferings, being made conformable unto his death.',
+   '["Philippians 1:21", "Matthew 13:45-46"]',
+   'Lord, let me count everything as loss to gain You. I want to know You — Your resurrection power and even the fellowship of Your sufferings. You are worth it all. Amen.',
+   'List the things you tend to build your worth on. Hold them next to "the excellency of the knowledge of Christ," and let one of them go today.',
+   'Paul counts all his gains as loss to know Christ. What would you have to release to say the same and mean it?',
+   'Paul, once proud of his religious résumé, calls it "dung" beside knowing Christ. To know Him fully includes sharing His sufferings, not only His power.',
+   false),
+  (21, 'When You Fast',
+   'Moreover when ye fast, be not, as the hypocrites, of a sad countenance: for they disfigure their faces, that they may appear unto men to fast. Verily I say unto you, They have their reward. But thou, when thou fastest, anoint thine head, and wash thy face; That thou appear not unto men to fast, but unto thy Father which is in secret: and thy Father, which seeth in secret, shall reward thee openly.',
+   '["Matthew 6:6", "Colossians 3:23"]',
+   'Father, let my devotion be for Your eyes, not for an audience. When I fast or pray, let it be to You in secret, and let that be reward enough. Amen.',
+   'Do one act of devotion today that no one but God will ever know about. Let the secrecy itself be part of the offering.',
+   'Jesus warns that seeking others'' notice becomes "your reward." Where does your devotion quietly angle for an audience?',
+   'Jesus assumes His followers will fast ("when," not "if"), but warns against the performance of piety. The Father who sees in secret is the only audience worth having.',
+   false),
+  (22, 'Draw Near to God',
+   'Draw nigh to God, and he will draw nigh to you. Cleanse your hands, ye sinners; and purify your hearts, ye double minded. Be afflicted, and mourn, and weep: let your laughter be turned to mourning, and your joy to heaviness. Humble yourselves in the sight of the Lord, and he shall lift you up.',
+   '["Isaiah 57:15", "1 Peter 5:6"]',
+   'Lord, I draw near to You, trusting Your promise to draw near to me. I humble myself before You; lift me up in Your time, not mine. Amen.',
+   'Take one deliberate step of drawing near today — extended prayer, silence, confession — trusting the promise that God will draw near in return.',
+   'James pairs drawing near with humbling ourselves. Why is lowering yourself the way up in God''s kingdom?',
+   'James echoes the prophets: God dwells with the humble and contrite. The way up is down — a truth Lent enacts through humbling practices of confession and self-denial.',
+   false),
+  (23, 'Behold My Servant',
+   'Behold, my servant shall deal prudently, he shall be exalted and extolled, and be very high. As many were astonied at thee; his visage was so marred more than any man, and his form more than the sons of men: So shall he sprinkle many nations; the kings shall shut their mouths at him: for that which had not been told them shall they see; and that which they had not heard shall they consider.',
+   '["Philippians 2:9-11", "Isaiah 42:1"]',
+   'Lord, You reached the highest glory through the deepest disfigurement. Teach me that Your kingdom exalts through lowliness and wins through wounds. Amen.',
+   'Where you assume greatness requires impressiveness, look today for God at work through something marred, weak, or overlooked.',
+   'Isaiah says the Servant is both "very high" and "marred more than any man." How does the cross redefine what glory looks like?',
+   'This begins the fourth and greatest of Isaiah''s "Servant Songs." Written centuries before Christ, it describes a suffering that leads, paradoxically, to exaltation.',
+   false),
+  (24, 'Despised and Rejected',
+   'Who hath believed our report? and to whom is the arm of the LORD revealed? For he shall grow up before him as a tender plant, and as a root out of a dry ground: he hath no form nor comeliness; and when we shall see him, there is no beauty that we should desire him. He is despised and rejected of men; a man of sorrows, and acquainted with grief: and we hid as it were our faces from him; he was despised, and we esteemed him not.',
+   '["John 1:11", "Hebrews 4:15"]',
+   'Man of sorrows, You were despised and rejected, yet You came near to the suffering. Thank You that You understand grief from the inside. Draw near to me in mine. Amen.',
+   'Bring one grief or rejection you carry to the "man of sorrows" who knows it firsthand. Let His acquaintance with grief be a comfort today.',
+   'The Messiah came without beauty or status, "acquainted with grief." How does a suffering Savior meet you differently than a distant, glorious one?',
+   'Isaiah foresaw a Messiah with "no beauty that we should desire him" — the opposite of every human expectation of a conquering king. He would be recognized only by faith.',
+   false),
+  (25, 'He Was Wounded for Us',
+   'Surely he hath borne our griefs, and carried our sorrows: yet we did esteem him stricken, smitten of God, and afflicted. But he was wounded for our transgressions, he was bruised for our iniquities: the chastisement of our peace was upon him; and with his stripes we are healed. All we like sheep have gone astray; we have turned every one to his own way; and the LORD hath laid on him the iniquity of us all.',
+   '["1 Peter 2:24", "Romans 4:25"]',
+   'Lord Jesus, You were wounded for my transgressions and bruised for my iniquities. The punishment that brought my peace fell on You. I can never thank You enough. Amen.',
+   'Read Isaiah 53:5 slowly, replacing "our" and "we" with "my" and "I." Let the personal weight of the exchange land on you today.',
+   'Isaiah says "the LORD hath laid on him the iniquity of us all." What does it mean to you that your specific sin was laid on Christ?',
+   'This is the clearest Old Testament picture of substitutionary atonement: our transgressions, His wounds; our peace, His chastisement. Written 700 years before the cross.',
+   true),
+  (26, 'Led as a Lamb',
+   'He was oppressed, and he was afflicted, yet he opened not his mouth: he is brought as a lamb to the slaughter, and as a sheep before her shearers is dumb, so he openeth not his mouth. He was taken from prison and from judgment: and who shall declare his generation? for he was cut off out of the land of the living: for the transgression of my people was he stricken. And he made his grave with the wicked, and with the rich in his death; because he had done no violence, neither was any deceit in his mouth.',
+   '["Acts 8:32-35", "1 Peter 2:23"]',
+   'Lamb of God, You went silent to the slaughter for me. When I am wronged, teach me Your quiet strength — to entrust myself to the Father rather than defend myself. Amen.',
+   'The next time you are tempted to defend yourself today, pause and consider the silent Lamb. Choose, once, to entrust the outcome to God instead.',
+   'The Servant "opened not his mouth" though innocent. Where is God inviting you to trust Him rather than justify yourself?',
+   'The Ethiopian official was reading this exact passage when Philip explained it was about Jesus (Acts 8). The silent, sacrificial Lamb is the key to the whole gospel.',
+   false),
+  (27, 'It Pleased the Lord',
+   'Yet it pleased the LORD to bruise him; he hath put him to grief: when thou shalt make his soul an offering for sin, he shall see his seed, he shall prolong his days, and the pleasure of the LORD shall prosper in his hand. He shall see of the travail of his soul, and shall be satisfied: by his knowledge shall my righteous servant justify many; for he shall bear their iniquities. He hath poured out his soul unto death: and he was numbered with the transgressors; and he bare the sin of many, and made intercession for the transgressors.',
+   '["Acts 2:23", "Romans 3:25"]',
+   'Father, the cross was no accident but Your deliberate love. Thank You that the Servant''s travail was not wasted — He is satisfied, and by it many, including me, are justified. Amen.',
+   'Sit with the hard phrase "it pleased the LORD to bruise him." Let it deepen your sense that the cross was intentional love, not tragic misfortune, and thank God for it.',
+   'The cross is called the LORD''s pleasure and plan. How does knowing the crucifixion was purposed, not accidental, change how you see it?',
+   'The most jarring line in Isaiah 53: it "pleased" God to bruise His Servant — not because He delighted in suffering, but because through it He would justify many and be satisfied.',
+   false),
+  (28, 'Why Have You Forsaken Me?',
+   'My God, my God, why hast thou forsaken me? why art thou so far from helping me, and from the words of my roaring? O my God, I cry in the daytime, but thou hearest not; and in the night season, and am not silent. But thou art holy, O thou that inhabitest the praises of Israel. Our fathers trusted in thee: they trusted, and thou didst deliver them. They cried unto thee, and were delivered: they trusted in thee, and were not confounded.',
+   '["Matthew 27:46", "Psalm 22:24"]',
+   'Lord, You entered even the darkness of feeling forsaken, so that I would never be truly abandoned. When You feel far, help me, like the psalmist, to keep crying out to You. Amen.',
+   'If you feel distant from God, follow the psalm''s pattern today: voice the honest lament, then deliberately recall one time God proved faithful before.',
+   'Jesus prayed this psalm''s first line from the cross. What does it mean that even His cry of abandonment was still addressed to God?',
+   'Psalm 22 opens in apparent abandonment but turns to triumph by its end. When Jesus quoted its first line on the cross, He was invoking the whole psalm — including its victory.',
+   false),
+  (29, 'They Pierced My Hands',
+   'I am poured out like water, and all my bones are out of joint: my heart is like wax; it is melted in the midst of my bowels. My strength is dried up like a potsherd; and my tongue cleaveth to my jaws; and thou hast brought me into the dust of death. For dogs have compassed me: the assembly of the wicked have inclosed me: they pierced my hands and my feet. I may tell all my bones: they look and stare upon me. They part my garments among them, and cast lots upon my vesture.',
+   '["John 19:23-24", "John 20:25"]',
+   'Lord, You endured every detail of this suffering for me — pierced hands, parted garments, bones out of joint. I bow before the price You paid. Amen.',
+   'Compare this psalm with the crucifixion accounts today. Let the precision of the prophecy deepen your trust that God''s word is sure.',
+   'David described death by crucifixion centuries before it existed as a Roman practice. What does such precise prophecy stir in you about Scripture?',
+   'Psalm 22:16-18 describes pierced hands and feet and garments divided by lot — details fulfilled at Golgotha, written perhaps a thousand years before and before crucifixion was invented.',
+   false),
+  (30, 'Whom They Pierced',
+   'And I will pour upon the house of David, and upon the inhabitants of Jerusalem, the spirit of grace and of supplications: and they shall look upon me whom they have pierced, and they shall mourn for him, as one mourneth for his only son, and shall be in bitterness for him, as one that is in bitterness for his firstborn.',
+   '["John 19:37", "Revelation 1:7"]',
+   'Lord, when I look on the One I have pierced, give me the spirit of grace that turns sorrow into repentance, not despair. Let my mourning lead me home. Amen.',
+   'Look honestly today at the cost of the cross — that your sin helped pierce Him. Let it produce not shame that hides but the grace-given mourning that draws near.',
+   'God pours out "a spirit of grace" alongside the piercing. How can honest grief over sin become a doorway to grace rather than despair?',
+   'Zechariah foresaw people looking on "me whom they have pierced" — God speaking of Himself as pierced. John quotes it at the cross; the wound becomes the place of repentance.',
+   false),
+  (31, 'Set His Face to Jerusalem',
+   'And it came to pass, when the time was come that he should be received up, he stedfastly set his face to go to Jerusalem.',
+   '["Isaiah 50:7", "Luke 18:31"]',
+   'Lord Jesus, You set Your face toward the cross on purpose, for me. Thank You that You did not drift toward Calvary but walked there deliberately, out of love. Amen.',
+   'Consider one hard, God-given path you have been avoiding. Following Jesus'' example, take one deliberate step toward it today rather than drifting.',
+   'Jesus "stedfastly set his face" toward the cross. What does His deliberate resolve teach you about facing hard things God has called you to?',
+   'From this verse Luke''s Gospel turns decisively toward Jerusalem. Everything after it is shadowed by the cross Jesus is walking toward with open eyes and fixed resolve.',
+   false),
+  (32, 'Going Up to Jerusalem',
+   'And they were in the way going up to Jerusalem; and Jesus went before them: and they were amazed; and as they followed, they were afraid. And he took again the twelve, and began to tell them what things should happen unto him, Saying, Behold, we go up to Jerusalem; and the Son of man shall be delivered unto the chief priests, and unto the scribes; and they shall condemn him to death, and shall deliver him to the Gentiles: And they shall mock him, and shall scourge him, and shall spit upon him, and shall kill him: and the third day he shall rise again.',
+   '["Mark 8:31", "John 10:18"]',
+   'Lord, You told Your disciples plainly what waited for You, and walked into it anyway. Give me courage to follow You even when the road ahead looks costly. Amen.',
+   'Where fear of what "might happen" is keeping you from obedience, remember Jesus walked knowingly into far worse. Take the faithful next step despite the fear.',
+   'Jesus predicted His death in detail, yet kept walking toward it. How does His clear-eyed courage speak to a fear you are carrying?',
+   'This is the third and most detailed of Jesus'' passion predictions. He names the betrayal, mocking, scourging, and death — and, each time, the resurrection on the third day.',
+   false),
+  (33, 'A Ransom for Many',
+   'For even the Son of man came not to be ministered unto, but to minister, and to give his life a ransom for many.',
+   '["1 Timothy 2:5-6", "Isaiah 53:11"]',
+   'Lord Jesus, You came not to be served but to serve, and to give Your life as my ransom. Let me receive it, and let me follow You into a life of serving. Amen.',
+   'Do one act of lowly service today, unasked and unseen, in imitation of the One who came "not to be ministered unto, but to minister."',
+   'Jesus defines His mission as service and ransom. How does His example reshape your idea of greatness?',
+   'A "ransom" (lutron) was the price paid to free a slave or captive. Jesus frames His death not as tragedy but as the purchase price of freedom for "many."',
+   false),
+  (34, 'I Lay Down My Life',
+   'Therefore doth my Father love me, because I lay down my life, that I might take it again. No man taketh it from me, but I lay it down of myself. I have power to lay it down, and I have power to take it again. This commandment have I received of my Father.',
+   '["John 15:13", "Philippians 2:8"]',
+   'Good Shepherd, no one took Your life — You laid it down for me by Your own power and love. I entrust myself wholly to a Savior who chose the cross. Amen.',
+   'Where you feel like a helpless victim of your circumstances today, remember Jesus was never a victim. Ask Him for the freedom to choose love as He did.',
+   'Jesus insists no one took His life; He laid it down freely. How does it change the cross to see it as His choice rather than His defeat?',
+   'The cross was not Rome overpowering a helpless man. Jesus states plainly that He lays down His life "of myself," with the authority to take it up again — the Shepherd, not the victim.',
+   false),
+  (35, 'Looking unto Jesus',
+   'Wherefore seeing we also are compassed about with so great a cloud of witnesses, let us lay aside every weight, and the sin which doth so easily beset us, and let us run with patience the race that is set before us, Looking unto Jesus the author and finisher of our faith; who for the joy that was set before him endured the cross, despising the shame, and is set down at the right hand of the throne of God.',
+   '["Philippians 3:14", "1 Corinthians 9:24-25"]',
+   'Lord, help me lay aside every weight and run my race looking to You. As You endured the cross for joy set ahead, let me endure my trials with my eyes on the joy to come. Amen.',
+   'Name one "weight" or besetting sin slowing your race. Lay it aside deliberately today, and fix your eyes on Jesus rather than on the difficulty.',
+   'Jesus endured the cross "for the joy that was set before him." What joy on the far side of obedience might God be asking you to fix your eyes on?',
+   'The image is an athlete stripping off every hindrance to run. Jesus is both the example who ran before us and the goal we run toward — the author and finisher of faith.',
+   false),
+  (36, 'Not My Will',
+   'Then cometh Jesus with them unto a place called Gethsemane, and saith unto the disciples, Sit ye here, while I go and pray yonder. And he took with him Peter and the two sons of Zebedee, and began to be sorrowful and very heavy. Then saith he unto them, My soul is exceeding sorrowful, even unto death: tarry ye here, and watch with me. And he went a little further, and fell on his face, and prayed, saying, O my Father, if it be possible, let this cup pass from me: nevertheless not as I will, but as thou wilt.',
+   '["Luke 22:42", "Hebrews 5:7-8"]',
+   'Father, in my own Gethsemanes, teach me to pray as Jesus did: honest about my dread, yet surrendered to Your will. Not as I will, but as You will. Amen.',
+   'Bring one thing you desperately want changed to God today. Voice the honest ask — then, like Jesus, add and mean the words: "nevertheless, not as I will, but as thou wilt."',
+   'Jesus asked for the cup to pass, yet surrendered to the Father''s will. How do you hold honest desire and real surrender together in prayer?',
+   'Gethsemane shows the cost was real — Jesus was "sorrowful even unto death." The victory of the cross was won first here, in a garden, through an agonized yes to the Father.',
+   false),
+  (37, 'I Set My Face Like Flint',
+   'The Lord GOD hath opened mine ear, and I was not rebellious, neither turned away back. I gave my back to the smiters, and my cheeks to them that plucked off the hair: I hid not my face from shame and spitting. For the Lord GOD will help me; therefore shall I not be confounded: therefore have I set my face like a flint, and I know that I shall not be ashamed.',
+   '["Luke 9:51", "1 Peter 2:23"]',
+   'Lord, You gave Your back to the smiters and set Your face like flint, sure the Father would help You. Give me that same steadfast trust when obedience costs me. Amen.',
+   'Where obedience may bring you "shame and spitting" — criticism, misunderstanding — set your face like flint today, trusting that God will help and not fail you.',
+   'The Servant endures shame by trusting God will help Him. What steadies you to endure hard obedience — the outcome you can see, or the God you cannot?',
+   'This third Servant Song shows the Messiah''s resolve: obedient, unflinching, certain of vindication. "Set my face like a flint" is the same resolve Luke describes as Jesus turned toward Jerusalem.',
+   false),
+  (38, 'Behold the Man',
+   'Then Pilate therefore took Jesus, and scourged him. And the soldiers platted a crown of thorns, and put it on his head, and they put on him a purple robe, And said, Hail, King of the Jews! and they smote him with their hands. Pilate therefore went forth again, and saith unto them, Behold, I bring him forth to you, that ye may know that I find no fault in him. Then came Jesus forth, wearing the crown of thorns, and the purple robe. And Pilate saith unto them, Behold the man!',
+   '["Isaiah 52:14", "1 Peter 2:24"]',
+   'Lord, they crowned You with thorns and mocked Your kingship — yet You were more royal in Your suffering than any king on a throne. I behold You, and I worship. Amen.',
+   'Sit with the image of the scourged, thorn-crowned Christ. Do not rush past it. Let the cost of your redemption move you to gratitude before the day fills up.',
+   'The soldiers meant "Hail, King" as mockery, but it was true. Where do you see God''s glory hidden in what looks like humiliation?',
+   'The crown of thorns and purple robe were a soldier''s cruel joke — dressing a condemned man as royalty. John records it knowing the deeper truth: the mocked man really is the King.',
+   false),
+  (39, 'It Is Finished',
+   'After this, Jesus knowing that all things were now accomplished, that the scripture might be fulfilled, saith, I thirst. Now there was set a vessel full of vinegar: and they filled a spunge with vinegar, and put it upon hyssop, and put it to his mouth. When Jesus therefore had received the vinegar, he said, It is finished: and he bowed his head, and gave up the ghost.',
+   '["Colossians 2:14", "Hebrews 10:12-14"]',
+   'Lord Jesus, "It is finished." The work of my salvation is complete — there is nothing left for me to add. I rest in Your finished work today. Amen.',
+   'Wherever you are still trying to earn what Christ has already secured, stop today. Say His words over that striving: "It is finished."',
+   'Jesus said "It is finished," not "I am finished." What is the difference, and what does it mean that the work of salvation is complete?',
+   'The Greek word tetelestai ("It is finished") was written across paid bills to mean "paid in full." Jesus'' final word from the cross was not a sigh of defeat but a shout of completion.',
+   true),
+  (40, 'By His Stripes',
+   'Who his own self bare our sins in his own body on the tree, that we, being dead to sins, should live unto righteousness: by whose stripes ye were healed. For ye were as sheep going astray; but are now returned unto the Shepherd and Bishop of your souls.',
+   '["Isaiah 53:5", "1 Peter 2:25"]',
+   'Lord Jesus, You bore my sins in Your body on the tree so that I could die to sin and live to righteousness. By Your stripes I am healed. Thank You for the road You walked for me. Amen.',
+   'As Lent closes at the cross, receive the healing it purchased. Name one way you want to "live unto righteousness" now, in response to what He bore for you.',
+   'The whole road of Lent ends here: "by his stripes ye were healed." How does seeing the cross as your healing change the way you carry your wounds and your sin?',
+   'Peter gathers Isaiah 53 into a sentence, pointing to the cross ("the tree") as the place our sins were borne. The road to the cross was, all along, the road to our healing and return.',
+   true)
+) AS v(day_number, day_title, passage_text, passage_refs, prayer, application, question, context_note, is_memory_verse)
+WHERE p.slug = 'lent-road-to-the-cross'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Lent — comprehension check questions (all 40 days).
+UPDATE reading_plan_entries e
+SET
+  quiz_question    = v.question,
+  quiz_options     = v.options,
+  quiz_explanation = v.explanation
+FROM reading_plans p,
+(VALUES
+  (1,  'According to Genesis 3:19, what will the man return to?',
+       '[{"label":"A","text":"The garden","correct":false},{"label":"B","text":"Dust","correct":true},{"label":"C","text":"The sea","correct":false}]',
+       '"For dust thou art, and unto dust shalt thou return." Lent begins by facing mortality honestly — the traditional Ash Wednesday words come from this verse.'),
+  (2,  'On what basis does David ask God to blot out his transgressions?',
+       '[{"label":"A","text":"His good deeds","correct":false},{"label":"B","text":"God''s lovingkindness and tender mercies","correct":true},{"label":"C","text":"His royal position","correct":false}]',
+       'David appeals only to "thy lovingkindness" and "the multitude of thy tender mercies" — repentance throws itself on God''s mercy, not on merit.'),
+  (3,  'What does David ask God to create in Psalm 51:10?',
+       '[{"label":"A","text":"A clean heart","correct":true},{"label":"B","text":"A new kingdom","correct":false},{"label":"C","text":"A long life","correct":false}]',
+       '"Create in me a clean heart, O God." David wants not just forgiveness but a heart remade — using bara, the verb for what God alone can create.'),
+  (4,  'In Joel 2:13, what does God say to rend instead of garments?',
+       '[{"label":"A","text":"Your garments","correct":false},{"label":"B","text":"Your heart","correct":true},{"label":"C","text":"The veil","correct":false}]',
+       '"Rend your heart, and not your garments." God wants inward return, not the outward performance of grief.'),
+  (5,  'What kind of fast has God chosen in Isaiah 58?',
+       '[{"label":"A","text":"To loose bands of wickedness and free the oppressed","correct":true},{"label":"B","text":"To abstain from all food for a week","correct":false},{"label":"C","text":"To fast in the public square","correct":false}]',
+       'The fast God chooses is "to loose the bands of wickedness... to let the oppressed go free" and feed the hungry — self-denial that reaches others.'),
+  (6,  'How does Jesus answer the temptation to turn stones to bread?',
+       '[{"label":"A","text":"Man shall not live by bread alone","correct":true},{"label":"B","text":"It is not yet my time","correct":false},{"label":"C","text":"Get thee behind me","correct":false}]',
+       '"Man shall not live by bread alone, but by every word that proceedeth out of the mouth of God." Jesus meets hunger with Scripture, not a shortcut.'),
+  (7,  'What does Jesus command in response to the offer of the kingdoms?',
+       '[{"label":"A","text":"Worship the Lord thy God, and him only serve","correct":true},{"label":"B","text":"Give me the kingdoms now","correct":false},{"label":"C","text":"Wait until my hour","correct":false}]',
+       '"Thou shalt worship the Lord thy God, and him only shalt thou serve." Jesus refuses the crown that skips the cross.'),
+  (8,  'Whom does David call "blessed" in Psalm 32?',
+       '[{"label":"A","text":"The one who never sins","correct":false},{"label":"B","text":"He whose transgression is forgiven","correct":true},{"label":"C","text":"The one who fasts often","correct":false}]',
+       '"Blessed is he whose transgression is forgiven, whose sin is covered." The blessing is not sinlessness but forgiveness.'),
+  (9,  'According to 1 John 1:9, if we confess our sins, God is:',
+       '[{"label":"A","text":"Faithful and just to forgive","correct":true},{"label":"B","text":"Reluctant but willing","correct":false},{"label":"C","text":"Slow to respond","correct":false}]',
+       '"He is faithful and just to forgive us our sins" — forgiveness rests on God''s justice, secured at the cross, not merely on His leniency.'),
+  (10, 'What did the father do while the prodigal was still far off?',
+       '[{"label":"A","text":"Waited for an apology","correct":false},{"label":"B","text":"Ran and embraced him","correct":true},{"label":"C","text":"Sent a servant","correct":false}]',
+       '"When he was yet a great way off, his father saw him, and had compassion, and ran, and fell on his neck." Repentance is met with a sprinting embrace.'),
+  (11, 'What does godly sorrow produce, according to 2 Corinthians 7:10?',
+       '[{"label":"A","text":"Repentance to salvation","correct":true},{"label":"B","text":"Lasting regret","correct":false},{"label":"C","text":"Despair","correct":false}]',
+       '"Godly sorrow worketh repentance to salvation not to be repented of: but the sorrow of the world worketh death." The difference is direction.'),
+  (12, 'In Psalm 130, if God marked iniquities, who could stand?',
+       '[{"label":"A","text":"Only the priests","correct":false},{"label":"B","text":"No one","correct":true},{"label":"C","text":"The righteous","correct":false}]',
+       '"If thou, LORD, shouldest mark iniquities, O Lord, who shall stand? But there is forgiveness with thee." Mercy, not merit, makes God approachable.'),
+  (13, 'In what does God delight, according to Micah 7:18?',
+       '[{"label":"A","text":"Judgment","correct":false},{"label":"B","text":"Sacrifice","correct":false},{"label":"C","text":"Mercy","correct":true}]',
+       '"He retaineth not his anger for ever, because he delighteth in mercy." God casts our sins "into the depths of the sea."'),
+  (14, 'What does God promise to replace the stony heart with?',
+       '[{"label":"A","text":"A heart of flesh","correct":true},{"label":"B","text":"A heart of gold","correct":false},{"label":"C","text":"A stronger stone","correct":false}]',
+       '"I will take away the stony heart... and I will give you an heart of flesh." God promises an inward transplant, plus His Spirit within.'),
+  (15, 'What three things does Jesus say a follower must do in Matthew 16:24?',
+       '[{"label":"A","text":"Fast, pray, and give","correct":false},{"label":"B","text":"Deny himself, take up his cross, follow","correct":true},{"label":"C","text":"Believe, be baptized, wait","correct":false}]',
+       '"Let him deny himself, and take up his cross, and follow me." The way to save your life is to lose it for His sake.'),
+  (16, 'Who does Jesus say is unfit for the kingdom in Luke 9:62?',
+       '[{"label":"A","text":"One who puts his hand to the plough and looks back","correct":true},{"label":"B","text":"One who has no possessions","correct":false},{"label":"C","text":"One who doubts","correct":false}]',
+       '"No man, having put his hand to the plough, and looking back, is fit for the kingdom of God." A backward glance cuts a crooked furrow.'),
+  (17, 'What must a grain of wheat do to bring forth fruit?',
+       '[{"label":"A","text":"Be watered daily","correct":false},{"label":"B","text":"Fall into the ground and die","correct":true},{"label":"C","text":"Stay whole","correct":false}]',
+       '"Except a corn of wheat fall into the ground and die, it abideth alone: but if it die, it bringeth forth much fruit." Death is the path to harvest.'),
+  (18, 'According to Galatians 2:20, who lives in Paul?',
+       '[{"label":"A","text":"Christ","correct":true},{"label":"B","text":"The law","correct":false},{"label":"C","text":"His better self","correct":false}]',
+       '"I am crucified with Christ... yet not I, but Christ liveth in me." The old self is put to death so that Christ may live.'),
+  (19, 'We are buried with Christ by baptism so that we might do what?',
+       '[{"label":"A","text":"Walk in newness of life","correct":true},{"label":"B","text":"Escape the world","correct":false},{"label":"C","text":"Earn our salvation","correct":false}]',
+       '"Buried with him by baptism into death: that... even so we also should walk in newness of life." Death is the doorway to new life.'),
+  (20, 'What does Paul count all things but loss for?',
+       '[{"label":"A","text":"The knowledge of Christ","correct":true},{"label":"B","text":"His reputation","correct":false},{"label":"C","text":"The law","correct":false}]',
+       'Paul counts everything "but loss for the excellency of the knowledge of Christ Jesus" — even to share "the fellowship of his sufferings."'),
+  (21, 'For whose notice should fasting be done, according to Matthew 6?',
+       '[{"label":"A","text":"The Father who sees in secret","correct":true},{"label":"B","text":"The congregation","correct":false},{"label":"C","text":"No one at all","correct":false}]',
+       'Fast "unto thy Father which is in secret: and thy Father, which seeth in secret, shall reward thee." The only audience worth having is God.'),
+  (22, 'What does James 4:8 promise if we draw near to God?',
+       '[{"label":"A","text":"He will draw near to us","correct":true},{"label":"B","text":"He will test us","correct":false},{"label":"C","text":"He will wait","correct":false}]',
+       '"Draw nigh to God, and he will draw nigh to you." The way up is down — humble yourselves, and He will lift you up.'),
+  (23, 'In Isaiah 52:14, what was "marred more than any man"?',
+       '[{"label":"A","text":"His visage (appearance)","correct":true},{"label":"B","text":"His reputation","correct":false},{"label":"C","text":"His words","correct":false}]',
+       'The Servant''s "visage was so marred more than any man" — yet He is also "exalted and extolled." The cross reaches glory through disfigurement.'),
+  (24, 'How is the Servant described in Isaiah 53:3?',
+       '[{"label":"A","text":"Mighty and feared","correct":false},{"label":"B","text":"Despised and rejected, a man of sorrows","correct":true},{"label":"C","text":"Robed in splendor","correct":false}]',
+       '"He is despised and rejected of men; a man of sorrows, and acquainted with grief." The Messiah came without beauty or status.'),
+  (25, 'According to Isaiah 53:5, why was the Servant wounded?',
+       '[{"label":"A","text":"For His own sins","correct":false},{"label":"B","text":"For our transgressions","correct":true},{"label":"C","text":"By accident","correct":false}]',
+       '"He was wounded for our transgressions, he was bruised for our iniquities... and with his stripes we are healed." The exchange is total.'),
+  (26, 'To what is the silent Servant compared in Isaiah 53:7?',
+       '[{"label":"A","text":"A lion","correct":false},{"label":"B","text":"A lamb to the slaughter","correct":true},{"label":"C","text":"A shepherd","correct":false}]',
+       '"He is brought as a lamb to the slaughter... so he openeth not his mouth." He goes willingly and without protest.'),
+  (27, 'Whose plan was it to bruise the Servant, according to Isaiah 53:10?',
+       '[{"label":"A","text":"Rome''s","correct":false},{"label":"B","text":"The crowd''s","correct":false},{"label":"C","text":"The LORD''s","correct":true}]',
+       '"Yet it pleased the LORD to bruise him." The cross was no accident but the deliberate, saving plan of God.'),
+  (28, 'What are the opening words of Psalm 22?',
+       '[{"label":"A","text":"The LORD is my shepherd","correct":false},{"label":"B","text":"My God, my God, why hast thou forsaken me?","correct":true},{"label":"C","text":"Out of the depths I cry","correct":false}]',
+       '"My God, my God, why hast thou forsaken me?" — the very words Jesus prayed from the cross, invoking the whole psalm, victory included.'),
+  (29, 'What does Psalm 22:16 say was done to the sufferer''s hands and feet?',
+       '[{"label":"A","text":"They were bound","correct":false},{"label":"B","text":"They were pierced","correct":true},{"label":"C","text":"They were washed","correct":false}]',
+       '"They pierced my hands and my feet" — a description of crucifixion written centuries before Rome practiced it.'),
+  (30, 'In Zechariah 12:10, on whom will the people look and mourn?',
+       '[{"label":"A","text":"Him whom they have pierced","correct":true},{"label":"B","text":"A fallen king","correct":false},{"label":"C","text":"The temple","correct":false}]',
+       '"They shall look upon me whom they have pierced, and they shall mourn." God pours out a spirit of grace even in the piercing.'),
+  (31, 'Where did Jesus stedfastly set His face to go in Luke 9:51?',
+       '[{"label":"A","text":"Galilee","correct":false},{"label":"B","text":"Jerusalem","correct":true},{"label":"C","text":"The wilderness","correct":false}]',
+       '"He stedfastly set his face to go to Jerusalem." Jesus did not drift toward the cross; He walked there on purpose.'),
+  (32, 'What did Jesus say would happen on the third day, in Mark 10:34?',
+       '[{"label":"A","text":"He shall rise again","correct":true},{"label":"B","text":"The temple would fall","correct":false},{"label":"C","text":"He would return to Galilee","correct":false}]',
+       'After naming His betrayal, mocking, and death, Jesus adds: "and the third day he shall rise again." He walked in with open eyes.'),
+  (33, 'Why did the Son of Man come, according to Mark 10:45?',
+       '[{"label":"A","text":"To be served","correct":false},{"label":"B","text":"To give His life a ransom for many","correct":true},{"label":"C","text":"To restore Israel''s throne","correct":false}]',
+       '"The Son of man came not to be ministered unto, but to minister, and to give his life a ransom for many." The cross was His purpose.'),
+  (34, 'According to John 10:18, who takes Jesus'' life from Him?',
+       '[{"label":"A","text":"Rome","correct":false},{"label":"B","text":"No one; He lays it down of Himself","correct":true},{"label":"C","text":"The chief priests","correct":false}]',
+       '"No man taketh it from me, but I lay it down of myself." The cross is the Shepherd''s free choice, with power to take His life up again.'),
+  (35, 'For what did Jesus endure the cross, according to Hebrews 12:2?',
+       '[{"label":"A","text":"The joy set before Him","correct":true},{"label":"B","text":"To prove a point","correct":false},{"label":"C","text":"Out of obligation only","correct":false}]',
+       '"Who for the joy that was set before him endured the cross, despising the shame." He saw past the agony to the joy beyond it.'),
+  (36, 'What did Jesus pray in Gethsemane, in Matthew 26:39?',
+       '[{"label":"A","text":"Let this cup pass; nevertheless not as I will, but as thou wilt","correct":true},{"label":"B","text":"Father, forgive them","correct":false},{"label":"C","text":"It is finished","correct":false}]',
+       '"O my Father, if it be possible, let this cup pass from me: nevertheless not as I will, but as thou wilt." Honest desire held together with real surrender.'),
+  (37, 'How did the Servant set His face in Isaiah 50:7?',
+       '[{"label":"A","text":"Like a flint","correct":true},{"label":"B","text":"Toward the sea","correct":false},{"label":"C","text":"Away in shame","correct":false}]',
+       '"I have set my face like a flint, and I know that I shall not be ashamed." Obedience unto death, forged in trust that God would help.'),
+  (38, 'What did Pilate say as he presented the scourged Jesus in John 19:5?',
+       '[{"label":"A","text":"Behold the man!","correct":true},{"label":"B","text":"He is innocent","correct":false},{"label":"C","text":"Crucify him","correct":false}]',
+       '"Behold the man!" Crowned with thorns and draped in mock purple, Jesus was more royal in His suffering than His judges knew.'),
+  (39, 'What were Jesus'' final words in John 19:30?',
+       '[{"label":"A","text":"Into thy hands I commit my spirit","correct":false},{"label":"B","text":"It is finished","correct":true},{"label":"C","text":"Why hast thou forsaken me?","correct":false}]',
+       '"It is finished" (tetelestai) — not a cry of defeat but of completion. The word was written on paid bills to mean "paid in full."'),
+  (40, 'According to 1 Peter 2:24, by what are we healed?',
+       '[{"label":"A","text":"His stripes","correct":true},{"label":"B","text":"Our own efforts","correct":false},{"label":"C","text":"The law","correct":false}]',
+       '"By whose stripes ye were healed." The whole road of Lent ends at the cross — which was, all along, the road to our healing.')
+) AS v(day_number, question, options, explanation)
+WHERE p.slug = 'lent-road-to-the-cross'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Lent — word studies (a key word from each day''s passage, all 40 days).
+UPDATE reading_plan_entries e
+SET word_studies = v.ws
+FROM reading_plans p,
+(VALUES
+  (1,  '{"dust":{"original":"עָפָר","transliteration":"aphar","definition":"Dust, dry earth, powder. Man is formed from aphar and returns to it — a word that anchors Lent in the humbling truth of human mortality.","refs":["Genesis 3:19","Psalm 103:14"]}}'),
+  (2,  '{"mercy":{"original":"חָנַן","transliteration":"chanan","definition":"To show favor, to be gracious, to have mercy. David''s plea rests entirely on God''s free grace, not on anything David can offer in return.","refs":["Psalm 51:1","Exodus 34:6"]}}'),
+  (3,  '{"create":{"original":"בָּרָא","transliteration":"bara","definition":"To create — used in Scripture only of God, only for what He alone can make from nothing. David needs not repair but a heart newly created.","refs":["Psalm 51:10","Genesis 1:1"]}}'),
+  (4,  '{"rend":{"original":"קָרַע","transliteration":"qara","definition":"To tear, to rend. Tearing the garments was the ancient sign of grief; God asks instead for a torn-open heart — the inward reality, not the outward gesture.","refs":["Joel 2:13","2 Kings 22:11"]}}'),
+  (5,  '{"fast":{"original":"צוֹם","transliteration":"tsom","definition":"A fast, abstinence from food. Isaiah insists the tsom God chooses is inseparable from mercy — self-denial that loosens the chains binding the oppressed.","refs":["Isaiah 58:6","Joel 2:12"]}}'),
+  (6,  '{"tempted":{"original":"πειράζω","transliteration":"peirazō","definition":"To test, try, or tempt. The same word covers both a trial meant to strengthen and a temptation meant to destroy. Jesus was truly tested, yet did not fail.","refs":["Matthew 4:1","Hebrews 4:15"]}}'),
+  (7,  '{"serve":{"original":"λατρεύω","transliteration":"latreuō","definition":"To serve, to render religious worship. Jesus answers the tempter with Deuteronomy: God alone is to be worshipped and latreuō — served with the devotion due to Him only.","refs":["Matthew 4:10","Deuteronomy 6:13"]}}'),
+  (8,  '{"forgiven":{"original":"נָשָׂא","transliteration":"nasa","definition":"To lift, to carry, to bear away. Forgiveness pictures a burden lifted off and carried away — the very thing the Servant will do by bearing sin Himself.","refs":["Psalm 32:1","Isaiah 53:12"]}}'),
+  (9,  '{"confess":{"original":"ὁμολογέω","transliteration":"homologeō","definition":"To say the same thing, to agree, to confess. Confession is agreeing with God about our sin rather than excusing it — and it meets a sure promise of forgiveness.","refs":["1 John 1:9","Proverbs 28:13"]}}'),
+  (10, '{"compassion":{"original":"σπλαγχνίζομαι","transliteration":"splagchnizomai","definition":"To be moved in the inward parts, to feel gut-deep compassion. The father''s pity for the returning son is visceral — it moves him to run.","refs":["Luke 15:20","Matthew 9:36"]}}'),
+  (11, '{"repentance":{"original":"μετάνοια","transliteration":"metanoia","definition":"A change of mind and direction, a turning. Godly sorrow produces metanoia — not mere regret but a genuine turn toward God that leads to life.","refs":["2 Corinthians 7:10","Acts 3:19"]}}'),
+  (12, '{"forgiveness":{"original":"סְלִיחָה","transliteration":"selichah","definition":"Pardon, forgiveness — a word used only of God. The psalmist''s hope from the depths is that selichah is found with the LORD, so that sinners may stand.","refs":["Psalm 130:4","Daniel 9:9"]}}'),
+  (13, '{"compassion":{"original":"רָחַם","transliteration":"racham","definition":"To love deeply, to have tender compassion — related to rechem, the womb. God will have racham on His people, subduing their sins and drowning them in the sea.","refs":["Micah 7:19","Psalm 103:13"]}}'),
+  (14, '{"heart":{"original":"לֵב","transliteration":"lev","definition":"The heart — in Hebrew thought the center of will, mind, and desire, not merely emotion. God promises to replace a lev of stone with a lev of flesh.","refs":["Ezekiel 36:26","Jeremiah 31:33"]}}'),
+  (15, '{"deny":{"original":"ἀπαρνέομαι","transliteration":"aparneomai","definition":"To disown, to renounce, to deny utterly — the same verb used of Peter denying Jesus. To follow Christ is to renounce the claim of self to rule one''s own life.","refs":["Matthew 16:24","Luke 9:23"]}}'),
+  (16, '{"plough":{"original":"ἄροτρον","transliteration":"arotron","definition":"A plough. A ploughman who looks back cuts a crooked furrow; Jesus uses the image for divided discipleship — a hand on the plough but a heart facing home.","refs":["Luke 9:62","Philippians 3:13"]}}'),
+  (17, '{"wheat":{"original":"κόκκος","transliteration":"kokkos","definition":"A grain, a seed (of wheat). Jesus makes the buried, dying seed the pattern of His own death — and of every fruitful life that follows Him.","refs":["John 12:24","1 Corinthians 15:36"]}}'),
+  (18, '{"crucified":{"original":"συσταυρόω","transliteration":"systauroō","definition":"To crucify together with. Paul says his old self was co-crucified with Christ — not improved but put to death, so that Christ might live in him.","refs":["Galatians 2:20","Romans 6:6"]}}'),
+  (19, '{"buried":{"original":"συνθάπτω","transliteration":"synthaptō","definition":"To bury together with. In baptism the believer is buried with Christ and raised with Him — His death and resurrection become the pattern of a new life.","refs":["Romans 6:4","Colossians 2:12"]}}'),
+  (20, '{"know":{"original":"γινώσκω","transliteration":"ginōskō","definition":"To know by experience and relationship, not merely by information. Paul''s aim is to ginōskō Christ — to know Him personally, including the fellowship of His sufferings.","refs":["Philippians 3:10","John 17:3"]}}'),
+  (21, '{"secret":{"original":"κρυπτός","transliteration":"kruptos","definition":"Hidden, secret, concealed. Jesus commends devotion done in the kruptos place, seen only by the Father — the one audience whose reward is worth having.","refs":["Matthew 6:18","Matthew 6:6"]}}'),
+  (22, '{"humble":{"original":"ταπεινόω","transliteration":"tapeinoō","definition":"To make low, to humble. James commands us to tapeinoō ourselves before God, with the promise that He will do the lifting — the way up is down.","refs":["James 4:10","1 Peter 5:6"]}}'),
+  (23, '{"servant":{"original":"עֶבֶד","transliteration":"ebed","definition":"A servant, slave, or bondman. Isaiah''s Suffering Servant (ebed) is God''s chosen one who saves not by power but by lowly, obedient suffering.","refs":["Isaiah 52:13","Isaiah 42:1"]}}'),
+  (24, '{"sorrows":{"original":"מַכְאוֹב","transliteration":"makob","definition":"Pain, sorrow, suffering. The Messiah is a man of makob, acquainted with grief — One who does not stand aloof from human suffering but enters it.","refs":["Isaiah 53:3","Lamentations 1:12"]}}'),
+  (25, '{"wounded":{"original":"חָלַל","transliteration":"chalal","definition":"To be pierced, wounded, fatally hurt. The Servant was chalal for our transgressions — the wound was ours by right, borne by Him in our place.","refs":["Isaiah 53:5","Zechariah 13:6"]}}'),
+  (26, '{"lamb":{"original":"שֶׂה","transliteration":"seh","definition":"A lamb or sheep, the animal of sacrifice. The Servant is led as a seh to the slaughter — silent, willing, the Passover lamb who takes away sin.","refs":["Isaiah 53:7","John 1:29"]}}'),
+  (27, '{"offering":{"original":"אָשָׁם","transliteration":"asham","definition":"A guilt offering, a sacrifice for trespass. God makes the Servant''s soul an asham for sin — the reparation offering that satisfies what the guilty owe.","refs":["Isaiah 53:10","Leviticus 5:15"]}}'),
+  (28, '{"forsaken":{"original":"עָזַב","transliteration":"azab","definition":"To leave, abandon, forsake. The cry azabtani — why hast thou forsaken me — is the psalm''s opening, and the very word Jesus took onto His lips at the cross.","refs":["Psalm 22:1","Matthew 27:46"]}}'),
+  (29, '{"pierced":{"original":"כָּאֲרִי","transliteration":"kaari","definition":"The disputed word behind they pierced my hands and feet, read as digging or piercing through. The psalm describes crucifixion long before Rome practiced it.","refs":["Psalm 22:16","John 20:25"]}}'),
+  (30, '{"mourn":{"original":"סָפַד","transliteration":"saphad","definition":"To wail, lament, mourn — the ritual grief for the dead. Zechariah foresees a mourning over the pierced One as deep as grief for an only son, turned by grace toward repentance.","refs":["Zechariah 12:10","Amos 8:10"]}}'),
+  (31, '{"set":{"original":"στηρίζω","transliteration":"stērizō","definition":"To fix firmly, to establish, to set steadfastly. Jesus stērizō His face toward Jerusalem — a settled, immovable resolve to walk the road to the cross.","refs":["Luke 9:51","Isaiah 50:7"]}}'),
+  (32, '{"delivered":{"original":"παραδίδωμι","transliteration":"paradidōmi","definition":"To hand over, to deliver up, to betray. Jesus foretells being paradidōmi to the priests and Gentiles — the same word used of His betrayal and of God giving Him up for us.","refs":["Mark 10:33","Romans 8:32"]}}'),
+  (33, '{"ransom":{"original":"λύτρον","transliteration":"lutron","definition":"The price paid to free a slave or captive. Jesus gives His life as a lutron for many — His death is the purchase price of our freedom.","refs":["Mark 10:45","1 Timothy 2:6"]}}'),
+  (34, '{"power":{"original":"ἐξουσία","transliteration":"exousia","definition":"Authority, right, power to act. Jesus lays down His life by His own exousia and takes it up again — the cross is His sovereign choice, not His defeat.","refs":["John 10:18","John 19:11"]}}'),
+  (35, '{"author":{"original":"ἀρχηγός","transliteration":"archēgos","definition":"A pioneer, founder, trailblazer, captain. Jesus is the archēgos of faith — the one who blazed the trail ahead of us and now stands as its goal.","refs":["Hebrews 12:2","Hebrews 2:10"]}}'),
+  (36, '{"cup":{"original":"ποτήριον","transliteration":"potērion","definition":"A cup; figuratively one''s appointed portion of suffering or wrath. Jesus asks that the potērion pass, yet drinks it — taking the cup of judgment we deserved.","refs":["Matthew 26:39","Isaiah 51:17"]}}'),
+  (37, '{"flint":{"original":"חַלָּמִישׁ","transliteration":"challamish","definition":"Flint, hard rock. The Servant sets His face like challamish — an image of unbreakable resolve, obedient to the point of shame and suffering, sure of vindication.","refs":["Isaiah 50:7","Ezekiel 3:8-9"]}}'),
+  (38, '{"thorns":{"original":"ἄκανθα","transliteration":"akantha","definition":"A thorn, thorn-plant. The soldiers'' crown of akantha was cruel mockery — and an echo of Eden''s curse (Genesis 3:18), now pressed onto the head of the One who bears it.","refs":["John 19:2","Genesis 3:18"]}}'),
+  (39, '{"finished":{"original":"τελέω","transliteration":"teleō","definition":"To complete, finish, accomplish, pay in full. Tetelestai — It is finished — was written on settled bills to mean paid in full. The work of salvation was done.","refs":["John 19:30","Colossians 2:14"]}}'),
+  (40, '{"healed":{"original":"ἰάομαι","transliteration":"iaomai","definition":"To heal, to cure, to make whole. Quoting Isaiah, Peter says by Christ''s stripes ye were iaomai — the wounds of the cross are the source of our deepest healing.","refs":["1 Peter 2:24","Isaiah 53:5"]}}')
+) AS v(day_number, ws)
+WHERE p.slug = 'lent-road-to-the-cross'
+  AND e.plan_id = p.id
+  AND e.day_number = v.day_number;
+
+-- Lent — dig deeper commentary (days 1, 6, 17, 25, 27, 28, 33, 39).
+UPDATE reading_plan_entries e
+SET
+  deep_dive_text = v.text,
+  deep_dive_refs = v.refs
+FROM reading_plans p,
+(VALUES
+  (1,
+   'Lent begins where we least want to look: at our own mortality. The traditional words spoken while ashes are marked on the forehead — "Remember that you are dust, and to dust you shall return" — come directly from Genesis 3:19, part of the sentence God pronounced after the fall. It sounds bleak, but the church has always understood it as a strange mercy. To remember that you are dust is to be freed from the exhausting pretense that you are the center of the universe, self-sufficient and permanent. The Hebrew word aphar means the dry, powdery earth — the same material from which God formed Adam in Genesis 2:7. So the reminder cuts both ways: you are dust, yes, but you are dust that God stooped to shape with His own hands and breathe life into. Psalm 103:14 makes the tenderness explicit: "he knoweth our frame; he remembereth that we are dust." Our frailty is not something God holds against us; it is something He factors into His compassion. Facing mortality honestly is the doorway to real repentance, because only those who know they are dust feel their need of a Savior who is not. The whole season that follows is the story of what that Savior did about our returning to dust.',
+   '["Genesis 2:7", "Psalm 103:13-16"]'),
+  (6,
+   'The Gospel writers frame Jesus'' forty days in the wilderness as a deliberate replay of Israel''s story — with the opposite ending. Israel was led through the sea and into the wilderness for forty years, where they were tested and failed repeatedly: they grumbled for bread, doubted God''s provision, and bowed to idols. Jesus, the true Israel, is led by the Spirit into the wilderness for forty days, hungry and tested — and at each temptation He answers by quoting Deuteronomy, the very book that recounts Israel''s wilderness failures. To the demand for bread He replies, "Man shall not live by bread alone" (Deuteronomy 8:3) — the lesson Israel never learned. Where the first Adam fell to temptation in a garden of plenty, the last Adam stands firm in a desert of want. This is why Lent is forty days: the church walks with Jesus through His wilderness, learning from Him how temptation is met — not with our own strength or clever shortcuts, but with the word of God trusted and obeyed. Hebrews 4:15 adds the comfort: He was "in all points tempted like as we are, yet without sin." He does not test us from a safe distance; He has stood exactly where we stand and held the ground we lose.',
+   '["Deuteronomy 8:2-3", "Hebrews 4:15-16"]'),
+  (17,
+   'Jesus speaks of the dying grain of wheat at a hinge moment: John 12 records that some Greeks — Gentiles — had come seeking Him, and instead of celebrating His growing fame, Jesus announces that the hour of His death has come. The connection is the whole point. How would the good news reach these Greeks and all the nations? Not through a popular teacher gathering crowds, but through a seed falling into the ground and dying. "Except a corn of wheat fall into the ground and die, it abideth alone: but if it die, it bringeth forth much fruit." A single grain kept safe on a shelf remains exactly one grain forever; only by being buried and broken open does it multiply into a harvest. Jesus is describing the strange economy of the cross: His death is not the failure of His mission but its mechanism. The worldwide harvest of the church — every believer of every nation — grows from that one buried seed. And then He turns it on us: "He that loveth his life shall lose it." The same law that governs the seed governs the disciple. The instinct to clutch and preserve our lives leads to a barren, solitary existence; the willingness to let our tightly-held ambitions and rights fall into the ground and die is the only path to a fruitful one. Death, in the kingdom of God, is never the end of the story — it is how the harvest begins.',
+   '["John 12:20-23", "1 Corinthians 15:36-38"]'),
+  (25,
+   'Isaiah 53:4-6 is the clearest statement of substitutionary atonement in the Old Testament — the truth that Christ took the place of sinners, bearing what they deserved. Written some seven hundred years before the crucifixion, it reads like an eyewitness account. Notice the relentless exchange of pronouns: "he" bore "our" griefs; "he" was wounded for "our" transgressions; the chastisement of "our" peace was upon "him"; with "his" stripes "we" are healed. Every clause moves the weight from us to Him. The passage also corrects a natural misreading: "we did esteem him stricken, smitten of God" — the onlookers assumed the Servant suffered for His own guilt. The truth was the reverse: "the LORD hath laid on him the iniquity of us all." The image in verse 6 is devastating in its ordinariness — "all we like sheep have gone astray; we have turned every one to his own way." Sin here is not dramatic villainy but the quiet, universal act of self-direction, each person turning off toward his own path. And onto that scattered, wayward flock''s collective guilt, laid on one Shepherd-Servant, the whole burden falls. This is the heart of the gospel Lent walks toward: not that God overlooked sin, but that He bore it Himself in the person of His Servant, so that the healing might be ours.',
+   '["1 Peter 2:24-25", "2 Corinthians 5:21"]'),
+  (27,
+   'Isaiah 53:10 contains perhaps the most jarring sentence in all of Scripture: "Yet it pleased the LORD to bruise him." How can the suffering of the innocent Servant be the Father''s pleasure? The answer is not that God delights in pain, but that He delights in what the suffering accomplishes — the salvation of many. The verse itself explains: the Servant''s soul is made "an offering for sin" (the Hebrew asham, a guilt offering), and the result is that "he shall see his seed... the pleasure of the LORD shall prosper in his hand." The cross was not a tragedy that befell Jesus against God''s will; it was the deliberate, eternal plan of God, in which Father and Son acted together in love for our rescue. Peter would later preach exactly this at Pentecost: Jesus was "delivered by the determinate counsel and foreknowledge of God" (Acts 2:23) — and yet the human hands that crucified Him were fully guilty. Both are true. The passage ends in triumph, not defeat: "He shall see of the travail of his soul, and shall be satisfied." The word "satisfied" matters. The Servant looks back on the agony and counts it worth it, because of the "seed" — the countless people justified by bearing their iniquities. When you wonder whether your salvation was worth the cross to Him, Isaiah answers: He looked at the cost, and He was satisfied.',
+   '["Acts 2:23", "Romans 3:24-26"]'),
+  (28,
+   'When Jesus cried "My God, my God, why hast thou forsaken me?" from the cross (Matthew 27:46), He was not improvising a scream of despair — He was praying Psalm 22, and every Jew within earshot would have recognized it. This matters, because in the ancient world quoting a psalm''s first line invoked the whole psalm. And Psalm 22, though it begins in the darkness of apparent abandonment, does not end there. It moves, in its second half, into one of the most triumphant declarations of vindication and worldwide worship in the Psalter: "All the ends of the world shall remember and turn unto the LORD" (v.27). So the cry from the cross holds two truths at once. First, the abandonment was real: as Jesus bore the sin of the world, He experienced a forsakenness we cannot fully fathom — the Son, for the only time in eternity, feeling the Father''s face turned away, so that we would never have to. Second, even that cry was an act of faith. Notice the psalm never stops addressing God: "MY God, MY God." It is a lament hurled toward heaven, not away from it — the prayer of one who feels forsaken yet still clings. This is a gift to every believer who has felt God''s absence: the sinless Son prayed His way through that exact darkness, and it did not have the last word. The psalm that opens "why hast thou forsaken me?" closes with the confident cry, "he hath done this" — a Hebrew phrase strikingly close to "It is finished."',
+   '["Matthew 27:46", "Psalm 22:22-31"]'),
+  (33,
+   'Mark 10:45 is often called the "ransom saying," and it sits at the theological center of Mark''s Gospel. Jesus has just found His disciples arguing about who will be greatest, and He upends their entire notion of greatness: in His kingdom, the way up is down, and the model is the Son of Man Himself, who "came not to be ministered unto, but to minister, and to give his life a ransom for many." The word ransom (lutron) was concrete and familiar — it was the price paid to purchase the freedom of a slave or to redeem a captive or debtor. By using it, Jesus interprets His own coming death in advance: it is not a defeat or an accident but a transaction of liberation. His life is the price; our freedom is what it buys. The phrase "for many" (which echoes Isaiah 53:11-12, where the Servant "bare the sin of many") does not limit the offer but emphasizes the vast number set free by the one life given. And crucially, Jesus makes this the pattern for His followers: greatness is not measured by how many serve you but by how much you spend yourself for others. The cross is both the price of our redemption and the shape of the redeemed life. The One who gave everything to purchase our freedom now calls the freed to live as servants.',
+   '["Isaiah 53:11-12", "Philippians 2:5-8"]'),
+  (39,
+   'The single Greek word Jesus spoke as His last breath left Him — tetelestai, translated "It is finished" — is one of the most important words in the Bible, and it is essential to hear it correctly. It is not the whimper of a defeated man ("I am finished"); it is the shout of a workman who has completed his task. Tetelestai comes from teleō, meaning to complete, accomplish, or bring to its intended goal. In the commercial world of the first century, the word was stamped or written across a bill of debt when it was paid, meaning "paid in full." Archaeologists have found receipts bearing exactly this word. So when Jesus said tetelestai, He was declaring that the debt of sin — the whole account of what humanity owed to God — had been paid, completely and finally, leaving nothing outstanding. This is why the gospel is genuinely good news and not merely good advice: salvation is not a project we contribute to but a finished work we receive. Every religious impulse to add our own payments — our good deeds, our penance, our self-improvement — stumbles over this word. There is nothing left to pay. Notice, too, that John says Jesus spoke it "knowing that all things were now accomplished, that the scripture might be fulfilled" — the prophecies of Genesis 3:15, of Isaiah 53, of Psalm 22, all converging and completed at this moment. The road that began in Eden with a promise ends here with a receipt: paid in full.',
+   '["Colossians 2:13-14", "Hebrews 10:11-14"]')
+) AS v(day_number, text, refs)
+WHERE p.slug = 'lent-road-to-the-cross'
   AND e.plan_id = p.id
   AND e.day_number = v.day_number;
