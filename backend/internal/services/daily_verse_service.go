@@ -263,7 +263,8 @@ func (s *DailyVerseService) selectVerseSimple(date string) string {
 func getCuratedVerses() []string {
 	return []string{
 		// Genesis
-		"Genesis 1:1", "Genesis 1:27", "Genesis 2:24", "Genesis 12:2-3", "Genesis 50:20",
+		"Genesis 1:1", "Genesis 1:3", "Genesis 1:27", "Genesis 2:24", "Genesis 12:2-3",
+		"Genesis 28:15", "Genesis 50:20",
 
 		// Exodus
 		"Exodus 14:14", "Exodus 20:3", "Exodus 33:14",
@@ -306,6 +307,9 @@ func getCuratedVerses() []string {
 		"Psalm 103:12", "Psalm 107:1", "Psalm 118:24", "Psalm 119:9", "Psalm 119:11",
 		"Psalm 119:105", "Psalm 121:1-2", "Psalm 127:1", "Psalm 133:1", "Psalm 136:1",
 		"Psalm 139:14", "Psalm 139:23-24", "Psalm 143:8", "Psalm 145:18", "Psalm 147:3",
+		"Psalm 8:4", "Psalm 24:1", "Psalm 34:1", "Psalm 51:12", "Psalm 61:2",
+		"Psalm 90:2", "Psalm 91:4", "Psalm 118:6", "Psalm 121:7-8", "Psalm 138:8",
+		"Psalm 139:7-8",
 
 		// Proverbs (40+ verses)
 		"Proverbs 1:7", "Proverbs 3:5-6", "Proverbs 3:9-10", "Proverbs 4:23", "Proverbs 6:6",
@@ -315,6 +319,7 @@ func getCuratedVerses() []string {
 		"Proverbs 21:21", "Proverbs 22:1", "Proverbs 22:6", "Proverbs 23:7", "Proverbs 24:16",
 		"Proverbs 25:11", "Proverbs 27:1", "Proverbs 27:17", "Proverbs 28:13", "Proverbs 29:18",
 		"Proverbs 29:25", "Proverbs 30:5", "Proverbs 31:25", "Proverbs 31:30",
+		"Proverbs 3:7-8", "Proverbs 16:24", "Proverbs 17:22", "Proverbs 27:9",
 
 		// Ecclesiastes
 		"Ecclesiastes 3:1", "Ecclesiastes 3:11", "Ecclesiastes 4:9-10", "Ecclesiastes 12:13",
@@ -323,9 +328,10 @@ func getCuratedVerses() []string {
 		"Isaiah 9:6", "Isaiah 26:3", "Isaiah 40:8", "Isaiah 40:28-29", "Isaiah 40:31",
 		"Isaiah 41:10", "Isaiah 41:13", "Isaiah 43:2", "Isaiah 53:5", "Isaiah 54:10",
 		"Isaiah 55:8-9", "Isaiah 58:11", "Isaiah 64:8", "Isaiah 65:24",
+		"Isaiah 6:8", "Isaiah 12:2", "Isaiah 30:21", "Isaiah 61:1",
 
 		// Jeremiah
-		"Jeremiah 17:7-8", "Jeremiah 29:11", "Jeremiah 31:3", "Jeremiah 33:3",
+		"Jeremiah 1:5", "Jeremiah 17:7-8", "Jeremiah 29:11", "Jeremiah 31:3", "Jeremiah 33:3",
 
 		// Lamentations
 		"Lamentations 3:22-23",
@@ -363,6 +369,7 @@ func getCuratedVerses() []string {
 		"Matthew 7:7", "Matthew 7:12", "Matthew 9:37-38", "Matthew 10:28", "Matthew 11:28-30",
 		"Matthew 16:24", "Matthew 18:20", "Matthew 19:26", "Matthew 20:28", "Matthew 22:37-39",
 		"Matthew 24:35", "Matthew 25:40", "Matthew 28:18-20",
+		"Matthew 5:9", "Matthew 6:14", "Matthew 7:24", "Matthew 28:19",
 
 		// Mark
 		"Mark 9:23", "Mark 10:27", "Mark 10:45", "Mark 11:24", "Mark 12:30-31",
@@ -379,6 +386,7 @@ func getCuratedVerses() []string {
 		"John 14:6", "John 14:13", "John 14:15", "John 14:21", "John 14:27",
 		"John 15:5", "John 15:7", "John 15:12-13", "John 16:33", "John 17:3",
 		"John 20:29", "John 20:31",
+		"John 1:14", "John 4:14", "John 6:37", "John 15:9", "John 16:24",
 
 		// Acts
 		"Acts 1:8", "Acts 2:38", "Acts 4:12", "Acts 16:31", "Acts 20:35",
@@ -389,38 +397,41 @@ func getCuratedVerses() []string {
 		"Romans 8:26", "Romans 8:28", "Romans 8:31", "Romans 8:37-39", "Romans 10:9",
 		"Romans 10:13", "Romans 10:17", "Romans 12:1-2", "Romans 12:2", "Romans 12:10",
 		"Romans 12:12", "Romans 12:21", "Romans 13:8", "Romans 14:8", "Romans 15:4",
-		"Romans 15:13",
+		"Romans 15:13", "Romans 8:38-39", "Romans 12:9",
 
 		// 1 Corinthians (25+ verses)
 		"1 Corinthians 1:18", "1 Corinthians 2:9", "1 Corinthians 6:19-20", "1 Corinthians 10:13",
 		"1 Corinthians 10:31", "1 Corinthians 12:4-6", "1 Corinthians 13:4-7", "1 Corinthians 13:13",
 		"1 Corinthians 15:3-4", "1 Corinthians 15:33", "1 Corinthians 15:57-58", "1 Corinthians 16:13-14",
+		"1 Corinthians 13:1", "1 Corinthians 16:14",
 
 		// 2 Corinthians (20+ verses)
 		"2 Corinthians 1:3-4", "2 Corinthians 3:17", "2 Corinthians 4:16-18", "2 Corinthians 5:7",
 		"2 Corinthians 5:17", "2 Corinthians 5:21", "2 Corinthians 9:6-7", "2 Corinthians 9:8",
-		"2 Corinthians 12:9-10", "2 Corinthians 13:14",
+		"2 Corinthians 12:9-10", "2 Corinthians 13:14", "2 Corinthians 5:20",
 
 		// Galatians (15+ verses)
 		"Galatians 2:20", "Galatians 5:1", "Galatians 5:13", "Galatians 5:16",
 		"Galatians 5:22-23", "Galatians 6:2", "Galatians 6:7", "Galatians 6:9-10",
+		"Galatians 3:28",
 
 		// Ephesians (25+ verses)
 		"Ephesians 1:3", "Ephesians 1:7", "Ephesians 2:4-5", "Ephesians 2:8-9", "Ephesians 2:10",
 		"Ephesians 3:16", "Ephesians 3:20-21", "Ephesians 4:2-3", "Ephesians 4:29", "Ephesians 4:32",
 		"Ephesians 5:1-2", "Ephesians 5:15-16", "Ephesians 6:10-11", "Ephesians 6:18",
+		"Ephesians 4:15", "Ephesians 5:20",
 
 		// Philippians (20+ verses)
 		"Philippians 1:6", "Philippians 2:3-4", "Philippians 2:13", "Philippians 3:13-14",
 		"Philippians 4:4", "Philippians 4:6-7", "Philippians 4:8", "Philippians 4:11-13",
-		"Philippians 4:13", "Philippians 4:19",
+		"Philippians 4:13", "Philippians 4:19", "Philippians 1:21",
 
 		// Colossians (15+ verses)
 		"Colossians 1:13-14", "Colossians 2:6-7", "Colossians 3:1-2", "Colossians 3:12-13",
-		"Colossians 3:15", "Colossians 3:17", "Colossians 3:23-24",
+		"Colossians 3:15", "Colossians 3:17", "Colossians 3:23-24", "Colossians 4:2",
 
 		// 1 Thessalonians
-		"1 Thessalonians 5:11", "1 Thessalonians 5:16-18",
+		"1 Thessalonians 5:11", "1 Thessalonians 5:16-18", "1 Thessalonians 5:23",
 
 		// 2 Thessalonians
 		"2 Thessalonians 3:3",
@@ -429,7 +440,7 @@ func getCuratedVerses() []string {
 		"1 Timothy 4:12", "1 Timothy 6:6", "1 Timothy 6:11-12",
 
 		// 2 Timothy (10+ verses)
-		"2 Timothy 1:7", "2 Timothy 2:15", "2 Timothy 3:16-17", "2 Timothy 4:7-8",
+		"2 Timothy 1:7", "2 Timothy 1:9", "2 Timothy 2:15", "2 Timothy 3:16-17", "2 Timothy 4:7-8",
 
 		// Titus
 		"Titus 2:11-12", "Titus 3:5",
@@ -437,14 +448,16 @@ func getCuratedVerses() []string {
 		// Hebrews (25+ verses)
 		"Hebrews 4:12", "Hebrews 4:15-16", "Hebrews 10:23-25", "Hebrews 11:1", "Hebrews 11:6",
 		"Hebrews 12:1-2", "Hebrews 12:11", "Hebrews 13:5", "Hebrews 13:8", "Hebrews 13:15-16",
+		"Hebrews 6:19", "Hebrews 12:14",
 
 		// James (15+ verses)
 		"James 1:2-3", "James 1:5", "James 1:12", "James 1:17", "James 1:19",
 		"James 1:22", "James 3:17", "James 4:7-8", "James 4:10", "James 5:16",
+		"James 1:27",
 
 		// 1 Peter (20+ verses)
 		"1 Peter 1:3", "1 Peter 2:9", "1 Peter 3:15", "1 Peter 4:8", "1 Peter 4:10",
-		"1 Peter 5:6-7", "1 Peter 5:7", "1 Peter 5:8-9", "1 Peter 5:10",
+		"1 Peter 5:6-7", "1 Peter 5:7", "1 Peter 5:8-9", "1 Peter 5:10", "1 Peter 2:24",
 
 		// 2 Peter
 		"2 Peter 1:3", "2 Peter 3:9", "2 Peter 3:18",
@@ -452,7 +465,7 @@ func getCuratedVerses() []string {
 		// 1 John (15+ verses)
 		"1 John 1:7", "1 John 1:9", "1 John 2:15-17", "1 John 3:1", "1 John 3:16",
 		"1 John 3:18", "1 John 4:4", "1 John 4:7-8", "1 John 4:9-10", "1 John 4:18-19",
-		"1 John 4:19", "1 John 5:14-15",
+		"1 John 4:19", "1 John 5:14-15", "1 John 4:11", "1 John 5:4-5",
 
 		// 3 John
 		"3 John 1:2",
@@ -461,7 +474,7 @@ func getCuratedVerses() []string {
 		"Jude 1:24-25",
 
 		// Revelation
-		"Revelation 1:8", "Revelation 3:20", "Revelation 21:4", "Revelation 22:13",
+		"Revelation 1:8", "Revelation 3:20", "Revelation 21:4", "Revelation 21:5", "Revelation 22:13",
 	}
 }
 
