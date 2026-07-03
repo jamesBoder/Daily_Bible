@@ -1313,6 +1313,7 @@
     },
     "enrollError": "Could not start this plan. Please try again.",
     "enrollLimitReached": "You’ve reached your active plan limit. Complete or leave a plan to begin a new path.",
+    "enrollLimitReachedCount": "You can have up to {{count}} active plans. Complete or leave one to begin a new path.",
     "enrollAlreadyEnrolled": "You’re already on this path.",
     "unenrollError": "Could not leave this plan. Please try again."
   },

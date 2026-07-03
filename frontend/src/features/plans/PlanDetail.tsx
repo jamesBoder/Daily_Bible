@@ -35,10 +35,15 @@ const PlanDetail: React.FC = () => {
       setShowDayView(true);
     },
     onError: (err: unknown) => {
-      const code = (err as { response?: { data?: { error?: string } } })?.response?.data?.error;
+      const data = (err as { response?: { data?: { error?: string; limit?: number } } })?.response?.data;
+      const code = data?.error;
       switch (code) {
         case 'max_plans_reached':
-          showToast.error(t('plan.enrollLimitReached', 'You’ve reached your active plan limit. Complete or leave a plan to begin a new path.'));
+          showToast.error(
+            typeof data?.limit === 'number'
+              ? t('plan.enrollLimitReachedCount', 'You can have up to {{count}} active plans. Complete or leave one to begin a new path.', { count: data.limit })
+              : t('plan.enrollLimitReached', 'You’ve reached your active plan limit. Complete or leave a plan to begin a new path.'),
+          );
           break;
         case 'already_enrolled':
           // Refresh so the button flips to Continue instead of Begin.

@@ -129,7 +129,10 @@ func (h *ReadingPlanHandler) Enroll(c *gin.Context) {
 		case errors.Is(err, services.ErrAlreadyEnrolled):
 			c.JSON(http.StatusConflict, gin.H{"error": "already_enrolled"})
 		case errors.Is(err, services.ErrMaxPlansReached):
-			c.JSON(http.StatusUnprocessableEntity, gin.H{"error": "max_plans_reached"})
+			c.JSON(http.StatusUnprocessableEntity, gin.H{
+				"error": "max_plans_reached",
+				"limit": services.MaxActivePlans(isPremium),
+			})
 		default:
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to enroll"})
 		}
