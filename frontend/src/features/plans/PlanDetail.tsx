@@ -34,8 +34,28 @@ const PlanDetail: React.FC = () => {
       qc.invalidateQueries({ queryKey: ['plans-my'] });
       setShowDayView(true);
     },
-    onError: () => {
-      showToast.error(t('plan.enrollError', 'Could not start this plan. Please try again.'));
+    onError: (err: unknown) => {
+      const data = (err as { response?: { data?: { error?: string; limit?: number } } })?.response?.data;
+      const code = data?.error;
+      switch (code) {
+        case 'max_plans_reached':
+          showToast.error(
+            typeof data?.limit === 'number'
+              ? t('plan.enrollLimitReachedCount', 'You can have up to {{count}} active plans. Complete or leave one to begin a new path.', { count: data.limit })
+              : t('plan.enrollLimitReached', 'You’ve reached your active plan limit. Complete or leave a plan to begin a new path.'),
+          );
+          break;
+        case 'already_enrolled':
+          // Refresh so the button flips to Continue instead of Begin.
+          qc.invalidateQueries({ queryKey: ['plan', slug] });
+          showToast.error(t('plan.enrollAlreadyEnrolled', 'You’re already on this path.'));
+          break;
+        case 'plan_premium_required':
+          openModal();
+          break;
+        default:
+          showToast.error(t('plan.enrollError', 'Could not start this plan. Please try again.'));
+      }
     },
   });
 
