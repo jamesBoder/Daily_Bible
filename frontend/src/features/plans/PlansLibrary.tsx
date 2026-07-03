@@ -2,9 +2,10 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useQuery } from '@tanstack/react-query';
-import { LockSimple, BookmarkSimple, Star } from '@phosphor-icons/react';
+import { LockSimple, BookmarkSimple, Star, CheckCircle } from '@phosphor-icons/react';
 import plansApi, { type ReadingPlanSummary } from '../../services/api/plans';
 import { useStreak } from '../../contexts/StreakContext';
+import { useAuth } from '../../hooks/useAuth';
 import { msUntilDailyReset } from '../../lib/queryClient';
 import { usePricingModal } from '../../hooks/usePricingModal';
 import { useTutorial } from '../../hooks/useTutorial';
@@ -14,6 +15,7 @@ const PlansLibrary: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { subscription } = useStreak();
+  const { isAuthenticated } = useAuth();
   const isPremium = subscription?.is_premium ?? false;
   const { openModal } = usePricingModal();
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(PLANS_TUTORIAL_KEY);
@@ -23,6 +25,16 @@ const PlansLibrary: React.FC = () => {
     queryFn: plansApi.getLibrary,
     staleTime: msUntilDailyReset(),
   });
+
+  // Slot usage comes from /plans/my (not the library): a free user's premium
+  // enrollments are hidden from the library view but still occupy slots.
+  const { data: myPlans } = useQuery({
+    queryKey: ['plans-my'],
+    queryFn: plansApi.getMyPlans,
+    enabled: isAuthenticated,
+  });
+  const slotsUsed = (myPlans?.enrollments ?? []).filter(e => !e.completed_at).length;
+  const slotLimit = myPlans?.plan_limit;
 
   const seasonalPlans = plans.filter(p => p.is_seasonal && p.is_season_active);
   const regularPlans = plans.filter(p => !p.is_seasonal || !p.is_season_active);
@@ -55,6 +67,27 @@ const PlansLibrary: React.FC = () => {
         <h1 className="text-xl font-bold text-[var(--foreground)] flex-1">
           {t('plans.title', 'Reading Plans')}
         </h1>
+        {typeof slotLimit === 'number' && (
+          <span
+            aria-label={t('plans.activeSlots', '{{used}} of {{limit}} paths active', { used: slotsUsed, limit: slotLimit })}
+            title={t('plans.activeSlots', '{{used}} of {{limit}} paths active', { used: slotsUsed, limit: slotLimit })}
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-900/40"
+          >
+            <span className="flex items-center gap-0.5" aria-hidden>
+              {Array.from({ length: slotLimit }, (_, i) => (
+                <span
+                  key={i}
+                  className={`w-1.5 h-1.5 rounded-full ${i < slotsUsed ? 'bg-amber-500 dark:bg-amber-400' : 'bg-amber-300/60 dark:bg-amber-700/60'}`}
+                />
+              ))}
+            </span>
+            {/* Compact count on mobile; full label on wider screens */}
+            <span className="sm:hidden">{slotsUsed}/{slotLimit}</span>
+            <span className="hidden sm:inline">
+              {t('plans.activeSlots', '{{used}} of {{limit}} paths active', { used: slotsUsed, limit: slotLimit })}
+            </span>
+          </span>
+        )}
         <button
           className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:text-amber-600 dark:hover:text-amber-400 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
           onClick={openTutorial}
@@ -145,9 +178,23 @@ const PlanLibraryCard: React.FC<PlanLibraryCardProps> = ({ plan, isPremium, onCl
             )}
           </p>
         </div>
-        {plan.is_seasonal && (
-          <Star size={16} weight="fill" style={{ color: 'var(--candle-amber)', flexShrink: 0 }} />
-        )}
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {progress && !locked && (
+            progress.completed_at ? (
+              <span className="flex items-center gap-1 text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full text-green-700 dark:text-green-400 bg-green-100/80 dark:bg-green-900/30">
+                <CheckCircle size={11} weight="fill" aria-hidden />
+                {t('plans.completedBadge', 'Complete')}
+              </span>
+            ) : (
+              <span className="text-[10px] font-semibold uppercase tracking-wide px-1.5 py-0.5 rounded-full text-amber-700 dark:text-amber-300 bg-amber-100/80 dark:bg-amber-900/40">
+                {t('plans.activeBadge', 'Active')}
+              </span>
+            )
+          )}
+          {plan.is_seasonal && (
+            <Star size={16} weight="fill" style={{ color: 'var(--candle-amber)', flexShrink: 0 }} />
+          )}
+        </div>
       </div>
 
       {/* Progress bar if enrolled */}

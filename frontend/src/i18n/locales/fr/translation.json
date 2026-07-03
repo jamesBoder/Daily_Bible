@@ -1297,6 +1297,7 @@
     "enrollError": "Impossible de démarrer ce plan. Veuillez réessayer.",
     "enrollLimitReached": "Vous avez atteint votre limite de plans actifs. Terminez ou quittez un plan pour commencer un nouveau chemin.",
     "enrollLimitReachedCount": "Vous pouvez avoir jusqu’à {{count}} plans actifs. Terminez ou quittez-en un pour commencer un nouveau chemin.",
+    "atCapNotice": "Vous avez {{used}} chemin(s) actif(s) sur {{limit}}. Terminez ou quittez-en un pour commencer ce chemin.",
     "enrollAlreadyEnrolled": "Vous êtes déjà sur ce chemin.",
     "unenrollError": "Impossible de quitter ce plan. Veuillez réessayer."
   },
@@ -1307,6 +1308,9 @@
     "premiumLabel": "Membre Dévoué",
     "nDays": "{{count}} jours",
     "freeLabel": "Gratuit",
+    "activeSlots": "{{used}} chemin(s) actif(s) sur {{limit}}",
+    "activeBadge": "Actif",
+    "completedBadge": "Terminé",
     "complete": "Chemin Terminé",
     "dayOf": "Jour {{day}} sur {{total}}",
     "continueReading": "Continuer la Lecture",

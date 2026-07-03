@@ -1297,6 +1297,7 @@
     "enrollError": "Pa ka kòmanse plan sa a. Tanpri eseye ankò.",
     "enrollLimitReached": "Ou rive nan limit plan aktif ou yo. Fini oswa kite yon plan pou kòmanse yon nouvo chemen.",
     "enrollLimitReachedCount": "Ou ka gen jiska {{count}} plan aktif. Fini oswa kite youn pou kòmanse yon nouvo chemen.",
+    "atCapNotice": "Ou gen {{used}} nan {{limit}} chemen aktif. Fini oswa kite youn pou kòmanse chemen sa a.",
     "enrollAlreadyEnrolled": "Ou deja sou chemen sa a.",
     "unenrollError": "Pa ka kite plan sa a. Tanpri eseye ankò."
   },
@@ -1307,6 +1308,9 @@
     "premiumLabel": "Manm Devot",
     "nDays": "{{count}} jou",
     "freeLabel": "Gratis",
+    "activeSlots": "{{used}} sou {{limit}} chemen aktif",
+    "activeBadge": "Aktif",
+    "completedBadge": "Fini",
     "complete": "Chemen Konplète",
     "dayOf": "Jou {{day}} nan {{total}}",
     "continueReading": "Kontinye Lekti",

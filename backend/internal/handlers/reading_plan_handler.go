@@ -46,16 +46,21 @@ func (h *ReadingPlanHandler) GetLibrary(c *gin.Context) {
 }
 
 // GetMyPlans handles GET /api/plans/my
-// Returns the authenticated user's active enrollments.
+// Returns the authenticated user's active enrollments plus the tier's
+// active-plan limit, so the UI can show slot usage before an enroll fails.
 func (h *ReadingPlanHandler) GetMyPlans(c *gin.Context) {
 	userID := c.MustGet("userID").(uint)
+	isPremium := c.GetBool("isPremium")
 
 	enrollments, err := h.service.GetActiveEnrollments(userID)
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch enrollments"})
 		return
 	}
-	c.JSON(http.StatusOK, gin.H{"enrollments": enrollments})
+	c.JSON(http.StatusOK, gin.H{
+		"enrollments": enrollments,
+		"plan_limit":  services.MaxActivePlans(isPremium),
+	})
 }
 
 // GetSeasonalCurrent handles GET /api/plans/seasonal/current
