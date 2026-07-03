@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	maxActivePlans             = 3
+	maxActivePlansPremium      = 4
+	maxActivePlansFree         = 2
 	BlessingsPerPlanDay        = 10
 	BlessingsForPlanCompletion = 50
 	journalExcerptRunes        = 80
@@ -251,6 +252,22 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 		return nil, err
 	}
 
+	// Enforce the active-plan cap before either path below — reactivating a
+	// previously-left plan adds an active plan just like a fresh enrollment.
+	cap := maxActivePlansFree
+	if isPremium {
+		cap = maxActivePlansPremium
+	}
+	var count int64
+	if err := s.db.Model(&models.UserPlanProgress{}).
+		Where("user_id = ? AND is_active = true AND completed_at IS NULL", userID).
+		Count(&count).Error; err != nil {
+		return nil, err
+	}
+	if int(count) >= cap {
+		return nil, ErrMaxPlansReached
+	}
+
 	// Check for an inactive enrollment from a previous unenroll. The unique index
 	// on (user_id, plan_id) prevents creating a second row — reactivate instead.
 	var inactive models.UserPlanProgress
@@ -267,20 +284,6 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 			return nil, err
 		}
 		return &inactive, nil
-	}
-
-	cap := 1
-	if isPremium {
-		cap = maxActivePlans
-	}
-	var count int64
-	if err := s.db.Model(&models.UserPlanProgress{}).
-		Where("user_id = ? AND is_active = true AND completed_at IS NULL", userID).
-		Count(&count).Error; err != nil {
-		return nil, err
-	}
-	if int(count) >= cap {
-		return nil, ErrMaxPlansReached
 	}
 
 	prog := models.UserPlanProgress{
