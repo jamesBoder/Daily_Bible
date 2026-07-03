@@ -1295,6 +1295,8 @@
       "appName": "Words of Praise"
     },
     "enrollError": "Impossible de démarrer ce plan. Veuillez réessayer.",
+    "enrollLimitReached": "Vous avez atteint votre limite de plans actifs. Terminez ou quittez un plan pour commencer un nouveau chemin.",
+    "enrollAlreadyEnrolled": "Vous êtes déjà sur ce chemin.",
     "unenrollError": "Impossible de quitter ce plan. Veuillez réessayer."
   },
   "plans": {

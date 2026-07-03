@@ -1295,6 +1295,8 @@
       "appName": "Words of Praise"
     },
     "enrollError": "Pa ka kòmanse plan sa a. Tanpri eseye ankò.",
+    "enrollLimitReached": "Ou rive nan limit plan aktif ou yo. Fini oswa kite yon plan pou kòmanse yon nouvo chemen.",
+    "enrollAlreadyEnrolled": "Ou deja sou chemen sa a.",
     "unenrollError": "Pa ka kite plan sa a. Tanpri eseye ankò."
   },
   "plans": {
