@@ -11,7 +11,8 @@ import (
 )
 
 const (
-	maxActivePlans             = 3
+	maxActivePlansPremium      = 4
+	maxActivePlansFree         = 2
 	BlessingsPerPlanDay        = 10
 	BlessingsForPlanCompletion = 50
 	journalExcerptRunes        = 80
@@ -25,6 +26,15 @@ var (
 	ErrNotEnrolled     = errors.New("not enrolled in this plan")
 	ErrPlanComplete    = errors.New("plan already completed")
 )
+
+// MaxActivePlans returns the active-plan cap for the given tier. Exposed so
+// handlers can include the limit in error responses.
+func MaxActivePlans(isPremium bool) int {
+	if isPremium {
+		return maxActivePlansPremium
+	}
+	return maxActivePlansFree
+}
 
 // ReadingPlanSummary is the shape returned for library listings.
 type ReadingPlanSummary struct {
@@ -194,7 +204,26 @@ func (s *ReadingPlanService) GetPlan(slug string, userID uint, isPremium bool) (
 		}
 		return nil, err
 	}
-	if plan.RequiresPremium && !isPremium {
+	// Look up the user's active enrollment before the premium gate: a user who
+	// is already on this plan may always view it, even if their premium access
+	// has since lapsed. GetPlanForToday and AdvanceDay already allow enrolled
+	// users through; without the same rule here, a downgraded user could never
+	// open — or leave — a premium plan they are enrolled in, permanently
+	// consuming one of their active-plan slots.
+	var userProgress *PlanProgressSummary
+	if userID > 0 {
+		var prog models.UserPlanProgress
+		if err := s.db.Where("user_id = ? AND plan_id = ? AND is_active = true", userID, plan.ID).
+			First(&prog).Error; err == nil {
+			userProgress = &PlanProgressSummary{
+				LastReadDay: prog.LastReadDay,
+				CompletedAt: prog.CompletedAt,
+				IsActive:    prog.IsActive,
+				PlanStreak:  prog.PlanStreak,
+			}
+		}
+	}
+	if plan.RequiresPremium && !isPremium && userProgress == nil {
 		return nil, ErrPlanPremium
 	}
 
@@ -208,19 +237,7 @@ func (s *ReadingPlanService) GetPlan(slug string, userID uint, isPremium bool) (
 		ReadingPlanSummary: planToSummary(plan, now),
 		Entries:            make([]ReadingPlanEntryResponse, 0, len(entries)),
 	}
-
-	if userID > 0 {
-		var prog models.UserPlanProgress
-		if err := s.db.Where("user_id = ? AND plan_id = ? AND is_active = true", userID, plan.ID).
-			First(&prog).Error; err == nil {
-			detail.UserProgress = &PlanProgressSummary{
-				LastReadDay: prog.LastReadDay,
-				CompletedAt: prog.CompletedAt,
-				IsActive:    prog.IsActive,
-				PlanStreak:  prog.PlanStreak,
-			}
-		}
-	}
+	detail.UserProgress = userProgress
 
 	for _, e := range entries {
 		detail.Entries = append(detail.Entries, entryToResponse(e))
@@ -251,6 +268,21 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 		return nil, err
 	}
 
+	// Enforce the active-plan cap before either path below — reactivating a
+	// previously-left plan adds an active plan just like a fresh enrollment.
+	// NOTE: count-then-write is not atomic; two racing enrolls can overshoot
+	// the cap by one. Acceptable for a self-paced devotional app.
+	cap := MaxActivePlans(isPremium)
+	var count int64
+	if err := s.db.Model(&models.UserPlanProgress{}).
+		Where("user_id = ? AND is_active = true AND completed_at IS NULL", userID).
+		Count(&count).Error; err != nil {
+		return nil, err
+	}
+	if int(count) >= cap {
+		return nil, ErrMaxPlansReached
+	}
+
 	// Check for an inactive enrollment from a previous unenroll. The unique index
 	// on (user_id, plan_id) prevents creating a second row — reactivate instead.
 	var inactive models.UserPlanProgress
@@ -267,20 +299,6 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 			return nil, err
 		}
 		return &inactive, nil
-	}
-
-	cap := 1
-	if isPremium {
-		cap = maxActivePlans
-	}
-	var count int64
-	if err := s.db.Model(&models.UserPlanProgress{}).
-		Where("user_id = ? AND is_active = true AND completed_at IS NULL", userID).
-		Count(&count).Error; err != nil {
-		return nil, err
-	}
-	if int(count) >= cap {
-		return nil, ErrMaxPlansReached
 	}
 
 	prog := models.UserPlanProgress{
