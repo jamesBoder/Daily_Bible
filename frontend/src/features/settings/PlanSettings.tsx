@@ -10,12 +10,12 @@ const PlanSettings: React.FC = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
 
-  const { data: enrollments = [] } = useQuery({
+  const { data: myPlans } = useQuery({
     queryKey: ['plans-my'],
     queryFn: plansApi.getMyPlans,
   });
 
-  const active = enrollments.filter(e => !e.completed_at);
+  const active = (myPlans?.enrollments ?? []).filter(e => !e.completed_at);
 
   return (
     <div>
