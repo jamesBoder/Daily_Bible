@@ -77,6 +77,11 @@ export interface UserPlanProgressDetail {
   plan_streak: number;
 }
 
+export interface MyPlansResponse {
+  enrollments: UserPlanProgressDetail[];
+  plan_limit?: number; // absent on backends older than the slots-UI release
+}
+
 export interface AdvanceResponse {
   progress: {
     id: number;
@@ -100,7 +105,7 @@ const plansApi = {
     apiClient.get<ReadingPlanDetail>(`/api/plans/${slug}`).then(r => r.data),
 
   getMyPlans: () =>
-    apiClient.get<{ enrollments: UserPlanProgressDetail[] }>('/api/plans/my').then(r => r.data.enrollments),
+    apiClient.get<MyPlansResponse>('/api/plans/my').then(r => r.data),
 
   getSeasonalCurrent: () =>
     apiClient.get<{ plan: ReadingPlanSummary | null }>('/api/plans/seasonal/current').then(r => r.data.plan),

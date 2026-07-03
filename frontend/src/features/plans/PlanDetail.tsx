@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { ArrowLeft, LockSimple, CheckCircle, Warning } from '@phosphor-icons/react';
 import plansApi from '../../services/api/plans';
 import { useStreak } from '../../contexts/StreakContext';
+import { useAuth } from '../../hooks/useAuth';
 import { usePricingModal } from '../../hooks/usePricingModal';
 import { showToast } from '../../utils/toast';
 import PlanDayView from './PlanDayView';
@@ -15,6 +16,7 @@ const PlanDetail: React.FC = () => {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const { subscription } = useStreak();
+  const { isAuthenticated } = useAuth();
   const { openModal } = usePricingModal();
   const isPremium = subscription?.is_premium ?? false;
   const [confirmUnenroll, setConfirmUnenroll] = useState(false);
@@ -25,6 +27,18 @@ const PlanDetail: React.FC = () => {
     queryFn: () => plansApi.getPlan(slug!),
     enabled: !!slug,
   });
+
+  // Slot usage for the cap-aware Begin button. If the query hasn't resolved
+  // (or the backend predates plan_limit), the button stays enabled and the
+  // error toast remains the fallback.
+  const { data: myPlans } = useQuery({
+    queryKey: ['plans-my'],
+    queryFn: plansApi.getMyPlans,
+    enabled: isAuthenticated,
+  });
+  const slotsUsed = (myPlans?.enrollments ?? []).filter(e => !e.completed_at).length;
+  const slotLimit = myPlans?.plan_limit;
+  const atCap = typeof slotLimit === 'number' && slotsUsed >= slotLimit;
 
   const enrollMutation = useMutation({
     mutationFn: () => plansApi.enroll(slug!),
@@ -159,12 +173,23 @@ const PlanDetail: React.FC = () => {
         </div>
       )}
 
+      {/* At-cap notice: tell the user before they tap, not via a failing toast.
+          Premium-locked buttons stay tappable — they open the pricing modal. */}
+      {!isEnrolled && atCap && (
+        <div className="flex items-start gap-2 p-3 mb-3 rounded-xl text-xs leading-relaxed text-amber-800 dark:text-amber-200 bg-amber-100/70 dark:bg-amber-900/30 border border-amber-200/60 dark:border-amber-800/40">
+          <Warning size={16} weight="fill" className="flex-shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" aria-hidden />
+          <span>
+            {t('plan.atCapNotice', 'You have {{used}} of {{limit}} active paths. Complete or leave one to begin this path.', { used: slotsUsed, limit: slotLimit })}
+          </span>
+        </div>
+      )}
+
       {/* CTA buttons */}
       <div className="flex gap-3 mb-8">
         {!isEnrolled ? (
           <button
             onClick={handleEnroll}
-            disabled={enrollMutation.isPending}
+            disabled={enrollMutation.isPending || (atCap && !(plan.requires_premium && !isPremium))}
             className="flex-1 py-3 rounded-xl font-semibold text-white text-sm active:scale-[0.98] transition-all disabled:opacity-60"
             style={{ background: 'var(--blessing-gold)' }}
           >
