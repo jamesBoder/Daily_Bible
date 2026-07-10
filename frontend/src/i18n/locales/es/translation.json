@@ -24,7 +24,13 @@
     "more": "Más",
     "mainNavigation": "Navegación principal",
     "moreMenu": "Más opciones",
-    "signin": "Iniciar sesión"
+    "signin": "Iniciar sesión",
+    "community": "Comunidad"
+  },
+  "header": {
+    "changeLanguage": "Cambiar idioma",
+    "switchToDark": "Cambiar a modo oscuro",
+    "switchToLight": "Cambiar a modo claro"
   },
   "manna": {
     "archive": "Archivo",
@@ -128,7 +134,13 @@
     "unlockCta": "Desbloquea con una membresía Words of Praise",
     "unlockScripture": "Desbloquear texto completo",
     "yesterdaySection": "La palabra de ayer",
-    "yesterdaysWord": "La palabra de ayer"
+    "yesterdaysWord": "La palabra de ayer",
+    "feature6Guesses": "6 intentos por acertijo",
+    "featureArchive": "Archivo de acertijos anteriores",
+    "featureBlessings": "Gana Bendiciones a diario",
+    "featureHints": "Pistas (15 Bendiciones cada una)",
+    "featureScripture": "Pista completa de la Escritura",
+    "featureStats": "Estadísticas e historial"
   },
   "journal": {
     "title": "Mi Diario",
@@ -162,6 +174,12 @@
     "shareTitle": "Entrada del Diario",
     "copied": "Copiado al portapapeles",
     "copyFailed": "No se pudo copiar al portapapeles",
+    "share": "Compartir",
+    "word": "palabra",
+    "words": "palabras",
+    "minRead": "min de lectura",
+    "confirmDeleteBtn": "Toca para confirmar la eliminación",
+    "confirmDeleteAriaLabel": "Toca de nuevo para eliminar esta entrada permanentemente",
     "tutorial": {
       "step1Title": "Escribe reflexiones diarias",
       "step1Body": "Toca «Nueva Entrada» para comenzar a escribir. Cada entrada puede incluir una reflexión, una oración o lo que tengas en el corazón.",
@@ -195,7 +213,9 @@
     "sessionOnly": "Solo esta sesión — no cambia tu configuración",
     "premiumTranslation": "Disponible con una membresía de Words of Praise",
     "translationUnavailable": "Traducción no disponible",
-    "premiumTranslationHint": "Las traducciones bloqueadas están disponibles con Words of Praise Premium"
+    "premiumTranslationHint": "Las traducciones bloqueadas están disponibles con Words of Praise Premium",
+    "copyVerse": "Copiar versículo",
+    "shareOn": "Compartir en"
   },
   "auth": {
     "browsingAsGuest": "Navegando como Invitado",
@@ -249,7 +269,8 @@
       "usernameRequired": "El nombre de usuario es obligatorio",
       "usernameTooShort": "El nombre de usuario debe tener al menos 3 caracteres",
       "passwordRequired": "La contraseña es obligatoria",
-      "passwordsMustMatch": "Las contraseñas no coinciden"
+      "passwordsMustMatch": "Las contraseñas no coinciden",
+      "usernameMinLength": "El nombre de usuario debe tener al menos 3 caracteres"
     },
     "forgotPassword": {
       "title": "Olvidé mi Contraseña",
@@ -356,10 +377,25 @@
     "removeConfirm": "¿Eliminar este versículo de favoritos?",
     "removeFailed": "Error al eliminar favorito",
     "clearFilter": "Limpiar filtro",
-    "noMatch": "Ningún favorito coincide"
+    "noMatch": "Ningún favorito coincide",
+    "tutorial": {
+      "title": "Favoritos",
+      "subtitle": "Tu colección personal de versículos bíblicos guardados.",
+      "step1Title": "Guarda cualquier versículo",
+      "step1Body": "Toca el ícono de corazón en cualquier versículo para guardarlo aquí y acceder rápidamente.",
+      "step2Title": "Toca para expandir",
+      "step2Body": "Toca una tarjeta de versículo para ver opciones de compartir, notas y el botón de eliminar.",
+      "step3Title": "Comparte con otros",
+      "step3Body": "Comparte tus versículos favoritos en Twitter, WhatsApp, Facebook o cópialos al portapapeles.",
+      "step4Title": "Filtra y ordena",
+      "step4Body": "Usa la barra de búsqueda para filtrar por palabra clave y el menú para ordenar por fecha, libro o traducción.",
+      "cta": "Explorar Mis Favoritos",
+      "reopenHint": "Toca ? en cualquier momento para ver esta guía de nuevo."
+    }
   },
   "history": {
     "title": "Historial",
+    "clearDesc": "Esto eliminará permanentemente tu historial de lectura de versículos. Esta acción no se puede deshacer.",
     "empty": "Tu historial está vacío.",
     "emptyDescription": "Tu historial de lectura de versículos aparecerá aquí",
     "clear": "Limpiar Historial",
@@ -418,7 +454,23 @@
     "days_to": "días para",
     "verses_read": "Versículos Leídos",
     "reflections": "Reflexiones",
-    "days_active": "Días Activo"
+    "days_active": "Días Activo",
+    "cal_engaged": "Activo",
+    "cal_grace": "Gracia",
+    "confirm_email_placeholder": "Confirma el nuevo correo",
+    "current_password_placeholder": "Contraseña actual para confirmar",
+    "edit_error": "No se pudo actualizar el perfil",
+    "edit_profile": "Editar perfil",
+    "email_confirm_mismatch": "Los correos electrónicos no coinciden",
+    "email_placeholder": "Correo electrónico",
+    "email_taken": "El correo ya está en uso",
+    "password_required_for_email": "Se requiere la contraseña para cambiar tu correo electrónico",
+    "pending_email_banner": "Cambio de correo pendiente — revisa {{email}} para el enlace de confirmación. Tu correo actual sigue activo hasta que verifiques el nuevo.",
+    "pending_email_info": "Tu correo actual sigue activo hasta que hagas clic en el enlace de confirmación que enviamos a la nueva dirección.",
+    "streak_amazing": "🕯 Racha de {{days}} días — ¡dedicación increíble!",
+    "streak_keep_going": "🕯 Racha de {{days}} días — ¡sigue así! {{remaining}} días más para {{name}}.",
+    "username_placeholder": "Nombre de usuario",
+    "username_taken": "El nombre de usuario ya está en uso"
   },
   "settings": {
     "title": "Configuración",
@@ -442,7 +494,10 @@
       "celebrationAnim": "Animaciones de celebración",
       "celebrationAnimDesc": "Mostrar efectos de partículas cuando alcances un hito.",
       "soundEffects": "Efectos de sonido",
-      "soundEffectsDesc": "Reproducir tonos suaves al guardar entradas del diario o continuar tu racha."
+      "soundEffectsDesc": "Reproducir tonos suaves al guardar entradas del diario o continuar tu racha.",
+      "verseFontSize": "Tamaño del texto del versículo",
+      "verseFontSizePreview": "Aa",
+      "volume": "Volumen"
     },
     "sections": {
       "myJourney": "Mi Camino",
@@ -470,7 +525,10 @@
       "use": "Usar un Día de Gracia",
       "confirm": "Confirmar — ¿usar un Día de Gracia?",
       "errorGeneric": "No se pudo usar el Día de Gracia.",
-      "usedSuccess": "Día de Gracia usado — ¡racha protegida!"
+      "usedSuccess": "Día de Gracia usado — ¡racha protegida!",
+      "availablePremium": "disponibles",
+      "banked": "en reserva — se restaurarán a medida que uses días",
+      "ofN": "de {{count}}"
     },
     "notifications": {
       "title": "Notificaciones",
@@ -793,7 +851,10 @@
     "comingSoon": "Próximamente",
     "goHome": "Ir al Inicio",
     "somethingWentWrong": "¡Ups! Algo salió mal",
-    "errorRefresh": "Lo sentimos por los inconvenientes. Por favor recarga la página."
+    "errorRefresh": "Lo sentimos por los inconvenientes. Por favor recarga la página.",
+    "dismiss": "Descartar",
+    "load_more": "Cargar más",
+    "premium": "Premium"
   },
   "streak": {
     "tooltip": "Racha de {{count}} días",
@@ -809,7 +870,12 @@
     "share_button": "Compartir mi racha",
     "share_generating": "Generando…",
     "share_subtitle": "días en la Palabra",
-    "share_locked": "Actualiza a Premium para compartir tu jornada de racha con otros."
+    "share_locked": "Actualiza a Premium para compartir tu jornada de racha con otros.",
+    "popover": {
+      "title": "Racha de {{count}} días",
+      "description": "Has leído a diario durante {{count}} días seguidos. ¡Sigue así!",
+      "graceDays": "{{count}} Día(s) de Gracia disponible(s)"
+    }
   },
   "blessings": {
     "label": "Bendiciones",
@@ -831,7 +897,8 @@
       "manna_streak_bonus": "Bonificación de racha de Maná",
       "discipline_complete": "Disciplina completada",
       "generic": "Bendiciones ganadas"
-    }
+    },
+    "creditError": "No se pudo registrar la finalización"
   },
   "disciplines": {
     "title": "Disciplinas de Hoy",
@@ -972,6 +1039,10 @@
       "annotations": "Anotaciones de versículos y notas personales",
       "saved_searches": "Búsquedas guardadas y filtros de búsqueda",
       "future_content": "Todas las funciones y contenido futuros"
+    },
+    "checkout_overlay": {
+      "label": "Preparando el pago",
+      "message": "Preparando tu pago seguro…"
     }
   },
   "otp": {
@@ -1027,7 +1098,8 @@
       "thankyou_label": "Gracias",
       "thankyou_title": "¡Gracias!",
       "thankyou_body": "Tu apoyo significa mucho."
-    }
+    },
+    "purchase_error": "No se pudo iniciar el pago. Inténtalo de nuevo."
   },
   "avatar": {
     "ring": {
@@ -1072,14 +1144,16 @@
       "placeholder": "Comparte una reflexión...",
       "post_btn": "Publicar",
       "char_limit": "{{count}} caracteres restantes",
-      "locked": "Actualiza para compartir reflexiones con la comunidad."
+      "locked": "Actualiza para compartir reflexiones con la comunidad.",
+      "guidelines": "Sé respetuoso y edificante. El lenguaje ofensivo o inapropiado puede resultar en la suspensión o eliminación de tu cuenta."
     },
     "prayer": {
       "placeholder": "Envía una petición de oración...",
       "anonymous_label": "Publicar anónimamente",
       "submit_btn": "Enviar",
       "expire_notice": "Las peticiones de oración expiran después de 7 días.",
-      "open_to_all": "Las peticiones de oración están abiertas a todos los miembros."
+      "open_to_all": "Las peticiones de oración están abiertas a todos los miembros.",
+      "wall_title": "Muro de Oración"
     },
     "challenge": {
       "joined_count": "{{count}} personas se unieron",
@@ -1089,7 +1163,8 @@
     "empty": {
       "board": "Aún no hay reflexiones — sé el primero en compartir.",
       "prayer": "No hay peticiones de oración en este momento.",
-      "challenge": "No hay reto activo esta semana."
+      "challenge": "No hay reto activo esta semana.",
+      "shareReflection": "✍ Comparte tu reflexión"
     },
     "delete": {
       "confirm": "¿Eliminar esta publicación?",
@@ -1098,7 +1173,10 @@
     "error": {
       "post_failed": "No se pudo publicar. Por favor, inténtalo de nuevo.",
       "react_failed": "No se pudo guardar tu reacción.",
-      "rate_limit": "Demasiadas publicaciones — espera unos minutos."
+      "rate_limit": "Demasiadas publicaciones — espera unos minutos.",
+      "login_required": "Inicia sesión para enviar una petición de oración.",
+      "premium_required": "Se requiere una suscripción Premium para publicar reflexiones.",
+      "profanity": "Tu publicación contiene lenguaje inapropiado. Revísala e inténtalo de nuevo."
     },
     "admin": {
       "panel_title": "Admin — Nueva publicación",
@@ -1119,7 +1197,32 @@
       "hours_ago": "hace {{count}}h",
       "days_ago": "hace {{count}}d"
     },
-    "new_posts_banner": "Nuevas publicaciones — toca para actualizar"
+    "new_posts_banner": "Nuevas publicaciones — toca para actualizar",
+    "challenges": {
+      "subtitle": "Desafíos semanales de fe de la comunidad"
+    },
+    "hero": {
+      "tagline": "Caminemos juntos en la fe"
+    },
+    "pinned_label": "Fijado",
+    "signUpToPost": "Regístrate gratis para compartir tu reflexión con la comunidad.",
+    "tutorial": {
+      "title": "Comunidad",
+      "subtitle": "Conecta con creyentes, comparte reflexiones y oren juntos.",
+      "step1Title": "Tablero de la Comunidad",
+      "step1Body": "Lee y comparte reflexiones, ánimos y pensamientos con la comunidad de Words of Praise.",
+      "step2Title": "Muro de Oración",
+      "step2Body": "Envía peticiones de oración y ora por otros. Un espacio de intercesión y apoyo.",
+      "step3Title": "Desafíos",
+      "step3Body": "Únete a desafíos de lectura y devocionales. Complétalos para ganar Bendiciones ✦ y crecer en la fe.",
+      "step4Title": "Reacciona y conecta",
+      "step4Body": "Toca los botones de reacción en cualquier publicación para mostrar ánimo. Las nuevas publicaciones aparecen automáticamente.",
+      "step5Title": "Normas de la Comunidad",
+      "step5Body": "Mantén este espacio respetuoso y edificante. El lenguaje ofensivo, de odio o inapropiado no se tolera y puede resultar en la suspensión o eliminación permanente de la cuenta.",
+      "cta": "Únete a la Comunidad",
+      "reopenHint": "Toca ? en cualquier momento para ver esta guía de nuevo."
+    },
+    "walking_today_label": "personas leyeron la Palabra hoy"
   },
   "leaderboard": {
     "title": "Comunidad",
@@ -1131,7 +1234,8 @@
   "tutorial": {
     "howItWorks": "Cómo funciona",
     "gotIt": "¡Entendido!",
-    "newBadge": "Nuevo"
+    "newBadge": "Nuevo",
+    "next": "Siguiente"
   },
   "graceDayTutorial": {
     "step1Title": "Tu racha importa",
@@ -1212,7 +1316,12 @@
     "joyfulDays": "Lunes y Sábado",
     "sorrowfulDays": "Martes y Viernes",
     "gloriousDays": "Miércoles y Domingo",
-    "luminousDays": "Jueves"
+    "luminousDays": "Jueves",
+    "comingSoonLabel": "Próximamente",
+    "guidedPrayerSubtitle": "Oración estructurada para acercarte más a Dios",
+    "resumeAriaLabel": "Reanudar {{mystery}}",
+    "startNewLabel": "O empieza de nuevo",
+    "stepLabel": "paso {{n}}"
   },
   "annotation": {
     "panelTitle": "Tus notas sobre {{reference}}",
@@ -1342,6 +1451,38 @@
       "lent": "Cuaresma",
       "holy-week": "Semana Santa",
       "pentecost": "Pentecostés"
-    }
+    },
+    "browseLibrary": "Explora la biblioteca"
+  },
+  "gamificationTutorial": {
+    "title": "Rachas y Bendiciones",
+    "subtitle": "Mantén la constancia, gana recompensas y crece en la fe cada día.",
+    "step1Title": "Construye tu racha",
+    "step1Body": "Lee el versículo diario todos los días para aumentar tu racha. Cuanto más larga la racha, más Bendiciones ✦ ganas por día.",
+    "step2Title": "Gana Bendiciones ✦",
+    "step2Body": "Las Bendiciones se ganan leyendo a diario, completando los acertijos de Maná y alcanzando hitos. Gástalas en pistas o temas en la Tienda.",
+    "step3Title": "Alcanza hitos",
+    "step3Body": "Alcanza hitos de racha (7, 30, 100 días y más) para desbloquear celebraciones y Bendiciones extra.",
+    "step4Title": "Sigue tu progreso",
+    "step4Body": "Consulta tu historial de rachas, tu racha más larga y tu saldo total de Bendiciones en tu página de Perfil.",
+    "cta": "Empieza a Ganar",
+    "reopenHint": "Encuentra esto en Configuración → Ayuda y Tutoriales en cualquier momento."
+  },
+  "notifications": {
+    "unsubscribed": "Has cancelado tu suscripción a los recordatorios diarios."
+  },
+  "shopTutorial": {
+    "title": "Tienda de Recompensas",
+    "subtitle": "Gasta Bendiciones, desbloquea temas y mejora tu experiencia.",
+    "step1Title": "Tu saldo de Bendiciones",
+    "step1Body": "Tu saldo de Bendiciones ✦ se muestra en la parte superior de esta página. Todo en la tienda se compra con Bendiciones o con una suscripción Premium.",
+    "step2Title": "Desbloquea temas",
+    "step2Body": "Compra hermosos temas para la aplicación con Bendiciones y personaliza tu experiencia. Los miembros Premium desbloquean todos los temas.",
+    "step3Title": "Hazte Premium",
+    "step3Body": "Premium desbloquea entradas ilimitadas en el diario, todas las traducciones, búsquedas guardadas, un multiplicador de Bendiciones y más.",
+    "step4Title": "Compras únicas",
+    "step4Body": "Algunas funciones están disponibles como desbloqueos permanentes de un solo pago — sin suscripción.",
+    "cta": "Explorar la Tienda",
+    "reopenHint": "Toca ? en cualquier momento para ver esta guía de nuevo."
   }
 }

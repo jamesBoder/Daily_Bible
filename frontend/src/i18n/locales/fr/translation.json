@@ -24,7 +24,13 @@
     "more": "Plus",
     "mainNavigation": "Navigation principale",
     "moreMenu": "Plus d'options",
-    "signin": "Se connecter"
+    "signin": "Se connecter",
+    "community": "Communauté"
+  },
+  "header": {
+    "changeLanguage": "Changer de langue",
+    "switchToDark": "Passer en mode sombre",
+    "switchToLight": "Passer en mode clair"
   },
   "manna": {
     "archive": "Archives",
@@ -128,7 +134,13 @@
     "unlockCta": "Débloquez avec un abonnement Words of Praise",
     "unlockScripture": "Débloquer le texte complet",
     "yesterdaySection": "Le mot d'hier",
-    "yesterdaysWord": "Le mot d'hier"
+    "yesterdaysWord": "Le mot d'hier",
+    "feature6Guesses": "6 essais par énigme",
+    "featureArchive": "Archives des énigmes passées",
+    "featureBlessings": "Gagnez des Bénédictions chaque jour",
+    "featureHints": "Indices (15 Bénédictions chacun)",
+    "featureScripture": "Indice complet des Écritures",
+    "featureStats": "Statistiques et historique"
   },
   "journal": {
     "title": "Mon Journal",
@@ -162,6 +174,12 @@
     "shareTitle": "Entrée du Journal",
     "copied": "Copié dans le presse-papiers",
     "copyFailed": "Impossible de copier dans le presse-papiers",
+    "share": "Partager",
+    "word": "mot",
+    "words": "mots",
+    "minRead": "min de lecture",
+    "confirmDeleteBtn": "Appuyez pour confirmer la suppression",
+    "confirmDeleteAriaLabel": "Appuyez à nouveau pour supprimer définitivement cette entrée",
     "tutorial": {
       "step1Title": "Écrivez des réflexions quotidiennes",
       "step1Body": "Appuyez sur «Nouvelle Entrée» pour commencer à écrire. Chaque entrée peut inclure une réflexion, une prière ou ce qui est sur votre cœur.",
@@ -195,7 +213,9 @@
     "sessionOnly": "Session uniquement — ne change pas vos paramètres",
     "premiumTranslation": "Disponible avec un abonnement Words of Praise",
     "translationUnavailable": "Traduction non disponible",
-    "premiumTranslationHint": "Les traductions verrouillées sont disponibles avec Words of Praise Premium"
+    "premiumTranslationHint": "Les traductions verrouillées sont disponibles avec Words of Praise Premium",
+    "copyVerse": "Copier le verset",
+    "shareOn": "Partager sur"
   },
   "auth": {
     "browsingAsGuest": "Navigation en tant qu'Invité",
@@ -249,7 +269,8 @@
       "usernameRequired": "Le nom d'utilisateur est obligatoire",
       "usernameTooShort": "Le nom d'utilisateur doit contenir au moins 3 caractères",
       "passwordRequired": "Le mot de passe est obligatoire",
-      "passwordsMustMatch": "Les mots de passe ne correspondent pas"
+      "passwordsMustMatch": "Les mots de passe ne correspondent pas",
+      "usernameMinLength": "Le nom d'utilisateur doit contenir au moins 3 caractères"
     },
     "forgotPassword": {
       "title": "Mot de Passe Oublié",
@@ -356,10 +377,25 @@
     "removeConfirm": "Retirer ce verset des favoris ?",
     "removeFailed": "Échec de la suppression du favori",
     "clearFilter": "Effacer le filtre",
-    "noMatch": "Aucun favori ne correspond"
+    "noMatch": "Aucun favori ne correspond",
+    "tutorial": {
+      "title": "Favoris",
+      "subtitle": "Votre collection personnelle de versets bibliques enregistrés.",
+      "step1Title": "Enregistrez n'importe quel verset",
+      "step1Body": "Touchez l'icône cœur sur un verset pour l'enregistrer ici et y accéder rapidement.",
+      "step2Title": "Touchez pour développer",
+      "step2Body": "Touchez une carte de verset pour afficher les options de partage, les notes et le bouton de suppression.",
+      "step3Title": "Partagez avec les autres",
+      "step3Body": "Partagez vos versets préférés sur Twitter, WhatsApp, Facebook ou copiez-les dans le presse-papiers.",
+      "step4Title": "Filtrez et triez",
+      "step4Body": "Utilisez la barre de recherche pour filtrer par mot-clé et le menu de tri pour classer par date, livre ou traduction.",
+      "cta": "Explorer Mes Favoris",
+      "reopenHint": "Touchez ? à tout moment pour revoir ce guide."
+    }
   },
   "history": {
     "title": "Historique",
+    "clearDesc": "Cela supprimera définitivement votre historique de lecture des versets. Cette action est irréversible.",
     "empty": "Votre historique est vide.",
     "emptyDescription": "Votre historique de lecture de versets apparaîtra ici",
     "clear": "Effacer l'Historique",
@@ -418,7 +454,23 @@
     "days_to": "jours pour",
     "verses_read": "Versets Lus",
     "reflections": "Réflexions",
-    "days_active": "Jours Actifs"
+    "days_active": "Jours Actifs",
+    "cal_engaged": "Actif",
+    "cal_grace": "Grâce",
+    "confirm_email_placeholder": "Confirmez le nouvel e-mail",
+    "current_password_placeholder": "Mot de passe actuel pour confirmer",
+    "edit_error": "Échec de la mise à jour du profil",
+    "edit_profile": "Modifier le profil",
+    "email_confirm_mismatch": "Les adresses e-mail ne correspondent pas",
+    "email_placeholder": "E-mail",
+    "email_taken": "E-mail déjà utilisé",
+    "password_required_for_email": "Mot de passe requis pour changer votre adresse e-mail",
+    "pending_email_banner": "Changement d'e-mail en attente — consultez {{email}} pour le lien de confirmation. Votre e-mail actuel reste actif jusqu'à la vérification du nouveau.",
+    "pending_email_info": "Votre e-mail actuel reste actif jusqu'à ce que vous cliquiez sur le lien de confirmation envoyé à la nouvelle adresse.",
+    "streak_amazing": "🕯 Série de {{days}} jours — quel dévouement !",
+    "streak_keep_going": "🕯 Série de {{days}} jours — continuez ! Encore {{remaining}} jours avant {{name}}.",
+    "username_placeholder": "Nom d'utilisateur",
+    "username_taken": "Nom d'utilisateur déjà pris"
   },
   "settings": {
     "title": "Paramètres",
@@ -442,7 +494,10 @@
       "celebrationAnim": "Animations de célébration",
       "celebrationAnimDesc": "Afficher des effets de particules lorsque vous atteignez un jalon.",
       "soundEffects": "Effets sonores",
-      "soundEffectsDesc": "Jouer des tons doux lors de l'enregistrement d'entrées de journal ou de la continuation de votre série."
+      "soundEffectsDesc": "Jouer des tons doux lors de l'enregistrement d'entrées de journal ou de la continuation de votre série.",
+      "verseFontSize": "Taille du texte du verset",
+      "verseFontSizePreview": "Aa",
+      "volume": "Volume"
     },
     "sections": {
       "myJourney": "Mon Chemin",
@@ -470,7 +525,10 @@
       "use": "Utiliser un Jour de Grâce",
       "confirm": "Confirmer — utiliser un Jour de Grâce ?",
       "errorGeneric": "Impossible d'utiliser le Jour de Grâce.",
-      "usedSuccess": "Jour de Grâce utilisé — série protégée !"
+      "usedSuccess": "Jour de Grâce utilisé — série protégée !",
+      "availablePremium": "disponibles",
+      "banked": "en réserve — seront restaurés à mesure que vous utilisez des jours",
+      "ofN": "sur {{count}}"
     },
     "notifications": {
       "title": "Notifications",
@@ -793,7 +851,10 @@
     "comingSoon": "Bientôt disponible",
     "goHome": "Accueil",
     "somethingWentWrong": "Oups ! Quelque chose s'est mal passé",
-    "errorRefresh": "Nous sommes désolés pour la gêne occasionnée. Veuillez rafraîchir la page."
+    "errorRefresh": "Nous sommes désolés pour la gêne occasionnée. Veuillez rafraîchir la page.",
+    "dismiss": "Ignorer",
+    "load_more": "Charger plus",
+    "premium": "Premium"
   },
   "visitor": {
     "title": "Restez dans la Parole",
@@ -896,6 +957,10 @@
       "annotations": "Annotations de versets et notes personnelles",
       "saved_searches": "Recherches enregistrées et filtres de recherche",
       "future_content": "Toutes les futures fonctionnalités et contenus"
+    },
+    "checkout_overlay": {
+      "label": "Préparation du paiement",
+      "message": "Préparation de votre paiement sécurisé…"
     }
   },
   "otp": {
@@ -951,7 +1016,8 @@
       "thankyou_label": "Merci",
       "thankyou_title": "Merci !",
       "thankyou_body": "Votre soutien compte beaucoup."
-    }
+    },
+    "purchase_error": "Impossible de démarrer le paiement. Veuillez réessayer."
   },
   "avatar": {
     "ring": {
@@ -996,14 +1062,16 @@
       "placeholder": "Partagez une réflexion...",
       "post_btn": "Publier",
       "char_limit": "{{count}} caractères restants",
-      "locked": "Abonnez-vous pour partager des réflexions avec la communauté."
+      "locked": "Abonnez-vous pour partager des réflexions avec la communauté.",
+      "guidelines": "Soyez respectueux et encourageant. Un langage offensant ou inapproprié peut entraîner la suspension ou la suppression de votre compte."
     },
     "prayer": {
       "placeholder": "Soumettre une demande de prière...",
       "anonymous_label": "Publier anonymement",
       "submit_btn": "Envoyer",
       "expire_notice": "Les demandes de prière expirent après 7 jours.",
-      "open_to_all": "Les demandes de prière sont ouvertes à tous les membres."
+      "open_to_all": "Les demandes de prière sont ouvertes à tous les membres.",
+      "wall_title": "Mur de Prière"
     },
     "challenge": {
       "joined_count": "{{count}} personnes ont rejoint",
@@ -1013,7 +1081,8 @@
     "empty": {
       "board": "Aucune réflexion encore — soyez le premier à partager.",
       "prayer": "Aucune demande de prière en ce moment.",
-      "challenge": "Aucun défi actif cette semaine."
+      "challenge": "Aucun défi actif cette semaine.",
+      "shareReflection": "✍ Partagez votre réflexion"
     },
     "delete": {
       "confirm": "Supprimer ce post ?",
@@ -1022,7 +1091,10 @@
     "error": {
       "post_failed": "Impossible de publier. Veuillez réessayer.",
       "react_failed": "Impossible de sauvegarder votre réaction.",
-      "rate_limit": "Trop de publications — veuillez attendre quelques minutes."
+      "rate_limit": "Trop de publications — veuillez attendre quelques minutes.",
+      "login_required": "Veuillez vous connecter pour soumettre une demande de prière.",
+      "premium_required": "Un abonnement Premium est requis pour publier des réflexions.",
+      "profanity": "Votre publication contient un langage inapproprié. Veuillez la modifier et réessayer."
     },
     "admin": {
       "panel_title": "Admin — Nouveau post",
@@ -1043,7 +1115,32 @@
       "hours_ago": "il y a {{count}}h",
       "days_ago": "il y a {{count}}j"
     },
-    "new_posts_banner": "Nouveaux posts — appuyez pour actualiser"
+    "new_posts_banner": "Nouveaux posts — appuyez pour actualiser",
+    "challenges": {
+      "subtitle": "Défis de foi hebdomadaires de la communauté"
+    },
+    "hero": {
+      "tagline": "Marchons ensemble dans la foi"
+    },
+    "pinned_label": "Épinglé",
+    "signUpToPost": "Inscrivez-vous gratuitement pour partager votre réflexion avec la communauté.",
+    "tutorial": {
+      "title": "Communauté",
+      "subtitle": "Connectez-vous avec des croyants, partagez des réflexions et priez ensemble.",
+      "step1Title": "Tableau de la Communauté",
+      "step1Body": "Lisez et partagez des réflexions, des encouragements et des pensées avec la communauté Words of Praise.",
+      "step2Title": "Mur de Prière",
+      "step2Body": "Soumettez des demandes de prière et priez pour les autres. Un espace d'intercession et de soutien.",
+      "step3Title": "Défis",
+      "step3Body": "Participez à des défis de lecture et de dévotion. Terminez-les pour gagner des Bénédictions ✦ et grandir dans la foi.",
+      "step4Title": "Réagissez et connectez-vous",
+      "step4Body": "Touchez les boutons de réaction sur une publication pour montrer votre encouragement. Les nouvelles publications apparaissent automatiquement.",
+      "step5Title": "Règles de la Communauté",
+      "step5Body": "Gardez cet espace respectueux et encourageant. Un langage offensant, haineux ou inapproprié n'est pas toléré et peut entraîner la suspension ou la suppression définitive du compte.",
+      "cta": "Rejoindre la Communauté",
+      "reopenHint": "Touchez ? à tout moment pour revoir ce guide."
+    },
+    "walking_today_label": "personnes ont lu la Parole aujourd'hui"
   },
   "leaderboard": {
     "title": "Communauté",
@@ -1063,7 +1160,12 @@
     "share_button": "Partager ma série",
     "share_generating": "Génération…",
     "share_subtitle": "jours dans la Parole",
-    "share_locked": "Passez à Premium pour partager votre parcours de série avec d'autres."
+    "share_locked": "Passez à Premium pour partager votre parcours de série avec d'autres.",
+    "popover": {
+      "title": "Série de {{count}} jours",
+      "description": "Vous lisez chaque jour depuis {{count}} jours d'affilée. Continuez !",
+      "graceDays": "{{count}} Jour(s) de Grâce disponible(s)"
+    }
   },
   "premium": {
     "go_premium": "Passer Premium"
@@ -1071,7 +1173,8 @@
   "tutorial": {
     "howItWorks": "Comment ça fonctionne",
     "gotIt": "Compris !",
-    "newBadge": "Nouveau"
+    "newBadge": "Nouveau",
+    "next": "Suivant"
   },
   "blessings": {
     "label": "Bénédictions",
@@ -1093,7 +1196,8 @@
       "manna_streak_bonus": "Bonus de série Manna",
       "discipline_complete": "Discipline accomplie",
       "generic": "Bénédictions gagnées"
-    }
+    },
+    "creditError": "Impossible d'enregistrer l'accomplissement"
   },
   "disciplines": {
     "title": "Disciplines du Jour",
@@ -1195,7 +1299,12 @@
     "joyfulDays": "Lundi & Samedi",
     "sorrowfulDays": "Mardi & Vendredi",
     "gloriousDays": "Mercredi & Dimanche",
-    "luminousDays": "Jeudi"
+    "luminousDays": "Jeudi",
+    "comingSoonLabel": "Bientôt disponible",
+    "guidedPrayerSubtitle": "Une prière structurée pour vous rapprocher de Dieu",
+    "resumeAriaLabel": "Reprendre {{mystery}}",
+    "startNewLabel": "Ou recommencez",
+    "stepLabel": "étape {{n}}"
   },
   "annotation": {
     "panelTitle": "Vos notes sur {{reference}}",
@@ -1325,7 +1434,8 @@
       "lent": "Carême",
       "holy-week": "Semaine Sainte",
       "pentecost": "Pentecôte"
-    }
+    },
+    "browseLibrary": "Parcourir la bibliothèque"
   },
   "graceDay": {
     "errors": {
@@ -1343,5 +1453,36 @@
       "processing": "Traitement…",
       "remaining": "{{count}} restant(s)"
     }
+  },
+  "gamificationTutorial": {
+    "title": "Séries et Bénédictions",
+    "subtitle": "Restez constant, gagnez des récompenses et grandissez dans la foi chaque jour.",
+    "step1Title": "Construisez votre série",
+    "step1Body": "Lisez le verset quotidien chaque jour pour faire grandir votre série. Plus la série est longue, plus vous gagnez de Bénédictions ✦ par jour.",
+    "step2Title": "Gagnez des Bénédictions ✦",
+    "step2Body": "Les Bénédictions se gagnent en lisant chaque jour, en résolvant les énigmes de la Manne et en atteignant des étapes. Dépensez-les en indices ou en thèmes dans la Boutique.",
+    "step3Title": "Atteignez des étapes",
+    "step3Body": "Atteignez des étapes de série (7, 30, 100 jours et plus) pour débloquer des célébrations et des Bénédictions bonus.",
+    "step4Title": "Suivez votre parcours",
+    "step4Body": "Consultez l'historique de vos séries, votre plus longue série et votre solde total de Bénédictions sur votre page Profil.",
+    "cta": "Commencez à Gagner",
+    "reopenHint": "Retrouvez ceci dans Paramètres → Aide et Tutoriels à tout moment."
+  },
+  "notifications": {
+    "unsubscribed": "Vous êtes désabonné des rappels quotidiens."
+  },
+  "shopTutorial": {
+    "title": "Boutique de Récompenses",
+    "subtitle": "Dépensez des Bénédictions, débloquez des thèmes et améliorez votre expérience.",
+    "step1Title": "Votre solde de Bénédictions",
+    "step1Body": "Votre solde de Bénédictions ✦ s'affiche en haut de cette page. Tout dans la boutique s'achète avec des Bénédictions ou un abonnement Premium.",
+    "step2Title": "Débloquez des thèmes",
+    "step2Body": "Achetez de beaux thèmes avec des Bénédictions pour personnaliser votre expérience. Les membres Premium débloquent tous les thèmes.",
+    "step3Title": "Passez Premium",
+    "step3Body": "Premium débloque des entrées de journal illimitées, toutes les traductions, les recherches enregistrées, un multiplicateur de Bénédictions et plus encore.",
+    "step4Title": "Achats uniques",
+    "step4Body": "Certaines fonctionnalités sont disponibles en déblocage permanent unique — sans abonnement.",
+    "cta": "Explorer la Boutique",
+    "reopenHint": "Touchez ? à tout moment pour revoir ce guide."
   }
 }
