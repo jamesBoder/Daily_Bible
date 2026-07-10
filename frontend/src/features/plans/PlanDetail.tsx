@@ -95,6 +95,27 @@ const PlanDetail: React.FC = () => {
   }
 
   if (error || !plan) {
+    // A free user deep-linking to a premium plan gets 403 plan_premium_required —
+    // show the premium gate, not "not found".
+    const errCode = (error as { response?: { data?: { error?: string } } } | null)?.response?.data?.error;
+    if (errCode === 'plan_premium_required') {
+      return (
+        <div className="max-w-2xl mx-auto px-4 py-8 text-center">
+          <LockSimple size={32} weight="fill" className="text-amber-500 mx-auto mb-2" />
+          <p className="text-[var(--journal-text-muted)] text-sm mb-4">
+            {t('plan.premiumRequired', 'This plan requires a Words of Praise Premium membership.')}
+          </p>
+          <button
+            onClick={() => openModal()}
+            className="inline-flex items-center gap-1.5 px-5 py-3 rounded-xl font-semibold text-white text-sm active:scale-[0.98] transition-all"
+            style={{ background: 'var(--blessing-gold)' }}
+          >
+            <LockSimple size={15} weight="fill" />
+            {t('plans.premiumLabel', 'Devoted Member')}
+          </button>
+        </div>
+      );
+    }
     return (
       <div className="max-w-2xl mx-auto px-4 py-8 text-center">
         <Warning size={32} className="text-red-400 mx-auto mb-2" />

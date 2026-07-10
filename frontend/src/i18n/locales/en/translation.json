@@ -24,7 +24,13 @@
     "prayer": "Prayer",
     "more": "More",
     "mainNavigation": "Main navigation",
-    "moreMenu": "More options"
+    "moreMenu": "More options",
+    "community": "Community"
+  },
+  "header": {
+    "changeLanguage": "Change language",
+    "switchToDark": "Switch to dark mode",
+    "switchToLight": "Switch to light mode"
   },
   "manna": {
     "archive": "Archive",
@@ -128,7 +134,13 @@
     "unlockCta": "Unlock with a Words of Praise membership",
     "unlockScripture": "Unlock full text",
     "yesterdaySection": "Yesterday's word",
-    "yesterdaysWord": "Yesterday's word"
+    "yesterdaysWord": "Yesterday's word",
+    "feature6Guesses": "6 guesses per puzzle",
+    "featureArchive": "Past puzzle archive",
+    "featureBlessings": "Earn Blessings daily",
+    "featureHints": "Hints (15 Blessings each)",
+    "featureScripture": "Full scripture clue",
+    "featureStats": "Stats & solve history"
   },
   "journal": {
     "title": "My Journal",
@@ -162,6 +174,12 @@
     "shareTitle": "Journal Entry",
     "copied": "Copied to clipboard",
     "copyFailed": "Could not copy to clipboard",
+    "share": "Share",
+    "word": "word",
+    "words": "words",
+    "minRead": "min read",
+    "confirmDeleteBtn": "Tap to confirm delete",
+    "confirmDeleteAriaLabel": "Tap again to permanently delete this entry",
     "tutorial": {
       "step1Title": "Write daily reflections",
       "step1Body": "Tap \"New Entry\" to start writing. Each entry can include a reflection, prayer, or whatever is on your heart.",
@@ -195,7 +213,9 @@
     "sessionOnly": "Session only — won't change your settings",
     "premiumTranslation": "Available with a Words of Praise membership",
     "translationUnavailable": "Translation unavailable",
-    "premiumTranslationHint": "Locked translations are available with Words of Praise Premium"
+    "premiumTranslationHint": "Locked translations are available with Words of Praise Premium",
+    "copyVerse": "Copy Verse",
+    "shareOn": "Share on"
   },
   "auth": {
     "browsingAsGuest": "Browsing as Guest",
@@ -249,7 +269,8 @@
       "usernameRequired": "Username is required",
       "usernameTooShort": "Username must be at least 3 characters",
       "passwordRequired": "Password is required",
-      "passwordsMustMatch": "Passwords do not match"
+      "passwordsMustMatch": "Passwords do not match",
+      "usernameMinLength": "Username must be at least 3 characters"
     },
     "forgotPassword": {
       "title": "Forgot Password",
@@ -356,10 +377,25 @@
     "removeConfirm": "Remove this verse from favorites?",
     "removeFailed": "Failed to remove favorite",
     "clearFilter": "Clear filter",
-    "noMatch": "No favorites match"
+    "noMatch": "No favorites match",
+    "tutorial": {
+      "title": "Favorites",
+      "subtitle": "Your personal collection of saved Bible verses.",
+      "step1Title": "Save any verse",
+      "step1Body": "Tap the heart icon on any verse to save it here for quick access.",
+      "step2Title": "Tap to expand",
+      "step2Body": "Tap a verse card to reveal sharing options, notes, and the remove button.",
+      "step3Title": "Share with others",
+      "step3Body": "Share your favorite verses to Twitter, WhatsApp, Facebook, or copy to clipboard.",
+      "step4Title": "Filter & sort",
+      "step4Body": "Use the search bar to filter by keyword, and the sort menu to order by date, book, or translation.",
+      "cta": "Explore My Favorites",
+      "reopenHint": "Tap ? anytime to see this guide again."
+    }
   },
   "history": {
     "title": "History",
+    "clearDesc": "This will permanently delete your verse reading history. This action cannot be undone.",
     "empty": "Your history is empty.",
     "emptyDescription": "Your verse reading history will appear here",
     "clear": "Clear History",
@@ -418,7 +454,23 @@
     "days_to": "days to",
     "verses_read": "Verses Read",
     "reflections": "Reflections",
-    "days_active": "Days Active"
+    "days_active": "Days Active",
+    "cal_engaged": "Active",
+    "cal_grace": "Grace",
+    "confirm_email_placeholder": "Confirm new email",
+    "current_password_placeholder": "Current password to confirm",
+    "edit_error": "Failed to update profile",
+    "edit_profile": "Edit profile",
+    "email_confirm_mismatch": "Email addresses do not match",
+    "email_placeholder": "Email",
+    "email_taken": "Email already in use",
+    "password_required_for_email": "Password required to change your email address",
+    "pending_email_banner": "Email change pending — check {{email}} for a confirmation link. Your current email remains active until you verify the new one.",
+    "pending_email_info": "Your current email stays active until you click the confirmation link we send to the new address.",
+    "streak_amazing": "🕯 {{days}}-day streak — amazing dedication!",
+    "streak_keep_going": "🕯 {{days}}-day streak — keep going! {{remaining}} more days to {{name}}.",
+    "username_placeholder": "Username",
+    "username_taken": "Username already taken"
   },
   "settings": {
     "title": "Settings",
@@ -442,7 +494,10 @@
       "celebrationAnim": "Celebration Animations",
       "celebrationAnimDesc": "Show particle effects when you reach a milestone.",
       "soundEffects": "Sound Effects",
-      "soundEffectsDesc": "Play soft tones when saving journal entries or continuing your streak."
+      "soundEffectsDesc": "Play soft tones when saving journal entries or continuing your streak.",
+      "verseFontSize": "Verse Text Size",
+      "verseFontSizePreview": "Aa",
+      "volume": "Volume"
     },
     "sections": {
       "myJourney": "My Journey",
@@ -470,7 +525,10 @@
       "use": "Use a Grace Day",
       "confirm": "Confirm — use a Grace Day?",
       "errorGeneric": "Could not use Grace Day.",
-      "usedSuccess": "Grace Day used — streak protected!"
+      "usedSuccess": "Grace Day used — streak protected!",
+      "availablePremium": "available",
+      "banked": "banked — will restore as you use days",
+      "ofN": "of {{count}}"
     },
     "notifications": {
       "title": "Notifications",
@@ -793,7 +851,10 @@
     "comingSoon": "Coming soon",
     "goHome": "Go Home",
     "somethingWentWrong": "Oops! Something went wrong",
-    "errorRefresh": "We're sorry for the inconvenience. Please try refreshing the page."
+    "errorRefresh": "We're sorry for the inconvenience. Please try refreshing the page.",
+    "dismiss": "Dismiss",
+    "load_more": "Load more",
+    "premium": "Premium"
   },
   "streak": {
     "tooltip": "Day {{count}} streak",
@@ -809,7 +870,12 @@
     "share_button": "Share my streak",
     "share_generating": "Generating…",
     "share_subtitle": "days in the Word",
-    "share_locked": "Upgrade to Premium to share your streak journey with others."
+    "share_locked": "Upgrade to Premium to share your streak journey with others.",
+    "popover": {
+      "title": "{{count}}-Day Streak",
+      "description": "You've been reading daily for {{count}} days in a row. Keep it up!",
+      "graceDays": "{{count}} Grace Day(s) available"
+    }
   },
   "blessings": {
     "label": "Blessings",
@@ -831,7 +897,8 @@
       "manna_streak_bonus": "Manna streak bonus",
       "discipline_complete": "Discipline completed",
       "generic": "Blessings earned"
-    }
+    },
+    "creditError": "Could not record completion"
   },
   "disciplines": {
     "title": "Today's Disciplines",
@@ -972,6 +1039,10 @@
       "blessings_multiplier": "1.5× Blessings on every action",
       "reflection_archive": "Full reflection archive",
       "future_content": "All future features & content"
+    },
+    "checkout_overlay": {
+      "label": "Preparing checkout",
+      "message": "Preparing your secure checkout…"
     }
   },
   "otp": {
@@ -1027,7 +1098,8 @@
       "thankyou_label": "Thank you",
       "thankyou_title": "Thank You!",
       "thankyou_body": "Your support means the world."
-    }
+    },
+    "purchase_error": "Could not start checkout. Please try again."
   },
   "avatar": {
     "ring": {
@@ -1072,14 +1144,16 @@
       "placeholder": "Share a reflection...",
       "post_btn": "Post",
       "char_limit": "{{count}} characters remaining",
-      "locked": "Upgrade to Devoted Member to share reflections with the community."
+      "locked": "Upgrade to Devoted Member to share reflections with the community.",
+      "guidelines": "Be respectful and uplifting. Offensive or inappropriate language may result in account suspension or removal."
     },
     "prayer": {
       "placeholder": "Submit a prayer request...",
       "anonymous_label": "Post anonymously",
       "submit_btn": "Submit",
       "expire_notice": "Prayer requests expire after 7 days.",
-      "open_to_all": "Prayer requests are open to all members."
+      "open_to_all": "Prayer requests are open to all members.",
+      "wall_title": "Prayer Wall"
     },
     "challenge": {
       "joined_count": "{{count}} people joined",
@@ -1089,7 +1163,8 @@
     "empty": {
       "board": "No reflections yet — be the first to share.",
       "prayer": "No prayer requests right now.",
-      "challenge": "No active challenge this week."
+      "challenge": "No active challenge this week.",
+      "shareReflection": "✍ Share your reflection"
     },
     "delete": {
       "confirm": "Delete this post?",
@@ -1098,7 +1173,10 @@
     "error": {
       "post_failed": "Could not post. Please try again.",
       "react_failed": "Could not save your reaction.",
-      "rate_limit": "Too many posts — please wait a few minutes."
+      "rate_limit": "Too many posts — please wait a few minutes.",
+      "login_required": "Please log in to submit a prayer request.",
+      "premium_required": "Premium subscription required to post reflections.",
+      "profanity": "Your post contains inappropriate language. Please revise and try again."
     },
     "admin": {
       "panel_title": "Admin — New Post",
@@ -1119,7 +1197,32 @@
       "hours_ago": "{{count}}h ago",
       "days_ago": "{{count}}d ago"
     },
-    "new_posts_banner": "New posts — tap to refresh"
+    "new_posts_banner": "New posts — tap to refresh",
+    "challenges": {
+      "subtitle": "Weekly faith challenges from the community"
+    },
+    "hero": {
+      "tagline": "Walk together in faith"
+    },
+    "pinned_label": "Pinned",
+    "signUpToPost": "Sign up free to share your reflection with the community.",
+    "tutorial": {
+      "title": "Community",
+      "subtitle": "Connect with believers, share reflections, and pray together.",
+      "step1Title": "Community Board",
+      "step1Body": "Read and share reflections, encouragements, and thoughts with the Words of Praise community.",
+      "step2Title": "Prayer Wall",
+      "step2Body": "Submit prayer requests and pray for others. A space for intercession and support.",
+      "step3Title": "Challenges",
+      "step3Body": "Join reading and devotional challenges. Complete them to earn Blessings ✦ and grow in faith.",
+      "step4Title": "React & connect",
+      "step4Body": "Tap the reaction buttons on any post to show encouragement. New posts appear automatically.",
+      "step5Title": "Community Guidelines",
+      "step5Body": "Keep this space respectful and uplifting. Offensive, hateful, or inappropriate language is not tolerated and may result in account suspension or permanent removal.",
+      "cta": "Join the Community",
+      "reopenHint": "Tap ? anytime to see this guide again."
+    },
+    "walking_today_label": "people read the Word today"
   },
   "leaderboard": {
     "title": "Community",
@@ -1131,7 +1234,8 @@
   "tutorial": {
     "howItWorks": "How it works",
     "gotIt": "Got it!",
-    "newBadge": "New"
+    "newBadge": "New",
+    "next": "Next"
   },
   "graceDayTutorial": {
     "step1Title": "Your streak matters",
@@ -1212,7 +1316,12 @@
     "joyfulDays": "Monday & Saturday",
     "sorrowfulDays": "Tuesday & Friday",
     "gloriousDays": "Wednesday & Sunday",
-    "luminousDays": "Thursday"
+    "luminousDays": "Thursday",
+    "comingSoonLabel": "Coming Soon",
+    "guidedPrayerSubtitle": "Structured prayer to draw you closer to God",
+    "resumeAriaLabel": "Resume {{mystery}}",
+    "startNewLabel": "Or start fresh",
+    "stepLabel": "step {{n}}"
   },
   "annotation": {
     "panelTitle": "Your Notes on {{reference}}",
@@ -1342,6 +1451,38 @@
       "lent": "Lent",
       "holy-week": "Holy Week",
       "pentecost": "Pentecost"
-    }
+    },
+    "browseLibrary": "Browse the library"
+  },
+  "gamificationTutorial": {
+    "title": "Streaks & Blessings",
+    "subtitle": "Stay consistent, earn rewards, and grow in faith every day.",
+    "step1Title": "Build your streak",
+    "step1Body": "Read the daily verse every day to grow your streak. The longer the streak, the more Blessings ✦ you earn per day.",
+    "step2Title": "Earn Blessings ✦",
+    "step2Body": "Blessings are earned by reading daily, completing Manna puzzles, and hitting milestones. Spend them on hints or themes in the Shop.",
+    "step3Title": "Hit milestones",
+    "step3Body": "Reach streak milestones (7, 30, 100 days and beyond) to unlock celebration moments and bonus Blessings rewards.",
+    "step4Title": "Track your journey",
+    "step4Body": "View your streak history, longest streak, and total Blessings balance on your Profile page.",
+    "cta": "Start Earning",
+    "reopenHint": "Find this in Settings → Help & Tutorials anytime."
+  },
+  "notifications": {
+    "unsubscribed": "You have been unsubscribed from daily reminders."
+  },
+  "shopTutorial": {
+    "title": "Rewards Shop",
+    "subtitle": "Spend Blessings, unlock themes, and upgrade your experience.",
+    "step1Title": "Your Blessings balance",
+    "step1Body": "Your Blessings ✦ balance is shown at the top of this page. Everything in the shop is purchased with Blessings or a Premium subscription.",
+    "step2Title": "Unlock themes",
+    "step2Body": "Purchase beautiful app themes with Blessings to personalize your experience. Premium members unlock all themes.",
+    "step3Title": "Go Premium",
+    "step3Body": "Premium unlocks unlimited journal entries, all translations, saved searches, a Blessings multiplier, and more.",
+    "step4Title": "One-time purchases",
+    "step4Body": "Some features are available as permanent one-time unlocks — no subscription needed.",
+    "cta": "Explore the Shop",
+    "reopenHint": "Tap ? anytime to see this guide again."
   }
 }

@@ -30,14 +30,17 @@ const PlanSettings: React.FC = () => {
           onClick={() => navigate('/plans')}
           className="flex items-center gap-1 text-xs text-amber-600 dark:text-amber-400 hover:opacity-75 transition-opacity"
         >
-          {t('nav.plans', 'Browse Plans')}
+          {t('plans.browseLibrary', 'Browse the library')}
           <ArrowRight size={12} />
         </button>
       </div>
 
       {active.length === 0 ? (
         <p className="text-xs text-[var(--journal-text-muted)] py-1">
-          No active plans. <button onClick={() => navigate('/plans')} className="underline">Browse the library →</button>
+          {t('plan.noActivePlans', 'No active plans yet.')}{' '}
+          <button onClick={() => navigate('/plans')} className="underline">
+            {t('plans.browseLibrary', 'Browse the library')} →
+          </button>
         </p>
       ) : (
         <div className="space-y-2">
