@@ -1425,6 +1425,8 @@
     "enrollLimitReachedCount": "You can have up to {{count}} active plans. Complete or leave one to begin a new path.",
     "atCapNotice": "You have {{used}} of {{limit}} active paths. Complete or leave one to begin this path.",
     "enrollAlreadyEnrolled": "You’re already on this path.",
+    "enrollLoginRequired": "Please log in to begin this path.",
+    "signUpToBegin": "Sign up free to begin this reading path and track your progress.",
     "unenrollError": "Could not leave this plan. Please try again."
   },
   "plans": {

@@ -67,6 +67,12 @@ const PlanDetail: React.FC = () => {
         case 'plan_premium_required':
           openModal();
           break;
+        case 'Unauthorized':
+          // Session expired between page load and this tap (isAuthenticated was
+          // true at render time). True guests never see this — the CTA is
+          // replaced with a sign-up prompt before the request can fire.
+          showToast.error(t('plan.enrollLoginRequired', 'Please log in to begin this path.'));
+          break;
         default:
           showToast.error(t('plan.enrollError', 'Could not start this plan. Please try again.'));
       }
@@ -194,6 +200,24 @@ const PlanDetail: React.FC = () => {
         </div>
       )}
 
+      {/* Guests can browse and view a plan's full detail, but enrolling requires
+          an account (POST /enroll is auth-required). Replace the CTA with a
+          sign-up prompt instead of letting the tap hit the backend and 401 —
+          mirrors the logged-out composer prompt on the Community tab. */}
+      {!isAuthenticated ? (
+        <div className="flex flex-col items-center gap-3 py-5 px-4 mb-8 rounded-xl border border-amber-200/60 dark:border-amber-700/30 text-center">
+          <p className="text-sm text-[var(--journal-text-muted)]">
+            {t('plan.signUpToBegin', 'Sign up free to begin this reading path and track your progress.')}
+          </p>
+          <button
+            onClick={() => navigate('/signup')}
+            className="px-5 py-2.5 rounded-xl text-sm font-semibold text-white bg-amber-600 hover:bg-amber-700 dark:bg-amber-500 dark:hover:bg-amber-400 transition-colors"
+          >
+            {t('nav.signup', 'Sign Up Free')}
+          </button>
+        </div>
+      ) : (
+      <>
       {/* At-cap notice: tell the user before they tap, not via a failing toast.
           Premium-locked buttons stay tappable — they open the pricing modal. */}
       {!isEnrolled && atCap && (
@@ -247,6 +271,8 @@ const PlanDetail: React.FC = () => {
           </button>
         )}
       </div>
+      </>
+      )}
 
       {/* Confirm unenroll modal */}
       {confirmUnenroll && (
