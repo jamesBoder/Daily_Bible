@@ -24,7 +24,13 @@
     "more": "Plis",
     "mainNavigation": "Navigasyon prensipal",
     "moreMenu": "Plis opsyon",
-    "signin": "Konekte"
+    "signin": "Konekte",
+    "community": "Kominote"
+  },
+  "header": {
+    "changeLanguage": "Chanje lang",
+    "switchToDark": "Chanje pou mòd fonse",
+    "switchToLight": "Chanje pou mòd klè"
   },
   "manna": {
     "archive": "Achiv",
@@ -128,7 +134,13 @@
     "unlockCta": "Debloke avèk yon abònman Words of Praise",
     "unlockScripture": "Debloke tèks konplè a",
     "yesterdaySection": "Mo ayè a",
-    "yesterdaysWord": "Mo ayè a"
+    "yesterdaysWord": "Mo ayè a",
+    "feature6Guesses": "6 esè pou chak devinèt",
+    "featureArchive": "Achiv ansyen devinèt yo",
+    "featureBlessings": "Genyen Benediksyon chak jou",
+    "featureHints": "Endis (15 Benediksyon chak)",
+    "featureScripture": "Endis konplè nan Ekriti a",
+    "featureStats": "Estatistik ak istwa rezolisyon"
   },
   "journal": {
     "title": "Jounal Mwen",
@@ -162,6 +174,12 @@
     "shareTitle": "Antre Jounal",
     "copied": "Kopye nan pòch-papye",
     "copyFailed": "Pa rive kopye nan pòch-papye",
+    "share": "Pataje",
+    "word": "mo",
+    "words": "mo",
+    "minRead": "min lekti",
+    "confirmDeleteBtn": "Peze pou konfime efase a",
+    "confirmDeleteAriaLabel": "Peze ankò pou efase antre sa a pou tout tan",
     "tutorial": {
       "step1Title": "Ekri refleksyon chak jou",
       "step1Body": "Tape «Nouvo Antre» pou kòmanse ekri. Chak antre ka gen yon refleksyon, yon priyè, oswa sa ou gen nan kè ou.",
@@ -195,7 +213,9 @@
     "sessionOnly": "Sesyon sèlman — pa chanje paramèt ou yo",
     "premiumTranslation": "Disponib ak yon manm Words of Praise",
     "translationUnavailable": "Tradiksyon pa disponib",
-    "premiumTranslationHint": "Tradiksyon ki bloke yo disponib ak Words of Praise Premium"
+    "premiumTranslationHint": "Tradiksyon ki bloke yo disponib ak Words of Praise Premium",
+    "copyVerse": "Kopye vèsè a",
+    "shareOn": "Pataje sou"
   },
   "auth": {
     "browsingAsGuest": "Ap navige kòm Envite",
@@ -249,7 +269,8 @@
       "usernameRequired": "Non itilizatè obligatwa",
       "usernameTooShort": "Non itilizatè dwe gen omwen 3 karaktè",
       "passwordRequired": "Modpas obligatwa",
-      "passwordsMustMatch": "Modpas yo pa menm"
+      "passwordsMustMatch": "Modpas yo pa menm",
+      "usernameMinLength": "Non itilizatè a dwe gen omwen 3 karaktè"
     },
     "forgotPassword": {
       "title": "Bliye Modpas",
@@ -356,10 +377,25 @@
     "removeConfirm": "Retire vèsè sa nan favori?",
     "removeFailed": "Pa rive retire favori",
     "clearFilter": "Efase filtre",
-    "noMatch": "Pa gen favori ki koresponn"
+    "noMatch": "Pa gen favori ki koresponn",
+    "tutorial": {
+      "title": "Favori",
+      "subtitle": "Koleksyon pèsonèl ou de vèsè Bib ou sove yo.",
+      "step1Title": "Sove nenpòt vèsè",
+      "step1Body": "Peze ikòn kè a sou nenpòt vèsè pou sove li isit la pou jwenn li fasil.",
+      "step2Title": "Peze pou ouvri",
+      "step2Body": "Peze yon kat vèsè pou wè opsyon pataj, nòt yo, ak bouton retire a.",
+      "step3Title": "Pataje ak lòt moun",
+      "step3Body": "Pataje vèsè favori ou yo sou Twitter, WhatsApp, Facebook, oswa kopye yo.",
+      "step4Title": "Filtre ak klase",
+      "step4Body": "Sèvi ak ba rechèch la pou filtre pa mo kle, ak meni klasman an pou klase pa dat, liv, oswa tradiksyon.",
+      "cta": "Gade Favori Mwen yo",
+      "reopenHint": "Peze ? nenpòt lè pou wè gid sa a ankò."
+    }
   },
   "history": {
     "title": "Istwa",
+    "clearDesc": "Sa a pral efase istwa lekti vèsè ou yo pou tout tan. Aksyon sa a pa ka anile.",
     "empty": "Istwa ou vid.",
     "emptyDescription": "Istwa lekti vèsè ou yo ap parèt isit la",
     "clear": "Efase Istwa",
@@ -418,7 +454,23 @@
     "days_to": "jou pou",
     "verses_read": "Vèsè Li",
     "reflections": "Refleksyon",
-    "days_active": "Jou Aktif"
+    "days_active": "Jou Aktif",
+    "cal_engaged": "Aktif",
+    "cal_grace": "Gras",
+    "confirm_email_placeholder": "Konfime nouvo imèl la",
+    "current_password_placeholder": "Modpas aktyèl pou konfime",
+    "edit_error": "Nou pa t ka mete pwofil la ajou",
+    "edit_profile": "Modifye pwofil",
+    "email_confirm_mismatch": "Adrès imèl yo pa menm",
+    "email_placeholder": "Imèl",
+    "email_taken": "Imèl sa a deja itilize",
+    "password_required_for_email": "Ou bezwen modpas ou pou chanje adrès imèl ou",
+    "pending_email_banner": "Chanjman imèl an atant — tcheke {{email}} pou lyen konfimasyon an. Imèl aktyèl ou rete aktif jiskaske ou verifye nouvo a.",
+    "pending_email_info": "Imèl aktyèl ou rete aktif jiskaske ou klike sou lyen konfimasyon nou voye nan nouvo adrès la.",
+    "streak_amazing": "🕯 Seri {{days}} jou — devouman ekstraòdinè!",
+    "streak_keep_going": "🕯 Seri {{days}} jou — kontinye! {{remaining}} jou ankò pou {{name}}.",
+    "username_placeholder": "Non itilizatè",
+    "username_taken": "Non itilizatè sa a deja pran"
   },
   "settings": {
     "title": "Paramèt",
@@ -442,7 +494,10 @@
       "celebrationAnim": "Animasyon Selebrasyon",
       "celebrationAnimDesc": "Montre efè patikil lè ou rive nan yon etap.",
       "soundEffects": "Efè Sono",
-      "soundEffectsDesc": "Jwe son dous lè w sove antre jounal oswa kontinye racha ou."
+      "soundEffectsDesc": "Jwe son dous lè w sove antre jounal oswa kontinye racha ou.",
+      "verseFontSize": "Gwosè tèks vèsè a",
+      "verseFontSizePreview": "Aa",
+      "volume": "Volim"
     },
     "sections": {
       "myJourney": "Vwayaj Mwen",
@@ -470,7 +525,10 @@
       "use": "Itilize yon Jou Gras",
       "confirm": "Konfime — itilize yon Jou Gras?",
       "errorGeneric": "Pa t kapab itilize Jou Gras la.",
-      "usedSuccess": "Jou Gras itilize — seri pwoteje!"
+      "usedSuccess": "Jou Gras itilize — seri pwoteje!",
+      "availablePremium": "disponib",
+      "banked": "an rezèv — y ap retounen tank ou itilize jou yo",
+      "ofN": "nan {{count}}"
     },
     "notifications": {
       "title": "Notifikasyon",
@@ -793,7 +851,10 @@
     "comingSoon": "Byento disponib",
     "errorRefresh": "Nou regrèt enkonvenyans lan. Tanpri eseye rechaje paj la.",
     "goHome": "Ale lakay",
-    "somethingWentWrong": "Oups! Yon bagay mal pase"
+    "somethingWentWrong": "Oups! Yon bagay mal pase",
+    "dismiss": "Fèmen",
+    "load_more": "Chaje plis",
+    "premium": "Premium"
   },
   "visitor": {
     "title": "Rete nan Pawòl la",
@@ -896,6 +957,10 @@
       "annotations": "Anòtasyon vèsè ak nòt pèsonèl",
       "saved_searches": "Rechèch anrejistre ak filtre rechèch",
       "future_content": "Tout fonksyon ak kontni fiti"
+    },
+    "checkout_overlay": {
+      "label": "N ap prepare peman an",
+      "message": "N ap prepare peman sekirize ou a…"
     }
   },
   "otp": {
@@ -951,7 +1016,8 @@
       "thankyou_label": "Mèsi",
       "thankyou_title": "Mèsi!",
       "thankyou_body": "Sipò ou vle di anpil."
-    }
+    },
+    "purchase_error": "Nou pa t ka kòmanse peman an. Tanpri eseye ankò."
   },
   "avatar": {
     "ring": {
@@ -996,14 +1062,16 @@
       "placeholder": "Pataje yon refleksyon...",
       "post_btn": "Pibliye",
       "char_limit": "{{count}} karaktè rete",
-      "locked": "Vin manm pou pataje refleksyon ak kominote a."
+      "locked": "Vin manm pou pataje refleksyon ak kominote a.",
+      "guidelines": "Montre respè epi ankouraje lòt moun. Langaj ofansif oswa ki pa apwopriye ka lakòz kont ou sispann oswa retire."
     },
     "prayer": {
       "placeholder": "Voye yon demann priyè...",
       "anonymous_label": "Pibliye anonim",
       "submit_btn": "Voye",
       "expire_notice": "Demann priyè yo ekspire apre 7 jou.",
-      "open_to_all": "Demann priyè yo ouvè pou tout manm."
+      "open_to_all": "Demann priyè yo ouvè pou tout manm.",
+      "wall_title": "Mi Lapriyè"
     },
     "challenge": {
       "joined_count": "{{count}} moun rantre",
@@ -1013,7 +1081,8 @@
     "empty": {
       "board": "Pa gen refleksyon ankò — ou kapab premye pataje.",
       "prayer": "Pa gen demann priyè kounye a.",
-      "challenge": "Pa gen defi aktif semèn sa a."
+      "challenge": "Pa gen defi aktif semèn sa a.",
+      "shareReflection": "✍ Pataje refleksyon ou"
     },
     "delete": {
       "confirm": "Efase pòs sa a?",
@@ -1022,7 +1091,10 @@
     "error": {
       "post_failed": "Pa kapab pibliye. Tanpri eseye ankò.",
       "react_failed": "Pa kapab sove reyaksyon ou.",
-      "rate_limit": "Twòp pòs — tanpri tann kèk minit."
+      "rate_limit": "Twòp pòs — tanpri tann kèk minit.",
+      "login_required": "Tanpri konekte pou voye yon demann lapriyè.",
+      "premium_required": "Ou bezwen yon abònman Premium pou pibliye refleksyon.",
+      "profanity": "Piblikasyon ou an gen langaj ki pa apwopriye. Tanpri korije li epi eseye ankò."
     },
     "admin": {
       "panel_title": "Admin — Nouvo Pòs",
@@ -1043,7 +1115,32 @@
       "hours_ago": "{{count}}h de sa",
       "days_ago": "{{count}}j de sa"
     },
-    "new_posts_banner": "Nouvo pòs — touche pou aktualize"
+    "new_posts_banner": "Nouvo pòs — touche pou aktualize",
+    "challenges": {
+      "subtitle": "Defi lafwa chak semèn ki soti nan kominote a"
+    },
+    "hero": {
+      "tagline": "Ann mache ansanm nan lafwa"
+    },
+    "pinned_label": "Epengle",
+    "signUpToPost": "Enskri gratis pou pataje refleksyon ou ak kominote a.",
+    "tutorial": {
+      "title": "Kominote",
+      "subtitle": "Konekte ak kwayan, pataje refleksyon, epi priye ansanm.",
+      "step1Title": "Tablo Kominote a",
+      "step1Body": "Li epi pataje refleksyon, ankourajman ak panse ak kominote Words of Praise la.",
+      "step2Title": "Mi Lapriyè",
+      "step2Body": "Voye demann lapriyè epi priye pou lòt moun. Yon espas pou entèsesyon ak sipò.",
+      "step3Title": "Defi yo",
+      "step3Body": "Patisipe nan defi lekti ak devosyon. Fini yo pou w genyen Benediksyon ✦ epi grandi nan lafwa.",
+      "step4Title": "Reyaji epi konekte",
+      "step4Body": "Peze bouton reyaksyon yo sou nenpòt piblikasyon pou montre ankourajman. Nouvo piblikasyon parèt otomatikman.",
+      "step5Title": "Règleman Kominote a",
+      "step5Body": "Kenbe espas sa a nan respè ak ankourajman. Langaj ofansif, rayisab oswa ki pa apwopriye pa tolere e li ka lakòz kont lan sispann oswa retire nèt.",
+      "cta": "Antre nan Kominote a",
+      "reopenHint": "Peze ? nenpòt lè pou wè gid sa a ankò."
+    },
+    "walking_today_label": "moun li Pawòl la jodi a"
   },
   "leaderboard": {
     "title": "Kominote",
@@ -1063,7 +1160,12 @@
     "share_button": "Pataje seri mwen",
     "share_generating": "Ap jenere…",
     "share_subtitle": "jou nan Pawòl la",
-    "share_locked": "Pase Premium pou pataje vwayaj seri ou ak lòt moun."
+    "share_locked": "Pase Premium pou pataje vwayaj seri ou ak lòt moun.",
+    "popover": {
+      "title": "Seri {{count}} jou",
+      "description": "Ou li chak jou pandan {{count}} jou youn apre lòt. Kontinye konsa!",
+      "graceDays": "{{count}} Jou Gras disponib"
+    }
   },
   "premium": {
     "go_premium": "Vin Premium"
@@ -1071,7 +1173,8 @@
   "tutorial": {
     "howItWorks": "Kijan sa travay",
     "gotIt": "Konprann!",
-    "newBadge": "Nouvo"
+    "newBadge": "Nouvo",
+    "next": "Apre"
   },
   "blessings": {
     "label": "Benediksyon",
@@ -1093,7 +1196,8 @@
       "manna_streak_bonus": "Bonis seri Manna",
       "discipline_complete": "Disiplin akonpli",
       "generic": "Benediksyon ranmase"
-    }
+    },
+    "creditError": "Nou pa t kapab anrejistre fen an"
   },
   "disciplines": {
     "title": "Disiplin Jodi a",
@@ -1195,7 +1299,12 @@
     "joyfulDays": "Lendi ak Samdi",
     "sorrowfulDays": "Madi ak Vandredi",
     "gloriousDays": "Mèkredi ak Dimanch",
-    "luminousDays": "Jedi"
+    "luminousDays": "Jedi",
+    "comingSoonLabel": "Ap vini byento",
+    "guidedPrayerSubtitle": "Lapriyè estriktire pou rapwoche ou pi pre Bondye",
+    "resumeAriaLabel": "Kontinye {{mystery}}",
+    "startNewLabel": "Oswa kòmanse yon lòt",
+    "stepLabel": "etap {{n}}"
   },
   "annotation": {
     "panelTitle": "Nòt ou sou {{reference}}",
@@ -1325,7 +1434,8 @@
       "lent": "Karèm",
       "holy-week": "Semèn Sen",
       "pentecost": "Pentekòt"
-    }
+    },
+    "browseLibrary": "Gade bibliyotèk la"
   },
   "graceDay": {
     "errors": {
@@ -1343,5 +1453,36 @@
       "processing": "Ap trete…",
       "remaining": "{{count}} ki rete"
     }
+  },
+  "gamificationTutorial": {
+    "title": "Seri ak Benediksyon",
+    "subtitle": "Rete konsistan, genyen rekonpans, epi grandi nan lafwa chak jou.",
+    "step1Title": "Bati seri ou",
+    "step1Body": "Li vèsè chak jou a pou fè seri ou grandi. Plis seri a long, plis ou genyen Benediksyon ✦ chak jou.",
+    "step2Title": "Genyen Benediksyon ✦",
+    "step2Body": "Ou genyen Benediksyon lè ou li chak jou, lè ou rezoud devinèt Manna yo, ak lè ou rive nan etap enpòtan. Depanse yo sou endis oswa tèm nan Boutik la.",
+    "step3Title": "Rive nan etap yo",
+    "step3Body": "Rive nan etap seri (7, 30, 100 jou e plis) pou debloke moman selebrasyon ak Benediksyon anplis.",
+    "step4Title": "Swiv wout ou",
+    "step4Body": "Gade istwa seri ou, pi long seri ou, ak total Benediksyon ou sou paj Pwofil ou.",
+    "cta": "Kòmanse Genyen",
+    "reopenHint": "Jwenn sa a nan Paramèt → Èd ak Titoryèl nenpòt lè."
+  },
+  "notifications": {
+    "unsubscribed": "Ou pa abòne nan rapèl chak jou yo ankò."
+  },
+  "shopTutorial": {
+    "title": "Boutik Rekonpans",
+    "subtitle": "Depanse Benediksyon, debloke tèm, epi amelyore eksperyans ou.",
+    "step1Title": "Balans Benediksyon ou",
+    "step1Body": "Balans Benediksyon ✦ ou parèt anlè paj sa a. Tout bagay nan boutik la achte ak Benediksyon oswa yon abònman Premium.",
+    "step2Title": "Debloke tèm",
+    "step2Body": "Achte bèl tèm ak Benediksyon pou pèsonalize eksperyans ou. Manm Premium debloke tout tèm yo.",
+    "step3Title": "Vin Premium",
+    "step3Body": "Premium debloke antre jounal san limit, tout tradiksyon yo, rechèch ou sove, yon miltiplikatè Benediksyon, ak plis ankò.",
+    "step4Title": "Acha yon sèl fwa",
+    "step4Body": "Gen kèk fonksyon ki disponib kòm debloke pèmanan yon sèl fwa — san abònman.",
+    "cta": "Gade Boutik la",
+    "reopenHint": "Peze ? nenpòt lè pou wè gid sa a ankò."
   }
 }
