@@ -1408,6 +1408,8 @@
     "enrollLimitReachedCount": "Ou ka gen jiska {{count}} plan aktif. Fini oswa kite youn pou kòmanse yon nouvo chemen.",
     "atCapNotice": "Ou gen {{used}} nan {{limit}} chemen aktif. Fini oswa kite youn pou kòmanse chemen sa a.",
     "enrollAlreadyEnrolled": "Ou deja sou chemen sa a.",
+    "enrollLoginRequired": "Tanpri konekte pou kòmanse chemen sa a.",
+    "signUpToBegin": "Enskri gratis pou kòmanse chemen lekti sa a epi swiv pwogrè ou.",
     "unenrollError": "Pa ka kite plan sa a. Tanpri eseye ankò."
   },
   "plans": {

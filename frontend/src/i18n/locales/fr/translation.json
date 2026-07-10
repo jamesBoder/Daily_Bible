@@ -1408,6 +1408,8 @@
     "enrollLimitReachedCount": "Vous pouvez avoir jusqu’à {{count}} plans actifs. Terminez ou quittez-en un pour commencer un nouveau chemin.",
     "atCapNotice": "Vous avez {{used}} chemin(s) actif(s) sur {{limit}}. Terminez ou quittez-en un pour commencer ce chemin.",
     "enrollAlreadyEnrolled": "Vous êtes déjà sur ce chemin.",
+    "enrollLoginRequired": "Veuillez vous connecter pour commencer ce chemin.",
+    "signUpToBegin": "Inscrivez-vous gratuitement pour commencer ce chemin de lecture et suivre votre progression.",
     "unenrollError": "Impossible de quitter ce plan. Veuillez réessayer."
   },
   "plans": {

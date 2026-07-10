@@ -1425,6 +1425,8 @@
     "enrollLimitReachedCount": "Puedes tener hasta {{count}} planes activos. Completa o deja uno para comenzar un nuevo camino.",
     "atCapNotice": "Tienes {{used}} de {{limit}} caminos activos. Completa o deja uno para comenzar este camino.",
     "enrollAlreadyEnrolled": "Ya estás en este camino.",
+    "enrollLoginRequired": "Inicia sesión para comenzar este camino.",
+    "signUpToBegin": "Regístrate gratis para comenzar este camino de lectura y seguir tu progreso.",
     "unenrollError": "No se pudo salir de este plan. Por favor, inténtalo de nuevo."
   },
   "plans": {
