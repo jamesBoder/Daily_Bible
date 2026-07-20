@@ -87,7 +87,7 @@ export const RewardsShop: React.FC = () => {
           <BlessingsChip showZero />
         </div>
         <button
-          className="absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="tap-target-44-abs absolute top-0 right-0 w-8 h-8 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={openTutorial}
           aria-label={t('common.help', 'Help')}
           title={t('common.help', 'Help')}

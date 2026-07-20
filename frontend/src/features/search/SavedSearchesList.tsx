@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FloppyDisk, Trash, MagnifyingGlass } from '@phosphor-icons/react';
 import searchExtendedApi, { type SavedSearch } from '../../services/api/search_extended';
+import { showToast } from '../../utils/toast';
 
 interface SavedSearchesListProps {
   currentQuery: string;
@@ -29,11 +30,17 @@ const SavedSearchesList: React.FC<SavedSearchesListProps> = ({ currentQuery, onS
       setShowSaveForm(false);
       setSaveName('');
     },
+    onError: () => {
+      showToast.error(t('search.saveSearchFailed', "Couldn't save this search — please try again"));
+    },
   });
 
   const deleteMutation = useMutation({
     mutationFn: (id: number) => searchExtendedApi.deleteSavedSearch(id),
     onSuccess: () => qc.invalidateQueries({ queryKey: ['saved-searches'] }),
+    onError: () => {
+      showToast.error(t('search.deleteSearchFailed', "Couldn't delete this search — please try again"));
+    },
   });
 
   const alreadySaved = searches.some(s => s.query.toLowerCase().trim() === currentQuery.toLowerCase().trim());

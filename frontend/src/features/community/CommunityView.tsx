@@ -147,7 +147,7 @@ export const CommunityView: React.FC = () => {
           </p>
         </div>
         <button
-          className="ml-auto flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:text-primary-600 dark:hover:text-primary-400 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="tap-target-44 ml-auto flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:text-primary-600 dark:hover:text-primary-400 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={openTutorial}
           aria-label={t('common.help', 'Help')}
           title={t('common.help', 'Help')}

@@ -85,8 +85,9 @@ func SetupRoutes(
 		// Public — no auth required (user arrives from email link)
 		api.GET("/settings/unsubscribe", settingsHandler.Unsubscribe)
 
-		// Email capture — public landing page opt-in
-		api.POST("/subscribe", subscriberHandler.Subscribe)
+		// Email capture — public landing page opt-in. Rate-limited like the other
+		// email-sending endpoints above to prevent inbox bombing.
+		api.POST("/subscribe", middleware.RateLimit(5, 15*time.Minute), subscriberHandler.Subscribe)
 		api.GET("/subscribe/unsubscribe", subscriberHandler.Unsubscribe)
 
 		// translations route (Phase 4) — public with optional auth

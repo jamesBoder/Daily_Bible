@@ -88,8 +88,13 @@ func (h *AuthHandler) Register(c *gin.Context) {
 	}
 
 	if err := h.validator.Struct(req); err != nil {
+		ve, ok := err.(validator.ValidationErrors)
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed"})
+			return
+		}
 		var errs []string
-		for _, e := range err.(validator.ValidationErrors) {
+		for _, e := range ve {
 			errs = append(errs, e.Field()+" is "+e.Tag())
 		}
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": errs})
@@ -182,8 +187,13 @@ func (h *AuthHandler) Login(c *gin.Context) {
 	}
 
 	if err := h.validator.Struct(req); err != nil {
+		ve, ok := err.(validator.ValidationErrors)
+		if !ok {
+			c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed"})
+			return
+		}
 		var errs []string
-		for _, e := range err.(validator.ValidationErrors) {
+		for _, e := range ve {
 			errs = append(errs, e.Field()+" is "+e.Tag())
 		}
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Validation failed", "details": errs})

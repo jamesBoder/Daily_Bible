@@ -331,6 +331,15 @@
   animation: savedFade 2.5s ease-out forwards;
 }
 
+.journal-save-indicator.error {
+  opacity: 1;
+  color: #dc2626;
+  pointer-events: auto;
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
 /* ── Character count ────────────────────────────────────────────────────────── */
 
 .journal-char-count {

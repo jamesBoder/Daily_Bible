@@ -40,7 +40,7 @@
   border: 1.5px solid var(--candle-amber);
   background-color: var(--journal-surface);
   color: var(--foreground);
-  font-size: 0.9375rem;
+  font-size: 1rem; /* 16px — prevents iOS Safari zoom-on-focus */
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
   -webkit-appearance: none;

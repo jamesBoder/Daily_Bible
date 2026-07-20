@@ -94,7 +94,7 @@ const EmailCapture: React.FC = () => {
             aria-invalid={!!emailError}
             maxLength={320}
             disabled={isDisabled}
-            className={`w-full px-4 py-3 rounded-xl border text-sm
+            className={`w-full px-4 py-3 rounded-xl border text-base sm:text-sm
               bg-[var(--journal-surface)]
               text-[var(--foreground)]
               placeholder-[var(--journal-text-muted)]

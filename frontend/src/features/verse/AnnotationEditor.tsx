@@ -77,7 +77,7 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({ annotation, verseRe
           type="text"
           value={phrase}
           onChange={e => setPhrase(e.target.value)}
-          className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)]"
+          className="w-full px-3 py-2 text-base sm:text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)]"
           placeholder={t('annotation.phrasePlaceholder', 'Phrase from this verse…')}
         />
       </div>
@@ -89,7 +89,7 @@ const AnnotationEditor: React.FC<AnnotationEditorProps> = ({ annotation, verseRe
           value={note}
           onChange={e => setNote(e.target.value)}
           rows={3}
-          className="w-full px-3 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] resize-none focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)]"
+          className="w-full px-3 py-2 text-base sm:text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] resize-none focus:outline-none focus:ring-2 focus:ring-[var(--candle-amber)]"
           placeholder={t('annotation.notePlaceholder', 'Your reflection on this phrase…')}
         />
       </div>

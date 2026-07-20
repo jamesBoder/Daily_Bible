@@ -28,7 +28,7 @@ interface JournalPrompt {
   active_until: string;
 }
 
-type SaveState = "idle" | "saving" | "saved";
+type SaveState = "idle" | "saving" | "saved" | "error";
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
@@ -161,10 +161,13 @@ export const JournalEditor: React.FC = () => {
       // Reset to idle after the savedFade animation completes
       setTimeout(() => setSaveState("idle"), 2600);
     } catch {
-      // Save failure: revert to idle so the user can try again manually
-      setSaveState("idle");
+      // Save failure: surface it — content stays dirty (isDirty untouched) so the
+      // unsaved-changes navigation blocker still protects it, and the visible
+      // indicator lets the user retry instead of silently losing the entry.
+      setSaveState("error");
+      showToast.error(t("journal.saveFailed", "Couldn't save — tap to retry"));
     }
-  }, [entryId, refreshStreak, queryClient]);
+  }, [entryId, refreshStreak, queryClient, t]);
 
   // ── Debounced auto-save ────────────────────────────────────────────────────
 
@@ -287,7 +290,7 @@ export const JournalEditor: React.FC = () => {
       setIsDirty(false); // prevent blocker from intercepting the post-delete redirect
       navigate("/journal");
     } catch {
-      // Non-blocking — leave the user on the page with no feedback disruption
+      showToast.error(t("journal.deleteFailed", "Couldn't delete this entry — please try again"));
     }
   };
 
@@ -375,7 +378,16 @@ export const JournalEditor: React.FC = () => {
         <div
           className={`journal-save-indicator ${saveState !== "idle" ? saveState : ""}`}
           aria-live="polite"
-          aria-label={saveState === "saving" ? "Saving…" : saveState === "saved" ? "Saved" : ""}
+          aria-label={
+            saveState === "saving" ? "Saving…"
+            : saveState === "saved" ? "Saved"
+            : saveState === "error" ? "Couldn't save — tap to retry"
+            : ""
+          }
+          role={saveState === "error" ? "button" : undefined}
+          tabIndex={saveState === "error" ? 0 : undefined}
+          onClick={saveState === "error" ? () => save(contentPlain, linkedVerse, promptId) : undefined}
+          onKeyDown={saveState === "error" ? (e) => { if (e.key === "Enter" || e.key === " ") save(contentPlain, linkedVerse, promptId); } : undefined}
         >
           {saveState === "saving" && (
             <>
@@ -385,6 +397,9 @@ export const JournalEditor: React.FC = () => {
           )}
           {saveState === "saved" && (
             <span>✓ {t("journal.saved", "Saved")}</span>
+          )}
+          {saveState === "error" && (
+            <span>⚠ {t("journal.saveFailedShort", "Couldn't save — tap to retry")}</span>
           )}
         </div>
 
