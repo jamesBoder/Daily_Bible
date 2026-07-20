@@ -1,5 +1,7 @@
 import { useState, useCallback, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 import { communityApi, PostResponse } from '../services/api/community';
+import { showToast } from '../utils/toast';
 
 const PAGE_LIMIT = 20;
 
@@ -18,6 +20,7 @@ export interface UseCommunityReturn {
 }
 
 export function useCommunity(): UseCommunityReturn {
+  const { t } = useTranslation();
   const [posts, setPosts] = useState<PostResponse[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [hasMore, setHasMore] = useState(true);
@@ -68,9 +71,13 @@ export function useCommunity(): UseCommunityReturn {
   }, []);
 
   const deletePost = useCallback(async (postId: number) => {
-    await communityApi.deletePost(postId);
-    setPosts((prev) => prev.filter((p) => p.id !== postId));
-  }, []);
+    try {
+      await communityApi.deletePost(postId);
+      setPosts((prev) => prev.filter((p) => p.id !== postId));
+    } catch {
+      showToast.error(t('community.deleteFailed', "Couldn't delete this post — please try again"));
+    }
+  }, [t]);
 
   const addReaction = useCallback(async (postId: number, reactionType: string) => {
     // Optimistic update.

@@ -105,7 +105,7 @@ export const TutorialModal: React.FC<TutorialModalProps> = ({
 
         {/* Close button */}
         <button
-          className="absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:opacity-100 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
+          className="tap-target-44-abs absolute top-3 right-3 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:opacity-100 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-primary-500"
           onClick={onDismiss}
           aria-label={t('common.close', 'Close')}
         >

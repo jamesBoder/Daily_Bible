@@ -2,6 +2,7 @@ package services
 
 import (
 	"dailybible/internal/models"
+	"log"
 	"math"
 	"time"
 
@@ -54,7 +55,11 @@ func (s *BlessingsService) Credit(userID uint, baseAmount int, reason string, mu
 
 	// Write transaction log outside the balance upsert — non-critical, best-effort.
 	// A failed transaction log write does not roll back the balance credit.
-	go s.db.Create(&models.BlessingsTransaction{UserID: userID, Amount: actual, Reason: reason})
+	go func() {
+		if err := s.db.Create(&models.BlessingsTransaction{UserID: userID, Amount: actual, Reason: reason}).Error; err != nil {
+			log.Printf("BlessingsService.Credit: transaction log write failed for user %d reason %q: %v", userID, reason, err)
+		}
+	}()
 
 	return actual, nil
 }

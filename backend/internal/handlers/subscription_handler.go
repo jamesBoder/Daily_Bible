@@ -20,6 +20,19 @@ import (
 	"golang.org/x/time/rate"
 )
 
+// userLimiterEntry pairs a per-user rate.Limiter with the last time it was
+// touched, so idle entries can be pruned instead of accumulating forever.
+type userLimiterEntry struct {
+	limiter  *rate.Limiter
+	lastUsed time.Time
+}
+
+// userLimiterIdleTTL is how long a per-user limiter can sit unused before the
+// background sweep in NewSubscriptionHandler prunes it. Comfortably longer
+// than the limiter's own 5-minute window so active users are never evicted
+// mid-burst.
+const userLimiterIdleTTL = 30 * time.Minute
+
 // SubscriptionHandler handles all /api/subscription and /api/webhooks/stripe endpoints.
 type SubscriptionHandler struct {
 	subscriptionService *services.SubscriptionService
@@ -27,7 +40,7 @@ type SubscriptionHandler struct {
 	cachedChecker       *services.CachedSubscriptionChecker // nil when caching is not configured
 	userRepo            repository.UserRepository
 	// Per-user rate limiters: max 3 checkout requests per 5 minutes.
-	limiters   map[uint]*rate.Limiter
+	limiters   map[uint]*userLimiterEntry
 	limitersMu sync.Mutex
 }
 
@@ -39,13 +52,32 @@ func NewSubscriptionHandler(
 	cachedChecker *services.CachedSubscriptionChecker,
 	userRepo repository.UserRepository,
 ) *SubscriptionHandler {
-	return &SubscriptionHandler{
+	h := &SubscriptionHandler{
 		subscriptionService: subscriptionService,
 		subscriptionChecker: subscriptionChecker,
 		cachedChecker:       cachedChecker,
 		userRepo:            userRepo,
-		limiters:            make(map[uint]*rate.Limiter),
+		limiters:            make(map[uint]*userLimiterEntry),
 	}
+
+	// Without this, `limiters` grows by one entry per distinct authenticated
+	// user for the lifetime of the process — an unbounded memory leak.
+	go func() {
+		ticker := time.NewTicker(userLimiterIdleTTL)
+		defer ticker.Stop()
+		for range ticker.C {
+			cutoff := time.Now().Add(-userLimiterIdleTTL)
+			h.limitersMu.Lock()
+			for userID, entry := range h.limiters {
+				if entry.lastUsed.Before(cutoff) {
+					delete(h.limiters, userID)
+				}
+			}
+			h.limitersMu.Unlock()
+		}
+	}()
+
+	return h
 }
 
 // getUserLimiter returns (or creates) the per-user rate limiter.
@@ -53,12 +85,13 @@ func NewSubscriptionHandler(
 func (h *SubscriptionHandler) getUserLimiter(userID uint) *rate.Limiter {
 	h.limitersMu.Lock()
 	defer h.limitersMu.Unlock()
-	if l, ok := h.limiters[userID]; ok {
-		return l
+	if entry, ok := h.limiters[userID]; ok {
+		entry.lastUsed = time.Now()
+		return entry.limiter
 	}
-	l := rate.NewLimiter(rate.Every(100*time.Second), 3)
-	h.limiters[userID] = l
-	return l
+	entry := &userLimiterEntry{limiter: rate.NewLimiter(rate.Every(100*time.Second), 3), lastUsed: time.Now()}
+	h.limiters[userID] = entry
+	return entry.limiter
 }
 
 // HandleStripeWebhook handles POST /api/webhooks/stripe.

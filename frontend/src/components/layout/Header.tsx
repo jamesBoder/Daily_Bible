@@ -72,7 +72,7 @@ export const Header: React.FC = () => {
     "flex items-center gap-2 w-full px-3 py-2 text-sm text-[var(--foreground)] hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 rounded-lg transition-colors";
 
   const iconBtn =
-    "flex items-center justify-center w-8 h-8 rounded-full text-[var(--journal-text-muted)] hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 transition-colors";
+    "tap-target-44 flex items-center justify-center w-8 h-8 rounded-full text-[var(--journal-text-muted)] hover:bg-amber-50 dark:hover:bg-amber-900/20 hover:text-amber-700 dark:hover:text-amber-400 transition-colors";
 
   const userInitial = user?.username ? user.username.charAt(0).toUpperCase() : null;
 

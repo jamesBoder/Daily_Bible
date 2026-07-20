@@ -64,6 +64,12 @@
   .searchBar.expanded {
     width: 10rem;
   }
+
+  /* 16px prevents iOS Safari's zoom-on-focus (only triggers below 16px);
+     desktop keeps the compact 0.875rem since desktop browsers never zoom. */
+  .input {
+    font-size: 1rem;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

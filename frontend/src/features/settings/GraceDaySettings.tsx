@@ -54,7 +54,7 @@ export const GraceDaySettings: React.FC = () => {
           </p>
         </div>
         <button
-          className="w-7 h-7 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 flex-shrink-0"
+          className="tap-target-44 w-7 h-7 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500 flex-shrink-0"
           onClick={() => setShowTutorial(true)}
           aria-label={t('common.help', 'Help')}
           title={t('common.help', 'Help')}

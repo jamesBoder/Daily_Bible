@@ -103,6 +103,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
   });
 
   const currentMonth = months[viewIdx];
+  if (currentMonth.days.length === 0) return null;
   const firstDate = new Date(currentMonth.days[0].date + 'T00:00:00');
   const paddingCells = firstDate.getDay();
   const totalCells = paddingCells + currentMonth.days.length;
@@ -119,7 +120,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
           onClick={() => setViewIdx(i => i - 1)}
           disabled={!canGoBack}
           aria-label="Previous month"
-          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-[var(--theme-surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="tap-target-44 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-[var(--theme-surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           ‹
         </button>
@@ -130,7 +131,7 @@ const StreakCalendar: React.FC<StreakCalendarProps> = () => {
           onClick={() => setViewIdx(i => i + 1)}
           disabled={!canGoForward}
           aria-label="Next month"
-          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-[var(--theme-surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+          className="tap-target-44 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:bg-[var(--theme-surface)] disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
         >
           ›
         </button>

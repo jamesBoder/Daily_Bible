@@ -203,7 +203,9 @@ func (s *PushService) send(sub models.PushSubscription, payload []byte) (gone bo
 
 	if resp.StatusCode == http.StatusGone {
 		// Subscription expired/unregistered by the browser — hard-delete to free the slot.
-		s.db.Unscoped().Delete(&sub)
+		if err := s.db.Unscoped().Delete(&sub).Error; err != nil {
+			log.Printf("push: failed to delete expired subscription id=%d: %v", sub.ID, err)
+		}
 		return true
 	}
 	return false
