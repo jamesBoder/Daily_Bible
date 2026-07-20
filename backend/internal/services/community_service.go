@@ -474,7 +474,14 @@ func (s *CommunityService) CreateAdminPost(postType string, body string, isPinne
 }
 
 // GetWalkingToday returns the count of distinct users who recorded a daily_engagement
-// in user_activity_logs with date_local equal to today (UTC). Cached for 5 minutes.
+// in the last rolling 24 hours. Cached for 5 minutes.
+//
+// This intentionally uses a rolling window on CreatedAt rather than comparing
+// against a single calendar-date string: date_local is written in each user's
+// own IANA local timezone (see StreakService.RecordDailyEngagement), so there
+// is no single "today" string that lines up with every row. A rolling window
+// sidesteps the mismatch entirely instead of trying to reproduce per-user
+// timezone math in a single aggregate query.
 func (s *CommunityService) GetWalkingToday() (int64, error) {
 	s.walkingCache.mu.Lock()
 	defer s.walkingCache.mu.Unlock()
@@ -484,9 +491,10 @@ func (s *CommunityService) GetWalkingToday() (int64, error) {
 	}
 
 	var count int64
-	today := time.Now().UTC().Format("2006-01-02")
+	cutoff := time.Now().UTC().Add(-24 * time.Hour)
 	if err := s.db.Table("user_activity_logs").
-		Where("action_type = 'daily_engagement' AND date_local = ?", today).
+		Where("action_type = 'daily_engagement' AND created_at >= ?", cutoff).
+		Distinct("user_id").
 		Count(&count).Error; err != nil {
 		return 0, err
 	}

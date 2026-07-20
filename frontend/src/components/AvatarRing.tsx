@@ -32,12 +32,13 @@ const RING_TIERS: Record<string, { stroke: string; strokeWidth: number; filter?:
 };
 
 function getInitials(username: string): string {
-  if (!username) return '?';
-  const words = username.trim().split(/\s+/);
+  const trimmed = username?.trim();
+  if (!trimmed) return '?';
+  const words = trimmed.split(/\s+/);
   if (words.length >= 2) {
     return (words[0][0] + words[1][0]).toUpperCase();
   }
-  return username[0].toUpperCase();
+  return trimmed[0].toUpperCase();
 }
 
 const PREMIUM_RING = {

@@ -47,7 +47,7 @@ const WordStudySheet: React.FC<WordStudySheetProps> = ({ word, study, onClose })
           <div className="w-10 h-1 rounded-full bg-[var(--theme-border)]" aria-hidden="true" />
           <button
             onClick={onClose}
-            className="w-6 h-6 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-80 transition-opacity"
+            className="tap-target-44 w-6 h-6 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-80 transition-opacity"
             aria-label="Close"
           >
             <X size={14} weight="bold" />

@@ -343,7 +343,7 @@ export const FavoritesList: React.FC = () => {
               {t('favorites.title')}
             </h1>
             <button
-              className="mb-1 w-7 h-7 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
+              className="tap-target-44 mb-1 w-7 h-7 flex items-center justify-center rounded-full text-[var(--foreground)] opacity-40 hover:opacity-90 hover:bg-[var(--theme-surface)] transition-all focus:outline-none focus:ring-2 focus:ring-primary-500"
               onClick={openTutorial}
               aria-label={t('common.help', 'Help')}
               title={t('common.help', 'Help')}
@@ -418,7 +418,7 @@ export const FavoritesList: React.FC = () => {
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           placeholder={t('favorites.filterPlaceholder')}
-          className="w-full pl-9 pr-9 py-2 text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] placeholder-[var(--journal-text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow duration-200"
+          className="w-full pl-9 pr-9 py-2 text-base sm:text-sm rounded-lg border border-[var(--theme-border)] bg-[var(--journal-surface)] text-[var(--foreground)] placeholder-[var(--journal-text-muted)] focus:outline-none focus:ring-2 focus:ring-primary-500 transition-shadow duration-200"
         />
         {keyword && (
           <button

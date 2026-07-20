@@ -9,7 +9,18 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// StreakService handles streak tracking and grace day logic
+// StreakService handles streak tracking and grace day logic.
+//
+// Day boundary note: this service deliberately uses each user's own IANA
+// local timezone (via utils.TodayLocal/YesterdayLocal/DaysAgoLocal) to decide
+// what "today" means for a streak, NOT the UTC-10 boundary used by the daily
+// verse, Manna, and Disciplines. This is intentional — a streak is meant to
+// track "did you show up today" from the user's own perspective, so their
+// local midnight is the correct rollover point. Do not "fix" this into
+// UTC-10 to match the other features: doing so would retroactively shift the
+// day boundary for every existing user's accumulated streak and could break
+// or reset currently-active streaks. If this ever needs to change, treat it
+// as a deliberate migration with its own rollout plan, not a bug fix.
 type StreakService struct {
 	db                  *gorm.DB
 	subscriptionChecker SubscriptionChecker

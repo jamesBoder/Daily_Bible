@@ -3,6 +3,7 @@ package services
 import (
 	"dailybible/internal/config"
 	"dailybible/internal/models"
+	"log"
 	"time"
 
 	"gorm.io/gorm"
@@ -91,8 +92,13 @@ func (s *RewardsService) CheckMilestones(userID uint, currentStreak int) []strin
 		})
 
 		if result.RowsAffected > 0 {
-			// Only credit Blessings if this process won the insert race.
-			_, _ = s.blessingsService.Credit(userID, def.BlessingsAwarded, "milestone_"+def.Key, 1.0) // #nosec G104
+			// Only credit Blessings if this process won the insert race. The milestone
+			// row is already committed at this point (can't retry via re-insert), so a
+			// failed credit here is a permanent loss for the user — must be logged so
+			// it's at least visible/reconcilable rather than silently dropped.
+			if _, err := s.blessingsService.Credit(userID, def.BlessingsAwarded, "milestone_"+def.Key, 1.0); err != nil {
+				log.Printf("RewardsService.CheckMilestones: blessings credit failed for user %d milestone %s: %v", userID, def.Key, err)
+			}
 			granted = append(granted, def.Key)
 		}
 	}

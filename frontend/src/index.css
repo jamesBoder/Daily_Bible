@@ -20,7 +20,11 @@
 
     /* Safe area insets for devices with notches */
     padding-top: env(safe-area-inset-top);
-    /* Bottom padding handled by BottomNav on mobile — not on body */
+    /* Bottom padding handled by BottomNav/.pb-safe-nav on mobile — explicitly
+       zeroed here to override the inline critical CSS in public/index.html,
+       which sets padding-bottom: env(safe-area-inset-bottom) on body and would
+       otherwise leak through and double up with those per-component paddings. */
+    padding-bottom: 0;
     padding-left: env(safe-area-inset-left);
     padding-right: env(safe-area-inset-right);
   }
@@ -140,6 +144,29 @@
   }
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Expands the tappable area of small icon buttons (help/close/nav-arrow
+     icons under 44px) to the 44px minimum recommended touch target, WITHOUT
+     changing the button's visible size or affecting surrounding layout —
+     the invisible ::before is position:absolute (out of flow) and centered
+     over the button via inset:50% + transform, so it never pushes siblings.
+     Apply .tap-target-44 to any button whose visible box is smaller than
+     44px and that has no position of its own (adds position:relative as the
+     pseudo-element's containing block). Use .tap-target-44-abs instead on a
+     button that is already `absolute`/`fixed`/`sticky` itself — it already
+     supplies a containing block, so forcing `relative` here would conflict. */
+  .tap-target-44 {
+    position: relative;
+  }
+  .tap-target-44::before,
+  .tap-target-44-abs::before {
+    content: '';
+    position: absolute;
+    inset: 50%;
+    width: max(44px, 100%);
+    height: max(44px, 100%);
+    transform: translate(-50%, -50%);
   }
 
   /* Phase 1 Color Tokens */

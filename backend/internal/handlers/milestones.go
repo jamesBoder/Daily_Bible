@@ -3,6 +3,7 @@ package handlers
 import (
 	"dailybible/internal/config"
 	"dailybible/internal/models"
+	"log"
 	"net/http"
 	"time"
 
@@ -84,10 +85,13 @@ func (h *MilestonesHandler) DismissCelebration(c *gin.Context) {
 
 	now := time.Now()
 	// WHERE includes `AND celebration_dismissed_at IS NULL` so already-dismissed rows
-	// are not touched — purely a no-op. No error returned.
-	h.db.Model(&models.UserMilestone{}).
+	// are not touched — purely a no-op. Always responds 200 either way (non-critical),
+	// but a write failure is logged so it's not entirely invisible.
+	if err := h.db.Model(&models.UserMilestone{}).
 		Where("user_id = ? AND milestone_key = ? AND celebration_dismissed_at IS NULL", userID, key).
-		Update("celebration_dismissed_at", now)
+		Update("celebration_dismissed_at", now).Error; err != nil {
+		log.Printf("MilestonesHandler.DismissCelebration: update failed for user %v key %s: %v", userID, key, err)
+	}
 
 	c.JSON(http.StatusOK, gin.H{"ok": true})
 }

@@ -55,6 +55,27 @@ func checkRateLimit(m *sync.Map, key uint, max int, window time.Duration) bool {
 	return true
 }
 
+// pruneIdleRateBuckets periodically drops buckets that have gone idle so a
+// sync.Map keyed by user ID does not grow without bound over the life of the
+// process (mirrors the eviction pattern in middleware.RateLimit).
+func pruneIdleRateBuckets(m *sync.Map, window time.Duration) {
+	ticker := time.NewTicker(window * 2)
+	defer ticker.Stop()
+	for range ticker.C {
+		cutoff := time.Now().Add(-window)
+		m.Range(func(k, v any) bool {
+			b := v.(*rateBucket)
+			b.mu.Lock()
+			idle := len(b.times) == 0 || b.times[len(b.times)-1].Before(cutoff)
+			b.mu.Unlock()
+			if idle {
+				m.Delete(k)
+			}
+			return true
+		})
+	}
+}
+
 // ProfileHandler struct
 
 type ProfileHandler struct {
@@ -91,7 +112,7 @@ func NewProfileHandler(
 	settingsService *services.SettingsService,
 	db *gorm.DB,
 ) *ProfileHandler {
-	return &ProfileHandler{
+	h := &ProfileHandler{
 		userRepo:            userRepo,
 		favoriteRepo:        favoriteRepo,
 		historyRepo:         historyRepo,
@@ -105,6 +126,9 @@ func NewProfileHandler(
 		settingsService:     settingsService,
 		db:                  db,
 	}
+	go pruneIdleRateBuckets(&h.updateLimiter, time.Minute)
+	go pruneIdleRateBuckets(&h.availLimiter, time.Minute)
+	return h
 }
 
 // CheckAvailability checks if a username or email is already taken.
@@ -738,8 +762,8 @@ func (h *ProfileHandler) SetPassword(c *gin.Context) {
 		ChangedAt:    time.Now(),
 	}
 	if err := h.passwordHistoryRepo.Create(passwordHistory); err != nil {
-		// Log error but don't fail the request
-		// Password was successfully set, history is not critical
+		// Don't fail the request — password was successfully set, history is not critical.
+		log.Printf("ProfileHandler.SetPassword: password history write failed for user %v: %v", userID, err)
 	}
 
 	// respond with success
@@ -859,8 +883,8 @@ func (h *ProfileHandler) UpdatePassword(c *gin.Context) {
 
 	// clean up old password history entries (keep only last 5)
 	if err := h.passwordHistoryRepo.DeleteOldestForUser(userID.(uint), passwordHistoryLimit); err != nil {
-		// Log error but don't fail the request
-		// Password was successfully changed, cleanup is not critical
+		// Don't fail the request — password was successfully changed, cleanup is not critical.
+		log.Printf("ProfileHandler.UpdatePassword: password history cleanup failed for user %v: %v", userID, err)
 	}
 
 	// respond with success

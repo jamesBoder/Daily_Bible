@@ -20,7 +20,7 @@ const PlansLibrary: React.FC = () => {
   const { openModal } = usePricingModal();
   const { showTutorial, dismissTutorial, openTutorial } = useTutorial(PLANS_TUTORIAL_KEY);
 
-  const { data: plans = [], isLoading } = useQuery({
+  const { data: plans = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['plans-library'],
     queryFn: plansApi.getLibrary,
     staleTime: msUntilDailyReset(),
@@ -58,6 +58,19 @@ const PlansLibrary: React.FC = () => {
     );
   }
 
+  if (isError) {
+    return (
+      <div className="max-w-2xl mx-auto px-4 py-6 text-center">
+        <p className="text-sm text-[var(--journal-text-muted)] mb-3">
+          {t('plans.errorLoading', 'Could not load reading plans. Please try again.')}
+        </p>
+        <button className="btn btn-ghost btn-sm" onClick={() => refetch()}>
+          {t('common.retry', 'Retry')}
+        </button>
+      </div>
+    );
+  }
+
   return (
     <div className="max-w-2xl mx-auto px-4 py-6 space-y-6">
       {showTutorial && <PlansTutorial onDismiss={dismissTutorial} />}
@@ -89,7 +102,7 @@ const PlansLibrary: React.FC = () => {
           </span>
         )}
         <button
-          className="w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:text-amber-600 dark:hover:text-amber-400 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
+          className="tap-target-44 w-8 h-8 flex items-center justify-center rounded-full text-[var(--journal-text-muted)] hover:text-amber-600 dark:hover:text-amber-400 hover:bg-[var(--theme-surface)] transition-colors focus:outline-none focus:ring-2 focus:ring-amber-400"
           onClick={openTutorial}
           aria-label={t('common.help', 'Help')}
           title={t('common.help', 'Help')}
@@ -100,6 +113,12 @@ const PlansLibrary: React.FC = () => {
         </button>
       </div>
 
+      {plans.length === 0 ? (
+        <p className="text-sm text-center text-[var(--journal-text-muted)] py-6">
+          {t('plans.noPlansAvailable', 'No reading plans are available right now.')}
+        </p>
+      ) : (
+        <>
       {/* Seasonal plans */}
       {seasonalPlans.length > 0 && (
         <section>
@@ -127,6 +146,8 @@ const PlansLibrary: React.FC = () => {
           ))}
         </div>
       </section>
+        </>
+      )}
 
     </div>
   );
