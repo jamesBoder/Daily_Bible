@@ -3,6 +3,7 @@ package handlers
 import (
 	"dailybible/internal/models"
 	"dailybible/internal/services"
+	"log"
 	"net/http"
 	"time"
 
@@ -17,6 +18,7 @@ type PrayerHandler struct {
 	db                  *gorm.DB
 	blessingsService    *services.BlessingsService
 	subscriptionChecker services.SubscriptionChecker
+	disciplineService   *services.DisciplineService
 }
 
 // NewPrayerHandler creates a new PrayerHandler.
@@ -26,6 +28,11 @@ func NewPrayerHandler(db *gorm.DB, blessingsService *services.BlessingsService, 
 		blessingsService:    blessingsService,
 		subscriptionChecker: subscriptionChecker,
 	}
+}
+
+// SetDisciplineService wires the discipline service for the complete_rosary hook.
+func (h *PrayerHandler) SetDisciplineService(s *services.DisciplineService) {
+	h.disciplineService = s
 }
 
 // CompleteRosary handles POST /api/prayer/rosary/complete
@@ -89,8 +96,18 @@ func (h *PrayerHandler) CompleteRosary(c *gin.Context) {
 	}
 
 	balance, _ := h.blessingsService.GetBalance(userID)
-	c.JSON(http.StatusOK, gin.H{
+	resp := gin.H{
 		"blessings_earned": credited,
 		"total_blessings":  balance,
-	})
+	}
+	// Separate from the direct Credit() above — this is the complete_rosary
+	// discipline layer, same double-credit pattern used by advance_plan_day etc.
+	if h.disciplineService != nil {
+		if dcCredits, dcErr := h.disciplineService.TryComplete(userID, "complete_rosary", isPremium); dcErr != nil {
+			log.Printf("discipline TryComplete complete_rosary failed user %d: %v", userID, dcErr)
+		} else if dcCredits > 0 {
+			resp["discipline_completed"] = gin.H{"key": "complete_rosary", "blessings_credited": dcCredits}
+		}
+	}
+	c.JSON(http.StatusOK, resp)
 }

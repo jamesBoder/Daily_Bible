@@ -180,6 +180,19 @@ func (h *ReadingPlanHandler) Advance(c *gin.Context) {
 		} else if dcCredits > 0 {
 			resp["discipline_completed"] = gin.H{"key": "advance_plan_day", "blessings_credited": dcCredits}
 		}
+		// Separate from the per-day advance_plan_day credit above — this is the
+		// rarer "finished the whole plan" discipline, layered on top of the
+		// existing complete_reading_plan blessings bonus already credited by
+		// AdvanceDay. If both this and advance_plan_day newly-credit on the same
+		// request, this one wins the single discipline_completed response slot
+		// (same acceptable overwrite pattern already used by manna_handler.go).
+		if justCompleted {
+			if dcCredits, dcErr := h.disciplineService.TryComplete(userID, "complete_reading_plan", isPremium); dcErr != nil {
+				log.Printf("discipline TryComplete complete_reading_plan failed user %d: %v", userID, dcErr)
+			} else if dcCredits > 0 {
+				resp["discipline_completed"] = gin.H{"key": "complete_reading_plan", "blessings_credited": dcCredits}
+			}
+		}
 	}
 	c.JSON(http.StatusOK, resp)
 }

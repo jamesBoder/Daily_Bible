@@ -387,6 +387,7 @@ func main() {
 	mannaHandler.SetDisciplineService(disciplineService)
 	annotationHandler.SetDisciplineService(disciplineService)
 	readingPlanHandler.SetDisciplineService(disciplineService)
+	prayerHandler.SetDisciplineService(disciplineService)
 
 	// Email capture handler — public landing page opt-in
 	subscriberHandler := handlers.NewSubscriberHandler(db, emailService, cfg.FrontendURL)

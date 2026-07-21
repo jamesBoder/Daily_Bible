@@ -229,6 +229,25 @@ func buildCommunityRouter(t *testing.T, db *gorm.DB) (authed, noAuth *gin.Engine
 	return
 }
 
+func buildDisciplinesRouter(t *testing.T, db *gorm.DB) (authed, noAuth *gin.Engine) {
+	t.Helper()
+	gin.SetMode(gin.TestMode)
+	blessSvc := services.NewBlessingsService(db)
+	discSvc := services.NewDisciplineService(db, blessSvc)
+	h := handlers.NewDisciplineHandler(discSvc)
+
+	authed = gin.New()
+	authed.Use(injectUser(smokeUserID))
+	authed.GET("/api/disciplines/today", h.GetToday)
+	authed.GET("/api/disciplines/stats", h.GetStats)
+
+	noAuth = gin.New()
+	noAuth.Use(rejectAuth())
+	noAuth.GET("/api/disciplines/today", h.GetToday)
+	noAuth.GET("/api/disciplines/stats", h.GetStats)
+	return
+}
+
 // ── Helpers ───────────────────────────────────────────────────────────────────
 
 // smokeCheck performs a GET against the authed router and asserts the status
@@ -418,6 +437,38 @@ func TestSmoke_CommunityFeed(t *testing.T) {
 	t.Logf("✅ Community feed GET 200, posts=%d", len(posts))
 }
 
+// TestSmoke_Disciplines verifies both discipline endpoints are reachable,
+// return the expected shape, and enforce authentication.
+func TestSmoke_Disciplines(t *testing.T) {
+	db := setupTestDB(t)
+	createSmokeUser(t, db)
+	t.Cleanup(func() { cleanupSmokeUser(db) })
+
+	authed, noAuth := buildDisciplinesRouter(t, db)
+
+	todayBody := smokeCheck(t, authed, "/api/disciplines/today", http.StatusOK)
+	assertField(t, todayBody, "disciplines")
+	assertField(t, todayBody, "date")
+	assertField(t, todayBody, "enrolled_in_plan")
+	t.Logf("✅ Disciplines GET /today 200, date=%v", todayBody["date"])
+
+	statsBody := smokeCheck(t, authed, "/api/disciplines/stats", http.StatusOK)
+	assertField(t, statsBody, "stats")
+	assertField(t, statsBody, "recent")
+	assertField(t, statsBody, "upcoming")
+	assertField(t, statsBody, "current_cycle")
+	assertField(t, statsBody, "perfect_cycles")
+	stats, ok := statsBody["stats"].([]any)
+	if !ok {
+		t.Fatalf("expected 'stats' to be an array, got %T", statsBody["stats"])
+	}
+	t.Logf("✅ Disciplines GET /stats 200, discipline count=%d", len(stats))
+
+	assert401(t, noAuth, "/api/disciplines/today")
+	assert401(t, noAuth, "/api/disciplines/stats")
+	t.Log("✅ Disciplines GET 401 without auth")
+}
+
 // TestSmoke_AuthBoundaries runs a consolidated check to ensure that every
 // protected feature area rejects unauthenticated requests with 401. This is
 // the single most critical invariant — if any protected route stops requiring
@@ -439,6 +490,7 @@ func TestSmoke_AuthBoundaries(t *testing.T) {
 	_, journalNoAuth := buildJournalRouter(t, db)
 	_, favoritesNoAuth := buildFavoritesRouter(t, db)
 	_, historyNoAuth := buildHistoryRouter(t, db)
+	_, disciplinesNoAuth := buildDisciplinesRouter(t, db)
 
 	endpoints := []endpoint{
 		{"settings", settingsNoAuth, "/api/settings"},
@@ -447,6 +499,7 @@ func TestSmoke_AuthBoundaries(t *testing.T) {
 		{"journal", journalNoAuth, "/api/journal"},
 		{"favorites", favoritesNoAuth, "/api/favorites"},
 		{"history", historyNoAuth, "/api/history"},
+		{"disciplines", disciplinesNoAuth, "/api/disciplines/today"},
 	}
 
 	for _, ep := range endpoints {
