@@ -37,6 +37,20 @@ func (h *DisciplineHandler) GetToday(c *gin.Context) {
 	c.JSON(http.StatusOK, resp)
 }
 
+// GetStats handles GET /api/disciplines/stats.
+// Returns lifetime completion stats, per-discipline streaks, rolling recent
+// history, an upcoming preview, and epoch-aligned cycle progress.
+func (h *DisciplineHandler) GetStats(c *gin.Context) {
+	userID := c.MustGet("userID").(uint)
+
+	resp, err := h.service.GetStats(userID)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to fetch discipline stats"})
+		return
+	}
+	c.JSON(http.StatusOK, resp)
+}
+
 // Complete handles POST /api/disciplines/:key/complete.
 // Manual fallback endpoint — most completions fire automatically from action hooks.
 func (h *DisciplineHandler) Complete(c *gin.Context) {

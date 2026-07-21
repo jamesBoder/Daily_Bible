@@ -278,6 +278,7 @@ func SetupRoutes(
 			disciplines := protected.Group("/disciplines")
 			{
 				disciplines.GET("/today", disciplineHandler.GetToday)
+				disciplines.GET("/stats", disciplineHandler.GetStats)
 				disciplines.POST("/:key/complete", disciplineHandler.Complete)
 			}
 		}

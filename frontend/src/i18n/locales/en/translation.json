@@ -912,6 +912,7 @@
     "startPlan": "Start a reading plan →",
     "continuePlan": "Continue your plan →",
     "unlockPremium": "Unlock with Premium",
+    "viewProgress": "View progress →",
     "keys": {
       "read_verse": "Read today's verse",
       "write_journal": "Write a journal entry",
@@ -922,8 +923,32 @@
       "solve_manna_any": "Solve today's Manna",
       "solve_manna_4": "Solve Manna in 4 guesses",
       "write_reflection_50": "Write a deep reflection (50+ words)",
+      "complete_reading_plan": "Finish a reading plan",
       "react_community": "Pray for someone",
       "complete_rosary": "Complete a Rosary"
+    },
+    "stats": {
+      "title": "Discipline Progress",
+      "currentStreak": "Best streak",
+      "noStreak": "no active streak",
+      "streakUnit": "{{count}} day streak",
+      "thisCycle": "This cycle",
+      "completionRate": "{{rate}} · +{{blessings}} {{symbol}} earned",
+      "lifetimeBlessings": "Blessings earned",
+      "perfectCycles": "{{count}} Perfect Cycles",
+      "recentHistory": "Last 14 days",
+      "upcomingDay": "upcoming",
+      "fullyComplete": "fully complete",
+      "partiallyComplete": "partially complete",
+      "missed": "missed",
+      "noneOffered": "nothing offered",
+      "noHistory": "Complete your first discipline to start tracking progress.",
+      "error": "Progress temporarily unavailable.",
+      "perfectCycleCelebration": {
+        "title": "Perfect Cycle!",
+        "body": "You completed every discipline offered in a full 14-day cycle. That's cycle #{{count}}.",
+        "cta": "Keep going"
+      }
     }
   },
   "graceDay": {

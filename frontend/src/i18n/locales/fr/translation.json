@@ -1212,6 +1212,7 @@
     "startPlan": "Commencer un plan de lecture →",
     "continuePlan": "Continuer votre plan →",
     "unlockPremium": "Débloquer avec Premium",
+    "viewProgress": "Voir la progression →",
     "keys": {
       "read_verse": "Lire le verset du jour",
       "write_journal": "Écrire dans le journal",
@@ -1222,8 +1223,32 @@
       "solve_manna_any": "Résoudre le Manna du jour",
       "solve_manna_4": "Résoudre le Manna en 4 essais",
       "write_reflection_50": "Écrire une réflexion profonde (50+ mots)",
+      "complete_reading_plan": "Terminer un plan de lecture",
       "react_community": "Prier pour quelqu'un",
       "complete_rosary": "Compléter un Rosaire"
+    },
+    "stats": {
+      "title": "Progression des Disciplines",
+      "currentStreak": "Meilleure série",
+      "noStreak": "aucune série active",
+      "streakUnit": "série de {{count}} jours",
+      "thisCycle": "Ce cycle",
+      "completionRate": "{{rate}} · +{{blessings}} {{symbol}} gagnées",
+      "lifetimeBlessings": "Bénédictions gagnées",
+      "perfectCycles": "{{count}} Cycles Parfaits",
+      "recentHistory": "14 derniers jours",
+      "upcomingDay": "à venir",
+      "fullyComplete": "entièrement complété",
+      "partiallyComplete": "partiellement complété",
+      "missed": "manqué",
+      "noneOffered": "rien de proposé",
+      "noHistory": "Complétez votre première discipline pour commencer à suivre votre progression.",
+      "error": "Progression temporairement indisponible.",
+      "perfectCycleCelebration": {
+        "title": "Cycle Parfait !",
+        "body": "Vous avez complété toutes les disciplines proposées sur un cycle complet de 14 jours. C'est le cycle #{{count}}.",
+        "cta": "Continuez ainsi"
+      }
     }
   },
   "graceDayTutorial": {

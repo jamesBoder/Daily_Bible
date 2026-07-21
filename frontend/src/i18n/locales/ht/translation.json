@@ -1212,6 +1212,7 @@
     "startPlan": "Kòmanse yon plan lekti →",
     "continuePlan": "Kontinye plan ou →",
     "unlockPremium": "Debloke ak Premium",
+    "viewProgress": "Gade pwogrè →",
     "keys": {
       "read_verse": "Li vèsè jodi a",
       "write_journal": "Ekri nan jounal ou",
@@ -1222,8 +1223,32 @@
       "solve_manna_any": "Rezoud Manna jodi a",
       "solve_manna_4": "Rezoud Manna nan 4 eseye",
       "write_reflection_50": "Ekri yon reyeksyon fon (50+ mo)",
+      "complete_reading_plan": "Fini yon plan lekti",
       "react_community": "Priye pou yon moun",
       "complete_rosary": "Ranpli yon Chaplet"
+    },
+    "stats": {
+      "title": "Pwogrè Disiplin",
+      "currentStreak": "Pi bon seri",
+      "noStreak": "pa gen seri aktif",
+      "streakUnit": "seri {{count}} jou",
+      "thisCycle": "Sik sa a",
+      "completionRate": "{{rate}} · +{{blessings}} {{symbol}} genyen",
+      "lifetimeBlessings": "Benediksyon genyen",
+      "perfectCycles": "{{count}} Sik Pafè",
+      "recentHistory": "Dènye 14 jou",
+      "upcomingDay": "k ap vini",
+      "fullyComplete": "fini nèt",
+      "partiallyComplete": "fini an pati",
+      "missed": "manke",
+      "noneOffered": "pa gen anyen ofri",
+      "noHistory": "Fini premye disiplin ou pou kòmanse swiv pwogrè ou.",
+      "error": "Pwogrè pa disponib pou kounye a.",
+      "perfectCycleCelebration": {
+        "title": "Sik Pafè!",
+        "body": "Ou fini tout disiplin ki te ofri nan yon sik 14 jou konplè. Se sik #{{count}}.",
+        "cta": "Kontinye konsa"
+      }
     }
   },
   "graceDayTutorial": {
