@@ -117,6 +117,7 @@ function DisciplineRow({ statusKey, blessings, completed, requiresPremium, isPre
 
 export default function DisciplinesCard() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const { subscription } = useStreak()
   const isPremium = subscription?.is_premium ?? false
 
@@ -187,18 +188,26 @@ export default function DisciplinesCard() {
       aria-label={t('disciplines.title', "Today's Disciplines")}
     >
       {/* Header */}
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-400">
+      <div className="flex items-center justify-between mb-1 gap-2">
+        <h3 className="text-sm font-semibold text-amber-700 dark:text-amber-400 truncate">
           {t('disciplines.title', "Today's Disciplines")}
         </h3>
         {!isLoading && (
-          <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">
+          <span className="text-xs text-gray-500 dark:text-gray-400 font-medium shrink-0">
             {allDone
               ? <span className="text-amber-600 dark:text-amber-400">{t('disciplines.allDone', 'All done')} {BLESSINGS_SYMBOL}</span>
               : t('disciplines.progress', '{{done}} of {{total}} complete', { done: completedCount, total: totalCount })
             }
           </span>
         )}
+      </div>
+      <div className="flex justify-end mb-2">
+        <button
+          onClick={() => navigate('/disciplines/progress')}
+          className="tap-target-44 text-xs text-amber-600 dark:text-amber-400 hover:underline"
+        >
+          {t('disciplines.viewProgress', 'View progress →')}
+        </button>
       </div>
 
       {/* Discipline rows */}

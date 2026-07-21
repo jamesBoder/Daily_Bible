@@ -148,6 +148,10 @@ const GuidedPrayerHome = lazy(() =>
   import("./features/prayer/GuidedPrayerHome").then((m) => ({ default: m.default }))
 );
 
+const DisciplinesProgress = lazy(() =>
+  import("./features/disciplines/DisciplinesProgress").then((m) => ({ default: m.default }))
+);
+
 const router = createBrowserRouter([
   // Public-only routes — redirect authenticated users to home
   {
@@ -232,6 +236,10 @@ const router = createBrowserRouter([
       {
         path: "favorites",
         element: <AuthRequiredRoute><PageSuspense><FavoritesList /></PageSuspense></AuthRequiredRoute>,
+      },
+      {
+        path: "disciplines/progress",
+        element: <AuthRequiredRoute><PageSuspense><DisciplinesProgress /></PageSuspense></AuthRequiredRoute>,
       },
       {
         path: "profile",

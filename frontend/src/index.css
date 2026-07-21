@@ -959,6 +959,48 @@
     filter: brightness(1.05);
   }
 
+  /* ── Discipline progress badges — same visual family as milestone-badge,
+     escalating glow by streak tier instead of a single earned/locked state ── */
+
+  .discipline-badge {
+    @apply w-11 h-11 rounded-full flex items-center justify-center flex-shrink-0;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .discipline-badge--dormant {
+    background: rgba(0, 0, 0, 0.05);
+    color: var(--journal-text-muted);
+  }
+  .dark .discipline-badge--dormant {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
+  .discipline-badge--active {
+    background: radial-gradient(circle at 35% 35%, #fde68a, #f59e0b);
+    box-shadow:
+      0 2px 8px rgba(245, 158, 11, 0.35),
+      0 0 0 2px rgba(253, 230, 138, 0.5);
+    color: #7c2d12;
+  }
+
+  .discipline-badge--active-strong {
+    background: radial-gradient(circle at 35% 35%, #fde68a, #f59e0b);
+    box-shadow:
+      0 2px 10px rgba(245, 158, 11, 0.5),
+      0 0 0 3px rgba(253, 230, 138, 0.7),
+      0 0 16px 3px rgba(245, 158, 11, 0.3);
+    color: #7c2d12;
+  }
+
+  .discipline-badge--locked {
+    background: rgba(0, 0, 0, 0.07);
+    filter: grayscale(1);
+    opacity: 0.55;
+  }
+  .dark .discipline-badge--locked {
+    background: rgba(255, 255, 255, 0.06);
+  }
+
   /* ── Phase 2: Milestone wall mobile scroll ──────────────────────────── */
 
   .milestone-wall--mobile {

@@ -912,6 +912,7 @@
     "startPlan": "Comenzar un plan de lectura →",
     "continuePlan": "Continuar tu plan →",
     "unlockPremium": "Desbloquear con Premium",
+    "viewProgress": "Ver progreso →",
     "keys": {
       "read_verse": "Leer el versículo de hoy",
       "write_journal": "Escribir una entrada en el diario",
@@ -922,8 +923,32 @@
       "solve_manna_any": "Resolver el Maná de hoy",
       "solve_manna_4": "Resolver el Maná en 4 intentos",
       "write_reflection_50": "Escribir una reflexión profunda (50+ palabras)",
+      "complete_reading_plan": "Terminar un plan de lectura",
       "react_community": "Orar por alguien",
       "complete_rosary": "Completar un Rosario"
+    },
+    "stats": {
+      "title": "Progreso de Disciplinas",
+      "currentStreak": "Mejor racha",
+      "noStreak": "sin racha activa",
+      "streakUnit": "racha de {{count}} días",
+      "thisCycle": "Este ciclo",
+      "completionRate": "{{rate}} · +{{blessings}} {{symbol}} ganadas",
+      "lifetimeBlessings": "Bendiciones ganadas",
+      "perfectCycles": "{{count}} Ciclos Perfectos",
+      "recentHistory": "Últimos 14 días",
+      "upcomingDay": "próximo",
+      "fullyComplete": "completado en su totalidad",
+      "partiallyComplete": "completado parcialmente",
+      "missed": "omitido",
+      "noneOffered": "nada disponible",
+      "noHistory": "Completa tu primera disciplina para empezar a seguir tu progreso.",
+      "error": "Progreso no disponible temporalmente.",
+      "perfectCycleCelebration": {
+        "title": "¡Ciclo Perfecto!",
+        "body": "Completaste todas las disciplinas ofrecidas en un ciclo completo de 14 días. Es el ciclo #{{count}}.",
+        "cta": "Sigue así"
+      }
     }
   },
   "graceDay": {
