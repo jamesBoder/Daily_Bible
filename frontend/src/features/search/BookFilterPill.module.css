@@ -1,0 +1,24 @@
+.pill {
+  min-height: 44px;
+  padding: 0.5rem 2.25rem 0.5rem 1rem;
+  border-radius: 9999px;
+  border: 1.5px solid var(--theme-border);
+  background-color: var(--journal-surface);
+  color: var(--foreground);
+  font-size: 0.875rem;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  -webkit-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8' fill='none'><path d='M1 1l5 5 5-5' stroke='%23999' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/></svg>");
+  background-repeat: no-repeat;
+  background-position: right 0.9rem center;
+  margin-bottom: 1rem;
+  max-width: 100%;
+}
+
+.pill:focus {
+  border-color: var(--blessing-gold);
+  box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.18);
+}

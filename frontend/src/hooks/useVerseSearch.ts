@@ -31,11 +31,13 @@ interface VerseByRefResponse {
 interface UseVerseSearchReturn {
   query: string;
   setQuery: (q: string) => void;
+  book: string;
+  setBook: (book: string) => void;
   results: VerseSearchResult[];
   isLoading: boolean;
   error: string | null;
   hasSearched: boolean;
-  search: (q: string) => void;
+  search: (q: string, book?: string) => void;
   clearSearch: () => void;
 }
 
@@ -51,6 +53,7 @@ function isVerseReference(q: string): boolean {
 export function useVerseSearch(): UseVerseSearchReturn {
   const { currentLanguage } = useLanguage();
   const [query, setQuery] = useState('');
+  const [book, setBook] = useState('');
   const [results, setResults] = useState<VerseSearchResult[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -58,8 +61,9 @@ export function useVerseSearch(): UseVerseSearchReturn {
   // reqIdRef: only the latest request ID can update state — prevents stale responses
   const reqIdRef = useRef(0);
 
-  const search = useCallback(async (q: string) => {
+  const search = useCallback(async (q: string, bookOverride?: string) => {
     if (!q.trim()) return;
+    const bookFilter = bookOverride !== undefined ? bookOverride : book;
 
     const reqId = ++reqIdRef.current;
 
@@ -90,7 +94,12 @@ export function useVerseSearch(): UseVerseSearchReturn {
       } else {
         // Full-text search
         const response = await apiClient.get<SearchResponse>(API_ENDPOINTS.SEARCH_VERSES, {
-          params: { q: q.trim(), limit: 20, lang: currentLanguage },
+          params: {
+            q: q.trim(),
+            limit: 20,
+            lang: currentLanguage,
+            ...(bookFilter ? { book: bookFilter } : {}),
+          },
         });
         if (reqId !== reqIdRef.current) return;
         resolved = response.data.results ?? [];
@@ -109,7 +118,7 @@ export function useVerseSearch(): UseVerseSearchReturn {
     } finally {
       if (reqId === reqIdRef.current) setIsLoading(false);
     }
-  }, [currentLanguage]);
+  }, [currentLanguage, book]);
 
   const clearSearch = useCallback(() => {
     reqIdRef.current++;
@@ -120,5 +129,5 @@ export function useVerseSearch(): UseVerseSearchReturn {
     setIsLoading(false);
   }, []);
 
-  return { query, setQuery, results, isLoading, error, hasSearched, search, clearSearch };
+  return { query, setQuery, book, setBook, results, isLoading, error, hasSearched, search, clearSearch };
 }
