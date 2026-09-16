@@ -121,7 +121,10 @@ jobs:
         run: test -z "$(go fmt ./internal/...)"
 
       - name: Install staticcheck
-        run: go install honnef.co/go/tools/cmd/staticcheck@latest
+        # Pinned: staticcheck v0.8.0+ requires Go >= 1.26, but this workflow runs Go 1.25 with
+        # GOTOOLCHAIN=local (no auto-download), so @latest hard-fails. v0.7.0 is the newest
+        # release that still supports Go 1.25; verified clean against ./internal/... on 2026-09-16.
+        run: go install honnef.co/go/tools/cmd/staticcheck@v0.7.0
 
       - name: Run staticcheck
         working-directory: backend
