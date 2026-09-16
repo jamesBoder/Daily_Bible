@@ -264,37 +264,46 @@ func getCuratedVerses() []string {
 	return []string{
 		// Genesis
 		"Genesis 1:1", "Genesis 1:3", "Genesis 1:27", "Genesis 2:24", "Genesis 12:2-3",
-		"Genesis 28:15", "Genesis 50:20",
+		"Genesis 28:15", "Genesis 50:20", "Genesis 1:31", "Genesis 9:13",
 
 		// Exodus
-		"Exodus 14:14", "Exodus 20:3", "Exodus 33:14",
+		"Exodus 14:14", "Exodus 20:3", "Exodus 33:14", "Exodus 3:14", "Exodus 15:2",
 
 		// Leviticus
 		"Leviticus 19:18",
 
 		// Numbers
-		"Numbers 6:24-26",
+		"Numbers 6:24-26", "Numbers 23:19",
 
 		// Deuteronomy
-		"Deuteronomy 6:5", "Deuteronomy 31:6", "Deuteronomy 31:8",
+		"Deuteronomy 6:5", "Deuteronomy 31:6", "Deuteronomy 31:8", "Deuteronomy 4:29", "Deuteronomy 8:3",
 
 		// Joshua
-		"Joshua 1:8", "Joshua 1:9", "Joshua 24:15",
+		"Joshua 1:8", "Joshua 1:9", "Joshua 24:15", "Joshua 21:45",
 
 		// Ruth
 		"Ruth 1:16",
 
 		// 1 Samuel
-		"1 Samuel 16:7",
+		"1 Samuel 16:7", "1 Samuel 17:47",
+
+		// 2 Samuel
+		"2 Samuel 22:31",
+
+		// 1 Kings
+		"1 Kings 8:57", "1 Kings 19:12",
 
 		// 2 Chronicles
-		"2 Chronicles 7:14",
+		"2 Chronicles 7:14", "2 Chronicles 16:9",
 
 		// Nehemiah
-		"Nehemiah 8:10",
+		"Nehemiah 8:10", "Nehemiah 4:14",
 
 		// Job
-		"Job 19:25", "Job 23:10",
+		"Job 19:25", "Job 23:10", "Job 1:21",
+
+		// Esther
+		"Esther 4:14",
 
 		// Psalms (50+ verses)
 		"Psalm 1:1-2", "Psalm 16:11", "Psalm 18:2", "Psalm 19:1", "Psalm 19:14",
@@ -324,6 +333,9 @@ func getCuratedVerses() []string {
 		// Ecclesiastes
 		"Ecclesiastes 3:1", "Ecclesiastes 3:11", "Ecclesiastes 4:9-10", "Ecclesiastes 12:13",
 
+		// Song of Solomon
+		"Song of Solomon 8:7",
+
 		// Isaiah (20+ verses)
 		"Isaiah 9:6", "Isaiah 26:3", "Isaiah 40:8", "Isaiah 40:28-29", "Isaiah 40:31",
 		"Isaiah 41:10", "Isaiah 41:13", "Isaiah 43:2", "Isaiah 53:5", "Isaiah 54:10",
@@ -340,10 +352,19 @@ func getCuratedVerses() []string {
 		"Ezekiel 36:26",
 
 		// Daniel
-		"Daniel 2:20-21", "Daniel 12:3",
+		"Daniel 2:20-21", "Daniel 12:3", "Daniel 3:17-18",
+
+		// Hosea
+		"Hosea 6:3",
+
+		// Joel
+		"Joel 2:25",
+
+		// Amos
+		"Amos 5:24",
 
 		// Micah
-		"Micah 6:8", "Micah 7:7",
+		"Micah 6:8", "Micah 7:7", "Micah 7:8",
 
 		// Nahum
 		"Nahum 1:7",
