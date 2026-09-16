@@ -64,12 +64,17 @@ type ReadingPlanEntry struct {
 // PlanStreak counts consecutive UTC-10 days the user has read this plan.
 // LastPlanReadDate is "YYYY-MM-DD" in UTC-10 — stored as string to avoid timezone ambiguity.
 type UserPlanProgress struct {
-	ID               uint `gorm:"primaryKey;autoIncrement"`
-	UserID           uint `gorm:"index;uniqueIndex:idx_user_plan_progress"`
-	PlanID           uint `gorm:"uniqueIndex:idx_user_plan_progress"`
-	EnrolledAt       time.Time
-	LastReadDay      int `gorm:"default:0"`
-	CompletedAt      *time.Time
+	ID          uint `gorm:"primaryKey;autoIncrement"`
+	UserID      uint `gorm:"index;uniqueIndex:idx_user_plan_progress"`
+	PlanID      uint `gorm:"uniqueIndex:idx_user_plan_progress"`
+	EnrolledAt  time.Time
+	LastReadDay int `gorm:"default:0"`
+	CompletedAt *time.Time
+	// FirstCompletedAt is set once, the first time this plan is ever completed, and is
+	// never cleared by Reactivate — unlike CompletedAt, which resets on re-enrollment so
+	// the plan can be replayed. Gates the one-time completion blessings bonus so
+	// unenroll-then-re-enroll can't be used to collect it repeatedly.
+	FirstCompletedAt *time.Time
 	IsActive         bool    `gorm:"default:true"`
 	PlanStreak       int     `gorm:"default:0"`
 	LastPlanReadDate *string `gorm:"type:varchar(10)"` // "YYYY-MM-DD" in UTC-10

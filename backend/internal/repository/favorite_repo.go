@@ -8,6 +8,7 @@ import (
 // FavoriteRepository defines the interface for favorite-related database operations.
 type FavoriteRepository interface {
 	Create(favorite *models.Favorite) error
+	MarkBlessingsCredited(id uint) error
 	GetByID(id uint) (*models.Favorite, error)
 	GetByUserID(userID uint) ([]models.Favorite, error)
 	GetByUserIDPaginated(userID uint, limit int, offset int) ([]models.Favorite, int64, error)
@@ -32,6 +33,12 @@ func NewFavoriteRepository(db *gorm.DB) FavoriteRepository {
 // Create adds a new favorite record to the database.
 func (r *favoriteRepository) Create(favorite *models.Favorite) error {
 	return r.db.Create(favorite).Error
+}
+
+// MarkBlessingsCredited flags a favorite as having earned the verse_favorited credit,
+// so RemoveFavorite knows whether to refund the debit on unfavorite.
+func (r *favoriteRepository) MarkBlessingsCredited(id uint) error {
+	return r.db.Model(&models.Favorite{}).Where("id = ?", id).Update("blessings_credited", true).Error
 }
 
 // // GetByID retrieves a favorite by ID

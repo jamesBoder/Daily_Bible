@@ -315,7 +315,10 @@ func (s *ReadingPlanService) EnrollUser(userID uint, slug string, isPremium bool
 
 // AdvanceDay marks the next day as read, credits Blessings, and returns updated progress.
 // Returns the progress row, a bool indicating whether the plan just completed, and the
-// number of blessings actually credited (BlessingsPerPlanDay or BlessingsForPlanCompletion).
+// number of blessings actually credited. That amount can be 0 even on success: the
+// per-day credit (BlessingsPerPlanDay) is capped to once per plan per UTC day, and the
+// completion bonus (BlessingsForPlanCompletion) only pays out the first time this plan
+// is ever completed by this user (see FirstCompletedAt).
 func (s *ReadingPlanService) AdvanceDay(userID uint, slug string) (*models.UserPlanProgress, bool, int, error) {
 	var plan models.ReadingPlan
 	if err := s.db.Where("slug = ? AND is_active = true", slug).First(&plan).Error; err != nil {
@@ -339,9 +342,17 @@ func (s *ReadingPlanService) AdvanceDay(userID uint, slug string) (*models.UserP
 
 	prog.LastReadDay++
 	justCompleted := prog.LastReadDay >= plan.LengthDays
+	// isFirstCompletion gates the one-time completion bonus below — FirstCompletedAt
+	// survives Reactivate (unlike CompletedAt), so re-enrolling in an already-completed
+	// plan and finishing it again does not pay out the bonus a second time.
+	isFirstCompletion := false
 	if justCompleted {
 		now := time.Now().UTC()
 		prog.CompletedAt = &now
+		if prog.FirstCompletedAt == nil {
+			prog.FirstCompletedAt = &now
+			isFirstCompletion = true
+		}
 	}
 
 	// Compute per-plan streak using UTC-10 date boundary.
@@ -365,17 +376,30 @@ func (s *ReadingPlanService) AdvanceDay(userID uint, slug string) (*models.UserP
 		return nil, false, 0, err
 	}
 
-	amount := BlessingsPerPlanDay
-	reason := "read_plan_entry"
+	// The day-read credit is capped to once per plan per UTC day — without this, calling
+	// Advance repeatedly races through the whole plan, collecting BlessingsPerPlanDay on
+	// every call instead of once per real day (found 2026-09-16). The reason string is
+	// scoped per-plan (via slug) so a user with multiple active plans still earns the
+	// credit once per plan, not once globally.
+	var credited int
 	if justCompleted {
-		amount = BlessingsForPlanCompletion
-		reason = "complete_reading_plan"
-	}
-	if _, err := s.blessingsService.Credit(userID, amount, reason, 1.0); err != nil {
-		log.Printf("blessings credit failed for user %d reason %s: %v", userID, reason, err)
+		if isFirstCompletion {
+			if amt, err := s.blessingsService.Credit(userID, BlessingsForPlanCompletion, "complete_reading_plan", 1.0); err != nil {
+				log.Printf("blessings credit failed for user %d reason complete_reading_plan: %v", userID, err)
+			} else {
+				credited = amt
+			}
+		}
+	} else {
+		dayReason := "read_plan_entry:" + slug
+		if amt, err := s.blessingsService.CreditWithDailyCap(userID, BlessingsPerPlanDay, dayReason, 1.0, 1); err != nil {
+			log.Printf("blessings credit failed for user %d reason %s: %v", userID, dayReason, err)
+		} else {
+			credited = amt
+		}
 	}
 
-	return &prog, justCompleted, amount, nil
+	return &prog, justCompleted, credited, nil
 }
 
 // GetActiveEnrollments returns the user's active plan enrollments with plan metadata.

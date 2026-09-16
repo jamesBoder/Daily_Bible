@@ -107,7 +107,7 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 	}
 
 	// add favorite via service
-	err := h.favoriteService.AddFavorite(userIDStr.(uint), req.VerseID)
+	favorite, err := h.favoriteService.AddFavorite(userIDStr.(uint), req.VerseID)
 	if err != nil {
 		if strings.Contains(err.Error(), "already in favorites") {
 			c.JSON(http.StatusConflict, gin.H{"error": err.Error()})
@@ -128,6 +128,12 @@ func (h *FavoriteHandler) AddFavorite(c *gin.Context) {
 	var blessingsCredited int
 	if credited, err := h.blessingsService.CreditWithDailyCap(userIDStr.(uint), 3, "verse_favorited", blessingsMultiplier, 3); err == nil && credited > 0 {
 		blessingsCredited = credited
+		// Flag this favorite so RemoveFavorite knows to refund the debit later —
+		// without this, unfavoriting a favorite added after the daily cap was hit
+		// (credited == 0) would still charge -3, overcharging the user (found 2026-09-16).
+		if err := h.favoriteService.MarkBlessingsCredited(favorite.ID); err != nil {
+			log.Printf("Failed to flag favorite %d as blessings-credited: %v", favorite.ID, err)
+		}
 	} else if err != nil {
 		log.Printf("Failed to credit blessings for favorite: %v", err)
 	}
@@ -163,19 +169,25 @@ func (h *FavoriteHandler) RemoveFavorite(c *gin.Context) {
 	}
 
 	// remove favorite via service
-	if err := h.favoriteService.RemoveFavorite(userIDStr.(uint), uint(favoriteID)); err != nil {
+	wasCredited, err := h.favoriteService.RemoveFavorite(userIDStr.(uint), uint(favoriteID))
+	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to remove favorite"})
 		return
 	}
 
-	// Debit blessings when a favorite is removed — this prevents users from
-	// gaming the system by repeatedly adding and removing verses to earn Blessings.
+	// Debit blessings when a favorite that actually earned them is removed — this
+	// prevents users from gaming the system by repeatedly adding and removing verses
+	// to earn Blessings. Only debit if this specific favorite was credited in the
+	// first place (wasCredited) — otherwise a favorite added after the daily cap was
+	// already hit would overcharge the user on removal (found 2026-09-16).
 	// Non-blocking: if the user has insufficient balance we skip silently.
-	go func() {
-		if err := h.blessingsService.Debit(userIDStr.(uint), 3, "verse_unfavorited"); err != nil {
-			log.Printf("Could not debit blessings for unfavorite (balance may be too low): %v", err)
-		}
-	}()
+	if wasCredited {
+		go func() {
+			if err := h.blessingsService.Debit(userIDStr.(uint), 3, "verse_unfavorited"); err != nil {
+				log.Printf("Could not debit blessings for unfavorite (balance may be too low): %v", err)
+			}
+		}()
+	}
 
 	c.JSON(http.StatusOK, gin.H{"message": "Favorite removed successfully"})
 }

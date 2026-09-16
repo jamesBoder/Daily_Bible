@@ -3,6 +3,7 @@ package services
 import (
 	"errors"
 	"fmt"
+	"log"
 	"math/rand"
 	"regexp"
 	"strconv"
@@ -436,13 +437,18 @@ func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremi
 				multiplier = 1.5
 			}
 
-			go func() {
-				defer func() { recover() }()
-				s.blessingsService.Credit(userID, base, reason, multiplier) // #nosec G104
-			}()
-
-			blessings := int(float64(base) * multiplier)
-			resp.BlessingsAwarded = &blessings
+			// Synchronous and error-checked: blessings_awarded is already flipped to
+			// true above (so a retry can't double-credit), which means a failed credit
+			// here is unrecoverable — only report BlessingsAwarded if it actually
+			// landed, per Credit()'s own contract ("do not show '+5' if the credit
+			// didn't land"). Previously this ran in a fire-and-forget goroutine with
+			// the error discarded, so the client could be told it earned blessings
+			// that silently never landed (found 2026-09-16).
+			if credited, err := s.blessingsService.Credit(userID, base, reason, multiplier); err != nil {
+				log.Printf("MannaService: blessings credit failed for user %d reason %s: %v", userID, reason, err)
+			} else {
+				resp.BlessingsAwarded = &credited
+			}
 
 			// Streak bonus: only for today's solved game (not archive plays).
 			today := mannaEffectiveToday()
@@ -450,13 +456,12 @@ func (s *MannaService) submitGuessForDate(userID uint, guessWord string, isPremi
 				winStreak := s.computeMannaWinStreak(userID, date)
 				bonusBase := mannaStreakBonusBase(winStreak)
 				if bonusBase > 0 {
-					bonus := int(float64(bonusBase) * multiplier)
-					go func() {
-						defer func() { recover() }()
-						s.blessingsService.Credit(userID, bonusBase, "manna_streak_bonus", multiplier) // #nosec G104
-					}()
-					resp.StreakBonus = &bonus
-					resp.WinStreak = &winStreak
+					if bonusCredited, err := s.blessingsService.Credit(userID, bonusBase, "manna_streak_bonus", multiplier); err != nil {
+						log.Printf("MannaService: streak bonus credit failed for user %d: %v", userID, err)
+					} else {
+						resp.StreakBonus = &bonusCredited
+						resp.WinStreak = &winStreak
+					}
 				}
 			}
 		}
@@ -513,10 +518,12 @@ func (s *MannaService) forfeitGameForDate(userID uint, date time.Time, isPremium
 			if isPremium {
 				multiplier = 1.5
 			}
-			go func() {
-				defer func() { recover() }()
-				s.blessingsService.Credit(userID, 10, "manna_played", multiplier) // #nosec G104
-			}()
+			// Synchronous, same reasoning as submitGuessForDate: blessings_awarded is
+			// already flipped, so a failed credit here is unrecoverable — at minimum
+			// log it instead of silently discarding the error (found 2026-09-16).
+			if _, err := s.blessingsService.Credit(userID, 10, "manna_played", multiplier); err != nil {
+				log.Printf("MannaService: forfeit blessings credit failed for user %d: %v", userID, err)
+			}
 		}
 	}
 

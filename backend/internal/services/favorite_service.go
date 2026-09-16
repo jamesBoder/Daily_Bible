@@ -47,24 +47,26 @@ func (s *FavoriteService) GetUserFavoritesPaginated(userID uint, search string, 
 	return s.favoriteRepo.GetByUserIDPaginated(userID, pageSize, offset)
 }
 
-// AddFavorite adds a verse to user's favorites
-func (s *FavoriteService) AddFavorite(userID, verseID uint) error {
+// AddFavorite adds a verse to user's favorites. Returns the created favorite (with ID)
+// so the caller can mark it via MarkBlessingsCredited once it knows whether the
+// verse_favorited blessings credit actually landed.
+func (s *FavoriteService) AddFavorite(userID, verseID uint) (*models.Favorite, error) {
 	// Check if verse exists
 	verse, err := s.verseRepo.GetByID(verseID)
 	if err != nil {
-		return fmt.Errorf("verse not found: %w", err)
+		return nil, fmt.Errorf("verse not found: %w", err)
 	}
 	if verse == nil {
-		return errors.New("verse not found")
+		return nil, errors.New("verse not found")
 	}
 
 	// Check if already favorited
 	exists, err := s.favoriteRepo.Exists(userID, verseID)
 	if err != nil {
-		return fmt.Errorf("failed to check favorite: %w", err)
+		return nil, fmt.Errorf("failed to check favorite: %w", err)
 	}
 	if exists {
-		return errors.New("verse already in favorites")
+		return nil, errors.New("verse already in favorites")
 	}
 
 	// Create favorite
@@ -73,23 +75,37 @@ func (s *FavoriteService) AddFavorite(userID, verseID uint) error {
 		VerseID: verseID,
 	}
 
-	return s.favoriteRepo.Create(favorite)
+	if err := s.favoriteRepo.Create(favorite); err != nil {
+		return nil, err
+	}
+	return favorite, nil
 }
 
-// RemoveFavorite removes a verse from user's favorites
-func (s *FavoriteService) RemoveFavorite(userID, favoriteID uint) error {
+// MarkBlessingsCredited flags a favorite as having earned blessings, so a later
+// RemoveFavorite knows whether to refund the debit.
+func (s *FavoriteService) MarkBlessingsCredited(favoriteID uint) error {
+	return s.favoriteRepo.MarkBlessingsCredited(favoriteID)
+}
+
+// RemoveFavorite removes a verse from user's favorites. Returns whether the favorite
+// had earned the verse_favorited blessings credit (the caller should only debit it
+// back if so — see models.Favorite.BlessingsCredited).
+func (s *FavoriteService) RemoveFavorite(userID, favoriteID uint) (bool, error) {
 	// Get favorite to verify ownership
 	favorite, err := s.favoriteRepo.GetByID(favoriteID)
 	if err != nil {
-		return fmt.Errorf("favorite not found: %w", err)
+		return false, fmt.Errorf("favorite not found: %w", err)
 	}
 
 	// Verify user owns this favorite
 	if favorite.UserID != userID {
-		return errors.New("unauthorized: favorite belongs to another user")
+		return false, errors.New("unauthorized: favorite belongs to another user")
 	}
 
-	return s.favoriteRepo.Delete(favoriteID)
+	if err := s.favoriteRepo.Delete(favoriteID); err != nil {
+		return false, err
+	}
+	return favorite.BlessingsCredited, nil
 }
 
 // RemoveFavoriteByVerse removes a favorite by verse ID
