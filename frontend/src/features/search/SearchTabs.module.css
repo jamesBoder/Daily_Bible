@@ -1,0 +1,33 @@
+.tabs {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+  border-bottom: 1px solid var(--theme-border);
+}
+
+.tab {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  min-height: 44px;
+  padding: 0 0.25rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  border: none;
+  background: none;
+  cursor: pointer;
+  color: color-mix(in srgb, var(--foreground) 65%, transparent);
+  border-bottom: 2px solid transparent;
+  transition: color 0.15s ease, border-color 0.15s ease;
+  margin-bottom: -1px;
+}
+
+.tabActive {
+  color: var(--candle-amber);
+  border-bottom-color: var(--candle-amber);
+}
+
+.tabLockIcon {
+  color: var(--grace-lavender);
+  flex-shrink: 0;
+}

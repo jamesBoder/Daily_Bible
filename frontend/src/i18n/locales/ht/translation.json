@@ -819,6 +819,27 @@
     "noSavedSearches": "Pa gen rechèch sove pou kounye a.",
     "saveSearchFailed": "Nou pa t kapab sove rechèch sa a — tanpri eseye ankò",
     "deleteSearchFailed": "Nou pa t kapab efase rechèch sa a — tanpri eseye ankò",
+    "tabs": {
+      "verses": "Vèsè",
+      "reflections": "Refleksyon",
+      "journal": "Jounal"
+    },
+    "bookFilter": {
+      "label": "Filtre pa liv",
+      "allBooks": "Tout liv"
+    },
+    "reflections": {
+      "locked": "Chèche nan refleksyon pèsonèl ou sou nenpòt vèsè — yon fonksyonalite Premium.",
+      "resultFound": "refleksyon jwenn",
+      "resultsFound": "refleksyon yo jwenn",
+      "empty": "Pa gen refleksyon pou \"{{query}}\"."
+    },
+    "journal": {
+      "locked": "Chèche nan antre jounal pèsonèl ou — yon fonksyonalite Premium.",
+      "resultFound": "antre jounal jwenn",
+      "resultsFound": "antre jounal yo jwenn",
+      "empty": "Pa gen antre jounal pou \"{{query}}\"."
+    },
     "tutorial": {
       "title": "Chèche nan Ekriti Yo",
       "subtitle": "Jwenn nenpòt vèsè, mo, oswa pasaj nan Bib la imedyatman.",

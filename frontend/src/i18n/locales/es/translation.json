@@ -819,6 +819,27 @@
     "noSavedSearches": "Sin búsquedas guardadas aún.",
     "saveSearchFailed": "No se pudo guardar esta búsqueda — inténtalo de nuevo",
     "deleteSearchFailed": "No se pudo eliminar esta búsqueda — inténtalo de nuevo",
+    "tabs": {
+      "verses": "Versículos",
+      "reflections": "Reflexiones",
+      "journal": "Diario"
+    },
+    "bookFilter": {
+      "label": "Filtrar por libro",
+      "allBooks": "Todos los libros"
+    },
+    "reflections": {
+      "locked": "Busca en tus reflexiones personales sobre cualquier versículo — una función Premium.",
+      "resultFound": "reflexión encontrada",
+      "resultsFound": "reflexiones encontradas",
+      "empty": "No se encontraron reflexiones para \"{{query}}\"."
+    },
+    "journal": {
+      "locked": "Busca en tus entradas de diario personal — una función Premium.",
+      "resultFound": "entrada de diario encontrada",
+      "resultsFound": "entradas de diario encontradas",
+      "empty": "No se encontraron entradas de diario para \"{{query}}\"."
+    },
     "tutorial": {
       "title": "Buscar en las Escrituras",
       "subtitle": "Encuentra cualquier versículo, palabra o pasaje en la Biblia al instante.",

@@ -819,6 +819,27 @@
     "noSavedSearches": "Aucune recherche sauvegardée.",
     "saveSearchFailed": "Impossible d'enregistrer cette recherche — veuillez réessayer",
     "deleteSearchFailed": "Impossible de supprimer cette recherche — veuillez réessayer",
+    "tabs": {
+      "verses": "Versets",
+      "reflections": "Réflexions",
+      "journal": "Journal"
+    },
+    "bookFilter": {
+      "label": "Filtrer par livre",
+      "allBooks": "Tous les livres"
+    },
+    "reflections": {
+      "locked": "Recherchez dans vos réflexions personnelles sur n'importe quel verset — une fonctionnalité Premium.",
+      "resultFound": "réflexion trouvée",
+      "resultsFound": "réflexions trouvées",
+      "empty": "Aucune réflexion trouvée pour « {{query}} »."
+    },
+    "journal": {
+      "locked": "Recherchez dans vos entrées de journal personnel — une fonctionnalité Premium.",
+      "resultFound": "entrée de journal trouvée",
+      "resultsFound": "entrées de journal trouvées",
+      "empty": "Aucune entrée de journal trouvée pour « {{query}} »."
+    },
     "tutorial": {
       "title": "Chercher dans les Écritures",
       "subtitle": "Trouvez n'importe quel verset, mot ou passage de la Bible instantanément.",

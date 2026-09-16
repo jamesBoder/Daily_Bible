@@ -6,12 +6,19 @@ import { SearchResultCard } from './SearchResultCard';
 import { SearchEmptyState } from './SearchEmptyState';
 import { SavedSearchesTeaser } from './SavedSearchesTeaser';
 import SavedSearchesList from './SavedSearchesList';
+import { SearchTabs, type SearchTab } from './SearchTabs';
+import { BookFilterPill } from './BookFilterPill';
+import { ReflectionResultCard } from './ReflectionResultCard';
+import { JournalResultCard } from './JournalResultCard';
 import { useVerseSearch } from '../../hooks/useVerseSearch';
+import { useExtendedSearch } from '../../hooks/useExtendedSearch';
+import searchExtendedApi from '../../services/api/search_extended';
 import { useTutorial } from '../../hooks/useTutorial';
 import { SearchTutorial, SEARCH_TUTORIAL_KEY } from './SearchTutorial';
 import { useStreak } from '../../contexts/StreakContext';
 import AnnotationPanel from '../verse/AnnotationPanel';
 import { useAuth } from '../../hooks/useAuth';
+import { LockedFeatureCard } from '../../components/common/LockedFeatureCard';
 import styles from './SearchResultsPage.module.css';
 
 const SearchIcon: React.FC = () => (
@@ -40,6 +47,7 @@ export const SearchResultsPage: React.FC = () => {
   const isPremium = subscription?.is_premium ?? false;
   const { user } = useAuth();
   const [annotatingReference, setAnnotatingReference] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<SearchTab>('verses');
 
   const {
     results,
@@ -49,7 +57,25 @@ export const SearchResultsPage: React.FC = () => {
     search,
     query,
     setQuery,
+    book,
+    setBook,
   } = useVerseSearch();
+
+  const reflectionSearch = useExtendedSearch(searchExtendedApi.searchReflections);
+  const journalSearch = useExtendedSearch(searchExtendedApi.searchJournal);
+
+  const activeTabLoading =
+    activeTab === 'reflections' ? reflectionSearch.isLoading :
+    activeTab === 'journal' ? journalSearch.isLoading :
+    isLoading;
+
+  const handleTabChange = (tab: SearchTab) => {
+    setActiveTab(tab);
+    if (!isPremium || !query.trim()) return;
+    // Re-run the current query against the newly selected corpus.
+    if (tab === 'reflections') reflectionSearch.search(query);
+    if (tab === 'journal') journalSearch.search(query);
+  };
 
   // Virtualizer — uses <main> as the scroll container (overflow-y-auto on mobile,
   // overflow-visible on desktop where the window scrolls instead).
@@ -84,6 +110,16 @@ export const SearchResultsPage: React.FC = () => {
     e.preventDefault();
     if (!query.trim()) return;
     const q = query.trim();
+
+    if (activeTab === 'reflections') {
+      if (isPremium) reflectionSearch.search(q);
+      return;
+    }
+    if (activeTab === 'journal') {
+      if (isPremium) journalSearch.search(q);
+      return;
+    }
+
     // If the URL already has this query (e.g. user re-submits the same term),
     // the useEffect won't re-fire so call search directly.
     // Otherwise just navigate — the useEffect handles the search when initialQuery changes.
@@ -92,6 +128,11 @@ export const SearchResultsPage: React.FC = () => {
     } else {
       navigate(`/search?q=${encodeURIComponent(q)}`, { replace: true });
     }
+  };
+
+  const handleBookChange = (newBook: string) => {
+    setBook(newBook);
+    if (hasSearched && query.trim()) search(query, newBook);
   };
 
   return (
@@ -129,33 +170,41 @@ export const SearchResultsPage: React.FC = () => {
         <button
           type="submit"
           className={styles.searchButton}
-          disabled={!query.trim() || isLoading}
+          disabled={!query.trim() || activeTabLoading}
         >
-          {isLoading ? 'Searching…' : t('common.search', 'Search')}
+          {activeTabLoading ? 'Searching…' : t('common.search', 'Search')}
         </button>
       </form>
 
-      {/* Saved searches — shown to premium users right below the search bar for quick access */}
-      {isPremium ? (
-        <SavedSearchesList
-          currentQuery={query}
-          onSelectSearch={(q) => navigate(`/search?q=${encodeURIComponent(q)}`, { replace: true })}
-        />
-      ) : (
-        !isLoading && !hasSearched && <SavedSearchesTeaser />
+      <SearchTabs activeTab={activeTab} onChange={handleTabChange} isPremium={isPremium} />
+
+      {activeTab === 'verses' && isPremium && (
+        <BookFilterPill value={book} onChange={handleBookChange} />
       )}
 
-      {isLoading && <SearchSkeleton />}
+      {/* Saved searches — shown to premium users right below the search bar for quick access */}
+      {activeTab === 'verses' && (
+        isPremium ? (
+          <SavedSearchesList
+            currentQuery={query}
+            onSelectSearch={(q) => navigate(`/search?q=${encodeURIComponent(q)}`, { replace: true })}
+          />
+        ) : (
+          !isLoading && !hasSearched && <SavedSearchesTeaser />
+        )
+      )}
 
-      {!isLoading && error && (
+      {activeTab === 'verses' && isLoading && <SearchSkeleton />}
+
+      {activeTab === 'verses' && !isLoading && error && (
         <p className={styles.error} role="alert">{error}</p>
       )}
 
-      {!isLoading && hasSearched && results.length === 0 && !error && (
+      {activeTab === 'verses' && !isLoading && hasSearched && results.length === 0 && !error && (
         <SearchEmptyState query={query} />
       )}
 
-      {!isLoading && results.length > 0 && (
+      {activeTab === 'verses' && !isLoading && results.length > 0 && (
         <>
           <p className={styles.resultCount}>
             {results.length}{' '}
@@ -193,6 +242,68 @@ export const SearchResultsPage: React.FC = () => {
             ))}
           </ul>
         </>
+      )}
+
+      {activeTab === 'reflections' && (
+        !isPremium ? (
+          <LockedFeatureCard featureDescription={t('search.reflections.locked', 'Search your personal reflections on any verse — a Premium feature.')} />
+        ) : (
+          <>
+            {reflectionSearch.isLoading && <SearchSkeleton />}
+            {!reflectionSearch.isLoading && reflectionSearch.error && (
+              <p className={styles.error} role="alert">{reflectionSearch.error}</p>
+            )}
+            {!reflectionSearch.isLoading && reflectionSearch.hasSearched && reflectionSearch.results.length === 0 && !reflectionSearch.error && (
+              <p className={styles.resultCount}>{t('search.reflections.empty', 'No reflections found for "{{query}}".', { query })}</p>
+            )}
+            {!reflectionSearch.isLoading && reflectionSearch.results.length > 0 && (
+              <>
+                <p className={styles.resultCount}>
+                  {reflectionSearch.results.length}{' '}
+                  {reflectionSearch.results.length === 1
+                    ? t('search.reflections.resultFound', 'reflection found')
+                    : t('search.reflections.resultsFound', 'reflections found')}
+                </p>
+                <ul className={styles.results}>
+                  {reflectionSearch.results.map((result, index) => (
+                    <ReflectionResultCard key={`${result.verse_reference}-${result.created_at}`} result={result} index={index} />
+                  ))}
+                </ul>
+              </>
+            )}
+          </>
+        )
+      )}
+
+      {activeTab === 'journal' && (
+        !isPremium ? (
+          <LockedFeatureCard featureDescription={t('search.journal.locked', 'Search your personal journal entries — a Premium feature.')} />
+        ) : (
+          <>
+            {journalSearch.isLoading && <SearchSkeleton />}
+            {!journalSearch.isLoading && journalSearch.error && (
+              <p className={styles.error} role="alert">{journalSearch.error}</p>
+            )}
+            {!journalSearch.isLoading && journalSearch.hasSearched && journalSearch.results.length === 0 && !journalSearch.error && (
+              <p className={styles.resultCount}>{t('search.journal.empty', 'No journal entries found for "{{query}}".', { query })}</p>
+            )}
+            {!journalSearch.isLoading && journalSearch.results.length > 0 && (
+              <>
+                <p className={styles.resultCount}>
+                  {journalSearch.results.length}{' '}
+                  {journalSearch.results.length === 1
+                    ? t('search.journal.resultFound', 'journal entry found')
+                    : t('search.journal.resultsFound', 'journal entries found')}
+                </p>
+                <ul className={styles.results}>
+                  {journalSearch.results.map((result, index) => (
+                    <JournalResultCard key={result.id} result={result} index={index} />
+                  ))}
+                </ul>
+              </>
+            )}
+          </>
+        )
       )}
 
       {/* Annotation panel — opens when a search result's "Add a note" is tapped */}
