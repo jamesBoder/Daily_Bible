@@ -2,8 +2,22 @@
 -- appear in the scripture_text (these produce a clue with no blank to guess).
 -- Safety guard: words referenced by any past manna_games row are retained —
 -- deleting them would cause record-not-found errors when loading game history.
+-- The word list below is a historical record of which words were bad as of
+-- the original cleanup — it is NOT re-checked here, so a word is only
+-- deleted if its CURRENT row still fails the verbatim-match check. This
+-- lets a word be legitimately re-added later (new scripture_reference, word
+-- actually appears this time) without this migration deleting it again on
+-- every future startup. Found 2026-09-15 when re-adding 12 of these exact
+-- word names with verified-correct entries — they were being deleted purely
+-- by name match, with no content check, undoing the content run's work.
+-- Second guard added same day: intentional concept words (connection_note
+-- IS NOT NULL, e.g. BIBLE/DAVID/JOINS/QUEEN/WEARS) are *designed* to fail
+-- the verbatim check — without this they'd be deleted by this migration
+-- the first time they aren't protected by the game-history guard above.
 DELETE FROM manna_words
 WHERE id NOT IN (SELECT DISTINCT word_id FROM manna_games)
+AND connection_note IS NULL
+AND LOWER(scripture_text) NOT LIKE '%' || LOWER(word) || '%'
 AND word IN (
   'ABASH',
   'ABHOR',
