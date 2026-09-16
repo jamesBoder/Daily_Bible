@@ -819,6 +819,27 @@
     "noSavedSearches": "No saved searches yet.",
     "saveSearchFailed": "Couldn't save this search — please try again",
     "deleteSearchFailed": "Couldn't delete this search — please try again",
+    "tabs": {
+      "verses": "Verses",
+      "reflections": "Reflections",
+      "journal": "Journal"
+    },
+    "bookFilter": {
+      "label": "Filter by book",
+      "allBooks": "All books"
+    },
+    "reflections": {
+      "locked": "Search your personal reflections on any verse — a Premium feature.",
+      "resultFound": "reflection found",
+      "resultsFound": "reflections found",
+      "empty": "No reflections found for \"{{query}}\"."
+    },
+    "journal": {
+      "locked": "Search your personal journal entries — a Premium feature.",
+      "resultFound": "journal entry found",
+      "resultsFound": "journal entries found",
+      "empty": "No journal entries found for \"{{query}}\"."
+    },
     "tutorial": {
       "title": "Search Scripture",
       "subtitle": "Find any verse, word, or passage in the Bible instantly.",
