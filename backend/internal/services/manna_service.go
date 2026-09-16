@@ -46,6 +46,7 @@ type MannaService struct {
 	db               *gorm.DB
 	blessingsService *BlessingsService
 	wordCache        wordCache
+	guestWordCache   wordCache
 }
 
 // NewMannaService creates a MannaService.
@@ -54,6 +55,7 @@ func NewMannaService(db *gorm.DB, blessingsService *BlessingsService) *MannaServ
 		db:               db,
 		blessingsService: blessingsService,
 		wordCache:        wordCache{entries: make(map[string]*models.MannaWord)},
+		guestWordCache:   wordCache{entries: make(map[string]*models.MannaWord)},
 	}
 }
 
@@ -154,6 +156,31 @@ func (s *MannaService) GetYesterdayWord() (*models.MannaWord, error) {
 	return s.getWordForDate(mannaEffectiveNow().AddDate(0, 0, -1))
 }
 
+// loadFiveLetterWords fetches the full 5-letter word bank, shared by both the
+// signed-in and guest word selectors so they draw from the same pool.
+func (s *MannaService) loadFiveLetterWords() ([]models.MannaWord, error) {
+	var words []models.MannaWord
+	if err := s.db.Where("LENGTH(word) = 5").Order("id asc").Find(&words).Error; err != nil {
+		return nil, err
+	}
+	if len(words) == 0 {
+		return nil, errors.New("word bank is empty")
+	}
+	return words, nil
+}
+
+// evictStaleCacheEntries drops every cache key except today's and yesterday's,
+// keeping the given wordCache's memory bounded across date rollovers.
+func evictStaleCacheEntries(c *wordCache, today, yesterday string) {
+	c.mu.Lock()
+	for k := range c.entries {
+		if k != today && k != yesterday {
+			delete(c.entries, k)
+		}
+	}
+	c.mu.Unlock()
+}
+
 func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 	dateStr := t.Format("20060102")
 
@@ -166,12 +193,9 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 	s.wordCache.mu.RUnlock()
 
 	// Cache miss: fetch the full word bank and pick deterministically.
-	var words []models.MannaWord
-	if err := s.db.Where("LENGTH(word) = 5").Order("id asc").Find(&words).Error; err != nil {
+	words, err := s.loadFiveLetterWords()
+	if err != nil {
 		return nil, err
-	}
-	if len(words) == 0 {
-		return nil, errors.New("word bank is empty")
 	}
 	// Seed format: YYYYMMDD as int64. Same seed = same word across all server instances.
 	seed, _ := strconv.ParseInt(dateStr, 10, 64)
@@ -181,14 +205,57 @@ func (s *MannaService) getWordForDate(t time.Time) (*models.MannaWord, error) {
 	// Populate cache. Evict stale keys (yesterday and older) to keep memory bounded.
 	today := mannaEffectiveNow().Format("20060102")
 	yesterday := mannaEffectiveNow().AddDate(0, 0, -1).Format("20060102")
+	evictStaleCacheEntries(&s.wordCache, today, yesterday)
 	s.wordCache.mu.Lock()
-	for k := range s.wordCache.entries {
-		if k != today && k != yesterday {
-			delete(s.wordCache.entries, k)
-		}
-	}
 	s.wordCache.entries[dateStr] = word
 	s.wordCache.mu.Unlock()
+
+	return word, nil
+}
+
+// getGuestWordForDate returns the word shown to unauthenticated guests for a
+// given date — deliberately a DIFFERENT word than getWordForDate's signed-in
+// daily word. Guests get 3 free guesses with no account and no persisted
+// state; without this separation, a guest could exhaust their guesses (or
+// solve it) to see the answer revealed, then sign in and "solve" the exact
+// same signed-in daily puzzle they'd already been told the answer to. Uses
+// a distinct seed derivation and, belt-and-suspenders, explicitly shifts off
+// the signed-in word's index if the two ever land on the same word.
+func (s *MannaService) getGuestWordForDate(t time.Time) (*models.MannaWord, error) {
+	dateStr := t.Format("20060102")
+
+	s.guestWordCache.mu.RLock()
+	if w, ok := s.guestWordCache.entries[dateStr]; ok {
+		s.guestWordCache.mu.RUnlock()
+		return w, nil
+	}
+	s.guestWordCache.mu.RUnlock()
+
+	words, err := s.loadFiveLetterWords()
+	if err != nil {
+		return nil, err
+	}
+	signedInWord, err := s.getWordForDate(t)
+	if err != nil {
+		return nil, err
+	}
+
+	// Distinct seed from the signed-in selector (same YYYYMMDD int, offset by
+	// a large odd constant so the two PRNG streams don't correlate).
+	seed, _ := strconv.ParseInt(dateStr, 10, 64)
+	rng := rand.New(rand.NewSource(seed + 104729)) // #nosec G404
+	idx := rng.Intn(len(words))
+	if words[idx].Word == signedInWord.Word {
+		idx = (idx + 1) % len(words)
+	}
+	word := &words[idx]
+
+	today := mannaEffectiveNow().Format("20060102")
+	yesterday := mannaEffectiveNow().AddDate(0, 0, -1).Format("20060102")
+	evictStaleCacheEntries(&s.guestWordCache, today, yesterday)
+	s.guestWordCache.mu.Lock()
+	s.guestWordCache.entries[dateStr] = word
+	s.guestWordCache.mu.Unlock()
 
 	return word, nil
 }
@@ -602,9 +669,10 @@ type GuestGuessResult struct {
 }
 
 // GetGuestGameInfo returns the guest game configuration with today's scripture clue.
+// Uses the guest-only word (see getGuestWordForDate), not the signed-in daily word.
 func (s *MannaService) GetGuestGameInfo() *GuestGameInfo {
 	info := &GuestGameInfo{WordLength: 5, MaxGuesses: guestMannaGuesses}
-	word, err := s.GetTodayWord()
+	word, err := s.getGuestWordForDate(mannaEffectiveNow())
 	if err != nil {
 		return info
 	}
@@ -614,7 +682,9 @@ func (s *MannaService) GetGuestGameInfo() *GuestGameInfo {
 	return info
 }
 
-// EvaluateGuestGuess validates and scores a guest guess against today's word.
+// EvaluateGuestGuess validates and scores a guest guess against today's guest word
+// (see getGuestWordForDate — deliberately not the signed-in daily word, so a guest
+// can't learn today's real answer before signing in).
 // isLastGuess should be true when the client has used its final allowed guess (so the
 // answer can be revealed on a wrong final guess).
 // No game state is stored — guest state lives entirely in the browser (localStorage).
@@ -629,7 +699,7 @@ func (s *MannaService) EvaluateGuestGuess(guess string, isLastGuess bool) (*Gues
 		}
 	}
 
-	word, err := s.GetTodayWord()
+	word, err := s.getGuestWordForDate(mannaEffectiveNow())
 	if err != nil {
 		return nil, fmt.Errorf("get today word: %w", err)
 	}

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import apiClient from '../services/api/client';
 import { type ThemeId } from '../contexts/ThemeContext';
+import { useStreak } from '../contexts/StreakContext';
 
 export interface UnlockSummary {
   theme_id: ThemeId;
@@ -13,6 +14,7 @@ export interface UnlockSummary {
 
 export function useUnlocks() {
   const { t } = useTranslation();
+  const { updateBlessingsBalance } = useStreak();
   const [unlocks, setUnlocks] = useState<UnlockSummary[]>([]);
   const [balance, setBalance] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -41,6 +43,7 @@ export function useUnlocks() {
     try {
       const { data } = await apiClient.post<{ blessings_balance: number }>('/api/blessings/spend', { theme_id: themeId });
       setBalance(data.blessings_balance);
+      updateBlessingsBalance(data.blessings_balance);
       setUnlocks(prev => prev.map(u => u.theme_id === themeId ? { ...u, is_owned: true } : u));
       return true;
     } catch (err: any) {
@@ -52,7 +55,7 @@ export function useUnlocks() {
       }
       return false;
     }
-  }, [t]);
+  }, [t, updateBlessingsBalance]);
 
   return { unlocks, balance, isLoading, isGuest, purchaseTheme, purchaseError };
 }

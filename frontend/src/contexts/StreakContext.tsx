@@ -40,6 +40,7 @@ interface StreakContextType {
   loading: boolean;
   error: string | null;
   refreshStreak: () => Promise<void>;
+  updateBlessingsBalance: (balance: number) => void;
   useGraceDay: () => Promise<{ success: boolean; error?: string }>;
   dismissMilestone: (key: string) => Promise<void>;
   // Subscription
@@ -222,6 +223,13 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }
   }, [isAuthenticated, refreshStreak]);
 
+  // Patches the shared blessings_balance in place from a response that already
+  // returned the authoritative new value (e.g. a shop purchase) — avoids waiting
+  // on refreshStreak's 1s debounce or a full refetch just to reflect a spend.
+  const updateBlessingsBalance = useCallback((balance: number) => {
+    setStreakData(prev => (prev ? { ...prev, blessings_balance: balance } : prev));
+  }, []);
+
   // Dismiss milestone celebration
   const dismissMilestone = useCallback(async (key: string) => {
     if (!isAuthenticated) return;
@@ -346,6 +354,7 @@ export const StreakProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         loading,
         error,
         refreshStreak,
+        updateBlessingsBalance,
         useGraceDay,
         dismissMilestone,
         subscription,
