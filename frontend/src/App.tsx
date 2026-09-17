@@ -142,6 +142,9 @@ const PlansLibrary = lazy(() =>
 const PlanDetail = lazy(() =>
   import("./features/plans/PlanDetail").then((m) => ({ default: m.default }))
 );
+const PlanDayRoute = lazy(() =>
+  import("./features/plans/PlanDayRoute").then((m) => ({ default: m.default }))
+);
 
 // Phase 12: Guided Prayer
 const GuidedPrayerHome = lazy(() =>
@@ -226,6 +229,10 @@ const router = createBrowserRouter([
       {
         path: "plans/:slug",
         element: <PageSuspense><PlanDetail /></PageSuspense>,
+      },
+      {
+        path: "plans/:slug/day",
+        element: <AuthRequiredRoute><PageSuspense><PlanDayRoute /></PageSuspense></AuthRequiredRoute>,
       },
       // Settings — open to visitors (theme, language useful without account)
       {

@@ -12,6 +12,17 @@ type DisciplineDef struct {
 	Blessings       int
 	Active          bool
 	RequiresPremium bool
+	// IntroducedDate is the UTC-10 date ("2006-01-02") this discipline actually
+	// shipped and joined DisciplineRotation. Empty means "since the epoch" (the
+	// original launch set). GetDayDisciplines excludes a discipline from any date
+	// before its IntroducedDate — without this, adding a discipline to the
+	// rotation retroactively rewrites history: GetStats walks past dates using
+	// the CURRENT rotation table, so a discipline added later would appear to
+	// have been "offered but missed" on days before it existed, deflating a
+	// long-time user's completion rate for a feature they never had access to.
+	// Found 2026-09-16 when complete_reading_plan/complete_rosary (added
+	// 2026-07-21) were retroactively counted as missed on pre-existing accounts.
+	IntroducedDate string
 }
 
 // DisciplineDefinitions is the full catalogue of disciplines, active and inactive.
@@ -26,9 +37,9 @@ var DisciplineDefinitions = []DisciplineDef{
 	{Key: "solve_manna_any", Blessings: 5, Active: true},
 	{Key: "solve_manna_4", Blessings: 10, Active: true},
 	{Key: "write_reflection_50", Blessings: 15, Active: true},
-	{Key: "complete_reading_plan", Blessings: 20, Active: true},
+	{Key: "complete_reading_plan", Blessings: 20, Active: true, IntroducedDate: "2026-07-21"},
 	{Key: "react_community", Blessings: 5, Active: false},
-	{Key: "complete_rosary", Blessings: 15, Active: true, RequiresPremium: true},
+	{Key: "complete_rosary", Blessings: 15, Active: true, RequiresPremium: true, IntroducedDate: "2026-07-21"},
 }
 
 // disciplineMap is an O(1) lookup built once at package init from DisciplineDefinitions.
@@ -91,9 +102,17 @@ func GetDayDisciplines(dateUTC10 string) []DisciplineDef {
 	keys := DisciplineRotation[cycleDay]
 	result := make([]DisciplineDef, 0, len(keys))
 	for _, k := range keys {
-		if d, ok := disciplineMap[k]; ok && d.Active {
-			result = append(result, d)
+		d, ok := disciplineMap[k]
+		if !ok || !d.Active {
+			continue
 		}
+		if d.IntroducedDate != "" {
+			introduced, err := time.Parse("2006-01-02", d.IntroducedDate)
+			if err == nil && today.Before(introduced) {
+				continue
+			}
+		}
+		result = append(result, d)
 	}
 	return result
 }

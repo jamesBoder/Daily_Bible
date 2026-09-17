@@ -8,8 +8,6 @@ import { useStreak } from '../../contexts/StreakContext';
 import { useAuth } from '../../hooks/useAuth';
 import { usePricingModal } from '../../hooks/usePricingModal';
 import { showToast } from '../../utils/toast';
-import PlanDayView from './PlanDayView';
-
 const PlanDetail: React.FC = () => {
   const { slug } = useParams<{ slug: string }>();
   const { t } = useTranslation();
@@ -20,7 +18,6 @@ const PlanDetail: React.FC = () => {
   const { openModal } = usePricingModal();
   const isPremium = subscription?.is_premium ?? false;
   const [confirmUnenroll, setConfirmUnenroll] = useState(false);
-  const [showDayView, setShowDayView] = useState(false);
 
   const { data: plan, isLoading, error } = useQuery({
     queryKey: ['plan', slug],
@@ -46,7 +43,7 @@ const PlanDetail: React.FC = () => {
       qc.invalidateQueries({ queryKey: ['plan', slug] });
       qc.invalidateQueries({ queryKey: ['plans-library'] });
       qc.invalidateQueries({ queryKey: ['plans-my'] });
-      setShowDayView(true);
+      navigate(`/plans/${slug}/day`);
     },
     onError: (err: unknown) => {
       const data = (err as { response?: { data?: { error?: string; limit?: number } } })?.response?.data;
@@ -130,11 +127,6 @@ const PlanDetail: React.FC = () => {
     );
   }
 
-  // If we just enrolled or user taps Continue, show the day view inline
-  if (showDayView && plan.user_progress) {
-    return <PlanDayView slug={slug!} onBack={() => setShowDayView(false)} />;
-  }
-
   const progress = plan.user_progress;
   const isEnrolled = !!progress?.is_active;
   const isComplete = !!progress?.completed_at;
@@ -153,7 +145,7 @@ const PlanDetail: React.FC = () => {
 
   const handleContinue = () => {
     if (navigator.vibrate) navigator.vibrate(8);
-    setShowDayView(true);
+    navigate(`/plans/${slug}/day`);
   };
 
   return (

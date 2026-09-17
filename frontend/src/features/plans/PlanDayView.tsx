@@ -22,9 +22,12 @@ import DeepDive from './DeepDive';
 interface PlanDayViewProps {
   slug: string;
   onBack: () => void;
+  /** Where the completion certificate's dismiss button sends the user — the plan
+   * library, not back to this now-finished plan's own detail page. */
+  onBackToLibrary: () => void;
 }
 
-const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
+const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack, onBackToLibrary }) => {
   const { t } = useTranslation();
   const qc = useQueryClient();
   const navigate = useNavigate();
@@ -395,7 +398,7 @@ const PlanDayView: React.FC<PlanDayViewProps> = ({ slug, onBack }) => {
           totalDays={plan?.length_days ?? 0}
           blessingsEarned={blessingsEarned}
           completedAt={completedAt}
-          onBackToLibrary={onBack}
+          onBackToLibrary={onBackToLibrary}
           onDismiss={() => setJustCompleted(false)}
         />
       )}
