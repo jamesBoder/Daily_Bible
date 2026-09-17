@@ -934,6 +934,7 @@
     "continuePlan": "Continue your plan →",
     "unlockPremium": "Unlock with Premium",
     "viewProgress": "View progress →",
+    "errorLoading": "Could not load today's disciplines.",
     "keys": {
       "read_verse": "Read today's verse",
       "write_journal": "Write a journal entry",

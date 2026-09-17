@@ -934,6 +934,7 @@
     "continuePlan": "Continuar tu plan →",
     "unlockPremium": "Desbloquear con Premium",
     "viewProgress": "Ver progreso →",
+    "errorLoading": "No se pudieron cargar las disciplinas de hoy.",
     "keys": {
       "read_verse": "Leer el versículo de hoy",
       "write_journal": "Escribir una entrada en el diario",

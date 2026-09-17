@@ -1234,6 +1234,7 @@
     "continuePlan": "Continuer votre plan →",
     "unlockPremium": "Débloquer avec Premium",
     "viewProgress": "Voir la progression →",
+    "errorLoading": "Impossible de charger les disciplines du jour.",
     "keys": {
       "read_verse": "Lire le verset du jour",
       "write_journal": "Écrire dans le journal",

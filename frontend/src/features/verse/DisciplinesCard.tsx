@@ -48,7 +48,14 @@ function DisciplineRow({ statusKey, blessings, completed, requiresPremium, isPre
         isLocked ? 'cursor-pointer hover:bg-amber-50 dark:hover:bg-amber-900/10 active:bg-amber-100 dark:active:bg-amber-900/20' : ''
       }`}
       onClick={isLocked ? handleLockedTap : undefined}
+      onKeyDown={isLocked ? (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault()
+          handleLockedTap()
+        }
+      } : undefined}
       role={isLocked ? 'button' : undefined}
+      tabIndex={isLocked ? 0 : undefined}
       aria-label={isLocked ? t('disciplines.unlockPremium', 'Unlock with Premium') : undefined}
     >
       {/* Status icon */}
@@ -121,7 +128,7 @@ export default function DisciplinesCard() {
   const { subscription } = useStreak()
   const isPremium = subscription?.is_premium ?? false
 
-  const { data, isLoading, isError } = useQuery<DisciplinesTodayResponse>({
+  const { data, isLoading, isError, refetch } = useQuery<DisciplinesTodayResponse>({
     queryKey: ['disciplines', 'today'],
     queryFn: disciplinesApi.getToday,
     staleTime: 60_000,
@@ -167,7 +174,24 @@ export default function DisciplinesCard() {
     }
   }, [])
 
-  if (isError) return null
+  if (isError) {
+    return (
+      <div
+        className="rounded-xl border border-amber-200 dark:border-amber-800/50 bg-white dark:bg-gray-900 p-4 text-center"
+        aria-label={t('disciplines.title', "Today's Disciplines")}
+      >
+        <p className="text-sm text-gray-500 dark:text-gray-400 mb-2">
+          {t('disciplines.errorLoading', "Could not load today's disciplines.")}
+        </p>
+        <button
+          className="tap-target-44 text-xs font-medium text-amber-600 dark:text-amber-400 hover:underline"
+          onClick={() => refetch()}
+        >
+          {t('common.retry', 'Retry')}
+        </button>
+      </div>
+    )
+  }
 
   const disciplines = data?.disciplines ?? []
   const enrolledInPlan = data?.enrolled_in_plan ?? false
